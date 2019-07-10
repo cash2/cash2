@@ -1,4 +1,5 @@
 // Copyright (c) 2011-2016 The Cryptonote developers
+// Copyright (c) 2016-2019, The Karbowanec developers
 // Copyright (c) 2018-2019 The Cash2 developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -299,6 +300,25 @@ int CryptoNoteProtocolHandler::handle_notify_new_transactions(int command, NOTIF
 
 int CryptoNoteProtocolHandler::handle_request_get_objects(int command, NOTIFY_REQUEST_GET_OBJECTS::request& arg, CryptoNoteConnectionContext& context) {
   logger(Logging::TRACE) << context << "NOTIFY_REQUEST_GET_OBJECTS";
+
+  /* Essentially, one can send such a large amount of IDs that core exhausts
+   * all free memory. This issue can theoretically be exploited using very
+   * large CN blockchains, such as Monero.
+   *
+   * This is a partial fix. Thanks and credit given to CryptoNote author
+   * 'cryptozoidberg' for collaboration and the fix. Also thanks to
+   * 'moneromooo'. Referencing HackerOne report #506595.
+   */
+  if (arg.blocks.size() + arg.txs.size() > CRYPTONOTE_PROTOCOL_MAX_OBJECT_REQUEST_COUNT)
+  {
+    logger(Logging::ERROR) << context << 
+      "Requested objects count is too big ("
+      << arg.blocks.size() << ") expected no more than "
+      << CRYPTONOTE_PROTOCOL_MAX_OBJECT_REQUEST_COUNT;
+    context.m_state = CryptoNoteConnectionContext::state_shutdown;
+    return 1;
+  }
+
   NOTIFY_RESPONSE_GET_OBJECTS::request rsp;
   if (!m_core.handle_get_objects(arg, rsp)) {
     logger(Logging::ERROR) << context << "failed to handle request NOTIFY_REQUEST_GET_OBJECTS, dropping connection";
