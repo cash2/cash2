@@ -59,7 +59,7 @@ public:
   virtual std::string message(int ev) const override {
     switch (ev) {
     case NOT_INITIALIZED:          return "Object was not initialized";
-    case WRONG_PASSWORD:           return "The password is wrong";
+    case WRONG_PASSWORD:           return "The wallet container password is incorrect";
     case ALREADY_INITIALIZED:      return "The object is already initialized";
     case INTERNAL_WALLET_ERROR:    return "Internal error occurred";
     case MIXIN_COUNT_TOO_BIG:      return "MixIn count is too big";

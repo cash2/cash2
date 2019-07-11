@@ -1,4 +1,5 @@
 // Copyright (c) 2011-2016 The Cryptonote developers
+// Copyright (c) 2018 The Turtlecoin developers
 // Copyright (c) 2018-2019 The Cash2 developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -26,12 +27,14 @@ Configuration::Configuration() {
   logLevel = Logging::INFO;
   bindAddress = "";
   bindPort = 0;
+  rpcConfigurationPassword = "";
 }
 
 void Configuration::initOptions(boost::program_options::options_description& desc) {
   desc.add_options()
       ("bind-address", po::value<std::string>()->default_value("0.0.0.0"), "payment service bind address")
       ("bind-port", po::value<uint16_t>()->default_value(8070), "payment service bind port")
+      ("rpc-password", po::value<std::string>(), "Specify a password for access to the wallet RPC server.")
       ("container-file,w", po::value<std::string>(), "container file")
       ("container-password,p", po::value<std::string>(), "container password")
       ("generate-container,g", "generate new container file with one wallet and exit")
@@ -112,6 +115,11 @@ void Configuration::init(const boost::program_options::variables_map& options) {
       throw ConfigurationError("Both container-file and container-password parameters are required");
     }
   }
+
+  if (!(options.count("rpc-password") == 0)) {
+    rpcConfigurationPassword = options["rpc-password"].as<std::string>();
+  }
+
 }
 
 } //namespace PaymentService

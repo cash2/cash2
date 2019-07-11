@@ -1,5 +1,6 @@
 // Copyright (c) 2011-2016 The Cryptonote developers
 // Copyright (c) 2018, Karbo developers
+// Copyright (c) 2018 The Turtlecoin developers
 // Copyright (c) 2018-2019 The Cash2 developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -16,8 +17,8 @@
 
 namespace PaymentService {
 
-PaymentServiceJsonRpcServer::PaymentServiceJsonRpcServer(System::Dispatcher& sys, System::Event& stopEvent, WalletService& service, Logging::ILogger& loggerGroup) 
-  : JsonRpcServer(sys, stopEvent, loggerGroup)
+PaymentServiceJsonRpcServer::PaymentServiceJsonRpcServer(System::Dispatcher& sys, System::Event& stopEvent, WalletService& service, Logging::ILogger& loggerGroup, std::string rpcConfigurationPassword) 
+  : JsonRpcServer(sys, stopEvent, loggerGroup, rpcConfigurationPassword)
   , service(service)
   , logger(loggerGroup, "PaymentServiceJsonRpcServer")
 {
@@ -48,6 +49,29 @@ PaymentServiceJsonRpcServer::PaymentServiceJsonRpcServer(System::Dispatcher& sys
 void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue& req, Common::JsonValue& resp) {
   try {
     prepareJsonResponse(req, resp);
+
+    // Check that the wallet RPC password of the request matches the RPC password set when the server was started
+    std::string clientPassword = "";
+
+    if (req.contains("password") && req("password").isString())
+    {
+      clientPassword = req("password").getString();
+    }
+
+    if (clientPassword != getRpcConfigurationPassword())
+    {
+      if (clientPassword == "")
+      {
+        logger(Logging::WARNING) << "Your request does not include a wallet RPC password";
+      }
+      else
+      {
+        logger(Logging::WARNING) << "Incorrect wallet RPC password : " << clientPassword;
+      }
+
+      makeIncorrectPasswordResponse(resp);
+      return;
+    }
 
     if (!req.contains("method")) {
       logger(Logging::WARNING) << "Field \"method\" is not found in json request: " << req;
