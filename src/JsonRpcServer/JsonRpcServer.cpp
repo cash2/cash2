@@ -1,4 +1,5 @@
 // Copyright (c) 2011-2016 The Cryptonote developers
+// Copyright (c) 2018 The Turtlecoin developers
 // Copyright (c) 2018-2019 The Cash2 developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -25,11 +26,12 @@
 
 namespace CryptoNote {
 
-JsonRpcServer::JsonRpcServer(System::Dispatcher& sys, System::Event& stopEvent, Logging::ILogger& loggerGroup) :
+JsonRpcServer::JsonRpcServer(System::Dispatcher& sys, System::Event& stopEvent, Logging::ILogger& loggerGroup, std::string rpcConfigurationPassword) :
   HttpServer(sys, loggerGroup), 
   system(sys),
   stopEvent(stopEvent),
-  logger(loggerGroup, "JsonRpcServer")
+  logger(loggerGroup, "JsonRpcServer"),
+  m_rpcConfigurationPassword(rpcConfigurationPassword)
 {
 }
 
@@ -152,6 +154,23 @@ void JsonRpcServer::makeMethodNotFoundResponse(Common::JsonValue& resp) {
   resp.insert("error", error);
 }
 
+void JsonRpcServer::makeIncorrectPasswordResponse(Common::JsonValue& resp) {
+  using Common::JsonValue;
+
+  JsonValue error(JsonValue::OBJECT);
+
+  JsonValue code;
+  code = static_cast<int64_t>(-32604);
+
+  JsonValue message;
+  message = "Incorrect wallet RPC password";
+
+  error.insert("code", code);
+  error.insert("message", message);
+
+  resp.insert("error", error);
+}
+
 void JsonRpcServer::fillJsonResponse(const Common::JsonValue& v, Common::JsonValue& resp) {
   resp.insert("result", v);
 }
@@ -173,6 +192,11 @@ void JsonRpcServer::makeJsonParsingErrorResponse(Common::JsonValue& resp) {
   error.insert("message", message);
 
   resp.insert("error", error);
+}
+
+std::string JsonRpcServer::getRpcConfigurationPassword()
+{
+  return m_rpcConfigurationPassword;
 }
 
 }
