@@ -155,9 +155,9 @@ bool RpcServer::processJsonRpcRequest(const HttpRequest& request, HttpResponse& 
       { "getlastblockheader", { makeMemberMethod(&RpcServer::on_get_last_block_header), false } },
       { "getblockheaderbyhash", { makeMemberMethod(&RpcServer::on_get_block_header_by_hash), false } },
       { "getblockheaderbyheight", { makeMemberMethod(&RpcServer::on_get_block_header_by_height), false } },
-      { "f_blocks_list_json", { makeMemberMethod(&RpcServer::f_on_blocks_list_json), false } },
+      { "getblocks", { makeMemberMethod(&RpcServer::on_getblocks), false } },
       { "f_block_json", { makeMemberMethod(&RpcServer::f_on_block_json), false } },
-      { "gettransaction", { makeMemberMethod(&RpcServer::on_get_transaction_json), false } },
+      { "gettransaction", { makeMemberMethod(&RpcServer::on_gettransaction), false } },
       { "f_mempool_json", { makeMemberMethod(&RpcServer::f_on_mempool_json), false } },
       { "check_tx_key", { makeMemberMethod(&RpcServer::k_on_check_tx_key), false } },
     };
@@ -718,7 +718,7 @@ bool RpcServer::on_get_block_header_by_height(const COMMAND_RPC_GET_BLOCK_HEADER
   return true;
 }
 
-bool RpcServer::f_on_blocks_list_json(const F_COMMAND_RPC_GET_BLOCKS_LIST::request& req, F_COMMAND_RPC_GET_BLOCKS_LIST::response& res) {
+bool RpcServer::on_getblocks(const COMMAND_RPC_GET_BLOCKS::request& req, COMMAND_RPC_GET_BLOCKS::response& res) {
   if (m_core.get_current_blockchain_height() <= req.height) {
     throw JsonRpc::JsonRpcError{ CORE_RPC_ERROR_CODE_TOO_BIG_HEIGHT,
       std::string("To big height: ") + std::to_string(req.height) + ", current blockchain height = " + std::to_string(m_core.get_current_blockchain_height()) };
@@ -894,7 +894,7 @@ bool RpcServer::f_on_block_json(const F_COMMAND_RPC_GET_BLOCK_DETAILS::request& 
   return true;
 }
 
-bool RpcServer::on_get_transaction_json(const COMMAND_RPC_GET_TRANSACTION_DETAILS::request& req, COMMAND_RPC_GET_TRANSACTION_DETAILS::response& res) {
+bool RpcServer::on_gettransaction(const COMMAND_RPC_GET_TRANSACTION::request& req, COMMAND_RPC_GET_TRANSACTION::response& res) {
   Hash hash;
 
   if (!parse_hash256(req.hash, hash)) {

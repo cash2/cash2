@@ -573,7 +573,7 @@ struct f_block_details_response {
   }
 };
 
-struct F_COMMAND_RPC_GET_BLOCKS_LIST {
+struct COMMAND_RPC_GET_BLOCKS {
   struct request {
     uint64_t height;
 
@@ -631,7 +631,7 @@ struct f_transaction_details_response {
   }
 };
 
-struct COMMAND_RPC_GET_TRANSACTION_DETAILS {
+struct COMMAND_RPC_GET_TRANSACTION {
   struct request {
     std::string hash;
 
