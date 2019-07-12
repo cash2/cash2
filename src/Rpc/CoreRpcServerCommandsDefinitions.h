@@ -495,23 +495,21 @@ struct COMMAND_RPC_QUERY_BLOCKS_LITE {
 
 // Definitions for block explorer
 
-struct f_block_short_response {
+struct block_short_details_response {
   uint64_t timestamp;
   uint32_t height;
   std::string hash;
+  uint64_t size;
   uint64_t tx_count;
-  uint64_t cumul_size;
   difficulty_type difficulty;
-  uint64_t min_tx_fee;
 
   void serialize(ISerializer &s) {
     KV_MEMBER(timestamp)
     KV_MEMBER(height)
     KV_MEMBER(hash)
-    KV_MEMBER(cumul_size)
+    KV_MEMBER(size)
     KV_MEMBER(tx_count)
     KV_MEMBER(difficulty)
-	KV_MEMBER(min_tx_fee)
   }
 };
 
@@ -585,7 +583,7 @@ struct F_COMMAND_RPC_GET_BLOCKS_LIST {
   };
 
   struct response {
-    std::vector<f_block_short_response> blocks; //transactions blobs as hex
+    std::vector<block_short_details_response> blocks; //transactions blobs as hex
     std::string status;
 
     void serialize(ISerializer &s) {
@@ -633,7 +631,7 @@ struct f_transaction_details_response {
   }
 };
 
-struct F_COMMAND_RPC_GET_TRANSACTION_DETAILS {
+struct COMMAND_RPC_GET_TRANSACTION_DETAILS {
   struct request {
     std::string hash;
 
@@ -645,7 +643,7 @@ struct F_COMMAND_RPC_GET_TRANSACTION_DETAILS {
   struct response {
     Transaction tx;
     f_transaction_details_response txDetails;
-    f_block_short_response block;
+    block_short_details_response block;
     std::string status;
 
     void serialize(ISerializer &s) {
