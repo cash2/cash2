@@ -1,4 +1,5 @@
 // Copyright (c) 2011-2016 The Cryptonote developers
+// Copyright (c) 2018 The Turtlecoin developers
 // Copyright (c) 2018-2019 The Cash2 developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -25,6 +26,7 @@ const int errInvalidRequest = -32600;
 const int errMethodNotFound = -32601;
 const int errInvalidParams = -32602;
 const int errInternalError = -32603;
+const int errIncorrectPassword = -32604;
 
 class JsonRpcError: public std::exception {
 public:
@@ -50,6 +52,7 @@ public:
 };
 
 typedef boost::optional<Common::JsonValue> OptionalId;
+typedef boost::optional<Common::JsonValue> OptionalPassword;
 
 class JsonRpcRequest {
 public:
@@ -71,6 +74,11 @@ public:
 
     if (psReq.contains("id")) {
       id = psReq("id");
+    }
+
+    if (psReq.contains("password"))
+    {
+      m_password = psReq("password");
     }
 
     return true;
@@ -101,6 +109,11 @@ public:
     return id;
   }
 
+  const OptionalPassword& getPassword() const
+  {
+    return m_password;
+  }
+
   std::string getBody() {
     psReq.set("jsonrpc", std::string("2.0"));
     psReq.set("method", method);
@@ -111,6 +124,7 @@ private:
 
   Common::JsonValue psReq;
   OptionalId id;
+  OptionalPassword m_password;
   std::string method;
 };
 

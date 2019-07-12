@@ -1,5 +1,6 @@
 // Copyright (c) 2011-2016 The Cryptonote developers
 // Copyright (c) 2016-2018, The Karbo developers
+// Copyright (c) 2018 The Turtlecoin developers
 // Copyright (c) 2018-2019 The Cash2 developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -42,6 +43,7 @@ namespace Tools
 
     static const command_line::arg_descriptor<uint16_t> arg_rpc_bind_port;
     static const command_line::arg_descriptor<std::string> arg_rpc_bind_ip;
+    static const command_line::arg_descriptor<std::string> arg_rpc_password;
 
   private:
 
@@ -64,6 +66,7 @@ namespace Tools
     CryptoNote::INode& m_node;
     uint16_t m_port;
     std::string m_bind_ip;
+    std::string m_rpcConfigPassword;
     CryptoNote::Currency& m_currency;
     const std::string m_walletFilename;
 
