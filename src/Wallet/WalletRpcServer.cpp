@@ -1,5 +1,6 @@
 // Copyright (c) 2011-2016 The Cryptonote developers
 // Copyright (c) 2016-2018, The Karbo developers
+// Copyright (c) 2018 The Turtlecoin developers
 // Copyright (c) 2018-2019 The Cash2 developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -26,10 +27,12 @@ namespace Tools {
 
 const command_line::arg_descriptor<uint16_t> wallet_rpc_server::arg_rpc_bind_port = { "rpc-bind-port", "Starts wallet as rpc server for wallet operations, sets bind port for server", 0, true };
 const command_line::arg_descriptor<std::string> wallet_rpc_server::arg_rpc_bind_ip = { "rpc-bind-ip", "Specify ip to bind rpc server", "127.0.0.1" };
+const command_line::arg_descriptor<std::string> wallet_rpc_server::arg_rpc_password = { "rpc-password", "Specify a password for access to the simplewallet RPC server", "" };
 
 void wallet_rpc_server::init_options(boost::program_options::options_description& desc) {
   command_line::add_arg(desc, arg_rpc_bind_ip);
   command_line::add_arg(desc, arg_rpc_bind_port);
+  command_line::add_arg(desc, arg_rpc_password);
 }
 //------------------------------------------------------------------------------------------------------------------------------
 wallet_rpc_server::wallet_rpc_server(
@@ -68,6 +71,7 @@ void wallet_rpc_server::send_stop_signal() {
 bool wallet_rpc_server::handle_command_line(const boost::program_options::variables_map& vm) {
   m_bind_ip = command_line::get_arg(vm, arg_rpc_bind_ip);
   m_port = command_line::get_arg(vm, arg_rpc_bind_port);
+  m_rpcConfigPassword = command_line::get_arg(vm, arg_rpc_password);
   return true;
 }
 //------------------------------------------------------------------------------------------------------------------------------
@@ -86,10 +90,23 @@ void wallet_rpc_server::processRequest(const CryptoNote::HttpRequest& request, C
 
   JsonRpcRequest jsonRequest;
   JsonRpcResponse jsonResponse;
+  std::string clientPassword = "";
 
   try {
     jsonRequest.parseRequest(request.getBody());
     jsonResponse.setId(jsonRequest.getId());
+
+    const JsonRpc::OptionalPassword& clientPasswordObject = jsonRequest.getPassword();
+
+    if (clientPasswordObject.is_initialized() && clientPasswordObject.get().isString())
+    {
+      clientPassword = clientPasswordObject.get().getString();
+    }
+
+    if (clientPassword != m_rpcConfigPassword)
+    {
+      throw JsonRpcError(errIncorrectPassword);
+    }
 
     static std::unordered_map<std::string, JsonMemberMethod> s_methods = {
       { "getbalance", makeMemberMethod(&wallet_rpc_server::on_getbalance) },

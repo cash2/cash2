@@ -1,4 +1,5 @@
 // Copyright (c) 2011-2016 The Cryptonote developers
+// Copyright (c) 2018 The Turtlecoin developers
 // Copyright (c) 2018-2019 The Cash2 developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -19,6 +20,7 @@ JsonRpcError::JsonRpcError(int c) : code(c) {
   case errMethodNotFound: message = "Method not found"; break;
   case errInvalidParams: message = "Invalid params"; break;
   case errInternalError: message = "Internal error"; break;
+  case errIncorrectPassword: message = "Incorrect RPC password"; break;
   default: message = "Unknown error"; break;
   }
 }
