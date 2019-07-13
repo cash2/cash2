@@ -61,9 +61,9 @@ private:
   bool on_stop_daemon(const COMMAND_RPC_STOP_DAEMON::request& req, COMMAND_RPC_STOP_DAEMON::response& res);
 
   // json rpc
-  bool on_getblockcount(const COMMAND_RPC_GETBLOCKCOUNT::request& req, COMMAND_RPC_GETBLOCKCOUNT::response& res);
-  bool on_getblockhash(const COMMAND_RPC_GETBLOCKHASH::request& req, COMMAND_RPC_GETBLOCKHASH::response& res);
-  bool on_getblocktemplate(const COMMAND_RPC_GETBLOCKTEMPLATE::request& req, COMMAND_RPC_GETBLOCKTEMPLATE::response& res);
+  bool on_get_block_count(const COMMAND_RPC_GET_BLOCK_COUNT::request& req, COMMAND_RPC_GET_BLOCK_COUNT::response& res);
+  bool on_get_block_hash(const COMMAND_RPC_GET_BLOCK_HASH::request& req, COMMAND_RPC_GET_BLOCK_HASH::response& res);
+  bool on_get_block_template(const COMMAND_RPC_GET_BLOCK_TEMPLATE::request& req, COMMAND_RPC_GET_BLOCK_TEMPLATE::response& res);
   bool on_get_currency_id(const COMMAND_RPC_GET_CURRENCY_ID::request& req, COMMAND_RPC_GET_CURRENCY_ID::response& res);
   bool on_submitblock(const COMMAND_RPC_SUBMITBLOCK::request& req, COMMAND_RPC_SUBMITBLOCK::response& res);
   bool on_get_last_block_header(const COMMAND_RPC_GET_LAST_BLOCK_HEADER::request& req, COMMAND_RPC_GET_LAST_BLOCK_HEADER::response& res);

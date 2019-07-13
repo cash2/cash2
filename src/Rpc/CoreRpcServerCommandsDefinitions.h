@@ -303,7 +303,7 @@ struct COMMAND_RPC_STOP_DAEMON {
 };
 
 //
-struct COMMAND_RPC_GETBLOCKCOUNT {
+struct COMMAND_RPC_GET_BLOCK_COUNT {
   typedef std::vector<std::string> request;
 
   struct response {
@@ -317,12 +317,12 @@ struct COMMAND_RPC_GETBLOCKCOUNT {
   };
 };
 
-struct COMMAND_RPC_GETBLOCKHASH {
+struct COMMAND_RPC_GET_BLOCK_HASH {
   typedef std::vector<uint64_t> request;
   typedef std::string response;
 };
 
-struct COMMAND_RPC_GETBLOCKTEMPLATE {
+struct COMMAND_RPC_GET_BLOCK_TEMPLATE {
   struct request {
     uint64_t reserve_size; //max 255 bytes
     std::string wallet_address;

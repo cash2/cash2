@@ -202,11 +202,11 @@ BlockMiningParameters MinerManager::requestMiningParameters(System::Dispatcher& 
   try {
     HttpClient client(dispatcher, daemonHost, daemonPort);
 
-    COMMAND_RPC_GETBLOCKTEMPLATE::request request;
+    COMMAND_RPC_GET_BLOCK_TEMPLATE::request request;
     request.wallet_address = miningAddress;
     request.reserve_size = 0;
 
-    COMMAND_RPC_GETBLOCKTEMPLATE::response response;
+    COMMAND_RPC_GET_BLOCK_TEMPLATE::response response;
 
     System::EventLock lk(m_httpEvent);
     JsonRpc::invokeJsonRpcCommand(client, "getblocktemplate", request, response);

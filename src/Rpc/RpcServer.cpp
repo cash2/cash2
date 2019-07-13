@@ -147,9 +147,9 @@ bool RpcServer::processJsonRpcRequest(const HttpRequest& request, HttpResponse& 
     jsonResponse.setId(jsonRequest.getId()); // copy id
 
     static std::unordered_map<std::string, RpcServer::RpcHandler<JsonMemberMethod>> jsonRpcHandlers = {
-      { "getblockcount", { makeMemberMethod(&RpcServer::on_getblockcount), true } },
-      { "on_getblockhash", { makeMemberMethod(&RpcServer::on_getblockhash), false } },
-      { "getblocktemplate", { makeMemberMethod(&RpcServer::on_getblocktemplate), false } },
+      { "get_block_count", { makeMemberMethod(&RpcServer::on_get_block_count), true } },
+      { "on_get_block_hash", { makeMemberMethod(&RpcServer::on_get_block_hash), false } },
+      { "get_block_template", { makeMemberMethod(&RpcServer::on_get_block_template), false } },
       { "getcurrencyid", { makeMemberMethod(&RpcServer::on_get_currency_id), true } },
       { "submitblock", { makeMemberMethod(&RpcServer::on_submitblock), false } },
       { "getlastblockheader", { makeMemberMethod(&RpcServer::on_get_last_block_header), false } },
@@ -497,13 +497,13 @@ bool RpcServer::on_stop_daemon(const COMMAND_RPC_STOP_DAEMON::request& req, COMM
 //------------------------------------------------------------------------------------------------------------------------------
 // JSON RPC methods
 //------------------------------------------------------------------------------------------------------------------------------
-bool RpcServer::on_getblockcount(const COMMAND_RPC_GETBLOCKCOUNT::request& req, COMMAND_RPC_GETBLOCKCOUNT::response& res) {
+bool RpcServer::on_get_block_count(const COMMAND_RPC_GET_BLOCK_COUNT::request& req, COMMAND_RPC_GET_BLOCK_COUNT::response& res) {
   res.count = m_core.get_current_blockchain_height();
   res.status = CORE_RPC_STATUS_OK;
   return true;
 }
 
-bool RpcServer::on_getblockhash(const COMMAND_RPC_GETBLOCKHASH::request& req, COMMAND_RPC_GETBLOCKHASH::response& res) {
+bool RpcServer::on_get_block_hash(const COMMAND_RPC_GET_BLOCK_HASH::request& req, COMMAND_RPC_GET_BLOCK_HASH::response& res) {
   if (req.size() != 1) {
     throw JsonRpc::JsonRpcError{ CORE_RPC_ERROR_CODE_WRONG_PARAM, "Wrong parameters, expected height" };
   }
@@ -538,7 +538,7 @@ namespace {
   }
 }
 
-bool RpcServer::on_getblocktemplate(const COMMAND_RPC_GETBLOCKTEMPLATE::request& req, COMMAND_RPC_GETBLOCKTEMPLATE::response& res) {
+bool RpcServer::on_get_block_template(const COMMAND_RPC_GET_BLOCK_TEMPLATE::request& req, COMMAND_RPC_GET_BLOCK_TEMPLATE::response& res) {
   if (req.reserve_size > TX_EXTRA_NONCE_MAX_COUNT) {
     throw JsonRpc::JsonRpcError{ CORE_RPC_ERROR_CODE_TOO_BIG_RESERVE_SIZE, "Too big reserved size, maximum 60" };
   }

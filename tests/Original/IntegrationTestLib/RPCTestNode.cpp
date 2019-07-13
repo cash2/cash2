@@ -53,12 +53,12 @@ bool RPCTestNode::getBlockTemplate(const std::string& minerAddress, CryptoNote::
   LOG_DEBUG("getBlockTemplate()");
 
   try {
-    COMMAND_RPC_GETBLOCKTEMPLATE::request req;
-    COMMAND_RPC_GETBLOCKTEMPLATE::response rsp;
+    COMMAND_RPC_GET_BLOCK_TEMPLATE::request req;
+    COMMAND_RPC_GET_BLOCK_TEMPLATE::response rsp;
     req.wallet_address = minerAddress;
     req.reserve_size = 0;
 
-    JsonRpc::invokeJsonRpcCommand(m_httpClient, "getblocktemplate", req, rsp);
+    JsonRpc::invokeJsonRpcCommand(m_httpClient, "get_block_template", req, rsp);
     if (rsp.status != CORE_RPC_STATUS_OK) {
       throw std::runtime_error(rsp.status);
     }
