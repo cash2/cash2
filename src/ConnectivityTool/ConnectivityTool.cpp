@@ -186,7 +186,7 @@ bool handle_get_daemon_info(po::variables_map& vm) {
     CryptoNote::COMMAND_RPC_GET_INFO::request req;
     CryptoNote::COMMAND_RPC_GET_INFO::response res;
 
-    invokeJsonCommand(httpClient, "/getinfo", req, res); // TODO: timeout
+    invokeJsonCommand(httpClient, "/get_info", req, res); // TODO: timeout
 
     std::cout << "OK" << ENDL
       << "height: " << res.height << ENDL

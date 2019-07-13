@@ -223,7 +223,7 @@ void NodeRpcProxy::updateBlockchainStatus() {
   CryptoNote::COMMAND_RPC_GET_INFO::request getInfoReq = AUTO_VAL_INIT(getInfoReq);
   CryptoNote::COMMAND_RPC_GET_INFO::response getInfoResp = AUTO_VAL_INIT(getInfoResp);
 
-  ec = jsonCommand("/getinfo", getInfoReq, getInfoResp);
+  ec = jsonCommand("/get_info", getInfoReq, getInfoResp);
   if (!ec) {
     //a quirk to let wallets work with previous versions daemons.
     //Previous daemons didn't have the 'last_known_block_index' parameter in RPC so it may have zero value.
@@ -474,7 +474,7 @@ std::error_code NodeRpcProxy::doRelayTransaction(const CryptoNote::Transaction& 
   COMMAND_RPC_SEND_RAW_TX::request req;
   COMMAND_RPC_SEND_RAW_TX::response rsp;
   req.tx_as_hex = toHex(toBinaryArray(transaction));
-  return jsonCommand("/sendrawtransaction", req, rsp);
+  return jsonCommand("/send_raw_transaction", req, rsp);
 }
 
 std::error_code NodeRpcProxy::doGetRandomOutsByAmounts(std::vector<uint64_t>& amounts, uint64_t outsCount,
@@ -484,7 +484,7 @@ std::error_code NodeRpcProxy::doGetRandomOutsByAmounts(std::vector<uint64_t>& am
   req.amounts = std::move(amounts);
   req.outs_count = outsCount;
 
-  std::error_code ec = binaryCommand("/getrandom_outs.bin", req, rsp);
+  std::error_code ec = binaryCommand("/get_random_outs.bin", req, rsp);
   if (!ec) {
     outs = std::move(rsp.outs);
   }
@@ -499,7 +499,7 @@ std::error_code NodeRpcProxy::doGetNewBlocks(std::vector<Crypto::Hash>& knownBlo
   CryptoNote::COMMAND_RPC_GET_BLOCKS_FAST::response rsp = AUTO_VAL_INIT(rsp);
   req.block_ids = std::move(knownBlockIds);
 
-  std::error_code ec = binaryCommand("/getblocks.bin", req, rsp);
+  std::error_code ec = binaryCommand("/get_blocks.bin", req, rsp);
   if (!ec) {
     newBlocks = std::move(rsp.blocks);
     startHeight = static_cast<uint32_t>(rsp.start_height);
@@ -533,7 +533,7 @@ std::error_code NodeRpcProxy::doQueryBlocksLite(const std::vector<Crypto::Hash>&
   req.blockIds = knownBlockIds;
   req.timestamp = timestamp;
 
-  std::error_code ec = binaryCommand("/queryblockslite.bin", req, rsp);
+  std::error_code ec = binaryCommand("/query_blocks_lite.bin", req, rsp);
   if (ec) {
     return ec;
   }
