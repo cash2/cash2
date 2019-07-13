@@ -153,10 +153,10 @@ bool RpcServer::processJsonRpcRequest(const HttpRequest& request, HttpResponse& 
       { "get_currency_id", { makeMemberMethod(&RpcServer::on_get_currency_id), true } },
       { "submit_block", { makeMemberMethod(&RpcServer::on_submit_block), false } },
       { "get_last_block_header", { makeMemberMethod(&RpcServer::on_get_last_block_header), false } },
-      { "getblockheaderbyhash", { makeMemberMethod(&RpcServer::on_get_block_header_by_hash), false } },
-      { "getblockheaderbyheight", { makeMemberMethod(&RpcServer::on_get_block_header_by_height), false } },
-      { "getblocks", { makeMemberMethod(&RpcServer::on_getblocks), false } },
-      { "getblock", { makeMemberMethod(&RpcServer::on_getblock), false } },
+      { "get_block_header_by_hash", { makeMemberMethod(&RpcServer::on_get_block_header_by_hash), false } },
+      { "get_block_header_by_height", { makeMemberMethod(&RpcServer::on_get_block_header_by_height), false } },
+      { "get_blocks", { makeMemberMethod(&RpcServer::on_get_blocks), false } },
+      { "get_block", { makeMemberMethod(&RpcServer::on_get_block), false } },
       { "gettransaction", { makeMemberMethod(&RpcServer::on_gettransaction), false } },
       { "getmempool", { makeMemberMethod(&RpcServer::on_getmempool), false } },
       { "checkpayment", { makeMemberMethod(&RpcServer::on_checkpayment), false } },
@@ -718,7 +718,7 @@ bool RpcServer::on_get_block_header_by_height(const COMMAND_RPC_GET_BLOCK_HEADER
   return true;
 }
 
-bool RpcServer::on_getblocks(const COMMAND_RPC_GET_BLOCKS::request& req, COMMAND_RPC_GET_BLOCKS::response& res) {
+bool RpcServer::on_get_blocks_json(const COMMAND_RPC_GET_BLOCKS_JSON::request& req, COMMAND_RPC_GET_BLOCKS_JSON::response& res) {
   if (m_core.get_current_blockchain_height() <= req.height) {
     throw JsonRpc::JsonRpcError{ CORE_RPC_ERROR_CODE_TOO_BIG_HEIGHT,
       std::string("To big height: ") + std::to_string(req.height) + ", current blockchain height = " + std::to_string(m_core.get_current_blockchain_height()) };
@@ -765,7 +765,7 @@ bool RpcServer::on_getblocks(const COMMAND_RPC_GET_BLOCKS::request& req, COMMAND
 
 
 
-bool RpcServer::on_getblock(const COMMAND_RPC_GET_BLOCK::request& req, COMMAND_RPC_GET_BLOCK::response& res) {
+bool RpcServer::on_get_block(const COMMAND_RPC_GET_BLOCK::request& req, COMMAND_RPC_GET_BLOCK::response& res) {
   Hash hash;
   uint32_t blockHeight;
 

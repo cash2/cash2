@@ -209,7 +209,7 @@ BlockMiningParameters MinerManager::requestMiningParameters(System::Dispatcher& 
     COMMAND_RPC_GET_BLOCK_TEMPLATE::response response;
 
     System::EventLock lk(m_httpEvent);
-    JsonRpc::invokeJsonRpcCommand(client, "getblocktemplate", request, response);
+    JsonRpc::invokeJsonRpcCommand(client, "get_block_template", request, response);
 
     if (response.status != CORE_RPC_STATUS_OK) {
       throw std::runtime_error("Core responded with wrong status: " + response.status);

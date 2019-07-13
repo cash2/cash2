@@ -567,7 +567,7 @@ struct block_long_response {
   }
 };
 
-struct COMMAND_RPC_GET_BLOCKS {
+struct COMMAND_RPC_GET_BLOCKS_JSON {
   struct request {
     uint64_t height;
 
