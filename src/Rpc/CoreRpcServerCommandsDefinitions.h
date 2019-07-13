@@ -649,29 +649,19 @@ struct COMMAND_RPC_GET_TRANSACTION {
   };
 };
 
-struct f_mempool_transaction_response {
-std::string hash;
+struct mempool_transaction_response {
+  std::string hash;
   uint64_t fee;
-  uint64_t amount_out;
+  uint64_t amount;
   uint64_t size;
   uint64_t receiveTime;
-  bool keptByBlock;
-  uint32_t max_used_block_height;
-  std::string max_used_block_id;
-  uint32_t last_failed_height;
-  std::string last_failed_id;
 
   void serialize(ISerializer &s) {
     KV_MEMBER(hash)
     KV_MEMBER(fee)
-    KV_MEMBER(amount_out)
+    KV_MEMBER(amount)
     KV_MEMBER(size)
-	KV_MEMBER(receiveTime)
-	KV_MEMBER(keptByBlock)
-	KV_MEMBER(max_used_block_height)
-	KV_MEMBER(max_used_block_id)
-	KV_MEMBER(last_failed_height)
-	KV_MEMBER(last_failed_id)
+    KV_MEMBER(receiveTime)
   }
 };
 
@@ -679,7 +669,7 @@ struct COMMAND_RPC_GET_MEMPOOL {
   typedef EMPTY_STRUCT request;
 
   struct response {
-    std::vector<f_mempool_transaction_response> mempool;
+    std::vector<mempool_transaction_response> mempool;
     std::string status;
 
     void serialize(ISerializer &s) {

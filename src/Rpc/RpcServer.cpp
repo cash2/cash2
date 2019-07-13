@@ -158,7 +158,7 @@ bool RpcServer::processJsonRpcRequest(const HttpRequest& request, HttpResponse& 
       { "getblocks", { makeMemberMethod(&RpcServer::on_getblocks), false } },
       { "getblock", { makeMemberMethod(&RpcServer::on_getblock), false } },
       { "gettransaction", { makeMemberMethod(&RpcServer::on_gettransaction), false } },
-      { "f_mempool_json", { makeMemberMethod(&RpcServer::f_on_mempool_json), false } },
+      { "getmempool", { makeMemberMethod(&RpcServer::on_getmempool), false } },
       { "check_tx_key", { makeMemberMethod(&RpcServer::k_on_check_tx_key), false } },
     };
 
@@ -985,22 +985,17 @@ bool RpcServer::f_getRingSize(const Transaction& transaction, uint64_t& ringSize
   return true;
 }
 
-bool RpcServer::f_on_mempool_json(const COMMAND_RPC_GET_MEMPOOL::request& req, COMMAND_RPC_GET_MEMPOOL::response& res) {
+bool RpcServer::on_getmempool(const COMMAND_RPC_GET_MEMPOOL::request& req, COMMAND_RPC_GET_MEMPOOL::response& res) {
   auto pool = m_core.getMemoryPool();
   for (const CryptoNote::tx_memory_pool::TransactionDetails txd : pool) {
-    f_mempool_transaction_response mempool_transaction;
+    mempool_transaction_response mempool_transaction;
     uint64_t amount_out = getOutputAmount(txd.tx);
 
     mempool_transaction.hash = Common::podToHex(txd.id);
     mempool_transaction.fee = txd.fee;
-    mempool_transaction.amount_out = amount_out;
+    mempool_transaction.amount = amount_out;
     mempool_transaction.size = txd.blobSize;
     mempool_transaction.receiveTime = txd.receiveTime;
-    mempool_transaction.keptByBlock = txd.keptByBlock;
-    mempool_transaction.max_used_block_height = txd.maxUsedBlock.height;
-    mempool_transaction.max_used_block_id = Common::podToHex(txd.maxUsedBlock.id);
-    mempool_transaction.last_failed_height = txd.lastFailedBlock.height;
-    mempool_transaction.last_failed_id = Common::podToHex(txd.lastFailedBlock.id);
     res.mempool.push_back(mempool_transaction);
   }
 
