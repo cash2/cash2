@@ -19,30 +19,30 @@ Launch date : December 5, 2018 9:00 am EST
 
 [Whitepaper](https://cash2.org/Cash2+Whitepaper+English+11012018.pdf)
 
-Recommended Mining Hardware
-Innosilicon S11 SiaMaster
+Recommended Mining Hardware  
+Innosilicon S11 SiaMaster  
 [APW7 by Bitmain](https://shop.bitmain.com/product/detail?pid=000201809111802447941Bf38AO30604)
 
-Contact
-Paul Aphivantrakul
+Contact  
+Paul Aphivantrakul  
 cash2@protonmail.com
 
-YouTube
+YouTube  
 https://www.youtube.com/channel/UCJ79rbHYc2tFJ-pL-v9guaw
 
-Reddit
+Reddit  
 https://www.reddit.com/r/Cash2/
 
-Twitter
+Twitter  
 https://twitter.com/cash2org
 
-Paper Wallet
+Paper Wallet  
 https://cash2.org/#paperWallet
 
-USA East Mining Pool
+USA East Mining Pool  
 https://pool1.cash2.org
 
-Block Explorer
+Block Explorer  
 https://blocks.cash2.org
 
 ## Frequently Asked Questions
