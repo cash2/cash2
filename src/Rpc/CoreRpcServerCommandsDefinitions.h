@@ -527,26 +527,23 @@ struct f_transaction_short_response {
   }
 };
 
-struct f_block_details_response {
+struct block_long_details_response {
   uint64_t timestamp;
   std::string prev_hash;
   std::string merkle_root;
   uint64_t nonce;
-  bool orphan_status;
+  bool isOrphaned;
   uint64_t height;
   uint64_t depth;
   std::string hash;
   difficulty_type difficulty;
-  uint64_t reward;
-  uint64_t blockSize;
-  size_t sizeMedian;
-  uint64_t effectiveSizeMedian;
-  uint64_t transactionsCumulativeSize;
+  uint64_t totalReward;
+  uint64_t size;
+  uint64_t transactionsSize;
   std::string alreadyGeneratedCoins;
   uint64_t alreadyGeneratedTransactions;
   uint64_t baseReward;
-  double penalty;
-  uint64_t totalFeeAmount;
+  uint64_t totalFees;
   std::vector<f_transaction_short_response> transactions;
 
   void serialize(ISerializer &s) {
@@ -554,22 +551,19 @@ struct f_block_details_response {
     KV_MEMBER(prev_hash)
     KV_MEMBER(merkle_root)
     KV_MEMBER(nonce)
-    KV_MEMBER(orphan_status)
+    KV_MEMBER(isOrphaned)
     KV_MEMBER(height)
     KV_MEMBER(depth)
     KV_MEMBER(hash)
     KV_MEMBER(difficulty)
-    KV_MEMBER(reward)
-    KV_MEMBER(blockSize)
-    KV_MEMBER(sizeMedian)
-    KV_MEMBER(effectiveSizeMedian)
-    KV_MEMBER(transactionsCumulativeSize)
+    KV_MEMBER(totalReward)
+    KV_MEMBER(size)
+    KV_MEMBER(transactionsSize)
     KV_MEMBER(alreadyGeneratedCoins)
     KV_MEMBER(alreadyGeneratedTransactions)
     KV_MEMBER(baseReward)
-    KV_MEMBER(penalty)
+    KV_MEMBER(totalFees)
     KV_MEMBER(transactions)
-    KV_MEMBER(totalFeeAmount)
   }
 };
 
@@ -593,7 +587,7 @@ struct COMMAND_RPC_GET_BLOCKS {
   };
 };
 
-struct F_COMMAND_RPC_GET_BLOCK_DETAILS {
+struct COMMAND_RPC_GET_BLOCK {
   struct request {
     std::string hash;
 
@@ -603,7 +597,7 @@ struct F_COMMAND_RPC_GET_BLOCK_DETAILS {
   };
 
   struct response {
-    f_block_details_response block;
+    block_long_details_response block;
     std::string status;
 
     void serialize(ISerializer &s) {

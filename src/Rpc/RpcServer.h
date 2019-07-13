@@ -72,7 +72,7 @@ private:
 
   // block explorer
   bool on_getblocks(const COMMAND_RPC_GET_BLOCKS::request& req, COMMAND_RPC_GET_BLOCKS::response& res);
-  bool f_on_block_json(const F_COMMAND_RPC_GET_BLOCK_DETAILS::request& req, F_COMMAND_RPC_GET_BLOCK_DETAILS::response& res);
+  bool on_getblock(const COMMAND_RPC_GET_BLOCK::request& req, COMMAND_RPC_GET_BLOCK::response& res);
   bool on_gettransaction(const COMMAND_RPC_GET_TRANSACTION::request& req, COMMAND_RPC_GET_TRANSACTION::response& res);
   bool f_getRingSize(const Transaction& transaction, uint64_t& mixin);
   bool f_on_mempool_json(const COMMAND_RPC_GET_MEMPOOL::request& req, COMMAND_RPC_GET_MEMPOOL::response& res);

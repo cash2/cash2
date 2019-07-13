@@ -156,7 +156,7 @@ bool RpcServer::processJsonRpcRequest(const HttpRequest& request, HttpResponse& 
       { "getblockheaderbyhash", { makeMemberMethod(&RpcServer::on_get_block_header_by_hash), false } },
       { "getblockheaderbyheight", { makeMemberMethod(&RpcServer::on_get_block_header_by_height), false } },
       { "getblocks", { makeMemberMethod(&RpcServer::on_getblocks), false } },
-      { "f_block_json", { makeMemberMethod(&RpcServer::f_on_block_json), false } },
+      { "getblock", { makeMemberMethod(&RpcServer::on_getblock), false } },
       { "gettransaction", { makeMemberMethod(&RpcServer::on_gettransaction), false } },
       { "f_mempool_json", { makeMemberMethod(&RpcServer::f_on_mempool_json), false } },
       { "check_tx_key", { makeMemberMethod(&RpcServer::k_on_check_tx_key), false } },
@@ -765,7 +765,7 @@ bool RpcServer::on_getblocks(const COMMAND_RPC_GET_BLOCKS::request& req, COMMAND
 
 
 
-bool RpcServer::f_on_block_json(const F_COMMAND_RPC_GET_BLOCK_DETAILS::request& req, F_COMMAND_RPC_GET_BLOCK_DETAILS::response& res) {
+bool RpcServer::on_getblock(const COMMAND_RPC_GET_BLOCK::request& req, COMMAND_RPC_GET_BLOCK::response& res) {
   Hash hash;
   uint32_t blockHeight;
 
@@ -798,6 +798,8 @@ bool RpcServer::f_on_block_json(const F_COMMAND_RPC_GET_BLOCK_DETAILS::request& 
 
   Crypto::Hash tmp_hash = m_core.getBlockIdByHeight(res.block.height);
   bool is_orphaned = hash != tmp_hash;
+  res.block.isOrphaned = is_orphaned;
+
   fill_block_header_response(block, is_orphaned, res.block.height, hash, block_header);
 
   res.block.timestamp = block_header.timestamp;
@@ -808,17 +810,17 @@ bool RpcServer::f_on_block_json(const F_COMMAND_RPC_GET_BLOCK_DETAILS::request& 
   res.block.depth = block_header.depth;
   m_core.getBlockDifficulty(static_cast<uint32_t>(res.block.height), res.block.difficulty);
 
-  res.block.reward = block_header.reward;
+  res.block.totalReward = block_header.reward;
 
   size_t blockSize = 0;
   if (!m_core.getBlockSize(hash, blockSize)) {
     return false;
   }
-  res.block.transactionsCumulativeSize = blockSize;
+  res.block.transactionsSize = blockSize;
 
   size_t blokBlobSize = getObjectBinarySize(block);
   size_t minerTxBlobSize = getObjectBinarySize(block.baseTransaction);
-  res.block.blockSize = blokBlobSize + res.block.transactionsCumulativeSize - minerTxBlobSize;
+  res.block.size = blokBlobSize + res.block.transactionsSize - minerTxBlobSize;
 
   uint64_t alreadyGeneratedCoins;
   if (!m_core.getAlreadyGeneratedCoins(hash, alreadyGeneratedCoins)) {
@@ -836,29 +838,17 @@ bool RpcServer::f_on_block_json(const F_COMMAND_RPC_GET_BLOCK_DETAILS::request& 
       return false;
     }
   }
-  uint64_t maxReward = 0;
-  uint64_t currentReward = 0;
-  int64_t emissionChange = 0;
-  size_t blockGrantedFullRewardZone =  CryptoNote::parameters::CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE; 
+
+  uint64_t baseReward = 0;
+  int64_t emissionChangeIgnore = 0;
 
   // removed hard fork 1 if clause here
 
-  if (!m_core.getBlockReward2(blockHeight, 0, prevBlockGeneratedCoins, 0, maxReward, emissionChange)) {
-    return false;
-  }
-  if (!m_core.getBlockReward2(blockHeight, res.block.transactionsCumulativeSize, prevBlockGeneratedCoins, 0, currentReward, emissionChange)) {
+  if (!m_core.getBlockReward2(blockHeight, res.block.transactionsSize, prevBlockGeneratedCoins, 0, baseReward, emissionChangeIgnore)) {
     return false;
   }
 
-  res.block.baseReward = maxReward;
-  if (maxReward == 0 && currentReward == 0) {
-    res.block.penalty = static_cast<double>(0);
-  } else {
-    if (maxReward < currentReward) {
-      return false;
-    }
-    res.block.penalty = static_cast<double>(maxReward - currentReward) / static_cast<double>(maxReward);
-  }
+  res.block.baseReward = baseReward;
 
   // Base transaction adding
   f_transaction_short_response transaction_short;
@@ -873,7 +863,7 @@ bool RpcServer::f_on_block_json(const F_COMMAND_RPC_GET_BLOCK_DETAILS::request& 
   std::list<Transaction> txs;
   m_core.getTransactions(block.transactionHashes, txs, missed_txs);
 
-  res.block.totalFeeAmount = 0;
+  res.block.totalFees = 0;
 
   for (const Transaction& tx : txs) {
     f_transaction_short_response transaction_short;
@@ -887,7 +877,7 @@ bool RpcServer::f_on_block_json(const F_COMMAND_RPC_GET_BLOCK_DETAILS::request& 
     transaction_short.size = getObjectBinarySize(tx);
     res.block.transactions.push_back(transaction_short);
 
-    res.block.totalFeeAmount += transaction_short.fee;
+    res.block.totalFees += transaction_short.fee;
   }
 
   res.status = CORE_RPC_STATUS_OK;
