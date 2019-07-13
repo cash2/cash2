@@ -77,7 +77,7 @@ private:
   bool f_getRingSize(const Transaction& transaction, uint64_t& mixin);
   bool on_getmempool(const COMMAND_RPC_GET_MEMPOOL::request& req, COMMAND_RPC_GET_MEMPOOL::response& res);
 
-  bool k_on_check_tx_key(const K_COMMAND_RPC_CHECK_TX_KEY::request& req, K_COMMAND_RPC_CHECK_TX_KEY::response& res);
+  bool on_checkpayment(const COMMAND_RPC_CHECK_PAYMENT::request& req, COMMAND_RPC_CHECK_PAYMENT::response& res);
 
   void fill_block_header_response(const Block& blk, bool orphan_status, uint64_t height, const Crypto::Hash& hash, block_header_response& responce);
 

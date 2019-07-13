@@ -679,16 +679,16 @@ struct COMMAND_RPC_GET_MEMPOOL {
   };
 };
 
-struct K_COMMAND_RPC_CHECK_TX_KEY {
+struct COMMAND_RPC_CHECK_PAYMENT {
 	struct request {
-		std::string txid;
-		std::string txkey;
-		std::string address;
+		std::string transactionId;
+		std::string transactionPrivateKey;
+		std::string receiverAddress;
 
 		void serialize(ISerializer &s) {
-			KV_MEMBER(txid)
-			KV_MEMBER(txkey)
-			KV_MEMBER(address)
+			KV_MEMBER(transactionId)
+			KV_MEMBER(transactionPrivateKey)
+			KV_MEMBER(receiverAddress)
 		}
 	};
 

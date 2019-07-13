@@ -159,7 +159,7 @@ bool RpcServer::processJsonRpcRequest(const HttpRequest& request, HttpResponse& 
       { "getblock", { makeMemberMethod(&RpcServer::on_getblock), false } },
       { "gettransaction", { makeMemberMethod(&RpcServer::on_gettransaction), false } },
       { "getmempool", { makeMemberMethod(&RpcServer::on_getmempool), false } },
-      { "check_tx_key", { makeMemberMethod(&RpcServer::k_on_check_tx_key), false } },
+      { "checkpayment", { makeMemberMethod(&RpcServer::on_checkpayment), false } },
     };
 
     auto it = jsonRpcHandlers.find(jsonRequest.getMethod());
@@ -1003,21 +1003,21 @@ bool RpcServer::on_getmempool(const COMMAND_RPC_GET_MEMPOOL::request& req, COMMA
   return true;
 }
 
-bool RpcServer::k_on_check_tx_key(const K_COMMAND_RPC_CHECK_TX_KEY::request& req, K_COMMAND_RPC_CHECK_TX_KEY::response& res) {
+bool RpcServer::on_checkpayment(const COMMAND_RPC_CHECK_PAYMENT::request& req, COMMAND_RPC_CHECK_PAYMENT::response& res) {
 	// parse txid
 	Crypto::Hash txid;
-	if (!parse_hash256(req.txid, txid)) {
+	if (!parse_hash256(req.transactionId, txid)) {
 		throw JsonRpc::JsonRpcError{ CORE_RPC_ERROR_CODE_WRONG_PARAM, "Failed to parse txid" };
 	}
 	// parse address
 	CryptoNote::AccountPublicAddress address;
-	if (!m_core.currency().parseAccountAddressString(req.address, address)) {
+	if (!m_core.currency().parseAccountAddressString(req.receiverAddress, address)) {
 		throw JsonRpc::JsonRpcError{ CORE_RPC_ERROR_CODE_WRONG_PARAM, "Receiver's address not found" };
 	}
 	// parse txkey
 	Crypto::Hash tx_key_hash;
 	size_t size;
-	if (!Common::fromHex(req.txkey, &tx_key_hash, sizeof(tx_key_hash), size) || size != sizeof(tx_key_hash)) {
+	if (!Common::fromHex(req.transactionPrivateKey, &tx_key_hash, sizeof(tx_key_hash), size) || size != sizeof(tx_key_hash)) {
 		throw JsonRpc::JsonRpcError{ CORE_RPC_ERROR_CODE_WRONG_PARAM, "Failed to parse transaction secret key" };
 	}
 	Crypto::SecretKey tx_key = *(struct Crypto::SecretKey *) &tx_key_hash;
