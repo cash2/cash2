@@ -8,14 +8,14 @@ Cash2 is a new cryptocurrency with all the useful properties of cash but with ad
 
 Launch date : December 5, 2018 9:00 am EST
 
-## Key highlights of Cash2
+## Key Highlights of Cash2
 - 9 second block time
-- low transaction fees
+- Low transaction fees
 - No premine
 - BLAKE2b hashing algorithm
 - 15,000,000 maximum supply
 - CryptoNote based
-- Recommended mining hardware is the [Antminer A3 by Bitmain](https://shop.bitmain.com/product/detail?pid=000201811071659320918shK4zCH068F)
+- Recommended mining hardware is the Innosilicon S11 SiaMaster
 
 [Whitepaper](https://cash2.org/Cash2+Whitepaper+English+11012018.pdf)
 
