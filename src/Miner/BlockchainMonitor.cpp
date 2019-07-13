@@ -72,7 +72,7 @@ Crypto::Hash BlockchainMonitor::requestLastBlockHash() {
     CryptoNote::COMMAND_RPC_GET_LAST_BLOCK_HEADER::response response;
 
     System::EventLock lk(m_httpEvent);
-    CryptoNote::JsonRpc::invokeJsonRpcCommand(client, "getlastblockheader", request, response);
+    CryptoNote::JsonRpc::invokeJsonRpcCommand(client, "get_last_block_header", request, response);
 
     if (response.status != CORE_RPC_STATUS_OK) {
       throw std::runtime_error("Core responded with wrong status: " + response.status);

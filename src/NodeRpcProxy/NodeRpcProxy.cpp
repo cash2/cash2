@@ -204,7 +204,7 @@ void NodeRpcProxy::updateBlockchainStatus() {
   CryptoNote::COMMAND_RPC_GET_LAST_BLOCK_HEADER::request req = AUTO_VAL_INIT(req);
   CryptoNote::COMMAND_RPC_GET_LAST_BLOCK_HEADER::response rsp = AUTO_VAL_INIT(rsp);
 
-  std::error_code ec = jsonRpcCommand("getlastblockheader", req, rsp);
+  std::error_code ec = jsonRpcCommand("get_last_block_header", req, rsp);
 
   if (!ec) {
     Crypto::Hash blockHash;

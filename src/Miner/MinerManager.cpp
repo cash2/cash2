@@ -182,13 +182,13 @@ bool MinerManager::submitBlock(const Block& minedBlock, const std::string& daemo
   try {
     HttpClient client(m_dispatcher, daemonHost, daemonPort);
 
-    COMMAND_RPC_SUBMITBLOCK::request request;
+    COMMAND_RPC_SUBMIT_BLOCK::request request;
     request.emplace_back(Common::toHex(toBinaryArray(minedBlock)));
 
-    COMMAND_RPC_SUBMITBLOCK::response response;
+    COMMAND_RPC_SUBMIT_BLOCK::response response;
 
     System::EventLock lk(m_httpEvent);
-    JsonRpc::invokeJsonRpcCommand(client, "submitblock", request, response);
+    JsonRpc::invokeJsonRpcCommand(client, "submit_block", request, response);
 
     m_logger(Logging::INFO) << "Block has been successfully submitted. Block hash: " << Common::podToHex(get_block_hash(minedBlock));
     return true;

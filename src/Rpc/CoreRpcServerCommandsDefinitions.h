@@ -366,7 +366,7 @@ struct COMMAND_RPC_GET_CURRENCY_ID {
   };
 };
 
-struct COMMAND_RPC_SUBMITBLOCK {
+struct COMMAND_RPC_SUBMIT_BLOCK {
   typedef std::vector<std::string> request;
   typedef STATUS_STRUCT response;
 };

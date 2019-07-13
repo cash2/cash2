@@ -79,10 +79,10 @@ bool RPCTestNode::submitBlock(const std::string& block) {
   LOG_DEBUG("submitBlock()");
 
   try {
-    COMMAND_RPC_SUBMITBLOCK::request req;
-    COMMAND_RPC_SUBMITBLOCK::response res;
+    COMMAND_RPC_SUBMIT_BLOCK::request req;
+    COMMAND_RPC_SUBMIT_BLOCK::response res;
     req.push_back(block);
-    JsonRpc::invokeJsonRpcCommand(m_httpClient, "submitblock", req, res);
+    JsonRpc::invokeJsonRpcCommand(m_httpClient, "submit_block", req, res);
     if (res.status != CORE_RPC_STATUS_OK) {
       throw std::runtime_error(res.status);
     }
@@ -118,7 +118,7 @@ bool RPCTestNode::getTailBlockId(Crypto::Hash& tailBlockId) {
   try {
     COMMAND_RPC_GET_LAST_BLOCK_HEADER::request req;
     COMMAND_RPC_GET_LAST_BLOCK_HEADER::response rsp;
-    JsonRpc::invokeJsonRpcCommand(m_httpClient, "getlastblockheader", req, rsp);
+    JsonRpc::invokeJsonRpcCommand(m_httpClient, "get_last_block_header", req, rsp);
     if (rsp.status != CORE_RPC_STATUS_OK) {
       throw std::runtime_error(rsp.status);
     }

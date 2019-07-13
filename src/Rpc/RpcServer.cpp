@@ -150,9 +150,9 @@ bool RpcServer::processJsonRpcRequest(const HttpRequest& request, HttpResponse& 
       { "get_block_count", { makeMemberMethod(&RpcServer::on_get_block_count), true } },
       { "on_get_block_hash", { makeMemberMethod(&RpcServer::on_get_block_hash), false } },
       { "get_block_template", { makeMemberMethod(&RpcServer::on_get_block_template), false } },
-      { "getcurrencyid", { makeMemberMethod(&RpcServer::on_get_currency_id), true } },
-      { "submitblock", { makeMemberMethod(&RpcServer::on_submitblock), false } },
-      { "getlastblockheader", { makeMemberMethod(&RpcServer::on_get_last_block_header), false } },
+      { "get_currency_id", { makeMemberMethod(&RpcServer::on_get_currency_id), true } },
+      { "submit_block", { makeMemberMethod(&RpcServer::on_submit_block), false } },
+      { "get_last_block_header", { makeMemberMethod(&RpcServer::on_get_last_block_header), false } },
       { "getblockheaderbyhash", { makeMemberMethod(&RpcServer::on_get_block_header_by_hash), false } },
       { "getblockheaderbyheight", { makeMemberMethod(&RpcServer::on_get_block_header_by_height), false } },
       { "getblocks", { makeMemberMethod(&RpcServer::on_getblocks), false } },
@@ -610,7 +610,7 @@ bool RpcServer::on_get_currency_id(const COMMAND_RPC_GET_CURRENCY_ID::request& /
   return true;
 }
 
-bool RpcServer::on_submitblock(const COMMAND_RPC_SUBMITBLOCK::request& req, COMMAND_RPC_SUBMITBLOCK::response& res) {
+bool RpcServer::on_submit_block(const COMMAND_RPC_SUBMIT_BLOCK::request& req, COMMAND_RPC_SUBMIT_BLOCK::response& res) {
   if (req.size() != 1) {
     throw JsonRpc::JsonRpcError{ CORE_RPC_ERROR_CODE_WRONG_PARAM, "Wrong param" };
   }

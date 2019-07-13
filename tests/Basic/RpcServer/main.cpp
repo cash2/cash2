@@ -30,7 +30,7 @@ public:
   }
 };
 
-// testing on_submitblock indirectly
+// testing on_submit_block indirectly
 TEST(Core, 1)
 {
   Logging::ConsoleLogger logger;
