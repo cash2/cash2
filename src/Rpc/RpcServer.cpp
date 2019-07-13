@@ -745,7 +745,7 @@ bool RpcServer::on_getblocks(const COMMAND_RPC_GET_BLOCKS::request& req, COMMAND
     difficulty_type blockDiff;
     m_core.getBlockDifficulty(static_cast<uint32_t>(i), blockDiff);
 
-    block_short_details_response block_short;
+    block_short_response block_short;
     block_short.timestamp = blk.timestamp;
     block_short.height = i;
     block_short.hash = Common::podToHex(block_hash);
@@ -851,7 +851,7 @@ bool RpcServer::on_getblock(const COMMAND_RPC_GET_BLOCK::request& req, COMMAND_R
   res.block.baseReward = baseReward;
 
   // Base transaction adding
-  f_transaction_short_response transaction_short;
+  transaction_short_response transaction_short;
   transaction_short.hash = Common::podToHex(getObjectHash(block.baseTransaction));
   transaction_short.fee = 0;
   transaction_short.amount_out = get_outs_money_amount(block.baseTransaction);
@@ -866,7 +866,7 @@ bool RpcServer::on_getblock(const COMMAND_RPC_GET_BLOCK::request& req, COMMAND_R
   res.block.totalFees = 0;
 
   for (const Transaction& tx : txs) {
-    f_transaction_short_response transaction_short;
+    transaction_short_response transaction_short;
     uint64_t amount_in = 0;
     get_inputs_money_amount(tx, amount_in);
     uint64_t amount_out = get_outs_money_amount(tx);
@@ -917,7 +917,7 @@ bool RpcServer::on_gettransaction(const COMMAND_RPC_GET_TRANSACTION::request& re
       m_core.getBlockSize(blockHash, tx_cumulative_block_size);
       size_t blokBlobSize = getObjectBinarySize(blk);
       size_t minerTxBlobSize = getObjectBinarySize(blk.baseTransaction);
-      block_short_details_response block_short;
+      block_short_response block_short;
 
       block_short.timestamp = blk.timestamp;
       block_short.height = blockHeight;
@@ -945,7 +945,7 @@ bool RpcServer::on_gettransaction(const COMMAND_RPC_GET_TRANSACTION::request& re
   res.txDetails.size = getObjectBinarySize(res.tx);
 
   uint64_t ringSize;
-  if (!f_getRingSize(res.tx, ringSize)) {
+  if (!getRingSize(res.tx, ringSize)) {
     return false;
   }
   res.txDetails.mixin = ringSize - 1;
@@ -961,7 +961,7 @@ bool RpcServer::on_gettransaction(const COMMAND_RPC_GET_TRANSACTION::request& re
   return true;
 }
 
-bool RpcServer::f_getRingSize(const Transaction& transaction, uint64_t& ringSize) {
+bool RpcServer::getRingSize(const Transaction& transaction, uint64_t& ringSize) {
   // base input
   if (transaction.inputs.size() == 1 && transaction.inputs[0].type() == typeid(BaseInput))
   {

@@ -74,8 +74,8 @@ private:
   bool on_getblocks(const COMMAND_RPC_GET_BLOCKS::request& req, COMMAND_RPC_GET_BLOCKS::response& res);
   bool on_getblock(const COMMAND_RPC_GET_BLOCK::request& req, COMMAND_RPC_GET_BLOCK::response& res);
   bool on_gettransaction(const COMMAND_RPC_GET_TRANSACTION::request& req, COMMAND_RPC_GET_TRANSACTION::response& res);
-  bool f_getRingSize(const Transaction& transaction, uint64_t& mixin);
   bool on_getmempool(const COMMAND_RPC_GET_MEMPOOL::request& req, COMMAND_RPC_GET_MEMPOOL::response& res);
+  bool getRingSize(const Transaction& transaction, uint64_t& mixin);
 
   bool on_checkpayment(const COMMAND_RPC_CHECK_PAYMENT::request& req, COMMAND_RPC_CHECK_PAYMENT::response& res);
 
