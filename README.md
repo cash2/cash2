@@ -20,7 +20,7 @@ Launch date : December 5, 2018 9:00 am EST
 [Whitepaper](https://cash2.org/Cash2+Whitepaper+English+11012018.pdf)
 
 Recommended Mining Hardware  
-[Antminer A3 by Bitmain](https://shop.bitmain.com/product/detail?pid=000201811071659320918shK4zCH068F)  
+Innosilicon S11 SiaMaster 
 [APW7 by Bitmain](https://shop.bitmain.com/product/detail?pid=000201809111802447941Bf38AO30604)
 
 Contact  
