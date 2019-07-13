@@ -2,21 +2,19 @@ add_definitions(-DSTATICLIB)
 
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR} ../version)
 
-include_directories(${CMAKE_SOURCE_DIR}/tests/Basic/HelperFunctions)
+file(GLOB_RECURSE Difficulty Difficulty/*)
 
-file(GLOB_RECURSE Checkpoints Checkpoints/*)
+source_group("" FILES ${Difficulty})
 
-source_group("" FILES ${Checkpoints})
+add_executable(Difficulty ${Difficulty})
 
-add_executable(Checkpoints ${Checkpoints})
+target_link_libraries(Difficulty gtest_main Crypto Common)
 
-target_link_libraries(Checkpoints gtest_main CryptoNoteCore Crypto Serialization Common Logging)
+add_custom_target(Basic DEPENDS Difficulty)
 
-add_custom_target(Basic DEPENDS Checkpoints)
+set_property(TARGET Basic Difficulty PROPERTY FOLDER "Basic")
 
-set_property(TARGET Basic Checkpoints PROPERTY FOLDER "Basic")
-
-set_property(TARGET Checkpoints PROPERTY OUTPUT_NAME "Checkpoints")
+set_property(TARGET Difficulty PROPERTY OUTPUT_NAME "Difficulty")
 
 if(NOT MSVC)
   # suppress warnings from gtest
