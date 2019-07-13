@@ -157,9 +157,9 @@ bool RpcServer::processJsonRpcRequest(const HttpRequest& request, HttpResponse& 
       { "get_block_header_by_height", { makeMemberMethod(&RpcServer::on_get_block_header_by_height), false } },
       { "get_blocks", { makeMemberMethod(&RpcServer::on_get_blocks), false } },
       { "get_block", { makeMemberMethod(&RpcServer::on_get_block), false } },
-      { "gettransaction", { makeMemberMethod(&RpcServer::on_gettransaction), false } },
-      { "getmempool", { makeMemberMethod(&RpcServer::on_getmempool), false } },
-      { "checkpayment", { makeMemberMethod(&RpcServer::on_checkpayment), false } },
+      { "get_transaction", { makeMemberMethod(&RpcServer::on_get_transaction), false } },
+      { "get_mempool", { makeMemberMethod(&RpcServer::on_get_mempool), false } },
+      { "check_payment", { makeMemberMethod(&RpcServer::on_check_payment), false } },
     };
 
     auto it = jsonRpcHandlers.find(jsonRequest.getMethod());
@@ -884,7 +884,7 @@ bool RpcServer::on_get_block(const COMMAND_RPC_GET_BLOCK::request& req, COMMAND_
   return true;
 }
 
-bool RpcServer::on_gettransaction(const COMMAND_RPC_GET_TRANSACTION::request& req, COMMAND_RPC_GET_TRANSACTION::response& res) {
+bool RpcServer::on_get_transaction(const COMMAND_RPC_GET_TRANSACTION::request& req, COMMAND_RPC_GET_TRANSACTION::response& res) {
   Hash hash;
 
   if (!parse_hash256(req.hash, hash)) {
@@ -985,7 +985,7 @@ bool RpcServer::getRingSize(const Transaction& transaction, uint64_t& ringSize) 
   return true;
 }
 
-bool RpcServer::on_getmempool(const COMMAND_RPC_GET_MEMPOOL::request& req, COMMAND_RPC_GET_MEMPOOL::response& res) {
+bool RpcServer::on_get_mempool(const COMMAND_RPC_GET_MEMPOOL::request& req, COMMAND_RPC_GET_MEMPOOL::response& res) {
   auto pool = m_core.getMemoryPool();
   for (const CryptoNote::tx_memory_pool::TransactionDetails txd : pool) {
     mempool_transaction_response mempool_transaction;
@@ -1003,7 +1003,7 @@ bool RpcServer::on_getmempool(const COMMAND_RPC_GET_MEMPOOL::request& req, COMMA
   return true;
 }
 
-bool RpcServer::on_checkpayment(const COMMAND_RPC_CHECK_PAYMENT::request& req, COMMAND_RPC_CHECK_PAYMENT::response& res) {
+bool RpcServer::on_check_payment(const COMMAND_RPC_CHECK_PAYMENT::request& req, COMMAND_RPC_CHECK_PAYMENT::response& res) {
 	// parse txid
 	Crypto::Hash txid;
 	if (!parse_hash256(req.transactionId, txid)) {
