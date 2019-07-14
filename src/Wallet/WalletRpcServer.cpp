@@ -109,13 +109,13 @@ void wallet_rpc_server::processRequest(const CryptoNote::HttpRequest& request, C
     }
 
     static std::unordered_map<std::string, JsonMemberMethod> s_methods = {
-      { "getbalance", makeMemberMethod(&wallet_rpc_server::on_getbalance) },
+      { "get_balance", makeMemberMethod(&wallet_rpc_server::on_get_balance) },
       { "transfer", makeMemberMethod(&wallet_rpc_server::on_transfer) },
       { "store", makeMemberMethod(&wallet_rpc_server::on_store) },
       { "get_payments", makeMemberMethod(&wallet_rpc_server::on_get_payments) },
       { "get_transfers", makeMemberMethod(&wallet_rpc_server::on_get_transfers) },
       { "get_height", makeMemberMethod(&wallet_rpc_server::on_get_height) },
-      { "get_tx_private_key", makeMemberMethod(&wallet_rpc_server::on_get_tx_private_key) },
+      { "get_transaction_private_key", makeMemberMethod(&wallet_rpc_server::on_get_transaction_private_key) },
       { "reset", makeMemberMethod(&wallet_rpc_server::on_reset) }
     };
 
@@ -136,7 +136,7 @@ void wallet_rpc_server::processRequest(const CryptoNote::HttpRequest& request, C
 }
 
 //------------------------------------------------------------------------------------------------------------------------------
-bool wallet_rpc_server::on_getbalance(const wallet_rpc::COMMAND_RPC_GET_BALANCE::request& req, wallet_rpc::COMMAND_RPC_GET_BALANCE::response& res) {
+bool wallet_rpc_server::on_get_balance(const wallet_rpc::COMMAND_RPC_GET_BALANCE::request& req, wallet_rpc::COMMAND_RPC_GET_BALANCE::response& res) {
   res.locked_amount = m_wallet.pendingBalance();
   res.available_balance = m_wallet.actualBalance();
   return true;
@@ -308,7 +308,7 @@ bool wallet_rpc_server::on_get_height(const wallet_rpc::COMMAND_RPC_GET_HEIGHT::
   return true;
 }
 
-bool wallet_rpc_server::on_get_tx_private_key(const wallet_rpc::COMMAND_RPC_GET_TX_PRIVATE_KEY::request& req,
+bool wallet_rpc_server::on_get_transaction_private_key(const wallet_rpc::COMMAND_RPC_GET_TX_PRIVATE_KEY::request& req,
 	wallet_rpc::COMMAND_RPC_GET_TX_PRIVATE_KEY::response& res) {
 	Crypto::Hash txid;
 	if (!parse_hash256(req.transactionHash, txid)) {
