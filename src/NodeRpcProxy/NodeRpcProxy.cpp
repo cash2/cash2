@@ -234,7 +234,7 @@ void NodeRpcProxy::updateBlockchainStatus() {
     }
 
     updatePeerCount(getInfoResp.incoming_connections_count + getInfoResp.outgoing_connections_count);
-    m_minimalFee.store(getInfoResp.min_tx_fee, std::memory_order_relaxed);
+    m_minimalFee.store(getInfoResp.min_transaction_fee, std::memory_order_relaxed);
   }
 
   if (m_connected != m_httpClient->isConnected()) {
