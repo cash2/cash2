@@ -512,7 +512,7 @@ std::error_code NodeRpcProxy::doGetTransactionOutsGlobalIndexes(const Crypto::Ha
                                                                 std::vector<uint32_t>& outsGlobalIndexes) {
   CryptoNote::COMMAND_RPC_GET_TX_GLOBAL_OUTPUTS_INDEXES::request req = AUTO_VAL_INIT(req);
   CryptoNote::COMMAND_RPC_GET_TX_GLOBAL_OUTPUTS_INDEXES::response rsp = AUTO_VAL_INIT(rsp);
-  req.txid = transactionHash;
+  req.transaction_id = transactionHash;
 
   std::error_code ec = binaryCommand("/get_o_indexes.bin", req, rsp);
   if (!ec) {
@@ -530,7 +530,7 @@ std::error_code NodeRpcProxy::doQueryBlocksLite(const std::vector<Crypto::Hash>&
   CryptoNote::COMMAND_RPC_QUERY_BLOCKS_LITE::request req = AUTO_VAL_INIT(req);
   CryptoNote::COMMAND_RPC_QUERY_BLOCKS_LITE::response rsp = AUTO_VAL_INIT(rsp);
 
-  req.blockIds = knownBlockIds;
+  req.block_ids = knownBlockIds;
   req.timestamp = timestamp;
 
   std::error_code ec = binaryCommand("/query_blocks_lite.bin", req, rsp);
@@ -538,7 +538,7 @@ std::error_code NodeRpcProxy::doQueryBlocksLite(const std::vector<Crypto::Hash>&
     return ec;
   }
 
-  startHeight = static_cast<uint32_t>(rsp.startHeight);
+  startHeight = static_cast<uint32_t>(rsp.start_height);
 
   for (auto& item: rsp.items) {
     BlockShortEntry bse;
@@ -571,8 +571,8 @@ std::error_code NodeRpcProxy::doGetPoolSymmetricDifference(std::vector<Crypto::H
   CryptoNote::COMMAND_RPC_GET_POOL_CHANGES_LITE::request req = AUTO_VAL_INIT(req);
   CryptoNote::COMMAND_RPC_GET_POOL_CHANGES_LITE::response rsp = AUTO_VAL_INIT(rsp);
 
-  req.tailBlockId = knownBlockId;
-  req.knownTxsIds = knownPoolTxIds;
+  req.tail_block_id = knownBlockId;
+  req.known_txs_ids = knownPoolTxIds;
 
   std::error_code ec = binaryCommand("/get_pool_changes_lite.bin", req, rsp);
 
@@ -580,11 +580,11 @@ std::error_code NodeRpcProxy::doGetPoolSymmetricDifference(std::vector<Crypto::H
     return ec;
   }
 
-  isBcActual = rsp.isTailBlockActual;
+  isBcActual = rsp.is_tail_block_actual;
 
-  deletedTxIds = std::move(rsp.deletedTxsIds);
+  deletedTxIds = std::move(rsp.deleted_txs_ids);
 
-  for (const auto& tpi : rsp.addedTxs) {
+  for (const auto& tpi : rsp.added_txs) {
     newTxs.push_back(createTransactionPrefix(tpi.txPrefix, tpi.txHash));
   }
 
