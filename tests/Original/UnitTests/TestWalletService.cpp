@@ -531,7 +531,7 @@ TEST_F(WalletServiceTest_getTransactions, addressesFilter_emptyReturnsTransactio
   ASSERT_FALSE(ec);
 
   ASSERT_EQ(1, transactions.size());
-  ASSERT_EQ(Common::podToHex(testTransactions[0].transactions[0].transaction.hash), transactions[0].transactions[0].transactionHash);
+  ASSERT_EQ(Common::podToHex(testTransactions[0].transactions[0].transaction.hash), transactions[0].transactions[0].transaction_hash);
 }
 
 TEST_F(WalletServiceTest_getTransactions, addressesFilter_existentReturnsTransaction) {
@@ -546,7 +546,7 @@ TEST_F(WalletServiceTest_getTransactions, addressesFilter_existentReturnsTransac
   ASSERT_FALSE(ec);
 
   ASSERT_EQ(1, transactions.size());
-  ASSERT_EQ(Common::podToHex(testTransactions[0].transactions[0].transaction.hash), transactions[0].transactions[0].transactionHash);
+  ASSERT_EQ(Common::podToHex(testTransactions[0].transactions[0].transaction.hash), transactions[0].transactions[0].transaction_hash);
 }
 
 TEST_F(WalletServiceTest_getTransactions, addressesFilter_nonExistentReturnsNoTransactions) {
@@ -576,7 +576,7 @@ TEST_F(WalletServiceTest_getTransactions, addressesFilter_existentAndNonExistent
   ASSERT_FALSE(ec);
 
   ASSERT_EQ(1, transactions.size());
-  ASSERT_EQ(Common::podToHex(testTransactions[0].transactions[0].transaction.hash), transactions[0].transactions[0].transactionHash);
+  ASSERT_EQ(Common::podToHex(testTransactions[0].transactions[0].transaction.hash), transactions[0].transactions[0].transaction_hash);
 }
 
 TEST_F(WalletServiceTest_getTransactions, paymentIdFilter_existentReturnsTransaction) {
@@ -591,8 +591,8 @@ TEST_F(WalletServiceTest_getTransactions, paymentIdFilter_existentReturnsTransac
   ASSERT_FALSE(ec);
 
   ASSERT_EQ(1, transactions.size());
-  ASSERT_EQ(Common::podToHex(testTransactions[0].transactions[0].transaction.hash), transactions[0].transactions[0].transactionHash);
-  ASSERT_EQ(PAYMENT_ID, transactions[0].transactions[0].paymentId);
+  ASSERT_EQ(Common::podToHex(testTransactions[0].transactions[0].transaction.hash), transactions[0].transactions[0].transaction_hash);
+  ASSERT_EQ(PAYMENT_ID, transactions[0].transactions[0].payment_id);
 }
 
 TEST_F(WalletServiceTest_getTransactions, paymentIdFilter_nonExistentReturnsNoTransaction) {
@@ -686,14 +686,14 @@ TEST_F(WalletServiceTest_getTransaction, returnsCorrectFields) {
 
   ASSERT_FALSE(ec);
   ASSERT_EQ(static_cast<uint8_t>(wallet.transaction.transaction.state), transaction.state);
-  ASSERT_EQ(wallet.transaction.transaction.blockHeight, transaction.blockIndex);
+  ASSERT_EQ(wallet.transaction.transaction.blockHeight, transaction.block_height);
   ASSERT_EQ(Common::toHex(Common::asBinaryArray(wallet.transaction.transaction.extra)), transaction.extra);
-  ASSERT_EQ(PAYMENT_ID, transaction.paymentId);
+  ASSERT_EQ(PAYMENT_ID, transaction.payment_id);
   ASSERT_EQ(wallet.transaction.transaction.fee, transaction.fee);
-  ASSERT_EQ(wallet.transaction.transaction.isBase, transaction.isBase);
+  ASSERT_EQ(wallet.transaction.transaction.isBase, transaction.is_base);
   ASSERT_EQ(wallet.transaction.transaction.timestamp, transaction.timestamp);
-  ASSERT_EQ(Common::podToHex(wallet.transaction.transaction.hash), transaction.transactionHash);
-  ASSERT_EQ(wallet.transaction.transaction.unlockTime, transaction.unlockTime);
+  ASSERT_EQ(Common::podToHex(wallet.transaction.transaction.hash), transaction.transaction_hash);
+  ASSERT_EQ(wallet.transaction.transaction.unlockTime, transaction.unlock_time);
 
   ASSERT_EQ(wallet.transaction.transfers.size(), transaction.transfers.size());
 
@@ -731,11 +731,11 @@ protected:
 };
 
 void WalletServiceTest_sendTransaction::SetUp() {
-  request.sourceAddresses.insert(request.sourceAddresses.end(), {RANDOM_ADDRESS1, RANDOM_ADDRESS2});
+  request.source_addresses.insert(request.source_addresses.end(), {RANDOM_ADDRESS1, RANDOM_ADDRESS2});
   request.transfers.push_back(WalletRpcOrder {RANDOM_ADDRESS3, 11111});
   request.fee = 2021;
   request.anonymity = 3;
-  request.unlockTime = 848309;
+  request.unlock_time = 848309;
 }
 
 struct WalletTransferStub : public IWalletBaseStub {
@@ -757,8 +757,8 @@ struct WalletTransferStub : public IWalletBaseStub {
 
 bool isEquivalent(const SendTransaction::Request& request, const TransactionParameters& params) {
   std::string extra;
-  if (!request.paymentId.empty()) {
-    extra = "022100" + request.paymentId;
+  if (!request.payment_id.empty()) {
+    extra = "022100" + request.payment_id;
   } else {
     extra = request.extra;
   }
@@ -768,7 +768,7 @@ bool isEquivalent(const SendTransaction::Request& request, const TransactionPara
     orders.push_back( WalletOrder{order.address, order.amount});
   });
 
-  return std::make_tuple(request.sourceAddresses, orders, request.fee, request.anonymity, extra, request.unlockTime)
+  return std::make_tuple(request.source_addresses, orders, request.fee, request.anonymity, extra, request.unlock_time)
       ==
       std::make_tuple(params.sourceAddresses, params.destinations, params.fee, params.mixIn, Common::toHex(Common::asBinaryArray(params.extra)), params.unlockTimestamp);
 }
@@ -788,7 +788,7 @@ TEST_F(WalletServiceTest_sendTransaction, passesCorrectParameters) {
 
 TEST_F(WalletServiceTest_sendTransaction, incorrectSourceAddress) {
   auto service = createWalletService();
-  request.sourceAddresses.push_back("wrong address");
+  request.source_addresses.push_back("wrong address");
 
   std::string hash;
   std::string transactionSecretKey;
@@ -817,7 +817,7 @@ void WalletServiceTest_createDelayedTransaction::SetUp() {
   request.transfers.push_back(WalletRpcOrder {RANDOM_ADDRESS3, 11111});
   request.fee = 2021;
   request.anonymity = 4;
-  request.unlockTime = 848309;
+  request.unlock_time = 848309;
 }
 
 struct WalletMakeTransactionStub : public IWalletBaseStub {
@@ -839,8 +839,8 @@ struct WalletMakeTransactionStub : public IWalletBaseStub {
 
 bool isEquivalent(const CreateDelayedTransaction::Request& request, const TransactionParameters& params) {
   std::string extra;
-  if (!request.paymentId.empty()) {
-    extra = "022100" + request.paymentId;
+  if (!request.payment_id.empty()) {
+    extra = "022100" + request.payment_id;
   } else {
     extra = request.extra;
   }
@@ -850,7 +850,7 @@ bool isEquivalent(const CreateDelayedTransaction::Request& request, const Transa
     orders.push_back( WalletOrder{order.address, order.amount});
   });
 
-  return std::make_tuple(request.addresses, orders, request.fee, request.anonymity, extra, request.unlockTime)
+  return std::make_tuple(request.addresses, orders, request.fee, request.anonymity, extra, request.unlock_time)
       ==
       std::make_tuple(params.sourceAddresses, params.destinations, params.fee, params.mixIn, Common::toHex(Common::asBinaryArray(params.extra)), params.unlockTimestamp);
 }

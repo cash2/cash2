@@ -232,15 +232,15 @@ PaymentService::TransactionRpcInfo convertTransactionWithTransfersToTransactionR
   PaymentService::TransactionRpcInfo transactionInfo;
 
   transactionInfo.state = static_cast<uint8_t>(transactionWithTransfers.transaction.state);
-  transactionInfo.transactionHash = Common::podToHex(transactionWithTransfers.transaction.hash);
-  transactionInfo.blockIndex = transactionWithTransfers.transaction.blockHeight;
+  transactionInfo.transaction_hash = Common::podToHex(transactionWithTransfers.transaction.hash);
+  transactionInfo.block_height = transactionWithTransfers.transaction.blockHeight;
   transactionInfo.timestamp = transactionWithTransfers.transaction.timestamp;
-  transactionInfo.isBase = transactionWithTransfers.transaction.isBase;
-  transactionInfo.unlockTime = transactionWithTransfers.transaction.unlockTime;
+  transactionInfo.is_base = transactionWithTransfers.transaction.isBase;
+  transactionInfo.unlock_time = transactionWithTransfers.transaction.unlockTime;
   transactionInfo.amount = transactionWithTransfers.transaction.totalAmount;
   transactionInfo.fee = transactionWithTransfers.transaction.fee;
   transactionInfo.extra = Common::toHex(transactionWithTransfers.transaction.extra.data(), transactionWithTransfers.transaction.extra.size());
-  transactionInfo.paymentId = getPaymentIdStringFromExtra(transactionWithTransfers.transaction.extra);
+  transactionInfo.payment_id = getPaymentIdStringFromExtra(transactionWithTransfers.transaction.extra);
 
   for (const CryptoNote::WalletTransfer& transfer: transactionWithTransfers.transfers) {
     PaymentService::TransferRpcInfo rpcTransfer;
@@ -261,7 +261,7 @@ std::vector<PaymentService::TransactionsInBlockRpcInfo> convertTransactionsInBlo
   rpcBlocks.reserve(blocks.size());
   for (const auto& block: blocks) {
     PaymentService::TransactionsInBlockRpcInfo rpcBlock;
-    rpcBlock.blockHash = Common::podToHex(block.blockHash);
+    rpcBlock.block_hash = Common::podToHex(block.blockHash);
 
     for (const CryptoNote::WalletTransactionWithTransfers& transactionWithTransfers: block.transactions) {
       PaymentService::TransactionRpcInfo transactionInfo = convertTransactionWithTransfersToTransactionRpcInfo(transactionWithTransfers);
@@ -281,10 +281,10 @@ std::vector<PaymentService::TransactionHashesInBlockRpcInfo> convertTransactions
   transactionHashes.reserve(blocks.size());
   for (const CryptoNote::TransactionsInBlockInfo& block: blocks) {
     PaymentService::TransactionHashesInBlockRpcInfo item;
-    item.blockHash = Common::podToHex(block.blockHash);
+    item.block_hash = Common::podToHex(block.blockHash);
 
     for (const CryptoNote::WalletTransactionWithTransfers& transaction: block.transactions) {
-      item.transactionHashes.emplace_back(Common::podToHex(transaction.transaction.hash));
+      item.transaction_hashes.emplace_back(Common::podToHex(transaction.transaction.hash));
     }
 
     transactionHashes.push_back(std::move(item));
@@ -830,27 +830,27 @@ std::error_code WalletService::sendTransaction(const SendTransaction::Request& r
   try {
     System::EventLock lk(readyEvent);
 
-    validateAddresses(request.sourceAddresses, currency, logger);
+    validateAddresses(request.source_addresses, currency, logger);
     validateAddresses(collectDestinationAddresses(request.transfers), currency, logger);
-    if (!request.changeAddress.empty()) {
-      validateAddresses({ request.changeAddress }, currency, logger);
+    if (!request.change_address.empty()) {
+      validateAddresses({ request.change_address }, currency, logger);
     }
 
     validateMixin(request.anonymity, currency, logger);
 
     CryptoNote::TransactionParameters sendParams;
-    if (!request.paymentId.empty()) {
-      addPaymentIdToExtra(request.paymentId, sendParams.extra);
+    if (!request.payment_id.empty()) {
+      addPaymentIdToExtra(request.payment_id, sendParams.extra);
     } else {
       sendParams.extra = Common::asString(Common::fromHex(request.extra));
     }
 
-    sendParams.sourceAddresses = request.sourceAddresses;
+    sendParams.sourceAddresses = request.source_addresses;
     sendParams.destinations = convertWalletRpcOrdersToWalletOrders(request.transfers);
     sendParams.fee = request.fee;
     sendParams.mixIn = request.anonymity;
-    sendParams.unlockTimestamp = request.unlockTime;
-    sendParams.changeDestination = request.changeAddress;
+    sendParams.unlockTimestamp = request.unlock_time;
+    sendParams.changeDestination = request.change_address;
 
     Crypto::SecretKey tx_key;                      
     size_t transactionId = wallet.transfer(sendParams, tx_key);
@@ -875,13 +875,13 @@ std::error_code WalletService::createDelayedTransaction(const CreateDelayedTrans
 
     validateAddresses(request.addresses, currency, logger);
     validateAddresses(collectDestinationAddresses(request.transfers), currency, logger);
-    if (!request.changeAddress.empty()) {
-      validateAddresses({ request.changeAddress }, currency, logger);
+    if (!request.change_address.empty()) {
+      validateAddresses({ request.change_address }, currency, logger);
     }
 
     CryptoNote::TransactionParameters sendParams;
-    if (!request.paymentId.empty()) {
-      addPaymentIdToExtra(request.paymentId, sendParams.extra);
+    if (!request.payment_id.empty()) {
+      addPaymentIdToExtra(request.payment_id, sendParams.extra);
     } else {
       sendParams.extra = Common::asString(Common::fromHex(request.extra));
     }
@@ -890,8 +890,8 @@ std::error_code WalletService::createDelayedTransaction(const CreateDelayedTrans
     sendParams.destinations = convertWalletRpcOrdersToWalletOrders(request.transfers);
     sendParams.fee = request.fee;
     sendParams.mixIn = request.anonymity;
-    sendParams.unlockTimestamp = request.unlockTime;
-    sendParams.changeDestination = request.changeAddress;
+    sendParams.unlockTimestamp = request.unlock_time;
+    sendParams.changeDestination = request.change_address;
 
     size_t transactionId = wallet.makeTransaction(sendParams);
     transactionHash = Common::podToHex(wallet.getTransaction(transactionId).hash);
