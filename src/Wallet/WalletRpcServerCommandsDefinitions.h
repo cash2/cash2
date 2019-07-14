@@ -69,12 +69,12 @@ using CryptoNote::ISerializer;
 
     struct response
     {
-      std::string transactionHash;
-      std::string transactionPrivateKey;                
+      std::string transaction_hash;
+      std::string transaction_private_key;                
 
       void serialize(ISerializer& s) {
-        KV_MEMBER(transactionHash)
-        KV_MEMBER(transactionPrivateKey)             
+        KV_MEMBER(transaction_hash)
+        KV_MEMBER(transaction_private_key)             
       }
     };
   };
@@ -87,13 +87,13 @@ using CryptoNote::ISerializer;
 
   struct payment_details
   {
-    std::string transactionHash;
+    std::string transaction_hash;
     uint64_t amount;
     uint64_t block_height;
     uint64_t unlock_time;
 
     void serialize(ISerializer& s) {
-      KV_MEMBER(transactionHash)
+      KV_MEMBER(transaction_hash)
       KV_MEMBER(amount)
       KV_MEMBER(block_height)
       KV_MEMBER(unlock_time)
@@ -124,26 +124,26 @@ using CryptoNote::ISerializer;
   struct Transfer {
     uint64_t timestamp;
     bool output;
-    std::string transactionHash;
+    std::string transaction_hash;
     uint64_t amount;
     uint64_t fee;
-    std::string paymentId;
+    std::string payment_id;
     std::string address;
-    uint64_t blockIndex;
-    uint64_t unlockTime;
-    std::string transactionPrivateKey;                     
+    uint64_t block_height;
+    uint64_t unlock_time;
+    std::string transaction_private_key;                     
 
     void serialize(ISerializer& s) {
       KV_MEMBER(timestamp)
       KV_MEMBER(output)
-      KV_MEMBER(transactionHash)
+      KV_MEMBER(transaction_hash)
       KV_MEMBER(amount)
       KV_MEMBER(fee)
-      KV_MEMBER(paymentId)
+      KV_MEMBER(payment_id)
       KV_MEMBER(address)
-      KV_MEMBER(blockIndex)
-      KV_MEMBER(unlockTime)
-      KV_MEMBER(transactionPrivateKey)
+      KV_MEMBER(block_height)
+      KV_MEMBER(unlock_time)
+      KV_MEMBER(transaction_private_key)
     }
   };
 
@@ -175,20 +175,20 @@ using CryptoNote::ISerializer;
 	{
 		struct request
 		{
-			std::string transactionHash;
+			std::string transaction_hash;
 
 			void serialize(ISerializer& s)
 			{
-				KV_MEMBER(transactionHash)
+				KV_MEMBER(transaction_hash)
 			}
 		};
 		struct response
 		{
-			std::string transactionPrivateKey;
+			std::string transaction_private_key;
 
 			void serialize(ISerializer& s)
 			{
-				KV_MEMBER(transactionPrivateKey)
+				KV_MEMBER(transaction_private_key)
 			}
 		};
 	};

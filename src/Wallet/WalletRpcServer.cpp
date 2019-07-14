@@ -201,8 +201,8 @@ bool wallet_rpc_server::on_transfer(const wallet_rpc::COMMAND_RPC_TRANSFER::requ
 
     CryptoNote::WalletLegacyTransaction txInfo;
     m_wallet.getTransaction(tx, txInfo);
-    res.transactionHash = Common::podToHex(txInfo.hash);
-    res.transactionPrivateKey = Common::podToHex(txInfo.secretKey.get());
+    res.transaction_hash = Common::podToHex(txInfo.hash);
+    res.transaction_private_key = Common::podToHex(txInfo.secretKey.get());
 
   } catch (const std::exception& e) {
     throw JsonRpc::JsonRpcError(WALLET_RPC_ERROR_CODE_GENERIC_TRANSFER_ERROR, e.what());
@@ -249,7 +249,7 @@ bool wallet_rpc_server::on_get_payments(const wallet_rpc::COMMAND_RPC_GET_PAYMEN
     Crypto::Hash paymentId;
     if (getPaymentIdFromTxExtra(extraVec, paymentId) && paymentId == expectedPaymentId) {
       wallet_rpc::payment_details rpc_payment;
-      rpc_payment.transactionHash = Common::podToHex(txInfo.hash);
+      rpc_payment.transaction_hash = Common::podToHex(txInfo.hash);
       rpc_payment.amount = txInfo.totalAmount;
       rpc_payment.block_height = txInfo.blockHeight;
       rpc_payment.unlock_time = txInfo.unlockTime;
@@ -282,21 +282,21 @@ bool wallet_rpc_server::on_get_transfers(const wallet_rpc::COMMAND_RPC_GET_TRANS
     wallet_rpc::Transfer transfer;
     transfer.timestamp = txInfo.timestamp;
     transfer.output = txInfo.totalAmount < 0;
-    transfer.transactionHash = Common::podToHex(txInfo.hash);
+    transfer.transaction_hash = Common::podToHex(txInfo.hash);
     transfer.amount = std::abs(txInfo.totalAmount);
     transfer.fee = txInfo.fee;
     transfer.address = address;
-    transfer.blockIndex = txInfo.blockHeight;
-    transfer.unlockTime = txInfo.unlockTime;
-    transfer.paymentId = "";
+    transfer.block_height = txInfo.blockHeight;
+    transfer.unlock_time = txInfo.unlockTime;
+    transfer.payment_id = "";
 
     std::vector<uint8_t> extraVec;
     extraVec.reserve(txInfo.extra.size());
     std::for_each(txInfo.extra.begin(), txInfo.extra.end(), [&extraVec](const char el) { extraVec.push_back(el); });
 
     Crypto::Hash paymentId;
-    transfer.paymentId = (getPaymentIdFromTxExtra(extraVec, paymentId) && paymentId != NULL_HASH ? Common::podToHex(paymentId) : "");
-    transfer.transactionPrivateKey = (txInfo.secretKey != NULL_SECRET_KEY ? Common::podToHex(txInfo.secretKey.get()) : "");
+    transfer.payment_id = (getPaymentIdFromTxExtra(extraVec, paymentId) && paymentId != NULL_HASH ? Common::podToHex(paymentId) : "");
+    transfer.transaction_private_key = (txInfo.secretKey != NULL_SECRET_KEY ? Common::podToHex(txInfo.secretKey.get()) : "");
 
     res.transfers.push_back(transfer);
   }
@@ -311,13 +311,13 @@ bool wallet_rpc_server::on_get_height(const wallet_rpc::COMMAND_RPC_GET_HEIGHT::
 bool wallet_rpc_server::on_get_transaction_private_key(const wallet_rpc::COMMAND_RPC_GET_TX_PRIVATE_KEY::request& req,
 	wallet_rpc::COMMAND_RPC_GET_TX_PRIVATE_KEY::response& res) {
 	Crypto::Hash txid;
-	if (!parse_hash256(req.transactionHash, txid)) {
+	if (!parse_hash256(req.transaction_hash, txid)) {
 		throw JsonRpc::JsonRpcError(WALLET_RPC_ERROR_CODE_UNKNOWN_ERROR, std::string("Failed to parse transaction id"));
 	}
 
 	Crypto::SecretKey tx_key = m_wallet.getTxKey(txid);
 	if (tx_key != NULL_SECRET_KEY) {
-		res.transactionPrivateKey = Common::podToHex(tx_key);
+		res.transaction_private_key = Common::podToHex(tx_key);
 	}
 	else {
 		throw JsonRpc::JsonRpcError(WALLET_RPC_ERROR_CODE_UNKNOWN_ERROR, std::string("No transaction secret key found for this transaction id"));
