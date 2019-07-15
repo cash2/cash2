@@ -944,11 +944,11 @@ bool RpcServer::on_get_transaction(const COMMAND_RPC_GET_TRANSACTION::request& r
   res.transaction_details.amount_out = amount_out;
   res.transaction_details.size = getObjectBinarySize(res.transaction);
 
-  uint64_t ringSize;
-  if (!getRingSize(res.transaction, ringSize)) {
+  uint64_t ringSignatureSize;
+  if (!getRingSignatureSize(res.transaction, ringSignatureSize)) {
     return false;
   }
-  res.transaction_details.mixin = ringSize - 1;
+  res.transaction_details.mixin = ringSignatureSize - 1;
 
   Crypto::Hash paymentId;
   if (CryptoNote::getPaymentIdFromTxExtra(res.transaction.extra, paymentId)) {
@@ -961,24 +961,24 @@ bool RpcServer::on_get_transaction(const COMMAND_RPC_GET_TRANSACTION::request& r
   return true;
 }
 
-bool RpcServer::getRingSize(const Transaction& transaction, uint64_t& ringSize) {
+bool RpcServer::getRingSignatureSize(const Transaction& transaction, uint64_t& ringSignatureSize) {
   // base input
   if (transaction.inputs.size() == 1 && transaction.inputs[0].type() == typeid(BaseInput))
   {
-    ringSize = 1;
+    ringSignatureSize = 1;
     return true;
   }
 
-  ringSize = 0;
+  ringSignatureSize = 0;
 
   // key input
   for (const TransactionInput& txin : transaction.inputs) {
     if (txin.type() != typeid(KeyInput)) {
       continue;
     }
-    uint64_t curRingSize = boost::get<KeyInput>(txin).outputIndexes.size();
-    if (curRingSize > ringSize) {
-      ringSize = curRingSize;
+    uint64_t curRingSignatureSize = boost::get<KeyInput>(txin).outputIndexes.size();
+    if (curRingSignatureSize > ringSignatureSize) {
+      ringSignatureSize = curRingSignatureSize;
     }
   }
 
