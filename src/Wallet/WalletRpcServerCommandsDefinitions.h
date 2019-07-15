@@ -13,6 +13,7 @@
 
 namespace Tools
 {
+
 namespace wallet_rpc
 {
 
@@ -197,5 +198,49 @@ using CryptoNote::ISerializer;
     typedef CryptoNote::EMPTY_STRUCT request;
     typedef CryptoNote::EMPTY_STRUCT response;
   };
-}
-}
+
+  struct COMMAND_RPC_GET_ADDRESS
+  {
+    typedef CryptoNote::EMPTY_STRUCT request;
+
+    struct response
+    {
+      std::string address;
+
+      void serialize(ISerializer& s) {
+        KV_MEMBER(address)
+      }
+    };
+  };
+
+  struct COMMAND_RPC_GET_VIEW_PRIVATE_KEY
+  {
+    typedef CryptoNote::EMPTY_STRUCT request;
+
+    struct response
+    {
+      std::string view_private_key;
+
+      void serialize(ISerializer& s) {
+        KV_MEMBER(view_private_key)
+      }
+    };
+  };
+
+  struct COMMAND_RPC_GET_SPEND_PRIVATE_KEY
+  {
+    typedef CryptoNote::EMPTY_STRUCT request;
+
+    struct response
+    {
+      std::string spend_private_key;
+
+      void serialize(ISerializer& s) {
+        KV_MEMBER(spend_private_key)
+      }
+    };
+  };
+
+} // end namespace wallet_rpc
+
+} // end namespace Tools

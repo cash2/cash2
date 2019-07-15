@@ -109,14 +109,17 @@ void wallet_rpc_server::processRequest(const CryptoNote::HttpRequest& request, C
     }
 
     static std::unordered_map<std::string, JsonMemberMethod> s_methods = {
+      { "get_address", makeMemberMethod(&wallet_rpc_server::on_get_address) },
       { "get_balance", makeMemberMethod(&wallet_rpc_server::on_get_balance) },
-      { "transfer", makeMemberMethod(&wallet_rpc_server::on_transfer) },
-      { "store", makeMemberMethod(&wallet_rpc_server::on_store) },
-      { "get_payments", makeMemberMethod(&wallet_rpc_server::on_get_payments) },
-      { "get_transfers", makeMemberMethod(&wallet_rpc_server::on_get_transfers) },
       { "get_height", makeMemberMethod(&wallet_rpc_server::on_get_height) },
+      { "get_payments", makeMemberMethod(&wallet_rpc_server::on_get_payments) },
+      { "get_spend_private_key", makeMemberMethod(&wallet_rpc_server::on_get_spend_private_key) },
       { "get_transaction_private_key", makeMemberMethod(&wallet_rpc_server::on_get_transaction_private_key) },
-      { "reset", makeMemberMethod(&wallet_rpc_server::on_reset) }
+      { "get_transfers", makeMemberMethod(&wallet_rpc_server::on_get_transfers) },
+      { "get_view_private_key", makeMemberMethod(&wallet_rpc_server::on_get_view_private_key) },
+      { "reset", makeMemberMethod(&wallet_rpc_server::on_reset) },
+      { "store", makeMemberMethod(&wallet_rpc_server::on_store) },
+      { "transfer", makeMemberMethod(&wallet_rpc_server::on_transfer) },
     };
 
     auto it = s_methods.find(jsonRequest.getMethod());
@@ -133,6 +136,11 @@ void wallet_rpc_server::processRequest(const CryptoNote::HttpRequest& request, C
   }
 
   response.setBody(jsonResponse.getBody());
+}
+
+bool wallet_rpc_server::on_get_address(const wallet_rpc::COMMAND_RPC_GET_ADDRESS::request& req, wallet_rpc::COMMAND_RPC_GET_ADDRESS::response& res) {
+  res.address = m_wallet.getAddress();
+  return true;
 }
 
 //------------------------------------------------------------------------------------------------------------------------------
@@ -260,6 +268,15 @@ bool wallet_rpc_server::on_get_payments(const wallet_rpc::COMMAND_RPC_GET_PAYMEN
   return true;
 }
 
+bool wallet_rpc_server::on_get_spend_private_key(const wallet_rpc::COMMAND_RPC_GET_SPEND_PRIVATE_KEY::request& req, wallet_rpc::COMMAND_RPC_GET_SPEND_PRIVATE_KEY::response& res)
+{
+  AccountKeys accountKeys;
+  m_wallet.getAccountKeys(accountKeys);
+  Crypto::SecretKey spendSecretKey = accountKeys.spendSecretKey;
+  res.spend_private_key = Common::podToHex(spendSecretKey);
+  return true;
+}
+
 bool wallet_rpc_server::on_get_transfers(const wallet_rpc::COMMAND_RPC_GET_TRANSFERS::request& req, wallet_rpc::COMMAND_RPC_GET_TRANSFERS::response& res) {
   res.transfers.clear();
   size_t transactionsCount = m_wallet.getTransactionCount();
@@ -300,6 +317,15 @@ bool wallet_rpc_server::on_get_transfers(const wallet_rpc::COMMAND_RPC_GET_TRANS
 
     res.transfers.push_back(transfer);
   }
+  return true;
+}
+
+bool wallet_rpc_server::on_get_view_private_key(const wallet_rpc::COMMAND_RPC_GET_VIEW_PRIVATE_KEY::request& req, wallet_rpc::COMMAND_RPC_GET_VIEW_PRIVATE_KEY::response& res)
+{
+  AccountKeys accountKeys;
+  m_wallet.getAccountKeys(accountKeys);
+  Crypto::SecretKey viewSecretKey = accountKeys.viewSecretKey;
+  res.view_private_key = Common::podToHex(viewSecretKey);
   return true;
 }
 
