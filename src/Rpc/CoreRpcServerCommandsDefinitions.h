@@ -400,6 +400,20 @@ struct COMMAND_RPC_GET_OUTGOING_CONNECTIONS_COUNT {
   };
 };
 
+struct COMMAND_RPC_GET_TOTAL_TRANSACTIONS_COUNT {
+  typedef EMPTY_STRUCT request;
+
+  struct response {
+    std::string status;
+    uint64_t total_transactions_count;
+
+    void serialize(ISerializer &s) {
+      KV_MEMBER(status)
+      KV_MEMBER(total_transactions_count)
+    }
+  };
+};
+
 //-----------------------------------------------
 struct COMMAND_RPC_STOP_MINING {
   typedef EMPTY_STRUCT request;
