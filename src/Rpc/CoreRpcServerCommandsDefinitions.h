@@ -330,6 +330,20 @@ struct COMMAND_RPC_GET_DIFFICULTY {
   };
 };
 
+struct COMMAND_RPC_GET_GREY_PEERLIST_SIZE {
+  typedef EMPTY_STRUCT request;
+
+  struct response {
+    std::string status;
+    uint64_t grey_peerlist_size;
+
+    void serialize(ISerializer &s) {
+      KV_MEMBER(status)
+      KV_MEMBER(grey_peerlist_size)
+    }
+  };
+};
+
 //-----------------------------------------------
 struct COMMAND_RPC_STOP_MINING {
   typedef EMPTY_STRUCT request;

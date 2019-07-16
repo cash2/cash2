@@ -54,6 +54,7 @@ private:
   // json handlers
   bool on_get_circulating_supply(const COMMAND_RPC_GET_CIRCULATING_SUPPLY::request& req, COMMAND_RPC_GET_CIRCULATING_SUPPLY::response& res);
   bool on_get_difficulty(const COMMAND_RPC_GET_DIFFICULTY::request& req, COMMAND_RPC_GET_DIFFICULTY::response& res);
+  bool on_get_grey_peerlist_size(const COMMAND_RPC_GET_GREY_PEERLIST_SIZE::request& req, COMMAND_RPC_GET_GREY_PEERLIST_SIZE::response& res);
   bool on_get_height(const COMMAND_RPC_GET_HEIGHT::request& req, COMMAND_RPC_GET_HEIGHT::response& res);
   bool on_get_info(const COMMAND_RPC_GET_INFO::request& req, COMMAND_RPC_GET_INFO::response& res);
   bool on_get_orphan_blocks_count(const COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT::request& req, COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT::response& res);
