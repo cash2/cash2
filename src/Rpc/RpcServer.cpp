@@ -98,6 +98,7 @@ std::unordered_map<std::string, RpcServer::RpcHandler<RpcServer::HandlerFunction
   { "/get_height", { jsonMethod<COMMAND_RPC_GET_HEIGHT>(&RpcServer::on_get_height), true } },
   { "/get_incoming_connections_count", { jsonMethod<COMMAND_RPC_GET_INCOMING_CONNECTIONS_COUNT>(&RpcServer::on_get_incoming_connections_count), true } },
   { "/get_info", { jsonMethod<COMMAND_RPC_GET_INFO>(&RpcServer::on_get_info), true } },
+  { "/get_mempool_transactions_count", { jsonMethod<COMMAND_RPC_GET_MEMPOOL_TRANSACTIONS_COUNT>(&RpcServer::on_get_mempool_transactions_count), true } },
   { "/get_orphan_blocks_count", { jsonMethod<COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT>(&RpcServer::on_get_orphan_blocks_count), true } },
   { "/get_transactions", { jsonMethod<COMMAND_RPC_GET_TRANSACTIONS>(&RpcServer::on_get_transactions), false } },
   { "/send_raw_transaction", { jsonMethod<COMMAND_RPC_SEND_RAW_TX>(&RpcServer::on_send_raw_tx), false } },
@@ -386,8 +387,8 @@ bool RpcServer::on_get_incoming_connections_count(const COMMAND_RPC_GET_INCOMING
 bool RpcServer::on_get_info(const COMMAND_RPC_GET_INFO::request& req, COMMAND_RPC_GET_INFO::response& res) {
   res.height = m_core.get_current_blockchain_height();
   res.difficulty = m_core.getNextBlockDifficulty();
-  res.transaction_count = m_core.get_blockchain_total_transactions() - res.height; //without coinbase
-  res.mempool_size = m_core.get_pool_transactions_count();
+  res.total_transactions_count = m_core.get_blockchain_total_transactions() - res.height; //without coinbase
+  res.mempool_transactions_count = m_core.get_pool_transactions_count();
   res.orphan_blocks_count = m_core.get_alternative_blocks_count();
   uint64_t total_conn = m_p2p.get_connections_count();
   res.outgoing_connections_count = m_p2p.get_outgoing_connections_count();
@@ -399,6 +400,12 @@ bool RpcServer::on_get_info(const COMMAND_RPC_GET_INFO::request& req, COMMAND_RP
   res.circulating_supply = m_core.currency().formatAmount(m_core.getTotalGeneratedAmount());
   res.min_transaction_fee = m_core.getMinimalFee();
 
+  res.status = CORE_RPC_STATUS_OK;
+  return true;
+}
+
+bool RpcServer::on_get_mempool_transactions_count(const COMMAND_RPC_GET_MEMPOOL_TRANSACTIONS_COUNT::request& req, COMMAND_RPC_GET_MEMPOOL_TRANSACTIONS_COUNT::response& res) {
+  res.mempool_transactions_count = m_core.get_pool_transactions_count();
   res.status = CORE_RPC_STATUS_OK;
   return true;
 }

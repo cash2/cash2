@@ -259,8 +259,8 @@ struct COMMAND_RPC_GET_INFO {
     std::string status;
     uint64_t height;
     uint64_t difficulty;
-    uint64_t transaction_count;
-    uint64_t mempool_size;
+    uint64_t total_transactions_count;
+    uint64_t mempool_transactions_count;
     uint64_t orphan_blocks_count;
     uint64_t outgoing_connections_count;
     uint64_t incoming_connections_count;
@@ -274,8 +274,8 @@ struct COMMAND_RPC_GET_INFO {
       KV_MEMBER(status)
       KV_MEMBER(height)
       KV_MEMBER(difficulty)
-      KV_MEMBER(transaction_count)
-      KV_MEMBER(mempool_size)
+      KV_MEMBER(total_transactions_count)
+      KV_MEMBER(mempool_transactions_count)
       KV_MEMBER(orphan_blocks_count)
       KV_MEMBER(outgoing_connections_count)
       KV_MEMBER(incoming_connections_count)
@@ -354,6 +354,20 @@ struct COMMAND_RPC_GET_INCOMING_CONNECTIONS_COUNT {
     void serialize(ISerializer &s) {
       KV_MEMBER(status)
       KV_MEMBER(incoming_connections_count)
+    }
+  };
+};
+
+struct COMMAND_RPC_GET_MEMPOOL_TRANSACTIONS_COUNT {
+  typedef EMPTY_STRUCT request;
+
+  struct response {
+    std::string status;
+    uint64_t mempool_transactions_count;
+
+    void serialize(ISerializer &s) {
+      KV_MEMBER(status)
+      KV_MEMBER(mempool_transactions_count)
     }
   };
 };
