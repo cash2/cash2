@@ -318,6 +318,20 @@ struct COMMAND_RPC_GET_CIRCULATING_SUPPLY {
   };
 };
 
+struct COMMAND_RPC_GET_DIFFICULTY {
+  typedef EMPTY_STRUCT request;
+
+  struct response {
+    std::string status;
+    uint64_t difficulty;
+
+    void serialize(ISerializer &s) {
+      KV_MEMBER(status)
+      KV_MEMBER(difficulty)
+    }
+  };
+};
+
 //-----------------------------------------------
 struct COMMAND_RPC_STOP_MINING {
   typedef EMPTY_STRUCT request;
