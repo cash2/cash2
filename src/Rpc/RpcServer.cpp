@@ -96,6 +96,7 @@ std::unordered_map<std::string, RpcServer::RpcHandler<RpcServer::HandlerFunction
   { "/get_difficulty", { jsonMethod<COMMAND_RPC_GET_DIFFICULTY>(&RpcServer::on_get_difficulty), true } },
   { "/get_grey_peerlist_size", { jsonMethod<COMMAND_RPC_GET_GREY_PEERLIST_SIZE>(&RpcServer::on_get_grey_peerlist_size), true } },
   { "/get_height", { jsonMethod<COMMAND_RPC_GET_HEIGHT>(&RpcServer::on_get_height), true } },
+  { "/get_incoming_connections_count", { jsonMethod<COMMAND_RPC_GET_INCOMING_CONNECTIONS_COUNT>(&RpcServer::on_get_incoming_connections_count), true } },
   { "/get_info", { jsonMethod<COMMAND_RPC_GET_INFO>(&RpcServer::on_get_info), true } },
   { "/get_orphan_blocks_count", { jsonMethod<COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT>(&RpcServer::on_get_orphan_blocks_count), true } },
   { "/get_transactions", { jsonMethod<COMMAND_RPC_GET_TRANSACTIONS>(&RpcServer::on_get_transactions), false } },
@@ -370,6 +371,14 @@ bool RpcServer::on_get_grey_peerlist_size(const COMMAND_RPC_GET_GREY_PEERLIST_SI
 
 bool RpcServer::on_get_height(const COMMAND_RPC_GET_HEIGHT::request& req, COMMAND_RPC_GET_HEIGHT::response& res) {
   res.height = m_core.get_current_blockchain_height();
+  res.status = CORE_RPC_STATUS_OK;
+  return true;
+}
+
+bool RpcServer::on_get_incoming_connections_count(const COMMAND_RPC_GET_INCOMING_CONNECTIONS_COUNT::request& req, COMMAND_RPC_GET_INCOMING_CONNECTIONS_COUNT::response& res) {
+  uint64_t totalConnections = m_p2p.get_connections_count();
+  size_t outgoingConnectionsCount = m_p2p.get_outgoing_connections_count();
+  res.incoming_connections_count = totalConnections - outgoingConnectionsCount;
   res.status = CORE_RPC_STATUS_OK;
   return true;
 }

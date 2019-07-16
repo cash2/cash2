@@ -344,6 +344,20 @@ struct COMMAND_RPC_GET_GREY_PEERLIST_SIZE {
   };
 };
 
+struct COMMAND_RPC_GET_INCOMING_CONNECTIONS_COUNT {
+  typedef EMPTY_STRUCT request;
+
+  struct response {
+    std::string status;
+    uint64_t incoming_connections_count;
+
+    void serialize(ISerializer &s) {
+      KV_MEMBER(status)
+      KV_MEMBER(incoming_connections_count)
+    }
+  };
+};
+
 //-----------------------------------------------
 struct COMMAND_RPC_STOP_MINING {
   typedef EMPTY_STRUCT request;
