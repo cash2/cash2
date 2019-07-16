@@ -386,6 +386,20 @@ struct COMMAND_RPC_GET_TRANSACTION_FEE {
   };
 };
 
+struct COMMAND_RPC_GET_OUTGOING_CONNECTIONS_COUNT {
+  typedef EMPTY_STRUCT request;
+
+  struct response {
+    uint64_t outgoing_connections_count;
+    std::string status;
+
+    void serialize(ISerializer &s) {
+      KV_MEMBER(outgoing_connections_count)
+      KV_MEMBER(status)
+    }
+  };
+};
+
 //-----------------------------------------------
 struct COMMAND_RPC_STOP_MINING {
   typedef EMPTY_STRUCT request;

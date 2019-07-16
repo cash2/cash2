@@ -60,6 +60,7 @@ private:
   bool on_get_info(const COMMAND_RPC_GET_INFO::request& req, COMMAND_RPC_GET_INFO::response& res);
   bool on_get_mempool_transactions_count(const COMMAND_RPC_GET_MEMPOOL_TRANSACTIONS_COUNT::request& req, COMMAND_RPC_GET_MEMPOOL_TRANSACTIONS_COUNT::response& res);
   bool on_get_orphan_blocks_count(const COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT::request& req, COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT::response& res);
+  bool on_get_outgoing_connections_count(const COMMAND_RPC_GET_OUTGOING_CONNECTIONS_COUNT::request& req, COMMAND_RPC_GET_OUTGOING_CONNECTIONS_COUNT::response& res);
   bool on_get_transaction_fee(const COMMAND_RPC_GET_TRANSACTION_FEE::request& req, COMMAND_RPC_GET_TRANSACTION_FEE::response& res);
   bool on_get_transactions(const COMMAND_RPC_GET_TRANSACTIONS::request& req, COMMAND_RPC_GET_TRANSACTIONS::response& res);
   bool on_send_raw_tx(const COMMAND_RPC_SEND_RAW_TX::request& req, COMMAND_RPC_SEND_RAW_TX::response& res);
