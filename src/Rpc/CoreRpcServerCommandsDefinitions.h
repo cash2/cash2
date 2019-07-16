@@ -304,6 +304,20 @@ struct COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT {
   };
 };
 
+struct COMMAND_RPC_GET_CIRCULATING_SUPPLY {
+  typedef EMPTY_STRUCT request;
+
+  struct response {
+    std::string status;
+    std::string circulating_supply;
+
+    void serialize(ISerializer &s) {
+      KV_MEMBER(status)
+      KV_MEMBER(circulating_supply)
+    }
+  };
+};
+
 //-----------------------------------------------
 struct COMMAND_RPC_STOP_MINING {
   typedef EMPTY_STRUCT request;

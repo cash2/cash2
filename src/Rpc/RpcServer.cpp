@@ -92,8 +92,9 @@ std::unordered_map<std::string, RpcServer::RpcHandler<RpcServer::HandlerFunction
   { "/get_pool_changes_lite.bin", { binMethod<COMMAND_RPC_GET_POOL_CHANGES_LITE>(&RpcServer::onGetPoolChangesLite), false } },
 
   // json handlers
-  { "/get_info", { jsonMethod<COMMAND_RPC_GET_INFO>(&RpcServer::on_get_info), true } },
+  { "/get_circulating_supply", { jsonMethod<COMMAND_RPC_GET_CIRCULATING_SUPPLY>(&RpcServer::on_get_circulating_supply), true } },
   { "/get_height", { jsonMethod<COMMAND_RPC_GET_HEIGHT>(&RpcServer::on_get_height), true } },
+  { "/get_info", { jsonMethod<COMMAND_RPC_GET_INFO>(&RpcServer::on_get_info), true } },
   { "/get_orphan_blocks_count", { jsonMethod<COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT>(&RpcServer::on_get_orphan_blocks_count), true } },
   { "/get_transactions", { jsonMethod<COMMAND_RPC_GET_TRANSACTIONS>(&RpcServer::on_get_transactions), false } },
   { "/send_raw_transaction", { jsonMethod<COMMAND_RPC_SEND_RAW_TX>(&RpcServer::on_send_raw_tx), false } },
@@ -347,6 +348,18 @@ bool RpcServer::onGetPoolChangesLite(const COMMAND_RPC_GET_POOL_CHANGES_LITE::re
 // JSON handlers
 //
 
+bool RpcServer::on_get_circulating_supply(const COMMAND_RPC_GET_CIRCULATING_SUPPLY::request& req, COMMAND_RPC_GET_CIRCULATING_SUPPLY::response& res) {
+  res.circulating_supply = m_core.currency().formatAmount(m_core.getTotalGeneratedAmount());
+  res.status = CORE_RPC_STATUS_OK;
+  return true;
+}
+
+bool RpcServer::on_get_height(const COMMAND_RPC_GET_HEIGHT::request& req, COMMAND_RPC_GET_HEIGHT::response& res) {
+  res.height = m_core.get_current_blockchain_height();
+  res.status = CORE_RPC_STATUS_OK;
+  return true;
+}
+
 bool RpcServer::on_get_info(const COMMAND_RPC_GET_INFO::request& req, COMMAND_RPC_GET_INFO::response& res) {
   res.height = m_core.get_current_blockchain_height();
   res.difficulty = m_core.getNextBlockDifficulty();
@@ -363,12 +376,6 @@ bool RpcServer::on_get_info(const COMMAND_RPC_GET_INFO::request& req, COMMAND_RP
   res.circulating_supply = m_core.currency().formatAmount(m_core.getTotalGeneratedAmount());
   res.min_transaction_fee = m_core.getMinimalFee();
 
-  res.status = CORE_RPC_STATUS_OK;
-  return true;
-}
-
-bool RpcServer::on_get_height(const COMMAND_RPC_GET_HEIGHT::request& req, COMMAND_RPC_GET_HEIGHT::response& res) {
-  res.height = m_core.get_current_blockchain_height();
   res.status = CORE_RPC_STATUS_OK;
   return true;
 }
