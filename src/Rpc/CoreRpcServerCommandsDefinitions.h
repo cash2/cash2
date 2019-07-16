@@ -256,34 +256,34 @@ struct COMMAND_RPC_GET_INFO {
   typedef EMPTY_STRUCT request;
 
   struct response {
-    std::string status;
-    uint64_t height;
+    std::string circulating_supply;
     uint64_t difficulty;
-    uint64_t total_transactions_count;
+    uint64_t grey_peerlist_size;
+    uint64_t height;
+    uint64_t incoming_connections_count;
+    uint32_t last_known_block_index;
     uint64_t mempool_transactions_count;
     uint64_t orphan_blocks_count;
     uint64_t outgoing_connections_count;
-    uint64_t incoming_connections_count;
+    std::string status;
+    uint64_t total_transactions_count;
+    uint64_t transaction_fee;
     uint64_t white_peerlist_size;
-    uint64_t grey_peerlist_size;
-    uint32_t last_known_block_index;
-    std::string circulating_supply;
-    uint64_t min_transaction_fee;
 
     void serialize(ISerializer &s) {
-      KV_MEMBER(status)
-      KV_MEMBER(height)
+      KV_MEMBER(circulating_supply)
       KV_MEMBER(difficulty)
-      KV_MEMBER(total_transactions_count)
+      KV_MEMBER(grey_peerlist_size)
+      KV_MEMBER(height)
+      KV_MEMBER(incoming_connections_count)
+      KV_MEMBER(last_known_block_index)
       KV_MEMBER(mempool_transactions_count)
       KV_MEMBER(orphan_blocks_count)
       KV_MEMBER(outgoing_connections_count)
-      KV_MEMBER(incoming_connections_count)
+      KV_MEMBER(status)
+      KV_MEMBER(total_transactions_count)
+      KV_MEMBER(transaction_fee)
       KV_MEMBER(white_peerlist_size)
-      KV_MEMBER(grey_peerlist_size)
-      KV_MEMBER(last_known_block_index)
-      KV_MEMBER(circulating_supply)
-      KV_MEMBER(min_transaction_fee)
     }
   };
 };
@@ -368,6 +368,20 @@ struct COMMAND_RPC_GET_MEMPOOL_TRANSACTIONS_COUNT {
     void serialize(ISerializer &s) {
       KV_MEMBER(status)
       KV_MEMBER(mempool_transactions_count)
+    }
+  };
+};
+
+struct COMMAND_RPC_GET_TRANSACTION_FEE {
+  typedef EMPTY_STRUCT request;
+
+  struct response {
+    std::string status;
+    uint64_t transaction_fee;
+
+    void serialize(ISerializer &s) {
+      KV_MEMBER(status)
+      KV_MEMBER(transaction_fee)
     }
   };
 };

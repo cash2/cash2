@@ -101,6 +101,7 @@ std::unordered_map<std::string, RpcServer::RpcHandler<RpcServer::HandlerFunction
   { "/get_mempool_transactions_count", { jsonMethod<COMMAND_RPC_GET_MEMPOOL_TRANSACTIONS_COUNT>(&RpcServer::on_get_mempool_transactions_count), true } },
   { "/get_orphan_blocks_count", { jsonMethod<COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT>(&RpcServer::on_get_orphan_blocks_count), true } },
   { "/get_transactions", { jsonMethod<COMMAND_RPC_GET_TRANSACTIONS>(&RpcServer::on_get_transactions), false } },
+  { "/get_transaction_fee", { jsonMethod<COMMAND_RPC_GET_TRANSACTION_FEE>(&RpcServer::on_get_transaction_fee), false } },
   { "/send_raw_transaction", { jsonMethod<COMMAND_RPC_SEND_RAW_TX>(&RpcServer::on_send_raw_tx), false } },
   
   // disabled in restricted rpc mode
@@ -398,7 +399,7 @@ bool RpcServer::on_get_info(const COMMAND_RPC_GET_INFO::request& req, COMMAND_RP
   res.last_known_block_index = std::max(static_cast<uint32_t>(1), m_protocolQuery.getObservedHeight()) - 1;
   // that large uint64_t number is unsafe in JavaScript environment and therefore as a JSON value so we display it as a formatted string
   res.circulating_supply = m_core.currency().formatAmount(m_core.getTotalGeneratedAmount());
-  res.min_transaction_fee = m_core.getMinimalFee();
+  res.transaction_fee = m_core.getMinimalFee();
 
   res.status = CORE_RPC_STATUS_OK;
   return true;
@@ -412,6 +413,12 @@ bool RpcServer::on_get_mempool_transactions_count(const COMMAND_RPC_GET_MEMPOOL_
 
 bool RpcServer::on_get_orphan_blocks_count(const COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT::request& req, COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT::response& res) {
   res.orphan_blocks_count = m_core.get_alternative_blocks_count();
+  res.status = CORE_RPC_STATUS_OK;
+  return true;
+}
+
+bool RpcServer::on_get_transaction_fee(const COMMAND_RPC_GET_TRANSACTION_FEE::request& req, COMMAND_RPC_GET_TRANSACTION_FEE::response& res) {
+  res.transaction_fee = m_core.getMinimalFee();
   res.status = CORE_RPC_STATUS_OK;
   return true;
 }
