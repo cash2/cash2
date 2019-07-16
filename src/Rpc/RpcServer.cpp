@@ -94,6 +94,7 @@ std::unordered_map<std::string, RpcServer::RpcHandler<RpcServer::HandlerFunction
   // json handlers
   { "/get_info", { jsonMethod<COMMAND_RPC_GET_INFO>(&RpcServer::on_get_info), true } },
   { "/get_height", { jsonMethod<COMMAND_RPC_GET_HEIGHT>(&RpcServer::on_get_height), true } },
+  { "/get_orphan_blocks_count", { jsonMethod<COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT>(&RpcServer::on_get_orphan_blocks_count), true } },
   { "/get_transactions", { jsonMethod<COMMAND_RPC_GET_TRANSACTIONS>(&RpcServer::on_get_transactions), false } },
   { "/send_raw_transaction", { jsonMethod<COMMAND_RPC_SEND_RAW_TX>(&RpcServer::on_send_raw_tx), false } },
   
@@ -147,11 +148,11 @@ bool RpcServer::processJsonRpcRequest(const HttpRequest& request, HttpResponse& 
     jsonResponse.setId(jsonRequest.getId()); // copy id
 
     static std::unordered_map<std::string, RpcServer::RpcHandler<JsonMemberMethod>> jsonRpcHandlers = {
+      { "check_payment", { makeMemberMethod(&RpcServer::on_check_payment), false } },
       { "get_block_count", { makeMemberMethod(&RpcServer::on_get_block_count), true } },
-      { "on_get_block_hash", { makeMemberMethod(&RpcServer::on_get_block_hash), false } },
       { "get_block_template", { makeMemberMethod(&RpcServer::on_get_block_template), false } },
       { "get_currency_id", { makeMemberMethod(&RpcServer::on_get_currency_id), true } },
-      { "submit_block", { makeMemberMethod(&RpcServer::on_submit_block), false } },
+      { "on_get_block_hash", { makeMemberMethod(&RpcServer::on_get_block_hash), false } },
       { "get_last_block_header", { makeMemberMethod(&RpcServer::on_get_last_block_header), false } },
       { "get_block_header_by_hash", { makeMemberMethod(&RpcServer::on_get_block_header_by_hash), false } },
       { "get_block_header_by_height", { makeMemberMethod(&RpcServer::on_get_block_header_by_height), false } },
@@ -159,7 +160,7 @@ bool RpcServer::processJsonRpcRequest(const HttpRequest& request, HttpResponse& 
       { "get_block", { makeMemberMethod(&RpcServer::on_get_block), false } },
       { "get_transaction", { makeMemberMethod(&RpcServer::on_get_transaction), false } },
       { "get_mempool", { makeMemberMethod(&RpcServer::on_get_mempool), false } },
-      { "check_payment", { makeMemberMethod(&RpcServer::on_check_payment), false } },
+      { "submit_block", { makeMemberMethod(&RpcServer::on_submit_block), false } },
     };
 
     auto it = jsonRpcHandlers.find(jsonRequest.getMethod());
@@ -351,7 +352,7 @@ bool RpcServer::on_get_info(const COMMAND_RPC_GET_INFO::request& req, COMMAND_RP
   res.difficulty = m_core.getNextBlockDifficulty();
   res.transaction_count = m_core.get_blockchain_total_transactions() - res.height; //without coinbase
   res.mempool_size = m_core.get_pool_transactions_count();
-  res.alt_blocks_count = m_core.get_alternative_blocks_count();
+  res.orphan_blocks_count = m_core.get_alternative_blocks_count();
   uint64_t total_conn = m_p2p.get_connections_count();
   res.outgoing_connections_count = m_p2p.get_outgoing_connections_count();
   res.incoming_connections_count = total_conn - res.outgoing_connections_count;
@@ -368,6 +369,12 @@ bool RpcServer::on_get_info(const COMMAND_RPC_GET_INFO::request& req, COMMAND_RP
 
 bool RpcServer::on_get_height(const COMMAND_RPC_GET_HEIGHT::request& req, COMMAND_RPC_GET_HEIGHT::response& res) {
   res.height = m_core.get_current_blockchain_height();
+  res.status = CORE_RPC_STATUS_OK;
+  return true;
+}
+
+bool RpcServer::on_get_orphan_blocks_count(const COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT::request& req, COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT::response& res) {
+  res.orphan_blocks_count = m_core.get_alternative_blocks_count();
   res.status = CORE_RPC_STATUS_OK;
   return true;
 }

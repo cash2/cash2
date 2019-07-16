@@ -193,7 +193,7 @@ bool handle_get_daemon_info(po::variables_map& vm) {
       << "difficulty: " << res.difficulty << ENDL
       << "tx_count: " << res.transaction_count << ENDL
       << "tx_pool_size: " << res.mempool_size << ENDL
-      << "alt_blocks_count: " << res.alt_blocks_count << ENDL
+      << "alt_blocks_count: " << res.orphan_blocks_count << ENDL
       << "outgoing_connections_count: " << res.outgoing_connections_count << ENDL
       << "incoming_connections_count: " << res.incoming_connections_count << ENDL
       << "white_peerlist_size: " << res.white_peerlist_size << ENDL

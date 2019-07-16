@@ -261,7 +261,7 @@ struct COMMAND_RPC_GET_INFO {
     uint64_t difficulty;
     uint64_t transaction_count;
     uint64_t mempool_size;
-    uint64_t alt_blocks_count;
+    uint64_t orphan_blocks_count;
     uint64_t outgoing_connections_count;
     uint64_t incoming_connections_count;
     uint64_t white_peerlist_size;
@@ -277,7 +277,7 @@ struct COMMAND_RPC_GET_INFO {
       KV_MEMBER(difficulty)
       KV_MEMBER(transaction_count)
       KV_MEMBER(mempool_size)
-      KV_MEMBER(alt_blocks_count)
+      KV_MEMBER(orphan_blocks_count)
       KV_MEMBER(outgoing_connections_count)
       KV_MEMBER(incoming_connections_count)
       KV_MEMBER(white_peerlist_size)
@@ -286,6 +286,20 @@ struct COMMAND_RPC_GET_INFO {
       KV_MEMBER(circulating_supply)
       KV_MEMBER(min_transaction_fee)
       KV_MEMBER(dust_threshold)
+    }
+  };
+};
+
+struct COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT {
+  typedef EMPTY_STRUCT request;
+
+  struct response {
+    std::string status;
+    uint64_t orphan_blocks_count;
+
+    void serialize(ISerializer &s) {
+      KV_MEMBER(status)
+      KV_MEMBER(orphan_blocks_count)
     }
   };
 };
