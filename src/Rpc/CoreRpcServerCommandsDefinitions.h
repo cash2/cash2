@@ -414,6 +414,21 @@ struct COMMAND_RPC_GET_TOTAL_TRANSACTIONS_COUNT {
   };
 };
 
+struct COMMAND_RPC_GET_WHITE_PEERLIST_SIZE {
+  typedef EMPTY_STRUCT request;
+
+  struct response {
+    std::string status;
+    uint64_t white_peerlist_size;
+
+    void serialize(ISerializer &s) {
+      KV_MEMBER(status)
+      KV_MEMBER(white_peerlist_size)
+    }
+  };
+};
+
+
 //-----------------------------------------------
 struct COMMAND_RPC_STOP_MINING {
   typedef EMPTY_STRUCT request;
