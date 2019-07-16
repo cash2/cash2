@@ -269,7 +269,6 @@ struct COMMAND_RPC_GET_INFO {
     uint32_t last_known_block_index;
     std::string circulating_supply;
     uint64_t min_transaction_fee;
-    uint64_t dust_threshold;
 
     void serialize(ISerializer &s) {
       KV_MEMBER(status)
@@ -285,7 +284,6 @@ struct COMMAND_RPC_GET_INFO {
       KV_MEMBER(last_known_block_index)
       KV_MEMBER(circulating_supply)
       KV_MEMBER(min_transaction_fee)
-      KV_MEMBER(dust_threshold)
     }
   };
 };
