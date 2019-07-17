@@ -116,21 +116,27 @@ bool CryptoNoteProtocolHandler::get_stat_info(core_stat_info& stat_inf) {
 void CryptoNoteProtocolHandler::log_connections() {
   std::stringstream ss;
 
-  ss << std::setw(25) << std::left << "Remote Host"
-    << std::setw(20) << "Peer id"
-    << std::setw(25) << "Recv/Sent (inactive,sec)"
-    << std::setw(25) << "State"
-    << std::setw(20) << "Lifetime(seconds)" << ENDL;
+  ss << ENDL << ENDL << ENDL <<
+    "CONNECTIONS TO PEER NODES" << ENDL << ENDL << ENDL <<
+    std::setw(5) << "IN/OUT" <<
+    std::setw(20) << "Address" <<
+    std::setw(10) << "Port" <<
+    std::setw(20) << "Peer ID" <<
+    std::setw(20) << "State" <<
+    std::setw(20) << "Time (secs)" <<
+    ENDL << ENDL;
 
   m_p2p->for_each_connection([&](const CryptoNoteConnectionContext& cntxt, PeerIdType peer_id) {
-    ss << std::setw(25) << std::left << std::string(cntxt.m_is_income ? "[INC]" : "[OUT]") +
-      Common::ipAddressToString(cntxt.m_remote_ip) + ":" + std::to_string(cntxt.m_remote_port)
-      << std::setw(20) << std::hex << peer_id
-      // << std::setw(25) << std::to_string(cntxt.m_recv_cnt) + "(" + std::to_string(time(NULL) - cntxt.m_last_recv) + ")" + "/" + std::to_string(cntxt.m_send_cnt) + "(" + std::to_string(time(NULL) - cntxt.m_last_send) + ")"
-      << std::setw(25) << get_protocol_state_string(cntxt.m_state)
-      << std::setw(20) << std::to_string(time(NULL) - cntxt.m_started) << ENDL;
+    ss <<
+      std::setw(5) << std::string(cntxt.m_is_income ? "IN " : "OUT ") <<
+      std::setw(20) << Common::ipAddressToString(cntxt.m_remote_ip) <<
+      std::setw(10) << std::to_string(cntxt.m_remote_port) <<
+      std::setw(20) << std::hex << peer_id <<
+      std::setw(20) << get_protocol_state_string(cntxt.m_state) <<
+      std::setw(20) << std::to_string(time(NULL) - cntxt.m_started) <<
+      ENDL;
   });
-  logger(INFO) << "Connections: " << ENDL << ss.str();
+  logger(INFO) << "Connections" << ENDL << ss.str();
 }
 
 void CryptoNoteProtocolHandler::get_all_connections_addresses(std::vector<std::string>& addresses)
