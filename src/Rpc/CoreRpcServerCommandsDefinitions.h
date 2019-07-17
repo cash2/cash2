@@ -257,6 +257,7 @@ struct COMMAND_RPC_GET_INFO {
 
   struct response {
     std::string circulating_supply;
+    uint64_t connections_count;
     uint64_t difficulty;
     uint64_t grey_peerlist_size;
     uint64_t height;
@@ -272,6 +273,7 @@ struct COMMAND_RPC_GET_INFO {
 
     void serialize(ISerializer &s) {
       KV_MEMBER(circulating_supply)
+      KV_MEMBER(connections_count)
       KV_MEMBER(difficulty)
       KV_MEMBER(grey_peerlist_size)
       KV_MEMBER(height)
@@ -428,6 +430,19 @@ struct COMMAND_RPC_GET_WHITE_PEERLIST_SIZE {
   };
 };
 
+struct COMMAND_RPC_GET_CONNECTIONS_COUNT {
+  typedef EMPTY_STRUCT request;
+
+  struct response {
+    uint64_t connections_count;
+    std::string status;
+
+    void serialize(ISerializer &s) {
+      KV_MEMBER(connections_count)
+      KV_MEMBER(status)
+    }
+  };
+};
 
 //-----------------------------------------------
 struct COMMAND_RPC_STOP_MINING {
