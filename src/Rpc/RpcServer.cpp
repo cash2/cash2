@@ -93,6 +93,7 @@ std::unordered_map<std::string, RpcServer::RpcHandler<RpcServer::HandlerFunction
 
   // json handlers
   { "/get_circulating_supply", { jsonMethod<COMMAND_RPC_GET_CIRCULATING_SUPPLY>(&RpcServer::on_get_circulating_supply), true } },
+  { "/get_connections", { jsonMethod<COMMAND_RPC_GET_CONNECTIONS>(&RpcServer::on_get_connections), true } },
   { "/get_connections_count", { jsonMethod<COMMAND_RPC_GET_CONNECTIONS_COUNT>(&RpcServer::on_get_connections_count), true } },
   { "/get_difficulty", { jsonMethod<COMMAND_RPC_GET_DIFFICULTY>(&RpcServer::on_get_difficulty), true } },
   { "/get_grey_peerlist_size", { jsonMethod<COMMAND_RPC_GET_GREY_PEERLIST_SIZE>(&RpcServer::on_get_grey_peerlist_size), true } },
@@ -359,6 +360,12 @@ bool RpcServer::onGetPoolChangesLite(const COMMAND_RPC_GET_POOL_CHANGES_LITE::re
 
 bool RpcServer::on_get_circulating_supply(const COMMAND_RPC_GET_CIRCULATING_SUPPLY::request& req, COMMAND_RPC_GET_CIRCULATING_SUPPLY::response& res) {
   res.circulating_supply = m_core.currency().formatAmount(m_core.getTotalGeneratedAmount());
+  res.status = CORE_RPC_STATUS_OK;
+  return true;
+}
+
+bool RpcServer::on_get_connections(const COMMAND_RPC_GET_CONNECTIONS::request& req, COMMAND_RPC_GET_CONNECTIONS::response& res) {
+  m_p2p.get_payload_object().get_connections_addresses(res.connections);
   res.status = CORE_RPC_STATUS_OK;
   return true;
 }

@@ -430,6 +430,20 @@ struct COMMAND_RPC_GET_WHITE_PEERLIST_SIZE {
   };
 };
 
+struct COMMAND_RPC_GET_CONNECTIONS {
+  typedef EMPTY_STRUCT request;
+
+  struct response {
+    std::string status;
+    std::vector<std::string> connections;
+
+    void serialize(ISerializer &s) {
+      KV_MEMBER(status)
+      KV_MEMBER(connections)
+    }
+  };
+};
+
 struct COMMAND_RPC_GET_CONNECTIONS_COUNT {
   typedef EMPTY_STRUCT request;
 

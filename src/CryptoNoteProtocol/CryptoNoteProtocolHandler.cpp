@@ -133,6 +133,13 @@ void CryptoNoteProtocolHandler::log_connections() {
   logger(INFO) << "Connections: " << ENDL << ss.str();
 }
 
+void CryptoNoteProtocolHandler::get_connections_addresses(std::vector<std::string>& addresses)
+{
+  m_p2p->for_each_connection([&](const CryptoNoteConnectionContext& cntxt, PeerIdType peer_id) {
+    addresses.push_back(Common::ipAddressToString(cntxt.m_remote_ip) + ":" + std::to_string(cntxt.m_remote_port));
+  });
+}
+
 uint32_t CryptoNoteProtocolHandler::get_current_blockchain_height() {
   uint32_t height;
   Crypto::Hash blockId;
