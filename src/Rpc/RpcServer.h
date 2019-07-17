@@ -56,6 +56,7 @@ private:
   bool on_get_connections(const COMMAND_RPC_GET_CONNECTIONS::request& req, COMMAND_RPC_GET_CONNECTIONS::response& res);
   bool on_get_connections_count(const COMMAND_RPC_GET_CONNECTIONS_COUNT::request& req, COMMAND_RPC_GET_CONNECTIONS_COUNT::response& res);
   bool on_get_difficulty(const COMMAND_RPC_GET_DIFFICULTY::request& req, COMMAND_RPC_GET_DIFFICULTY::response& res);
+  bool on_get_grey_peerlist(const COMMAND_RPC_GET_GREY_PEERLIST::request& req, COMMAND_RPC_GET_GREY_PEERLIST::response& res);
   bool on_get_grey_peerlist_size(const COMMAND_RPC_GET_GREY_PEERLIST_SIZE::request& req, COMMAND_RPC_GET_GREY_PEERLIST_SIZE::response& res);
   bool on_get_height(const COMMAND_RPC_GET_HEIGHT::request& req, COMMAND_RPC_GET_HEIGHT::response& res);
   bool on_get_incoming_connections(const COMMAND_RPC_GET_INCOMING_CONNECTIONS::request& req, COMMAND_RPC_GET_INCOMING_CONNECTIONS::response& res);

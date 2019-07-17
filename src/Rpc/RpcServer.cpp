@@ -96,6 +96,7 @@ std::unordered_map<std::string, RpcServer::RpcHandler<RpcServer::HandlerFunction
   { "/get_connections", { jsonMethod<COMMAND_RPC_GET_CONNECTIONS>(&RpcServer::on_get_connections), true } },
   { "/get_connections_count", { jsonMethod<COMMAND_RPC_GET_CONNECTIONS_COUNT>(&RpcServer::on_get_connections_count), true } },
   { "/get_difficulty", { jsonMethod<COMMAND_RPC_GET_DIFFICULTY>(&RpcServer::on_get_difficulty), true } },
+  { "/get_grey_peerlist", { jsonMethod<COMMAND_RPC_GET_GREY_PEERLIST>(&RpcServer::on_get_grey_peerlist), true } },
   { "/get_grey_peerlist_size", { jsonMethod<COMMAND_RPC_GET_GREY_PEERLIST_SIZE>(&RpcServer::on_get_grey_peerlist_size), true } },
   { "/get_height", { jsonMethod<COMMAND_RPC_GET_HEIGHT>(&RpcServer::on_get_height), true } },
   { "/get_incoming_connections", { jsonMethod<COMMAND_RPC_GET_INCOMING_CONNECTIONS>(&RpcServer::on_get_incoming_connections), true } },
@@ -381,6 +382,21 @@ bool RpcServer::on_get_connections_count(const COMMAND_RPC_GET_CONNECTIONS_COUNT
 
 bool RpcServer::on_get_difficulty(const COMMAND_RPC_GET_DIFFICULTY::request& req, COMMAND_RPC_GET_DIFFICULTY::response& res) {
   res.difficulty = m_core.getNextBlockDifficulty();
+  res.status = CORE_RPC_STATUS_OK;
+  return true;
+}
+
+bool RpcServer::on_get_grey_peerlist(const COMMAND_RPC_GET_GREY_PEERLIST::request& req, COMMAND_RPC_GET_GREY_PEERLIST::response& res) {
+  std::list<PeerlistEntry> greyPeerlist;
+  std::list<PeerlistEntry> whitePeerlistIgnore;
+
+  m_p2p.getPeerlistManager().get_peerlist_full(greyPeerlist, whitePeerlistIgnore);
+
+  for (PeerlistEntry const& peer : greyPeerlist)
+  {
+    res.grey_peerlist.push_back(Common::ipAddressToString(peer.adr.ip));
+  }
+
   res.status = CORE_RPC_STATUS_OK;
   return true;
 }
