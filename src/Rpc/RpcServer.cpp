@@ -98,6 +98,7 @@ std::unordered_map<std::string, RpcServer::RpcHandler<RpcServer::HandlerFunction
   { "/get_difficulty", { jsonMethod<COMMAND_RPC_GET_DIFFICULTY>(&RpcServer::on_get_difficulty), true } },
   { "/get_grey_peerlist_size", { jsonMethod<COMMAND_RPC_GET_GREY_PEERLIST_SIZE>(&RpcServer::on_get_grey_peerlist_size), true } },
   { "/get_height", { jsonMethod<COMMAND_RPC_GET_HEIGHT>(&RpcServer::on_get_height), true } },
+  { "/get_incoming_connections", { jsonMethod<COMMAND_RPC_GET_INCOMING_CONNECTIONS>(&RpcServer::on_get_incoming_connections), true } },
   { "/get_incoming_connections_count", { jsonMethod<COMMAND_RPC_GET_INCOMING_CONNECTIONS_COUNT>(&RpcServer::on_get_incoming_connections_count), true } },
   { "/get_info", { jsonMethod<COMMAND_RPC_GET_INFO>(&RpcServer::on_get_info), true } },
   { "/get_mempool_transactions_count", { jsonMethod<COMMAND_RPC_GET_MEMPOOL_TRANSACTIONS_COUNT>(&RpcServer::on_get_mempool_transactions_count), true } },
@@ -365,7 +366,7 @@ bool RpcServer::on_get_circulating_supply(const COMMAND_RPC_GET_CIRCULATING_SUPP
 }
 
 bool RpcServer::on_get_connections(const COMMAND_RPC_GET_CONNECTIONS::request& req, COMMAND_RPC_GET_CONNECTIONS::response& res) {
-  m_p2p.get_payload_object().get_connections_addresses(res.connections);
+  m_p2p.get_payload_object().get_all_connections_addresses(res.connections);
   res.status = CORE_RPC_STATUS_OK;
   return true;
 }
@@ -390,6 +391,12 @@ bool RpcServer::on_get_grey_peerlist_size(const COMMAND_RPC_GET_GREY_PEERLIST_SI
 
 bool RpcServer::on_get_height(const COMMAND_RPC_GET_HEIGHT::request& req, COMMAND_RPC_GET_HEIGHT::response& res) {
   res.height = m_core.get_current_blockchain_height();
+  res.status = CORE_RPC_STATUS_OK;
+  return true;
+}
+
+bool RpcServer::on_get_incoming_connections(const COMMAND_RPC_GET_INCOMING_CONNECTIONS::request& req, COMMAND_RPC_GET_INCOMING_CONNECTIONS::response& res) {
+  m_p2p.get_payload_object().get_incoming_connections_addresses(res.incoming_connections);
   res.status = CORE_RPC_STATUS_OK;
   return true;
 }

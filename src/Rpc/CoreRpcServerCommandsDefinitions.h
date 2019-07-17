@@ -444,6 +444,20 @@ struct COMMAND_RPC_GET_CONNECTIONS {
   };
 };
 
+struct COMMAND_RPC_GET_INCOMING_CONNECTIONS {
+  typedef EMPTY_STRUCT request;
+
+  struct response {
+    std::string status;
+    std::vector<std::string> incoming_connections;
+
+    void serialize(ISerializer &s) {
+      KV_MEMBER(status)
+      KV_MEMBER(incoming_connections)
+    }
+  };
+};
+
 struct COMMAND_RPC_GET_CONNECTIONS_COUNT {
   typedef EMPTY_STRUCT request;
 
