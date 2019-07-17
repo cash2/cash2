@@ -486,6 +486,20 @@ struct COMMAND_RPC_GET_CONNECTIONS_COUNT {
   };
 };
 
+struct COMMAND_RPC_GET_WHITE_PEERLIST {
+  typedef EMPTY_STRUCT request;
+
+  struct response {
+    std::string status;
+    std::vector<std::string> white_peerlist;
+
+    void serialize(ISerializer &s) {
+      KV_MEMBER(status)
+      KV_MEMBER(white_peerlist)
+    }
+  };
+};
+
 //-----------------------------------------------
 struct COMMAND_RPC_STOP_MINING {
   typedef EMPTY_STRUCT request;

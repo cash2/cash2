@@ -68,6 +68,7 @@ private:
   bool on_get_total_transactions_count(const COMMAND_RPC_GET_TOTAL_TRANSACTIONS_COUNT::request& req, COMMAND_RPC_GET_TOTAL_TRANSACTIONS_COUNT::response& res);
   bool on_get_transaction_fee(const COMMAND_RPC_GET_TRANSACTION_FEE::request& req, COMMAND_RPC_GET_TRANSACTION_FEE::response& res);
   bool on_get_transactions(const COMMAND_RPC_GET_TRANSACTIONS::request& req, COMMAND_RPC_GET_TRANSACTIONS::response& res);
+  bool on_get_white_peerlist(const COMMAND_RPC_GET_WHITE_PEERLIST::request& req, COMMAND_RPC_GET_WHITE_PEERLIST::response& res);
   bool on_get_white_peerlist_size(const COMMAND_RPC_GET_WHITE_PEERLIST_SIZE::request& req, COMMAND_RPC_GET_WHITE_PEERLIST_SIZE::response& res);
   bool on_send_raw_tx(const COMMAND_RPC_SEND_RAW_TX::request& req, COMMAND_RPC_SEND_RAW_TX::response& res);
   bool on_start_mining(const COMMAND_RPC_START_MINING::request& req, COMMAND_RPC_START_MINING::response& res);
