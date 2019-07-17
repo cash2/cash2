@@ -103,6 +103,7 @@ std::unordered_map<std::string, RpcServer::RpcHandler<RpcServer::HandlerFunction
   { "/get_info", { jsonMethod<COMMAND_RPC_GET_INFO>(&RpcServer::on_get_info), true } },
   { "/get_mempool_transactions_count", { jsonMethod<COMMAND_RPC_GET_MEMPOOL_TRANSACTIONS_COUNT>(&RpcServer::on_get_mempool_transactions_count), true } },
   { "/get_orphan_blocks_count", { jsonMethod<COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT>(&RpcServer::on_get_orphan_blocks_count), true } },
+  { "/get_outgoing_connections", { jsonMethod<COMMAND_RPC_GET_OUTGOING_CONNECTIONS>(&RpcServer::on_get_outgoing_connections), true } },
   { "/get_outgoing_connections_count", { jsonMethod<COMMAND_RPC_GET_OUTGOING_CONNECTIONS_COUNT>(&RpcServer::on_get_outgoing_connections_count), true } },
   { "/get_total_transactions_count", { jsonMethod<COMMAND_RPC_GET_TOTAL_TRANSACTIONS_COUNT>(&RpcServer::on_get_total_transactions_count), false } },
   { "/get_transactions", { jsonMethod<COMMAND_RPC_GET_TRANSACTIONS>(&RpcServer::on_get_transactions), false } },
@@ -438,6 +439,12 @@ bool RpcServer::on_get_mempool_transactions_count(const COMMAND_RPC_GET_MEMPOOL_
 
 bool RpcServer::on_get_orphan_blocks_count(const COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT::request& req, COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT::response& res) {
   res.orphan_blocks_count = m_core.get_alternative_blocks_count();
+  res.status = CORE_RPC_STATUS_OK;
+  return true;
+}
+
+bool RpcServer::on_get_outgoing_connections(const COMMAND_RPC_GET_OUTGOING_CONNECTIONS::request& req, COMMAND_RPC_GET_OUTGOING_CONNECTIONS::response& res) {
+  m_p2p.get_payload_object().get_outgoing_connections_addresses(res.outgoing_connections);
   res.status = CORE_RPC_STATUS_OK;
   return true;
 }

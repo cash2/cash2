@@ -49,6 +49,7 @@ namespace CryptoNote
     void log_connections();
     void get_all_connections_addresses(std::vector<std::string>& addresses);
     void get_incoming_connections_addresses(std::vector<std::string>& addresses);
+    void get_outgoing_connections_addresses(std::vector<std::string>& addresses);
 
     // Interface t_payload_net_handler, where t_payload_net_handler is template argument of nodetool::node_server
     void stop();
