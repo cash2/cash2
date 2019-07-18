@@ -117,23 +117,22 @@ void CryptoNoteProtocolHandler::log_connections() {
   std::stringstream ss;
 
   ss << ENDL << ENDL << ENDL <<
-    "CONNECTIONS TO PEER NODES" << ENDL << ENDL << ENDL <<
-    std::setw(5) << "IN/OUT" <<
-    std::setw(20) << "Address" <<
-    std::setw(10) << "Port" <<
-    std::setw(20) << "Peer ID" <<
-    std::setw(20) << "State" <<
-    std::setw(20) << "Time (secs)" <<
-    ENDL << ENDL;
+    std::setw(12) << std::left << "In/Out" <<
+    std::setw(20) << std::left << "IP Address" <<
+    std::setw(10) << std::left << "Port" <<
+    std::setw(20) << std::left << "Peer ID" <<
+    std::setw(25) << std::left << "State" <<
+    std::setw(20) << std::left << "Time (secs)" <<
+    ENDL;
 
   m_p2p->for_each_connection([&](const CryptoNoteConnectionContext& cntxt, PeerIdType peer_id) {
     ss <<
-      std::setw(5) << std::string(cntxt.m_is_income ? "IN " : "OUT ") <<
-      std::setw(20) << Common::ipAddressToString(cntxt.m_remote_ip) <<
-      std::setw(10) << std::to_string(cntxt.m_remote_port) <<
-      std::setw(20) << std::hex << peer_id <<
-      std::setw(20) << get_protocol_state_string(cntxt.m_state) <<
-      std::setw(20) << std::to_string(time(NULL) - cntxt.m_started) <<
+      std::setw(12) << std::left << std::string(cntxt.m_is_income ? "In" : "Out") <<
+      std::setw(20) << std::left << Common::ipAddressToString(cntxt.m_remote_ip) <<
+      std::setw(10) << std::left << std::to_string(cntxt.m_remote_port) <<
+      std::setw(20) << std::left << std::hex << peer_id <<
+      std::setw(25) << std::left << get_protocol_state_string(cntxt.m_state) <<
+      std::setw(20) << std::left << std::to_string(time(NULL) - cntxt.m_started) <<
       ENDL;
   });
   logger(INFO) << "Connections" << ENDL << ss.str();
