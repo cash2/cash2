@@ -28,8 +28,7 @@ DaemonCommandsHandler::DaemonCommandsHandler(CryptoNote::core& core, CryptoNote:
   m_consoleHandler.setHandler("print_pl", boost::bind(&DaemonCommandsHandler::print_pl, this, _1), "Print peer list");
   m_consoleHandler.setHandler("print_cn", boost::bind(&DaemonCommandsHandler::print_cn, this, _1), "Print connections");
   m_consoleHandler.setHandler("print_bc", boost::bind(&DaemonCommandsHandler::print_bc, this, _1), "Print blockchain info in a given blocks range, print_bc <begin_height> [<end_height>]");
-  //m_consoleHandler.setHandler("print_bci", boost::bind(&DaemonCommandsHandler::print_bci, this, _1));
-  //m_consoleHandler.setHandler("print_bc_outs", boost::bind(&DaemonCommandsHandler::print_bc_outs, this, _1));
+  m_consoleHandler.setHandler("print_height", boost::bind(&DaemonCommandsHandler::print_blockchain_height, this, _1), "Print height of local blockchain");
   m_consoleHandler.setHandler("print_block", boost::bind(&DaemonCommandsHandler::print_block, this, _1), "Print block, print_block <block_hash> | <block_height>");
   m_consoleHandler.setHandler("print_tx", boost::bind(&DaemonCommandsHandler::print_tx, this, _1), "Print transaction, print_tx <transaction_hash>");
   m_consoleHandler.setHandler("start_mining", boost::bind(&DaemonCommandsHandler::start_mining, this, _1), "Start mining for specified address, start_mining <addr> [threads=1]");
@@ -193,6 +192,16 @@ bool DaemonCommandsHandler::print_block_by_height(uint32_t height)
 
   return true;
 }
+
+bool DaemonCommandsHandler::print_blockchain_height(const std::vector<std::string>& args)
+{
+  uint32_t height;
+  Crypto::Hash blockHashIgnore;
+  m_core.get_blockchain_top(height, blockHashIgnore);
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Blockchain height : " << height << std::endl;
+  return true;
+}
+
 //--------------------------------------------------------------------------------
 bool DaemonCommandsHandler::print_block_by_hash(const std::string& arg)
 {
