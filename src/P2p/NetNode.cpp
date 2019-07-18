@@ -111,13 +111,17 @@ namespace CryptoNote
     const command_line::arg_descriptor<std::vector<std::string> > arg_p2p_seed_node   = {"seed-node", "Connect to a node to retrieve peer addresses, and disconnect"};
     const command_line::arg_descriptor<bool> arg_p2p_hide_my_port   =    {"hide-my-port", "Do not announce yourself as peerlist candidate", false, true};
 
-    std::string print_peerlist_to_string(const std::list<PeerlistEntry>& pl) {
+    std::string print_peerlist_to_string(const std::list<PeerlistEntry>& peerList) {
       time_t now_time = 0;
       time(&now_time);
       std::stringstream ss;
-      ss << std::setfill('0') << std::setw(8) << std::hex << std::noshowbase;
-      for (const auto& pe : pl) {
-        ss << pe.id << "\t" << pe.adr << " \tlast_seen: " << Common::timeIntervalToString(now_time - pe.last_seen) << std::endl;
+      // ss << std::endl << std::setfill('0') << std::setw(8) << std::hex << std::noshowbase;
+      for (const PeerlistEntry& peerListEntry : peerList) {
+        ss << 
+        std::setw(20) << std::left << Common::ipAddressToString(peerListEntry.adr.ip) <<
+        std::setw(10) << std::left << std::to_string(peerListEntry.adr.port) <<
+        std::setw(20) << std::left << std::hex << peerListEntry.id <<
+        std::setw(20) << std::left << Common::timeIntervalToString(now_time - peerListEntry.last_seen) << std::endl;
       }
       return ss.str();
     }
@@ -1196,7 +1200,23 @@ namespace CryptoNote
     std::list<PeerlistEntry> pl_wite;
     std::list<PeerlistEntry> pl_gray;
     m_peerlist.get_peerlist_full(pl_gray, pl_wite);
-    logger(INFO) << ENDL << "Peerlist white:" << ENDL << print_peerlist_to_string(pl_wite) << ENDL << "Peerlist gray:" << ENDL << print_peerlist_to_string(pl_gray) ;
+    std::stringstream ss;
+    ss << 
+      ENDL << ENDL << "Peerlist white:" << ENDL << ENDL <<
+      std::setw(20) << std::left << "IP Address" <<
+      std::setw(10) << std::left << "Port" <<
+      std::setw(20) << std::left << "Peer ID" <<
+      std::setw(20) << std::left << "Last Seen" << ENDL <<
+      print_peerlist_to_string(pl_wite);
+
+    ss <<
+      ENDL << ENDL << "Peerlist gray:" << ENDL << ENDL <<
+      std::setw(20) << std::left << "IP Address" <<
+      std::setw(10) << std::left << "Port" <<
+      std::setw(20) << std::left << "Peer ID" <<
+      std::setw(20) << std::left << "Last Seen" << ENDL <<
+      print_peerlist_to_string(pl_gray) ;
+    logger(INFO) << "Print Peerlist" << ENDL << ss.str();
     return true;
   }
   //-----------------------------------------------------------------------------------
