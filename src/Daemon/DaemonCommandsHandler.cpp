@@ -31,6 +31,7 @@ DaemonCommandsHandler::DaemonCommandsHandler(CryptoNote::core& core, CryptoNote:
   m_consoleHandler.setHandler("print_block", boost::bind(&DaemonCommandsHandler::print_block, this, _1), "Print block, print_block <block_hash> | <block_height>");
   m_consoleHandler.setHandler("print_circulating_supply", boost::bind(&DaemonCommandsHandler::print_circulating_supply, this, _1), "Print the number of coins mined so far");
   m_consoleHandler.setHandler("print_cn", boost::bind(&DaemonCommandsHandler::print_cn, this, _1), "Print connections");
+  m_consoleHandler.setHandler("print_cn_count", boost::bind(&DaemonCommandsHandler::print_cn_count, this, _1), "Print the number of nodes we are connected to");
   m_consoleHandler.setHandler("print_height", boost::bind(&DaemonCommandsHandler::print_blockchain_height, this, _1), "Print height of local blockchain");
   m_consoleHandler.setHandler("print_pl", boost::bind(&DaemonCommandsHandler::print_pl, this, _1), "Print peer list");
   m_consoleHandler.setHandler("print_pool", boost::bind(&DaemonCommandsHandler::print_pool, this, _1), "Print transaction pool (long format)");
@@ -210,6 +211,12 @@ bool DaemonCommandsHandler::print_circulating_supply(const std::vector<std::stri
 bool DaemonCommandsHandler::print_cn(const std::vector<std::string>& args)
 {
   m_srv.get_payload_object().log_connections();
+  return true;
+}
+
+bool DaemonCommandsHandler::print_cn_count(const std::vector<std::string>& args)
+{
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Number of connections : " << m_srv.get_connections_count() << std::endl;
   return true;
 }
 
