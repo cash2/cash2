@@ -38,24 +38,24 @@ private:
   Logging::LoggerManager& m_logManager;
 
   std::string get_commands_str();
-  bool print_block_by_height(uint32_t height);
   bool print_block_by_hash(const std::string& arg);
+  bool print_block_by_height(uint32_t height);
 
   bool exit(const std::vector<std::string>& args);
   bool help(const std::vector<std::string>& args);
-  bool print_pl(const std::vector<std::string>& args);
-  bool show_hr(const std::vector<std::string>& args);
   bool hide_hr(const std::vector<std::string>& args);
-  bool print_bc_outs(const std::vector<std::string>& args);
-  bool print_cn(const std::vector<std::string>& args);
   bool print_bc(const std::vector<std::string>& args);
+  bool print_bc_outs(const std::vector<std::string>& args);
   bool print_bci(const std::vector<std::string>& args);
-  bool print_blockchain_height(const std::vector<std::string>& args);
-  bool set_log(const std::vector<std::string>& args);
   bool print_block(const std::vector<std::string>& args);
-  bool print_tx(const std::vector<std::string>& args);
+  bool print_blockchain_height(const std::vector<std::string>& args);
+  bool print_cn(const std::vector<std::string>& args);
+  bool print_pl(const std::vector<std::string>& args);
   bool print_pool(const std::vector<std::string>& args);
   bool print_pool_sh(const std::vector<std::string>& args);
+  bool print_tx(const std::vector<std::string>& args);
+  bool set_log(const std::vector<std::string>& args);
+  bool show_hr(const std::vector<std::string>& args);
   bool start_mining(const std::vector<std::string>& args);
   bool stop_mining(const std::vector<std::string>& args);
 };
