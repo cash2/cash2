@@ -49,6 +49,7 @@ private:
   bool print_bci(const std::vector<std::string>& args);
   bool print_block(const std::vector<std::string>& args);
   bool print_blockchain_height(const std::vector<std::string>& args);
+  bool print_circulating_supply(const std::vector<std::string>& args);
   bool print_cn(const std::vector<std::string>& args);
   bool print_pl(const std::vector<std::string>& args);
   bool print_pool(const std::vector<std::string>& args);

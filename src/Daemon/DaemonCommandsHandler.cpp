@@ -29,6 +29,7 @@ DaemonCommandsHandler::DaemonCommandsHandler(CryptoNote::core& core, CryptoNote:
   m_consoleHandler.setHandler("hide_hr", boost::bind(&DaemonCommandsHandler::hide_hr, this, _1), "Stop showing hash rate");
   m_consoleHandler.setHandler("print_bc", boost::bind(&DaemonCommandsHandler::print_bc, this, _1), "Print blockchain info in a given blocks range, print_bc <begin_height> [<end_height>]");
   m_consoleHandler.setHandler("print_block", boost::bind(&DaemonCommandsHandler::print_block, this, _1), "Print block, print_block <block_hash> | <block_height>");
+  m_consoleHandler.setHandler("print_circulating_supply", boost::bind(&DaemonCommandsHandler::print_circulating_supply, this, _1), "Print the number of coins mined so far");
   m_consoleHandler.setHandler("print_cn", boost::bind(&DaemonCommandsHandler::print_cn, this, _1), "Print connections");
   m_consoleHandler.setHandler("print_height", boost::bind(&DaemonCommandsHandler::print_blockchain_height, this, _1), "Print height of local blockchain");
   m_consoleHandler.setHandler("print_pl", boost::bind(&DaemonCommandsHandler::print_pl, this, _1), "Print peer list");
@@ -196,6 +197,13 @@ bool DaemonCommandsHandler::print_blockchain_height(const std::vector<std::strin
   Crypto::Hash blockHashIgnore;
   m_core.get_blockchain_top(height, blockHashIgnore);
   logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Blockchain height : " << height << std::endl;
+  return true;
+}
+
+bool DaemonCommandsHandler::print_circulating_supply(const std::vector<std::string>& args)
+{
+  std::string circulatingSupply = m_core.currency().formatAmount(m_core.getTotalGeneratedAmount());
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Circulating supply : " << circulatingSupply << std::endl;
   return true;
 }
 
