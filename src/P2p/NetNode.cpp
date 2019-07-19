@@ -1216,26 +1216,26 @@ namespace CryptoNote
 
   bool NodeServer::log_peerlist()
   {
-    std::list<PeerlistEntry> pl_wite;
-    std::list<PeerlistEntry> pl_gray;
-    m_peerlist.get_peerlist_full(pl_gray, pl_wite);
+    std::list<PeerlistEntry> whitePeerlist;
+    std::list<PeerlistEntry> greyPeerlist;
+    m_peerlist.get_peerlist_full(greyPeerlist, whitePeerlist);
     std::stringstream ss;
     ss << 
-      ENDL << ENDL << "Peerlist white:" << ENDL << ENDL <<
+      '\n' << '\n' << "White Peerlist" << '\n' << '\n' <<
       std::setw(20) << std::left << "IP Address" <<
       std::setw(10) << std::left << "Port" <<
       std::setw(20) << std::left << "Peer ID" <<
-      std::setw(20) << std::left << "Last Seen" << ENDL <<
-      print_peerlist_to_string(pl_wite);
+      std::setw(20) << std::left << "Last Seen" << '\n' <<
+      print_peerlist_to_string(whitePeerlist);
 
     ss <<
-      ENDL << ENDL << "Peerlist gray:" << ENDL << ENDL <<
+      '\n' << "Grey Peerlist" << '\n' << '\n' <<
       std::setw(20) << std::left << "IP Address" <<
       std::setw(10) << std::left << "Port" <<
       std::setw(20) << std::left << "Peer ID" <<
-      std::setw(20) << std::left << "Last Seen" << ENDL <<
-      print_peerlist_to_string(pl_gray) ;
-    logger(INFO) << "Print Peerlist" << ENDL << ss.str();
+      std::setw(20) << std::left << "Last Seen" << '\n' <<
+      print_peerlist_to_string(greyPeerlist) ;
+    logger(INFO, BRIGHT_CYAN) << ss.str();
     return true;
   }
   //-----------------------------------------------------------------------------------
