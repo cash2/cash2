@@ -36,6 +36,7 @@ DaemonCommandsHandler::DaemonCommandsHandler(CryptoNote::core& core, CryptoNote:
   m_consoleHandler.setHandler("print_grey_pl", boost::bind(&DaemonCommandsHandler::print_grey_pl, this, _1), "Print the IP addresses of known but not currently active peers");
   m_consoleHandler.setHandler("print_grey_pl_count", boost::bind(&DaemonCommandsHandler::print_grey_pl_count, this, _1), "Print the number of known but not currently active peers");
   m_consoleHandler.setHandler("print_height", boost::bind(&DaemonCommandsHandler::print_blockchain_height, this, _1), "Print height of local blockchain");
+  m_consoleHandler.setHandler("print_incoming_cn", boost::bind(&DaemonCommandsHandler::print_incoming_cn, this, _1), "Print the IP address and ports of the peers connected to you and pulling information from your node");
   m_consoleHandler.setHandler("print_pl", boost::bind(&DaemonCommandsHandler::print_pl, this, _1), "Print peer list");
   m_consoleHandler.setHandler("print_pool", boost::bind(&DaemonCommandsHandler::print_pool, this, _1), "Print transaction pool (long format)");
   m_consoleHandler.setHandler("print_pool_sh", boost::bind(&DaemonCommandsHandler::print_pool_sh, this, _1), "Print transaction pool (short format)");
@@ -241,6 +242,12 @@ bool DaemonCommandsHandler::print_grey_pl_count(const std::vector<std::string>& 
 {
   uint64_t greyPeerlistCount = m_srv.getPeerlistManager().get_gray_peers_count();
   logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Grey Peerlist Count : " << greyPeerlistCount << std::endl;
+  return true;
+}
+
+bool DaemonCommandsHandler::print_incoming_cn(const std::vector<std::string>& args)
+{
+  m_srv.get_payload_object().log_incoming_connections();
   return true;
 }
 

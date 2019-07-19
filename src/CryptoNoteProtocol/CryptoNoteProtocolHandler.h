@@ -47,6 +47,7 @@ namespace CryptoNote
     // ICore& get_core() { return m_core; }
     virtual bool isSynchronized() const override { return m_synchronized; }
     void log_connections();
+    void log_incoming_connections();
     void get_all_connections_addresses(std::vector<std::string>& addresses);
     void get_incoming_connections_addresses(std::vector<std::string>& addresses);
     void get_outgoing_connections_addresses(std::vector<std::string>& addresses);
