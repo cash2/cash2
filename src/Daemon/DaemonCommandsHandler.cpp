@@ -39,6 +39,7 @@ DaemonCommandsHandler::DaemonCommandsHandler(CryptoNote::core& core, CryptoNote:
   m_consoleHandler.setHandler("print_incoming_cn", boost::bind(&DaemonCommandsHandler::print_incoming_cn, this, _1), "Print the IP address and ports of the peers connected to you and pulling information from your node");
   m_consoleHandler.setHandler("print_incoming_cn_count", boost::bind(&DaemonCommandsHandler::print_incoming_cn_count, this, _1), "Print the number of the peers connected to you and pulling information from your node");
   m_consoleHandler.setHandler("print_outgoing_cn", boost::bind(&DaemonCommandsHandler::print_outgoing_cn, this, _1), "Print the IP addresses and ports of the peers you are connected to and that you are pulling information from");
+  m_consoleHandler.setHandler("print_outgoing_cn_count", boost::bind(&DaemonCommandsHandler::print_outgoing_cn_count, this, _1), "Print the number of the peers you are connected to and that you are pulling information from");
   m_consoleHandler.setHandler("print_pl", boost::bind(&DaemonCommandsHandler::print_pl, this, _1), "Print peer list");
   m_consoleHandler.setHandler("print_pool", boost::bind(&DaemonCommandsHandler::print_pool, this, _1), "Print transaction pool (long format)");
   m_consoleHandler.setHandler("print_pool_sh", boost::bind(&DaemonCommandsHandler::print_pool_sh, this, _1), "Print transaction pool (short format)");
@@ -266,6 +267,14 @@ bool DaemonCommandsHandler::print_incoming_cn_count(const std::vector<std::strin
 bool DaemonCommandsHandler::print_outgoing_cn(const std::vector<std::string>& args)
 {
   m_srv.get_payload_object().log_outgoing_connections();
+  return true;
+}
+
+bool DaemonCommandsHandler::print_outgoing_cn_count(const std::vector<std::string>& args)
+{
+  size_t outgoingConnectionsCount = m_srv.get_outgoing_connections_count();
+
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Outgoing connections count : " << outgoingConnectionsCount << std::endl;
   return true;
 }
 
