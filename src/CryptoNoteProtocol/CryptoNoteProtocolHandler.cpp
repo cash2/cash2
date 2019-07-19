@@ -155,7 +155,6 @@ void CryptoNoteProtocolHandler::log_incoming_connections() {
     if (cntxt.m_is_income)
     {
       ss <<
-        std::setw(12) << std::left << std::string(cntxt.m_is_income ? "In" : "Out") <<
         std::setw(20) << std::left << Common::ipAddressToString(cntxt.m_remote_ip) <<
         std::setw(10) << std::left << std::to_string(cntxt.m_remote_port) <<
         std::setw(20) << std::left << std::hex << peer_id <<
