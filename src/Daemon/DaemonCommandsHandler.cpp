@@ -34,6 +34,7 @@ DaemonCommandsHandler::DaemonCommandsHandler(CryptoNote::core& core, CryptoNote:
   m_consoleHandler.setHandler("print_cn_count", boost::bind(&DaemonCommandsHandler::print_cn_count, this, _1), "Print the number of nodes we are connected to");
   m_consoleHandler.setHandler("print_difficulty", boost::bind(&DaemonCommandsHandler::print_difficulty, this, _1), "Print the difficulty of the next block to be added to the blockchain");
   m_consoleHandler.setHandler("print_grey_pl", boost::bind(&DaemonCommandsHandler::print_grey_pl, this, _1), "Print the IP addresses of known but not currently active peers");
+  m_consoleHandler.setHandler("print_grey_pl_count", boost::bind(&DaemonCommandsHandler::print_grey_pl_count, this, _1), "Print the number of known but not currently active peers");
   m_consoleHandler.setHandler("print_height", boost::bind(&DaemonCommandsHandler::print_blockchain_height, this, _1), "Print height of local blockchain");
   m_consoleHandler.setHandler("print_pl", boost::bind(&DaemonCommandsHandler::print_pl, this, _1), "Print peer list");
   m_consoleHandler.setHandler("print_pool", boost::bind(&DaemonCommandsHandler::print_pool, this, _1), "Print transaction pool (long format)");
@@ -232,6 +233,13 @@ bool DaemonCommandsHandler::print_difficulty(const std::vector<std::string>& arg
 bool DaemonCommandsHandler::print_grey_pl(const std::vector<std::string>& args)
 {
   m_srv.log_grey_peerlist();
+  return true;
+}
+
+bool DaemonCommandsHandler::print_grey_pl_count(const std::vector<std::string>& args)
+{
+  uint64_t greyPeerlistCount = m_srv.getPeerlistManager().get_gray_peers_count();
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Grey Peerlist Count : " << greyPeerlistCount << std::endl;
   return true;
 }
 
