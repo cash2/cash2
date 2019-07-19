@@ -60,6 +60,7 @@ private:
   bool print_pool_sh(const std::vector<std::string>& args);
   bool print_tx(const std::vector<std::string>& args);
   bool print_white_pl(const std::vector<std::string>& args);
+  bool print_white_pl_count(const std::vector<std::string>& args);
   bool set_log(const std::vector<std::string>& args);
   bool show_hr(const std::vector<std::string>& args);
   bool start_mining(const std::vector<std::string>& args);
