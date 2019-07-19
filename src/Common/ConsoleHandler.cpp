@@ -158,12 +158,10 @@ std::string ConsoleHandler::getUsage() const {
   
   std::stringstream ss;
 
-  size_t maxlen = std::max_element(m_handlers.begin(), m_handlers.end(), [](
-    CommandHandlersMap::const_reference& a, CommandHandlersMap::const_reference& b) { 
-      return a.first.size() < b.first.size(); })->first.size();
-
   for (auto& x : m_handlers) {
-    ss << std::left << std::setw(maxlen + 3) << x.first << x.second.second << std::endl;
+    std::string commandName = x.first;
+    std::string commandDescription = x.second.second;
+    ss << std::left << commandName << std::endl << " * " << commandDescription << std::endl << std::endl;
   }
 
   return ss.str();

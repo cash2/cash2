@@ -27,8 +27,8 @@ DaemonCommandsHandler::DaemonCommandsHandler(CryptoNote::core& core, CryptoNote:
   m_consoleHandler.setHandler("exit", boost::bind(&DaemonCommandsHandler::exit, this, _1), "Shutdown the daemon");
   m_consoleHandler.setHandler("help", boost::bind(&DaemonCommandsHandler::help, this, _1), "Show this help");
   m_consoleHandler.setHandler("hide_hr", boost::bind(&DaemonCommandsHandler::hide_hr, this, _1), "Stop showing hash rate");
-  m_consoleHandler.setHandler("print_bc", boost::bind(&DaemonCommandsHandler::print_bc, this, _1), "Print blockchain info in a given blocks range, print_bc <begin_height> [<end_height>]");
-  m_consoleHandler.setHandler("print_block", boost::bind(&DaemonCommandsHandler::print_block, this, _1), "Print block, print_block <block_hash> | <block_height>");
+  m_consoleHandler.setHandler("print_bc", boost::bind(&DaemonCommandsHandler::print_bc, this, _1), "Print blockchain info in a given blocks range\n * print_bc <begin_height> [<end_height>]");
+  m_consoleHandler.setHandler("print_block", boost::bind(&DaemonCommandsHandler::print_block, this, _1), "Print block\n * print_block <block_hash> | <block_height>");
   m_consoleHandler.setHandler("print_circulating_supply", boost::bind(&DaemonCommandsHandler::print_circulating_supply, this, _1), "Print the number of coins mined so far");
   m_consoleHandler.setHandler("print_cn", boost::bind(&DaemonCommandsHandler::print_cn, this, _1), "Print connections");
   m_consoleHandler.setHandler("print_cn_count", boost::bind(&DaemonCommandsHandler::print_cn_count, this, _1), "Print the number of nodes we are connected to");
@@ -45,12 +45,12 @@ DaemonCommandsHandler::DaemonCommandsHandler(CryptoNote::core& core, CryptoNote:
   m_consoleHandler.setHandler("print_pool_sh", boost::bind(&DaemonCommandsHandler::print_pool_sh, this, _1), "Print transaction pool (short format)");
   m_consoleHandler.setHandler("print_total_transactions_count", boost::bind(&DaemonCommandsHandler::print_total_transactions_count, this, _1), "Print the total number of transactions ever created and sent on the network");
   m_consoleHandler.setHandler("print_transaction_fee", boost::bind(&DaemonCommandsHandler::print_transaction_fee, this, _1), "Print the minimum fee needed to send a transaction");
-  m_consoleHandler.setHandler("print_tx", boost::bind(&DaemonCommandsHandler::print_tx, this, _1), "Print transaction, print_tx <transaction_hash>");
+  m_consoleHandler.setHandler("print_tx", boost::bind(&DaemonCommandsHandler::print_tx, this, _1), "Print transaction\n * print_tx <transaction_hash>");
   m_consoleHandler.setHandler("print_white_pl", boost::bind(&DaemonCommandsHandler::print_white_pl, this, _1), "Print the IP addresses of currently active peers");
   m_consoleHandler.setHandler("print_white_pl_count", boost::bind(&DaemonCommandsHandler::print_white_pl_count, this, _1), "Print the number of currently active peers");
-  m_consoleHandler.setHandler("set_log", boost::bind(&DaemonCommandsHandler::set_log, this, _1), "set_log <level> - Change current log level, <level> is a number 0-4");
+  m_consoleHandler.setHandler("set_log", boost::bind(&DaemonCommandsHandler::set_log, this, _1), "Change current log level\n * set_log <level>\n * <level> is a number 0-4");
   m_consoleHandler.setHandler("show_hr", boost::bind(&DaemonCommandsHandler::show_hr, this, _1), "Start showing hash rate");
-  m_consoleHandler.setHandler("start_mining", boost::bind(&DaemonCommandsHandler::start_mining, this, _1), "Start mining for specified address, start_mining <addr> [threads=1]");
+  m_consoleHandler.setHandler("start_mining", boost::bind(&DaemonCommandsHandler::start_mining, this, _1), "Start mining for specified address\n * start_mining <addr> [threads=1]");
   m_consoleHandler.setHandler("stop_mining", boost::bind(&DaemonCommandsHandler::stop_mining, this, _1), "Stop mining");
 
 }
@@ -58,12 +58,7 @@ DaemonCommandsHandler::DaemonCommandsHandler(CryptoNote::core& core, CryptoNote:
 std::string DaemonCommandsHandler::get_commands_str()
 {
   std::stringstream ss;
-  ss << CryptoNote::CRYPTONOTE_NAME << " v" << PROJECT_VERSION_LONG << ENDL;
-  ss << "Commands: " << ENDL;
-  std::string usage = m_consoleHandler.getUsage();
-  boost::replace_all(usage, "\n", "\n  ");
-  usage.insert(0, "  ");
-  ss << usage << ENDL;
+  ss << "Daemon Commands" << ENDL << ENDL << m_consoleHandler.getUsage() << ENDL;
   return ss.str();
 }
 
@@ -120,7 +115,7 @@ bool DaemonCommandsHandler::exit(const std::vector<std::string>& args)
 
 bool DaemonCommandsHandler::help(const std::vector<std::string>& args)
 {
-  std::cout << get_commands_str() << ENDL;
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Help" << '\n' << '\n' << get_commands_str() << std::endl;
   return true;
 }
 
