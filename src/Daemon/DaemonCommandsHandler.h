@@ -63,6 +63,7 @@ private:
   bool print_pool(const std::vector<std::string>& args);
   bool print_pool_sh(const std::vector<std::string>& args);
   bool print_total_transactions_count(const std::vector<std::string>& args);
+  bool print_transaction_fee(const std::vector<std::string>& args);
   bool print_tx(const std::vector<std::string>& args);
   bool print_white_pl(const std::vector<std::string>& args);
   bool print_white_pl_count(const std::vector<std::string>& args);

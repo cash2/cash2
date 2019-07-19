@@ -44,6 +44,7 @@ DaemonCommandsHandler::DaemonCommandsHandler(CryptoNote::core& core, CryptoNote:
   m_consoleHandler.setHandler("print_pool", boost::bind(&DaemonCommandsHandler::print_pool, this, _1), "Print transaction pool (long format)");
   m_consoleHandler.setHandler("print_pool_sh", boost::bind(&DaemonCommandsHandler::print_pool_sh, this, _1), "Print transaction pool (short format)");
   m_consoleHandler.setHandler("print_total_transactions_count", boost::bind(&DaemonCommandsHandler::print_total_transactions_count, this, _1), "Print the total number of transactions ever created and sent on the network");
+  m_consoleHandler.setHandler("print_transaction_fee", boost::bind(&DaemonCommandsHandler::print_transaction_fee, this, _1), "Print the minimum fee needed to send a transaction");
   m_consoleHandler.setHandler("print_tx", boost::bind(&DaemonCommandsHandler::print_tx, this, _1), "Print transaction, print_tx <transaction_hash>");
   m_consoleHandler.setHandler("print_white_pl", boost::bind(&DaemonCommandsHandler::print_white_pl, this, _1), "Print the IP addresses of currently active peers");
   m_consoleHandler.setHandler("print_white_pl_count", boost::bind(&DaemonCommandsHandler::print_white_pl_count, this, _1), "Print the number of currently active peers");
@@ -302,6 +303,13 @@ bool DaemonCommandsHandler::print_total_transactions_count(const std::vector<std
   uint32_t numCoinbaseTransactions = m_core.get_current_blockchain_height();
   size_t totalTransactionsCount = m_core.get_blockchain_total_transactions() - numCoinbaseTransactions;
   logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Total transactions count : " << totalTransactionsCount << std::endl;
+  return true;
+}
+
+bool DaemonCommandsHandler::print_transaction_fee(const std::vector<std::string>& args)
+{
+  std::string transactionFee = m_core.currency().formatAmount(m_core.getMinimalFee());
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Transaction fee : " << transactionFee << " CASH2"  << std::endl;
   return true;
 }
 
