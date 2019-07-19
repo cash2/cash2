@@ -1195,7 +1195,7 @@ namespace CryptoNote
   }
   //-----------------------------------------------------------------------------------
   
-    bool NodeServer::log_grey_peerlist()
+  bool NodeServer::log_grey_peerlist()
   {
     std::list<PeerlistEntry> whitePeerlistIgnore;
     std::list<PeerlistEntry> greyPeerlist;
@@ -1235,6 +1235,25 @@ namespace CryptoNote
       std::setw(20) << std::left << "Peer ID" <<
       std::setw(20) << std::left << "Last Seen" << '\n' <<
       print_peerlist_to_string(greyPeerlist) ;
+    logger(INFO, BRIGHT_CYAN) << ss.str();
+    return true;
+  }
+
+  bool NodeServer::log_white_peerlist()
+  {
+    std::list<PeerlistEntry> whitePeerlist;
+    std::list<PeerlistEntry> greyPeerlistIgnore;
+    m_peerlist.get_peerlist_full(greyPeerlistIgnore, whitePeerlist);
+    std::stringstream ss;
+
+    ss <<
+      '\n' << '\n' << "White Peerlist" << '\n' << '\n' <<
+      std::setw(20) << std::left << "IP Address" <<
+      std::setw(10) << std::left << "Port" <<
+      std::setw(20) << std::left << "Peer ID" <<
+      std::setw(20) << std::left << "Last Seen" << '\n' <<
+      print_peerlist_to_string(whitePeerlist) ;
+
     logger(INFO, BRIGHT_CYAN) << ss.str();
     return true;
   }

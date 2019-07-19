@@ -128,6 +128,7 @@ namespace CryptoNote
     // debug functions
     bool log_grey_peerlist();
     bool log_peerlist();
+    bool log_white_peerlist();
     bool log_connections();
     virtual uint64_t get_connections_count() override;
     size_t get_outgoing_connections_count();

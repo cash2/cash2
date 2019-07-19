@@ -39,6 +39,7 @@ DaemonCommandsHandler::DaemonCommandsHandler(CryptoNote::core& core, CryptoNote:
   m_consoleHandler.setHandler("print_pool", boost::bind(&DaemonCommandsHandler::print_pool, this, _1), "Print transaction pool (long format)");
   m_consoleHandler.setHandler("print_pool_sh", boost::bind(&DaemonCommandsHandler::print_pool_sh, this, _1), "Print transaction pool (short format)");
   m_consoleHandler.setHandler("print_tx", boost::bind(&DaemonCommandsHandler::print_tx, this, _1), "Print transaction, print_tx <transaction_hash>");
+  m_consoleHandler.setHandler("print_white_pl", boost::bind(&DaemonCommandsHandler::print_white_pl, this, _1), "Print the IP addresses of currently active peers");
   m_consoleHandler.setHandler("set_log", boost::bind(&DaemonCommandsHandler::set_log, this, _1), "set_log <level> - Change current log level, <level> is a number 0-4");
   m_consoleHandler.setHandler("show_hr", boost::bind(&DaemonCommandsHandler::show_hr, this, _1), "Start showing hash rate");
   m_consoleHandler.setHandler("start_mining", boost::bind(&DaemonCommandsHandler::start_mining, this, _1), "Start mining for specified address, start_mining <addr> [threads=1]");
@@ -279,6 +280,13 @@ bool DaemonCommandsHandler::print_tx(const std::vector<std::string>& args)
 
   return true;
 }
+
+bool DaemonCommandsHandler::print_white_pl(const std::vector<std::string>& args)
+{
+  m_srv.log_white_peerlist();
+  return true;
+}
+
 
 bool DaemonCommandsHandler::set_log(const std::vector<std::string>& args)
 {
