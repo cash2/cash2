@@ -56,6 +56,7 @@ private:
   bool print_grey_pl(const std::vector<std::string>& args);
   bool print_grey_pl_count(const std::vector<std::string>& args);
   bool print_incoming_cn(const std::vector<std::string>& args);
+  bool print_outgoing_cn(const std::vector<std::string>& args);
   bool print_pl(const std::vector<std::string>& args);
   bool print_pool(const std::vector<std::string>& args);
   bool print_pool_sh(const std::vector<std::string>& args);

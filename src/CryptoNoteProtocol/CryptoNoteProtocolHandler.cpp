@@ -180,6 +180,47 @@ void CryptoNoteProtocolHandler::log_incoming_connections() {
   logger(INFO, BRIGHT_CYAN) << "Incoming Connections" << output;
 }
 
+void CryptoNoteProtocolHandler::log_outgoing_connections() {
+  std::stringstream ss;
+
+  ss << '\n' << '\n' <<
+    std::setw(20) << std::left << "IP Address" <<
+    std::setw(10) << std::left << "Port" <<
+    std::setw(20) << std::left << "Peer ID" <<
+    std::setw(25) << std::left << "State" <<
+    std::setw(20) << std::left << "Time (secs)" <<
+    '\n';
+
+  bool outgoingConnectionFound = false;
+
+  m_p2p->for_each_connection([&](const CryptoNoteConnectionContext& cntxt, PeerIdType peer_id) {
+    if (!cntxt.m_is_income)
+    {
+      ss <<
+        std::setw(20) << std::left << Common::ipAddressToString(cntxt.m_remote_ip) <<
+        std::setw(10) << std::left << std::to_string(cntxt.m_remote_port) <<
+        std::setw(20) << std::left << std::hex << peer_id <<
+        std::setw(25) << std::left << get_protocol_state_string(cntxt.m_state) <<
+        std::setw(20) << std::left << std::to_string(time(NULL) - cntxt.m_started) <<
+        '\n';
+
+      if (!outgoingConnectionFound)
+      {
+        outgoingConnectionFound = true;
+      }
+    }
+  });
+
+  std::string output = ss.str();
+
+  if (!outgoingConnectionFound)
+  {
+    output = " : None";
+  }
+
+  logger(INFO, BRIGHT_CYAN) << "Outgoing Connections" << output;
+}
+
 void CryptoNoteProtocolHandler::get_all_connections_addresses(std::vector<std::string>& addresses)
 {
   m_p2p->for_each_connection([&](const CryptoNoteConnectionContext& cntxt, PeerIdType peer_id) {
