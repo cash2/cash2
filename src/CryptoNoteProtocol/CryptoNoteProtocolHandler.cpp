@@ -116,7 +116,7 @@ bool CryptoNoteProtocolHandler::get_stat_info(core_stat_info& stat_inf) {
 void CryptoNoteProtocolHandler::log_connections() {
   std::stringstream ss;
 
-  ss << ENDL << ENDL << ENDL <<
+  ss << '\n' << '\n' << "Connections" << '\n' << '\n' <<
     std::setw(12) << std::left << "In/Out" <<
     std::setw(20) << std::left << "IP Address" <<
     std::setw(10) << std::left << "Port" <<
@@ -135,7 +135,8 @@ void CryptoNoteProtocolHandler::log_connections() {
       std::setw(20) << std::left << std::to_string(time(NULL) - cntxt.m_started) <<
       ENDL;
   });
-  logger(INFO) << "Connections" << ENDL << ss.str();
+
+  logger(INFO, BRIGHT_CYAN) << ss.str();
 }
 
 void CryptoNoteProtocolHandler::log_incoming_connections() {
