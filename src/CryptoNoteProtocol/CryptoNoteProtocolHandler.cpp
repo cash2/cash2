@@ -142,7 +142,7 @@ void CryptoNoteProtocolHandler::log_connections() {
 void CryptoNoteProtocolHandler::log_incoming_connections() {
   std::stringstream ss;
 
-  ss << '\n' << '\n' <<
+  ss << '\n' << '\n' << "Incoming Connections" << '\n' << '\n' << 
     std::setw(20) << std::left << "IP Address" <<
     std::setw(10) << std::left << "Port" <<
     std::setw(20) << std::left << "Peer ID" <<
@@ -174,10 +174,10 @@ void CryptoNoteProtocolHandler::log_incoming_connections() {
 
   if (!incomingConnectionFound)
   {
-    output = " : None";
+    output = "\n\nIncoming Connections : None";
   }
 
-  logger(INFO, BRIGHT_CYAN) << "Incoming Connections" << output;
+  logger(INFO, BRIGHT_CYAN) << output;
 }
 
 void CryptoNoteProtocolHandler::log_outgoing_connections() {
@@ -215,7 +215,7 @@ void CryptoNoteProtocolHandler::log_outgoing_connections() {
 
   if (!outgoingConnectionFound)
   {
-    output = " : None";
+    output = "\n\nOutgoing Connections : None";
   }
 
   logger(INFO, BRIGHT_CYAN) << output;
