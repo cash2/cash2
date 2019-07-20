@@ -350,13 +350,14 @@ bool DaemonCommandsHandler::print_transaction_fee(const std::vector<std::string>
 bool DaemonCommandsHandler::print_tx(const std::vector<std::string>& args)
 {
   if (args.empty()) {
-    std::cout << "expected: print_tx <transaction hash>" << std::endl;
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Expected : print_tx <transaction hash>" << std::endl;
     return true;
   }
 
   const std::string &str_hash = args.front();
   Crypto::Hash tx_hash;
   if (!parse_hash256(str_hash, tx_hash)) {
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Transaction hash is invalid, transaction hash should be 64 characters long" << std::endl;
     return true;
   }
 
@@ -367,9 +368,9 @@ bool DaemonCommandsHandler::print_tx(const std::vector<std::string>& args)
   m_core.getTransactions(tx_ids, txs, missed_ids, true);
 
   if (1 == txs.size()) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << CryptoNote::storeToJson(txs.front()) << ENDL;
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << CryptoNote::storeToJson(txs.front()) << std::endl;
   } else {
-    std::cout << "transaction wasn't found: <" << str_hash << '>' << std::endl;
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Transaction was not found : " << str_hash << std::endl;
   }
 
   return true;
