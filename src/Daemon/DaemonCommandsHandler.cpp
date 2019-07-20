@@ -12,15 +12,6 @@
 #include "Serialization/SerializationTools.h"
 #include "version.h"
 
-namespace {
-  template <typename T>
-  static bool print_as_json(const T& obj) {
-    std::cout << CryptoNote::storeToJson(obj) << ENDL;
-    return true;
-  }
-}
-
-
 DaemonCommandsHandler::DaemonCommandsHandler(CryptoNote::core& core, CryptoNote::NodeServer& srv, Logging::LoggerManager& log) :
   m_core(core), m_srv(srv), logger(log, "daemon"), m_logManager(log) {
 
@@ -68,13 +59,13 @@ bool DaemonCommandsHandler::print_block_by_height(uint32_t height)
   m_core.get_blocks(height, 1, blocks);
 
   if (1 == blocks.size()) {
-    std::cout << "block_id: " << get_block_hash(blocks.front()) << ENDL;
-    print_as_json(blocks.front());
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << '\n' << '\n' << "Block hash : " << get_block_hash(blocks.front()) << '\n' <<
+    CryptoNote::storeToJson(blocks.front()) << ENDL;
   } else {
     uint32_t current_height;
     Crypto::Hash top_id;
     m_core.get_blockchain_top(current_height, top_id);
-    std::cout << "block wasn't found. Current block chain height: " << current_height << ", requested: " << height << std::endl;
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Block wasn't found. Current block chain height: " << current_height << ", requested: " << height << std::endl;
     return false;
   }
 
@@ -96,10 +87,10 @@ bool DaemonCommandsHandler::print_block_by_hash(const std::string& arg)
 
   if (1 == blocks.size())
   {
-    print_as_json(blocks.front());
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << CryptoNote::storeToJson(blocks.front()) << ENDL;
   } else
   {
-    std::cout << "block wasn't found: " << arg << std::endl;
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "block wasn't found: " << arg << std::endl;
     return false;
   }
 
@@ -183,7 +174,7 @@ bool DaemonCommandsHandler::print_bci(const std::vector<std::string>& args)
 bool DaemonCommandsHandler::print_block(const std::vector<std::string> &args)
 {
   if (args.empty()) {
-    std::cout << "expected: print_block (<block_hash> | <block_height>)" << std::endl;
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "expected: print_block (<block_hash> | <block_height>)" << std::endl;
     return true;
   }
 
@@ -328,7 +319,7 @@ bool DaemonCommandsHandler::print_tx(const std::vector<std::string>& args)
   m_core.getTransactions(tx_ids, txs, missed_ids, true);
 
   if (1 == txs.size()) {
-    print_as_json(txs.front());
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << CryptoNote::storeToJson(txs.front()) << ENDL;
   } else {
     std::cout << "transaction wasn't found: <" << str_hash << '>' << std::endl;
   }
