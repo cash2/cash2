@@ -290,7 +290,7 @@ bool DaemonCommandsHandler::print_outgoing_cn_count(const std::vector<std::strin
 {
   size_t outgoingConnectionsCount = m_srv.get_outgoing_connections_count();
 
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Outgoing connections count : " << outgoingConnectionsCount << std::endl;
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Outgoing Connections Count : " << outgoingConnectionsCount << std::endl;
   return true;
 }
 
