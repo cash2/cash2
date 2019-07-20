@@ -201,7 +201,7 @@ bool DaemonCommandsHandler::print_blockchain_height(const std::vector<std::strin
 bool DaemonCommandsHandler::print_circulating_supply(const std::vector<std::string>& args)
 {
   std::string circulatingSupply = m_core.currency().formatAmount(m_core.getTotalGeneratedAmount());
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Circulating supply : " << circulatingSupply << std::endl;
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Circulating supply : " << circulatingSupply << " CASH2" << std::endl;
   return true;
 }
 
