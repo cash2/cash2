@@ -336,7 +336,7 @@ bool DaemonCommandsHandler::print_total_transactions_count(const std::vector<std
 {
   uint32_t numCoinbaseTransactions = m_core.get_current_blockchain_height();
   size_t totalTransactionsCount = m_core.get_blockchain_total_transactions() - numCoinbaseTransactions;
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Total transactions count : " << totalTransactionsCount << std::endl;
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Total Transactions Count : " << totalTransactionsCount << std::endl;
   return true;
 }
 
