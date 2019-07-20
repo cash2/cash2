@@ -19,7 +19,7 @@ DaemonCommandsHandler::DaemonCommandsHandler(CryptoNote::core& core, CryptoNote:
   m_consoleHandler.setHandler("help", boost::bind(&DaemonCommandsHandler::help, this, _1), "Show this help");
   m_consoleHandler.setHandler("hide_hr", boost::bind(&DaemonCommandsHandler::hide_hr, this, _1), "Stop showing hash rate");
   m_consoleHandler.setHandler("print_bc", boost::bind(&DaemonCommandsHandler::print_bc, this, _1), "Print blockchain info in a given blocks range\n * print_bc <start_height> [<end_height>]\n * start_height is the starting block height, integer, mandatory\n * end_height is the end block height, integer, optional");
-  m_consoleHandler.setHandler("print_block", boost::bind(&DaemonCommandsHandler::print_block, this, _1), "Print block\n * print_block <block_hash> | <block_height>");
+  m_consoleHandler.setHandler("print_block", boost::bind(&DaemonCommandsHandler::print_block, this, _1), "Print block\n * print_block <block_hash> or print_block <block_height>\n * block_hash is a 64 character string\n * block_height is an integer");
   m_consoleHandler.setHandler("print_circulating_supply", boost::bind(&DaemonCommandsHandler::print_circulating_supply, this, _1), "Print the number of coins mined so far");
   m_consoleHandler.setHandler("print_cn", boost::bind(&DaemonCommandsHandler::print_cn, this, _1), "Print connections");
   m_consoleHandler.setHandler("print_cn_count", boost::bind(&DaemonCommandsHandler::print_cn_count, this, _1), "Print the number of nodes we are connected to");
@@ -189,14 +189,27 @@ bool DaemonCommandsHandler::print_bci(const std::vector<std::string>& args)
 bool DaemonCommandsHandler::print_block(const std::vector<std::string> &args)
 {
   if (args.empty()) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "expected: print_block (<block_hash> | <block_height>)" << std::endl;
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Expected print_block <block_hash> or print_block <block_height>" << std::endl;
     return true;
   }
 
   const std::string &arg = args.front();
   try {
     uint32_t height = boost::lexical_cast<uint32_t>(arg);
-    print_block_by_height(height);
+
+    if (height == 0) {
+      logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Start height should be greater than 0" << ENDL;
+      return false;
+    }
+
+    uint32_t blockchainHeight = m_core.get_current_blockchain_height();
+
+    if (height > blockchainHeight) {
+      logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Start height should not be greater than " << blockchainHeight << ENDL;
+      return false;
+    }
+
+    print_block_by_height(height - 1);
   } catch (boost::bad_lexical_cast &) {
     print_block_by_hash(arg);
   }
