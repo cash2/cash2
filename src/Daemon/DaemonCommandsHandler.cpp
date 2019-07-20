@@ -247,7 +247,7 @@ bool DaemonCommandsHandler::print_cn_count(const std::vector<std::string>& args)
 
 bool DaemonCommandsHandler::print_difficulty(const std::vector<std::string>& args)
 {
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Network difficulty : " << m_core.getNextBlockDifficulty() << std::endl;
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Network Difficulty : " << m_core.getNextBlockDifficulty() << std::endl;
   return true;
 }
 
