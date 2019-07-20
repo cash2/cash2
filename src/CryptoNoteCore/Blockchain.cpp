@@ -1359,11 +1359,16 @@ void Blockchain::print_blockchain(uint64_t start_index, uint64_t end_index) {
   }
 
   size_t printCount = 0;
+  Crypto::Hash proofOfWorkHash = NULL_HASH;
 
   for (size_t i = start_index; i != m_blocks.size() && i != end_index && printCount < 100; i++) {
+
+    get_block_longhash(m_cn_context, m_blocks[i].bl, proofOfWorkHash);
+
     ss <<
       std::setw(30) << std::left << "Height"                  << std::setw(50) << std::left << i + 1 << ENDL <<
       std::setw(30) << std::left << "Hash"                    << std::setw(50) << std::left << get_block_hash(m_blocks[i].bl) << ENDL <<
+      std::setw(30) << std::left << "Proof of Work Hash"      << std::setw(50) << std::left << proofOfWorkHash << ENDL <<
       std::setw(30) << std::left << "Timestamp "              << std::setw(50) << std::left << m_blocks[i].bl.timestamp << ENDL <<
       std::setw(30) << std::left << "Cumulative Difficulty "  << std::setw(50) << std::left << m_blocks[i].cumulative_difficulty << ENDL <<
       std::setw(30) << std::left << "Size"                    << std::setw(50) << std::left << m_blocks[i].block_cumulative_size << ENDL <<

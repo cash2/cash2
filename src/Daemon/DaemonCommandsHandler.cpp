@@ -18,7 +18,7 @@ DaemonCommandsHandler::DaemonCommandsHandler(CryptoNote::core& core, CryptoNote:
   m_consoleHandler.setHandler("exit", boost::bind(&DaemonCommandsHandler::exit, this, _1), "Shutdown the daemon");
   m_consoleHandler.setHandler("help", boost::bind(&DaemonCommandsHandler::help, this, _1), "Show this help");
   m_consoleHandler.setHandler("hide_hr", boost::bind(&DaemonCommandsHandler::hide_hr, this, _1), "Stop showing hash rate");
-  m_consoleHandler.setHandler("print_bc", boost::bind(&DaemonCommandsHandler::print_bc, this, _1), "Print blockchain info in a given blocks range\n * print_bc <begin_height> [<end_height>]");
+  m_consoleHandler.setHandler("print_bc", boost::bind(&DaemonCommandsHandler::print_bc, this, _1), "Print blockchain info in a given blocks range\n * print_bc <start_height> [<end_height>]\n * start_height is the starting block height, integer, mandatory\n * end_height is the end block height, integer, optional");
   m_consoleHandler.setHandler("print_block", boost::bind(&DaemonCommandsHandler::print_block, this, _1), "Print block\n * print_block <block_hash> | <block_height>");
   m_consoleHandler.setHandler("print_circulating_supply", boost::bind(&DaemonCommandsHandler::print_circulating_supply, this, _1), "Print the number of coins mined so far");
   m_consoleHandler.setHandler("print_cn", boost::bind(&DaemonCommandsHandler::print_cn, this, _1), "Print connections");
@@ -119,38 +119,53 @@ bool DaemonCommandsHandler::hide_hr(const std::vector<std::string>& args)
 bool DaemonCommandsHandler::print_bc(const std::vector<std::string> &args)
 {
   if (!args.size()) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "need block index parameter" << ENDL;
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Need start height parameter" << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
     return false;
   }
 
-  uint32_t start_index = 0;
-  uint32_t end_index = 0;
-  uint32_t end_block_parametr = m_core.get_current_blockchain_height();
-  if (!Common::fromString(args[0], start_index)) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "wrong starter block index parameter" << ENDL;
+  uint32_t startHeight = 1;
+  uint32_t endHeight = 1;
+  uint32_t blockchainHeight = m_core.get_current_blockchain_height();
+  if (!Common::fromString(args[0], startHeight)) {
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wrong start height value" << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
     return false;
   }
 
-  if (args.size() > 1 && !Common::fromString(args[1], end_index)) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "wrong end block index parameter" << ENDL;
+  if (args.size() > 1 && !Common::fromString(args[1], endHeight)) {
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wrong end height value" << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
     return false;
   }
 
-  if (end_index == 0) {
-    end_index = end_block_parametr;
-  }
-
-  if (end_index > end_block_parametr) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "end block index parameter shouldn't be greater than " << end_block_parametr << ENDL;
+  if (startHeight == 0) {
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Start height should be greater than 0" << ENDL;
     return false;
   }
 
-  if (end_index <= start_index) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "end block index should be greater than starter block index" << ENDL;
+  if (endHeight == 0) {
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "End height should be greater than 0" << ENDL;
     return false;
   }
 
-  m_core.print_blockchain(start_index, end_index);
+  if (startHeight > blockchainHeight) {
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Start height should not be greater than " << blockchainHeight << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
+    return false;
+  }
+
+  if (endHeight > blockchainHeight) {
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "End height should not be greater than " << blockchainHeight << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
+    return false;
+  }
+
+  if (endHeight == 1) {
+    endHeight = startHeight + 1;
+  }
+
+  if (endHeight <= startHeight) {
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "End height should be greater than start height" << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
+    return false;
+  }
+
+  m_core.print_blockchain(startHeight - 1, endHeight - 1);
   return true;
 }
 
