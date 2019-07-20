@@ -183,7 +183,7 @@ void CryptoNoteProtocolHandler::log_incoming_connections() {
 void CryptoNoteProtocolHandler::log_outgoing_connections() {
   std::stringstream ss;
 
-  ss << '\n' << '\n' <<
+  ss << '\n' << '\n' << "Outgoing Connections" << '\n' << '\n' <<
     std::setw(20) << std::left << "IP Address" <<
     std::setw(10) << std::left << "Port" <<
     std::setw(20) << std::left << "Peer ID" <<
@@ -218,7 +218,7 @@ void CryptoNoteProtocolHandler::log_outgoing_connections() {
     output = " : None";
   }
 
-  logger(INFO, BRIGHT_CYAN) << "Outgoing Connections" << output;
+  logger(INFO, BRIGHT_CYAN) << output;
 }
 
 void CryptoNoteProtocolHandler::get_all_connections_addresses(std::vector<std::string>& addresses)
