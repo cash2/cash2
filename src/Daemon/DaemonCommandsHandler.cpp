@@ -428,13 +428,13 @@ bool DaemonCommandsHandler::show_hr(const std::vector<std::string>& args)
 bool DaemonCommandsHandler::start_mining(const std::vector<std::string> &args)
 {
   if (!args.size()) {
-    std::cout << "Please, specify wallet address to mine for: start_mining <addr> [threads=1]" << std::endl;
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wallet address missiing, start_mining <addr> [threads=1]" << std::endl;
     return true;
   }
 
   CryptoNote::AccountPublicAddress adr;
   if (!m_core.currency().parseAccountAddressString(args.front(), adr)) {
-    std::cout << "target account address has wrong format" << std::endl;
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Invalid Cash2 address" << std::endl;
     return true;
   }
 
