@@ -343,7 +343,7 @@ bool DaemonCommandsHandler::print_total_transactions_count(const std::vector<std
 bool DaemonCommandsHandler::print_transaction_fee(const std::vector<std::string>& args)
 {
   std::string transactionFee = m_core.currency().formatAmount(m_core.getMinimalFee());
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Transaction fee : " << transactionFee << " CASH2"  << std::endl;
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Transaction Fee : " << transactionFee << " CASH2"  << std::endl;
   return true;
 }
 
