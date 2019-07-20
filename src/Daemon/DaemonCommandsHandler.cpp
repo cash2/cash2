@@ -417,7 +417,7 @@ bool DaemonCommandsHandler::show_hr(const std::vector<std::string>& args)
 {
   if (!m_core.get_miner().is_mining())
   {
-    std::cout << "Mining is not started. You need to start mining before you can see hash rate." << ENDL;
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Mining is not started, you need to start mining before you can see the hash rate." << ENDL;
   } else
   {
     m_core.get_miner().do_print_hashrate(true);
