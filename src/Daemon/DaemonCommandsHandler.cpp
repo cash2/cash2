@@ -241,7 +241,7 @@ bool DaemonCommandsHandler::print_cn(const std::vector<std::string>& args)
 
 bool DaemonCommandsHandler::print_cn_count(const std::vector<std::string>& args)
 {
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Number of connections : " << m_srv.get_connections_count() << std::endl;
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Number of Connections : " << m_srv.get_connections_count() << std::endl;
   return true;
 }
 
