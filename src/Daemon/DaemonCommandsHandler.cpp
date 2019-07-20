@@ -318,7 +318,17 @@ bool DaemonCommandsHandler::print_pool(const std::vector<std::string>& args)
 
 bool DaemonCommandsHandler::print_pool_sh(const std::vector<std::string>& args)
 {
-  logger(Logging::INFO) << "Pool state: " << ENDL << m_core.print_pool(true);
+  std::string mempool = m_core.print_pool(true);
+
+  if (mempool == "")
+  {
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "\n\nMempool : No tansactions in the mempool" << ENDL;
+  }
+  else
+  {
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "\n\nMempool : \n\n" << mempool << ENDL;
+  }
+
   return true;
 }
 
