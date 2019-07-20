@@ -128,7 +128,7 @@ bool DaemonCommandsHandler::hide_hr(const std::vector<std::string>& args)
 bool DaemonCommandsHandler::print_bc(const std::vector<std::string> &args)
 {
   if (!args.size()) {
-    std::cout << "need block index parameter" << ENDL;
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "need block index parameter" << ENDL;
     return false;
   }
 
@@ -136,12 +136,12 @@ bool DaemonCommandsHandler::print_bc(const std::vector<std::string> &args)
   uint32_t end_index = 0;
   uint32_t end_block_parametr = m_core.get_current_blockchain_height();
   if (!Common::fromString(args[0], start_index)) {
-    std::cout << "wrong starter block index parameter" << ENDL;
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "wrong starter block index parameter" << ENDL;
     return false;
   }
 
   if (args.size() > 1 && !Common::fromString(args[1], end_index)) {
-    std::cout << "wrong end block index parameter" << ENDL;
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "wrong end block index parameter" << ENDL;
     return false;
   }
 
@@ -150,12 +150,12 @@ bool DaemonCommandsHandler::print_bc(const std::vector<std::string> &args)
   }
 
   if (end_index > end_block_parametr) {
-    std::cout << "end block index parameter shouldn't be greater than " << end_block_parametr << ENDL;
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "end block index parameter shouldn't be greater than " << end_block_parametr << ENDL;
     return false;
   }
 
   if (end_index <= start_index) {
-    std::cout << "end block index should be greater than starter block index" << ENDL;
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "end block index should be greater than starter block index" << ENDL;
     return false;
   }
 

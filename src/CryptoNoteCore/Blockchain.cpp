@@ -1353,20 +1353,28 @@ void Blockchain::print_blockchain(uint64_t start_index, uint64_t end_index) {
   std::stringstream ss;
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   if (start_index >= m_blocks.size()) {
-    logger(INFO, BRIGHT_WHITE) <<
-      "Wrong starter index set: " << start_index << ", expected max index " << m_blocks.size() - 1;
+    logger(INFO, BRIGHT_CYAN) <<
+      "Start index too large : " << start_index << ", blockchain height : " << m_blocks.size() - 1;
     return;
   }
 
-  for (size_t i = start_index; i != m_blocks.size() && i != end_index; i++) {
-    ss << "height " << i << ", timestamp " << m_blocks[i].bl.timestamp << ", cumul_dif " << m_blocks[i].cumulative_difficulty << ", cumul_size " << m_blocks[i].block_cumulative_size
-      << "\nid\t\t" << get_block_hash(m_blocks[i].bl)
-      << "\ndifficulty\t\t" << blockDifficulty(i) << ", nonce " << m_blocks[i].bl.nonce << ", tx_count " << m_blocks[i].bl.transactionHashes.size() << ENDL;
+  size_t printCount = 0;
+
+  for (size_t i = start_index; i != m_blocks.size() && i != end_index && printCount < 100; i++) {
+    ss <<
+      std::setw(30) << std::left << "Height"                  << std::setw(50) << std::left << i + 1 << ENDL <<
+      std::setw(30) << std::left << "Hash"                    << std::setw(50) << std::left << get_block_hash(m_blocks[i].bl) << ENDL <<
+      std::setw(30) << std::left << "Timestamp "              << std::setw(50) << std::left << m_blocks[i].bl.timestamp << ENDL <<
+      std::setw(30) << std::left << "Cumulative Difficulty "  << std::setw(50) << std::left << m_blocks[i].cumulative_difficulty << ENDL <<
+      std::setw(30) << std::left << "Size"                    << std::setw(50) << std::left << m_blocks[i].block_cumulative_size << ENDL <<
+      std::setw(30) << std::left << "Difficulty"              << std::setw(50) << std::left << blockDifficulty(i) << ENDL <<
+      std::setw(30) << std::left << "Nonce"                   << std::setw(50) << std::left << m_blocks[i].bl.nonce << ENDL <<
+      std::setw(30) << std::left << "Transaction Count"       << std::setw(50) << std::left << m_blocks[i].bl.transactionHashes.size() << ENDL << ENDL;
+
+    printCount++;
   }
-  logger(DEBUGGING) <<
-    "Current blockchain:" << ENDL << ss.str();
-  logger(INFO, BRIGHT_WHITE) <<
-    "Blockchain printed with log level 1";
+
+  logger(INFO, BRIGHT_CYAN) << '\n' << '\n' << ss.str();
 }
 
 void Blockchain::print_blockchain_index() {
