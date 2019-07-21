@@ -42,7 +42,7 @@ namespace po = boost::program_options;
 namespace
 {
   const command_line::arg_descriptor<std::string> arg_config_file =       {"config-file", "Specify configuration file", std::string(CryptoNote::CRYPTONOTE_NAME) + ".conf"};
-  const command_line::arg_descriptor<bool>        arg_os_version =        {"os-version", ""};
+  const command_line::arg_descriptor<bool>        arg_os_version =        {"os-version", "Shows the Cash2 software version and the OS version"};
   const command_line::arg_descriptor<std::string> arg_log_file =          {"log-file", "", ""};
   const command_line::arg_descriptor<int>         arg_log_level =         {"log-level", "", 2}; // info level
   const command_line::arg_descriptor<bool>        arg_console =           {"no-console", "Disable daemon console commands"};
