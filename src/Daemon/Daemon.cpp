@@ -41,15 +41,16 @@ namespace po = boost::program_options;
 
 namespace
 {
-  const command_line::arg_descriptor<std::string> arg_config_file =       {"config-file", "Specify configuration file", std::string(CryptoNote::CRYPTONOTE_NAME) + ".conf"};
-  const command_line::arg_descriptor<bool>        arg_os_version =        {"os-version", "Shows the Cash2 software version and the OS version"};
+  const command_line::arg_descriptor<std::string> arg_config_file =       {"config-file", "Specify the configuration file", std::string(CryptoNote::CRYPTONOTE_NAME) + ".conf"};
+  const command_line::arg_descriptor<std::string> arg_enable_cors =       {"enable-cors", "Adds header 'Access-Control-Allow-Origin' to Daemon RPC responses. Uses the value as domain. Use * for all", "" };
   const command_line::arg_descriptor<std::string> arg_log_file =          {"log-file", "", ""};
   const command_line::arg_descriptor<int>         arg_log_level =         {"log-level", "", 2}; // info level
   const command_line::arg_descriptor<bool>        arg_console =           {"no-console", "Disable daemon console commands"};
+  const command_line::arg_descriptor<bool>        arg_os_version =        {"os-version", "Shows the Cash2 software version and the OS version"};
+  const command_line::arg_descriptor<bool>        arg_print_genesis_tx =  {"print-genesis-tx", "Prints genesis block's coinbase transaction as hexidecimal to insert it to config" };
+  const command_line::arg_descriptor<bool>        arg_restricted_rpc =    {"restricted-rpc", "Restrict Daemon RPC commands to view only commands to prevent abuse"};
   const command_line::arg_descriptor<bool>        arg_testnet_on =        {"testnet", "Used to deploy test nets. Checkpoints and hardcoded seeds are ignored, network id is changed. Use it with --data-dir flag. The wallet must be launched with --testnet flag.", false};
-  const command_line::arg_descriptor<bool>        arg_print_genesis_tx =  {"print-genesis-tx", "Prints genesis' block tx hex to insert it to config and exits" };
-  const command_line::arg_descriptor<std::string> arg_enable_cors =       {"enable-cors", "Adds header 'Access-Control-Allow-Origin' to the daemon's RPC responses. Uses the value as domain. Use * for all", "" };
-  const command_line::arg_descriptor<bool>        arg_restricted_rpc =    {"restricted-rpc", "Restrict RPC to view only commands to prevent abuse"};
+
 }
 
 bool command_line_preprocessor(const boost::program_options::variables_map& vm, LoggerRef& logger);
@@ -98,31 +99,32 @@ int main(int argc, char* argv[])
 
   try {
 
-    po::options_description desc_cmd_only("Command line options");
-    po::options_description desc_cmd_sett("Command line options and settings options");
+    po::options_description desc_daemon("Daemon Options");
+    po::options_description desc_daemon_rpc("Daemon RPC Server Options");
+    po::options_description desc_core("Core Options");
+    po::options_description desc_network("Network Options");
+    po::options_description desc_mining("Mining Options");
 
-    command_line::add_arg(desc_cmd_only, command_line::arg_help);
-    command_line::add_arg(desc_cmd_only, command_line::arg_version);
-    command_line::add_arg(desc_cmd_only, arg_os_version);
-    // tools::get_default_data_dir() can't be called during static initialization
-    command_line::add_arg(desc_cmd_only, command_line::arg_data_dir, Tools::getDefaultDataDirectory());
-    command_line::add_arg(desc_cmd_only, arg_config_file);
+    command_line::add_arg(desc_daemon, arg_config_file);
+    command_line::add_arg(desc_daemon, command_line::arg_data_dir, Tools::getDefaultDataDirectory());
+    command_line::add_arg(desc_daemon, arg_enable_cors);
+    command_line::add_arg(desc_daemon, command_line::arg_help);
+    command_line::add_arg(desc_daemon, arg_log_file);
+    command_line::add_arg(desc_daemon, arg_log_level);
+    command_line::add_arg(desc_daemon, arg_os_version);
+    command_line::add_arg(desc_daemon, arg_console);
+    command_line::add_arg(desc_daemon, arg_print_genesis_tx);
+    command_line::add_arg(desc_daemon, arg_restricted_rpc);
+    command_line::add_arg(desc_daemon, arg_testnet_on);
+    command_line::add_arg(desc_daemon, command_line::arg_version);
 
-    command_line::add_arg(desc_cmd_sett, arg_log_file);
-    command_line::add_arg(desc_cmd_sett, arg_log_level);
-    command_line::add_arg(desc_cmd_sett, arg_console);
-    command_line::add_arg(desc_cmd_sett, arg_testnet_on);
-    command_line::add_arg(desc_cmd_sett, arg_print_genesis_tx);
-    command_line::add_arg(desc_cmd_sett, arg_enable_cors);
-    command_line::add_arg(desc_cmd_sett, arg_restricted_rpc);
+    RpcServerConfig::initOptions(desc_daemon_rpc);
+    CoreConfig::initOptions(desc_core); // There are currently no core configuration options
+    NetNodeConfig::initOptions(desc_network);
+    MinerConfig::initOptions(desc_mining);
 
-    RpcServerConfig::initOptions(desc_cmd_sett);
-    CoreConfig::initOptions(desc_cmd_sett);
-    NetNodeConfig::initOptions(desc_cmd_sett);
-    MinerConfig::initOptions(desc_cmd_sett);
-
-    po::options_description desc_options("Allowed options");
-    desc_options.add(desc_cmd_only).add(desc_cmd_sett);
+    po::options_description desc_options("Command Line Options");
+    desc_options.add(desc_daemon).add(desc_daemon_rpc).add(desc_network).add(desc_mining);
 
     po::variables_map vm;
     bool r = command_line::handle_error_helper(desc_options, [&]()
@@ -152,7 +154,7 @@ int main(int argc, char* argv[])
 
       boost::system::error_code ec;
       if (boost::filesystem::exists(config_path, ec)) {
-        po::store(po::parse_config_file<char>(config_path.string<std::string>().c_str(), desc_cmd_sett), vm);
+        po::store(po::parse_config_file<char>(config_path.string<std::string>().c_str(), desc_daemon), vm);
       }
       po::notify(vm);
       return true;
