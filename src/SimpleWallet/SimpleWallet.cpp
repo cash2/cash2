@@ -486,7 +486,7 @@ void printOutgoingTransaction(LoggerRef& logger, const WalletLegacyTransaction& 
 
   char timeString[TIMESTAMP_MAX_WIDTH + 1];
   time_t timestamp = static_cast<time_t>(txInfo.timestamp);
-  if (std::strftime(timeString, sizeof(timeString), "%Y-%m-%d %H:%M:%S", std::gmtime(&timestamp)) == 0) {
+  if (std::strftime(timeString, sizeof(timeString), "%b %d, %Y, %A, %I:%M:%S %p", std::gmtime(&timestamp)) == 0) {
     throw std::runtime_error("time buffer is too small");
   }
 
@@ -494,29 +494,37 @@ void printOutgoingTransaction(LoggerRef& logger, const WalletLegacyTransaction& 
 
   Crypto::SecretKey transactionSecretKey = wallet.getTxKey(txInfo.hash);
 
-  logger(INFO, RED)
-    << "Sent\n"
-    << "Timestamp : " << timeString << "\n"
-    << "Transaction ID : " << Common::podToHex(txInfo.hash) << "\n"
-    << "Transaction Secret Key : " << Common::podToHex(transactionSecretKey) << "\n"
-    << "Fee : " << currency.formatAmount(txInfo.fee) << "\n"
-    << "Block Height : " << txInfo.blockHeight << "\n";
+  std::stringstream ss;
+
+  ss <<
+    "Sent" << std::endl <<
+    "Timestamp : " << timeString << std::endl <<
+    "Transaction Hash : " << Common::podToHex(txInfo.hash) << std::endl <<
+    "Transaction Fee : " << currency.formatAmount(txInfo.fee) << " CASH2" << std::endl <<
+    "Block Height : " << addCommasToBlockHeight(txInfo.blockHeight) << std::endl;
+
+  if (transactionSecretKey != NULL_SECRET_KEY)
+  {
+    ss << "Transaction Private Key : " << Common::podToHex(transactionSecretKey) << std::endl;
+  }
 
   if (txInfo.transferCount > 0) {
     for (TransferId id = txInfo.firstTransferId; id < txInfo.firstTransferId + txInfo.transferCount; ++id) {
       WalletLegacyTransfer tr;
       wallet.getTransfer(id, tr);
-      logger(INFO, RED)
-      << "Receiver's Address : " << tr.address << "\n"
-      << "Amount :  " << currency.formatAmount(tr.amount) << "\n\n";
+      ss <<
+      "Receiver's Address : " << tr.address << std::endl <<
+      "Amount :  " << currency.formatAmount(tr.amount) << " CASH2" << std::endl;
     }
   }
 
   if (!paymentIdStr.empty()) {
-    logger(INFO, RED) << "Payment ID : " << paymentIdStr;
+    ss << "Payment ID : " << paymentIdStr;
   }
 
-  logger(INFO, RED) << " "; //just to make logger print one endline
+  ss << std::endl;
+
+  logger(INFO, RED) << ss.str();
 }
 
 std::string prepareWalletAddressFilename(const std::string& walletBaseName) {
@@ -1166,9 +1174,11 @@ bool simple_wallet::show_incoming_transactions(const std::vector<std::string>& a
   for (size_t trantransactionNumber = 0; trantransactionNumber < transactionsCount; ++trantransactionNumber) {
     WalletLegacyTransaction txInfo;
     m_wallet->getTransaction(trantransactionNumber, txInfo);
-    if (txInfo.totalAmount < 0) continue;
-    hasTransfers = true;
-    printIncomingTransaction(logger, txInfo, *m_wallet, m_currency);
+    if (txInfo.totalAmount > 0)
+    {
+      hasTransfers = true;
+      printIncomingTransaction(logger, txInfo, *m_wallet, m_currency);
+    }
   }
 
   if (!hasTransfers) success_msg_writer() << "No incoming transactions";
