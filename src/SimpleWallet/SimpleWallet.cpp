@@ -13,6 +13,7 @@
 #include <thread>
 #include <set>
 #include <sstream>
+#include <locale>
 
 #include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
@@ -369,7 +370,15 @@ std::string makeCenteredString(size_t width, const std::string& text) {
   return std::string(offset, ' ') + text + std::string(width - text.size() - offset, ' ');
 }
 
-const size_t TIMESTAMP_MAX_WIDTH = 19;
+std::string addCommasToBlockHeight(const uint32_t& height)
+{
+  std::stringstream ss;
+  ss.imbue(std::locale(""));
+  ss << std::fixed << height;
+  return ss.str();
+}
+
+const size_t TIMESTAMP_MAX_WIDTH = 36;
 const size_t HASH_MAX_WIDTH = 64;
 const size_t TOTAL_AMOUNT_MAX_WIDTH = 20;
 const size_t FEE_MAX_WIDTH = 14;
@@ -435,7 +444,7 @@ void printTransaction(LoggerRef& logger, const WalletLegacyTransaction& txInfo, 
   logger(INFO, rowColor) << " "; //just to make logger print one endline
 }
 
-void printIncomingTransaction(LoggerRef& logger, const WalletLegacyTransaction& txInfo, IWalletLegacy& wallet, const Currency& currency) {
+std::string printIncomingTransaction(LoggerRef& logger, const WalletLegacyTransaction& txInfo, IWalletLegacy& wallet, const Currency& currency) {
   std::vector<uint8_t> extraVec = Common::asBinaryArray(txInfo.extra);
 
   Crypto::Hash paymentId;
@@ -443,28 +452,30 @@ void printIncomingTransaction(LoggerRef& logger, const WalletLegacyTransaction& 
 
   char timeString[TIMESTAMP_MAX_WIDTH + 1];
   time_t timestamp = static_cast<time_t>(txInfo.timestamp);
-  if (std::strftime(timeString, sizeof(timeString), "%Y-%m-%d %H:%M:%S", std::gmtime(&timestamp)) == 0) {
+  if (std::strftime(timeString, sizeof(timeString), "%b %d, %Y, %A, %I:%M:%S %p", std::gmtime(&timestamp)) == 0) {
     throw std::runtime_error("time buffer is too small");
   }
 
+  std::stringstream ss;
+
   if (txInfo.totalAmount >= 0)
   {
-
     // Received money into your wallet
+    ss <<
+      "Received : " << currency.formatAmount(txInfo.totalAmount) << " CASH2" << std::endl <<
+      "Timestamp : " << timeString << "\n" <<
+      "Transaction Hash : " << Common::podToHex(txInfo.hash) << std::endl <<
+      "Transaction Fee : " << currency.formatAmount(txInfo.fee) << " CASH2" << std::endl <<
+      "Block Height : " << addCommasToBlockHeight(txInfo.blockHeight) << std::endl;
 
-    logger(INFO, GREEN)
-      << "Received : " << currency.formatAmount(txInfo.totalAmount) << "\n"
-      << "Timestamp : " << timeString << "\n"
-      << "Transaction ID : " << Common::podToHex(txInfo.hash) << "\n"
-      << "Fee : " << currency.formatAmount(txInfo.fee) << "\n"
-      << "Block Height : " << txInfo.blockHeight << "\n\n";
+    if (!paymentIdStr.empty()) {
+      ss << "Payment ID : " << paymentIdStr << std::endl;
+    }
+
+    ss << std::endl;
   }
 
-  if (!paymentIdStr.empty()) {
-    logger(INFO, GREEN) << "Payment ID : " << paymentIdStr;
-  }
-
-  logger(INFO, GREEN) << " "; //just to make logger print one endline
+  logger(INFO, GREEN) << ss.str();
 }
 
 void printOutgoingTransaction(LoggerRef& logger, const WalletLegacyTransaction& txInfo, IWalletLegacy& wallet, const Currency& currency) {
@@ -1160,7 +1171,7 @@ bool simple_wallet::show_incoming_transactions(const std::vector<std::string>& a
     printIncomingTransaction(logger, txInfo, *m_wallet, m_currency);
   }
 
-  if (!hasTransfers) success_msg_writer() << "No incoming transfers";
+  if (!hasTransfers) success_msg_writer() << "No incoming transactions";
   return true;
 }
 
@@ -1175,7 +1186,7 @@ bool simple_wallet::show_outgoing_transactions(const std::vector<std::string>& a
     printOutgoingTransaction(logger, txInfo, *m_wallet, m_currency);
   }
 
-  if (!hasTransfers) success_msg_writer() << "No incoming transfers";
+  if (!hasTransfers) success_msg_writer() << "No outgoing transactions";
   return true;
 }
 
