@@ -289,7 +289,7 @@ std::string tryToOpenWalletOrLoadKeysOrThrow(LoggerRef& logger, std::unique_ptr<
   }
 
   if (walletExists) {
-    logger(INFO) << "\nLoading wallet...\n";
+    logger(INFO) << "\nLoading wallet ...\n";
     std::ifstream walletFile;
     walletFile.open(walletFileName, std::ios_base::binary | std::ios_base::in);
     if (walletFile.fail()) {
@@ -645,13 +645,13 @@ bool simple_wallet::init(const boost::program_options::variables_map& vm) {
 
   char c;
   if (m_generate_new.empty() && m_wallet_file_arg.empty()) {
-    std::cout << "What would you like to do?\n  [1] Open existing wallet\n  [2] Create new wallet\n  [3] Restore wallet from private keys\n  [4] Exit\n";
+    std::cout << "\nWhat would you like to do?\n\n [1] Open existing wallet\n [2] Create new wallet\n [3] Restore wallet from private keys\n [4] Exit\n\n";
     do {
       std::string answer;
       std::getline(std::cin, answer);
       c = answer[0];
       if (!(c == '1' || c == '2' || c == '3' || c == '4')) {
-        std::cout << "Unknown command: " << c <<std::endl;
+        std::cout << "Unknown command : " << c <<std::endl;
       } else {
         break;
       }
@@ -666,7 +666,7 @@ bool simple_wallet::init(const boost::program_options::variables_map& vm) {
       std::string spendPrivateKeyInput;
       do
       {
-        std::cout << "Spend private key: ";
+        std::cout << "\nSpend private key : ";
         std::getline(std::cin, spendPrivateKeyInput);
         boost::algorithm::trim(spendPrivateKeyInput);
       } while (spendPrivateKeyInput.empty());
@@ -676,7 +676,7 @@ bool simple_wallet::init(const boost::program_options::variables_map& vm) {
       std::string viewPrivateKeyInput;
       do
       {
-        std::cout << "View private key: ";
+        std::cout << "View private key : ";
         std::getline(std::cin, viewPrivateKeyInput);
         boost::algorithm::trim(viewPrivateKeyInput);
       } while (viewPrivateKeyInput.empty());
@@ -686,7 +686,7 @@ bool simple_wallet::init(const boost::program_options::variables_map& vm) {
 
     std::string userInput;
     do {
-      std::cout << "Wallet name: ";
+      std::cout << "Wallet name : ";
       std::getline(std::cin, userInput);
       boost::algorithm::trim(userInput);
     } while (userInput.empty());
@@ -737,22 +737,43 @@ bool simple_wallet::init(const boost::program_options::variables_map& vm) {
   }
   else if (!pwd_container.read_password())
   {
-    fail_msg_writer() << "failed to read password";
+    fail_msg_writer() << "Failed to read password";
     return false;
   }
 
   // ask to confirm password when generating a new wallet or restoring wallet
-  if (c == '2' || c == '3' || c == '4')
+  if (c == '2' || c == '3')
   {
-    if (!pwd_container.read_confirm_password())
+    bool passwordSuccess = false;
+
+    while(!passwordSuccess)
     {
-      fail_msg_writer() << "failed to read confirm password";
-      return false;
-    }
-    else if (!pwd_container.passwords_match())
-    {
-      fail_msg_writer() << "passwords do not match";
-      return false;
+      if (!pwd_container.read_confirm_password())
+      {
+        logger(Logging::ERROR, Logging::BRIGHT_RED) << "\nFailed to confirm password\n";
+
+        // ask for the password again
+        if (!pwd_container.read_password())
+        {
+          fail_msg_writer() << "Failed to read password";
+          return false;
+        }
+      }
+      else if (!pwd_container.passwords_match())
+      {
+        logger(Logging::ERROR, Logging::BRIGHT_RED) << "\nPasswords do not match\n";
+
+        // ask for the password again
+        if (!pwd_container.read_password())
+        {
+          fail_msg_writer() << "Failed to read password";
+          return false;
+        }
+      }
+      else
+      {
+        passwordSuccess = true;
+      }
     }
   }
 
@@ -825,12 +846,9 @@ bool simple_wallet::init(const boost::program_options::variables_map& vm) {
     m_wallet->addObserver(this);
     m_node->addObserver(static_cast<INodeObserver*>(this));
 
-    logger(INFO, BRIGHT_WHITE) << "Wallet address: " << m_wallet->getAddress() << '\n';
+    logger(INFO, BRIGHT_WHITE) << "Wallet Address\n" << m_wallet->getAddress() << '\n';
 
-    success_msg_writer() <<
-      "**********************************************************************\n" <<
-      "Use \"help\" command to see the list of available commands.\n" <<
-      "**********************************************************************";
+    success_msg_writer() << "Type \"help\" to see the list of available commands.\n";
   }
 
   return true;
@@ -882,9 +900,9 @@ bool simple_wallet::new_wallet(const std::string &wallet_file, const std::string
     AccountKeys keys;
     m_wallet->getAccountKeys(keys);
 
-    logger(INFO, BRIGHT_WHITE) << "Wallet Address : " << m_wallet->getAddress() << std::endl;
-    logger(INFO, BRIGHT_WHITE) << "\nSpend Private Key : " << Common::podToHex(keys.spendSecretKey) << std::endl;
-    logger(INFO, BRIGHT_WHITE) << "\nView Private Key : " << Common::podToHex(keys.viewSecretKey) << std::endl;
+    logger(INFO, BRIGHT_WHITE) << "\nWallet Address\n" << m_wallet->getAddress() << std::endl;
+    logger(INFO, BRIGHT_WHITE) << "\nSpend Private Key\n" << Common::podToHex(keys.spendSecretKey) << std::endl;
+    logger(INFO, BRIGHT_WHITE) << "\nView Private Key\n" << Common::podToHex(keys.viewSecretKey) << std::endl;
     logger(INFO, BRIGHT_WHITE) << "\nPlease keep both private keys safe\n" << std::endl;
   }
   catch (const std::exception& e) {
@@ -893,13 +911,8 @@ bool simple_wallet::new_wallet(const std::string &wallet_file, const std::string
   }
 
   success_msg_writer() <<
-    "**********************************************************************\n" <<
-    "Your wallet has been generated.\n" <<
-    "Use \"help\" command to see the list of available commands.\n" <<
-    "Always use \"exit\" command when closing simplewallet to save\n" <<
-    "current session's state. Otherwise, you will possibly need to synchronize \n" <<
-    "your wallet again. Your wallet key is NOT under risk anyway.\n" <<
-    "**********************************************************************";
+    "Type \"help\" to see a list of available commands.\n" <<
+    "Always type \"exit\" when closing SimpleWallet to save your wallet.\n";
   return true;
 }
 //----------------------------------------------------------------------------------------------------
@@ -969,9 +982,10 @@ bool simple_wallet::restore_wallet_from_private_keys(const std::string &wallet_f
     AccountKeys keys;
     m_wallet->getAccountKeys(keys);
 
-    logger(INFO, BRIGHT_WHITE) << "Wallet Address\n" << m_wallet->getAddress() << std::endl;
+    logger(INFO, BRIGHT_WHITE) << "\nWallet Address\n" << m_wallet->getAddress() << std::endl;
     logger(INFO, BRIGHT_WHITE) << "\nView Private Key\n" << Common::podToHex(keys.viewSecretKey) << std::endl;
     logger(INFO, BRIGHT_WHITE) << "\nSpend Private Key\n" << Common::podToHex(keys.spendSecretKey) << std::endl;
+    logger(INFO, BRIGHT_WHITE) << "\nPlease keep both private keys safe\n" << std::endl;
   }
   catch (const std::exception& e) {
     fail_msg_writer() << "failed to generate new wallet: " << e.what();
@@ -979,13 +993,8 @@ bool simple_wallet::restore_wallet_from_private_keys(const std::string &wallet_f
   }
 
   success_msg_writer() <<
-    "**********************************************************************\n" <<
-    "Your wallet has been generated.\n" <<
-    "Use \"help\" command to see the list of available commands.\n" <<
-    "Always use \"exit\" command when closing simplewallet to save\n" <<
-    "current session's state. Otherwise, you will possibly need to synchronize \n" <<
-    "your wallet again. Your wallet key is NOT under risk anyway.\n" <<
-    "**********************************************************************";
+    "Type \"help\" to see a list of available commands.\n" <<
+    "Always type \"exit\" when closing SimpleWallet to save your wallet.\n";
   return true;
 }
 //----------------------------------------------------------------------------------------------------
@@ -1360,8 +1369,7 @@ bool simple_wallet::run() {
 
   std::cout << std::endl;
 
-  std::string addr_start = m_wallet->getAddress().substr(0, 6);
-  std::string walletName = m_wallet_file_arg.substr(0, 20);
+  std::string walletName = Common::RemoveExtension(m_wallet_file).substr(0, 20);
   m_consoleHandler.start(false, "[" + walletName + "]: ", Common::Console::Color::BrightYellow);
   return true;
 }
@@ -1396,7 +1404,7 @@ bool simple_wallet::process_command(const std::vector<std::string> &args) {
 }
 
 void simple_wallet::printConnectionError() const {
-  fail_msg_writer() << "wallet failed to connect to daemon (" << m_daemon_address << ").\n";
+  logger(ERROR, RED) << "SimpleWallet failed to connect to the daemon";
 }
 
 
@@ -1466,8 +1474,6 @@ int main(int argc, char* argv[]) {
   }
 
   logManager.configure(buildLoggerConfiguration(logLevel, Common::ReplaceExtenstion(argv[0], ".log")));
-
-  logger(INFO, BRIGHT_WHITE) << CRYPTONOTE_NAME << " wallet v" << PROJECT_VERSION_LONG;
 
   CryptoNote::Currency currency = CryptoNote::CurrencyBuilder(logManager).
     testnet(command_line::get_arg(vm, arg_testnet)).currency();
