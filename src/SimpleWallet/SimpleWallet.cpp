@@ -546,12 +546,12 @@ bool writeAddressFile(const std::string& addressFilename, const std::string& add
 
 std::string simple_wallet::get_commands_str() {
   std::stringstream ss;
-  ss << ENDL << "Wallet Commands" << ENDL << ENDL << m_consoleHandler.getUsage() << ENDL;
+  ss << ENDL << "SimpleWallet Commands" << ENDL << ENDL << m_consoleHandler.getUsage() << ENDL;
   return ss.str();
 }
 
 bool simple_wallet::help(const std::vector<std::string> &args/* = std::vector<std::string>()*/) {
-  success_msg_writer() << get_commands_str();
+  logger(INFO, BRIGHT_CYAN) << get_commands_str();
   return true;
 }
 
@@ -1361,7 +1361,8 @@ bool simple_wallet::run() {
   std::cout << std::endl;
 
   std::string addr_start = m_wallet->getAddress().substr(0, 6);
-  m_consoleHandler.start(false, "[wallet " + addr_start + "]: ", Common::Console::Color::BrightYellow);
+  std::string walletName = m_wallet_file_arg.substr(0, 20);
+  m_consoleHandler.start(false, "[" + walletName + "]: ", Common::Console::Color::BrightYellow);
   return true;
 }
 //----------------------------------------------------------------------------------------------------
