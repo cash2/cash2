@@ -1231,40 +1231,51 @@ bool simple_wallet::show_payments(const std::vector<std::string> &args) {
     return true;
   }
 
-  logger(INFO) << "                            payment                             \t" <<
-    "                          transaction                           \t" <<
-    "  height\t       amount        ";
-
   bool payments_found = false;
   for (const std::string& arg: args) {
     Crypto::Hash expectedPaymentId;
     if (CryptoNote::parsePaymentId(arg, expectedPaymentId)) {
+      std::stringstream ss;
+
       size_t transactionsCount = m_wallet->getTransactionCount();
       for (size_t trantransactionNumber = 0; trantransactionNumber < transactionsCount; ++trantransactionNumber) {
         WalletLegacyTransaction txInfo;
         m_wallet->getTransaction(trantransactionNumber, txInfo);
-        if (txInfo.totalAmount < 0) continue;
-        std::vector<uint8_t> extraVec;
-        extraVec.reserve(txInfo.extra.size());
-        std::for_each(txInfo.extra.begin(), txInfo.extra.end(), [&extraVec](const char el) { extraVec.push_back(el); });
+        if (txInfo.totalAmount > 0)
+        {
+          std::vector<uint8_t> extraVec;
+          extraVec.reserve(txInfo.extra.size());
+          std::for_each(txInfo.extra.begin(), txInfo.extra.end(), [&extraVec](const char el) { extraVec.push_back(el); });
 
-        Crypto::Hash paymentId;
-        if (CryptoNote::getPaymentIdFromTxExtra(extraVec, paymentId) && paymentId == expectedPaymentId) {
-          payments_found = true;
-          success_msg_writer(true) <<
-            paymentId << "\t\t" <<
-            Common::podToHex(txInfo.hash) <<
-            std::setw(8) << txInfo.blockHeight << '\t' <<
-            std::setw(21) << m_currency.formatAmount(txInfo.totalAmount);// << '\t' <<
+          Crypto::Hash paymentId;
+          if (CryptoNote::getPaymentIdFromTxExtra(extraVec, paymentId) && paymentId == expectedPaymentId) {
+            payments_found = true;
+
+            char timeString[TIMESTAMP_MAX_WIDTH + 1];
+            time_t timestamp = static_cast<time_t>(txInfo.timestamp);
+            if (std::strftime(timeString, sizeof(timeString), "%b %d, %Y, %A, %I:%M:%S %p", std::gmtime(&timestamp)) == 0) {
+              throw std::runtime_error("time buffer is too small");
+            }
+
+            ss <<
+              "Received : " << m_currency.formatAmount(txInfo.totalAmount) << " CASH2" << std::endl <<
+              "Timestamp : " << timeString << std::endl <<
+              "Transaction Hash : " << Common::podToHex(txInfo.hash) << std::endl <<
+              "Transaction Fee : " << m_currency.formatAmount(txInfo.fee) << " CASH2" << std::endl <<
+              "Block Height : " << addCommasToBlockHeight(txInfo.blockHeight) << std::endl <<
+              "Payment ID : " << paymentId << std::endl << std::endl;
+          }
         }
       }
 
+      logger(INFO, GREEN) << ss.str();
+
       if (!payments_found) {
-        success_msg_writer() << "No payments with id " << expectedPaymentId;
+        success_msg_writer() << "No payments with id " << expectedPaymentId << " found";
         continue;
       }
     } else {
-      fail_msg_writer() << "payment ID has invalid format: \"" << arg << "\", expected 64-character string";
+      fail_msg_writer() << "Payment ID has invalid format: \"" << arg << "\", expected 64-character string";
     }
   }
 
