@@ -1,5 +1,6 @@
 // Copyright (c) 2011-2016 The Cryptonote developers
 // Copyright (c) 2016-2018, The Karbo developers
+// Copyright (c) 2018-2019, The TurtleCoin Developers
 // Copyright (c) 2018-2019 The Cash2 developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -900,10 +901,11 @@ bool simple_wallet::new_wallet(const std::string &wallet_file, const std::string
     AccountKeys keys;
     m_wallet->getAccountKeys(keys);
 
-    logger(INFO, BRIGHT_WHITE) << "\nWallet Address\n" << m_wallet->getAddress() << std::endl;
-    logger(INFO, BRIGHT_WHITE) << "\nSpend Private Key\n" << Common::podToHex(keys.spendSecretKey) << std::endl;
-    logger(INFO, BRIGHT_WHITE) << "\nView Private Key\n" << Common::podToHex(keys.viewSecretKey) << std::endl;
-    logger(INFO, BRIGHT_WHITE) << "\nPlease keep both private keys safe\n" << std::endl;
+    std::cout <<
+      "\nWallet Address\n" << m_wallet->getAddress() << std::endl <<
+      "\nSpend Private Key\n" << Common::podToHex(keys.spendSecretKey) << std::endl <<
+      "\nView Private Key\n" << Common::podToHex(keys.viewSecretKey) << std::endl <<
+      "\nPlease keep both private keys safe\n" << std::endl;
   }
   catch (const std::exception& e) {
     fail_msg_writer() << "failed to generate new wallet: " << e.what();
@@ -982,10 +984,11 @@ bool simple_wallet::restore_wallet_from_private_keys(const std::string &wallet_f
     AccountKeys keys;
     m_wallet->getAccountKeys(keys);
 
-    logger(INFO, BRIGHT_WHITE) << "\nWallet Address\n" << m_wallet->getAddress() << std::endl;
-    logger(INFO, BRIGHT_WHITE) << "\nView Private Key\n" << Common::podToHex(keys.viewSecretKey) << std::endl;
-    logger(INFO, BRIGHT_WHITE) << "\nSpend Private Key\n" << Common::podToHex(keys.spendSecretKey) << std::endl;
-    logger(INFO, BRIGHT_WHITE) << "\nPlease keep both private keys safe\n" << std::endl;
+    std::cout <<
+      "\nWallet Address\n" << m_wallet->getAddress() << std::endl <<
+      "\nView Private Key\n" << Common::podToHex(keys.viewSecretKey) << std::endl <<
+      "\nSpend Private Key\n" << Common::podToHex(keys.spendSecretKey) << std::endl <<
+      "\nPlease keep both private keys safe\n" << std::endl;
   }
   catch (const std::exception& e) {
     fail_msg_writer() << "failed to generate new wallet: " << e.what();
@@ -1387,7 +1390,7 @@ bool simple_wallet::print_view_secret_key(const std::vector<std::string> &args) 
   CryptoNote::AccountKeys accountKeys;
   m_wallet->getAccountKeys(accountKeys);
   Crypto::SecretKey viewSecretKey = accountKeys.viewSecretKey;
-  success_msg_writer() << Common::podToHex(viewSecretKey);
+  std::cout << Common::podToHex(viewSecretKey) << '\n';
   return true;
 }
 //----------------------------------------------------------------------------------------------------
@@ -1395,7 +1398,7 @@ bool simple_wallet::print_spend_secret_key(const std::vector<std::string> &args)
   CryptoNote::AccountKeys accountKeys;
   m_wallet->getAccountKeys(accountKeys);
   Crypto::SecretKey spendSecretKey = accountKeys.spendSecretKey;
-  success_msg_writer() << Common::podToHex(spendSecretKey);
+  std::cout << Common::podToHex(spendSecretKey) << '\n';
   return true;
 }
 //----------------------------------------------------------------------------------------------------
