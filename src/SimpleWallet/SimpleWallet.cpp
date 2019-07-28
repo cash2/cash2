@@ -324,7 +324,7 @@ std::string tryToOpenWalletOrLoadKeysOrThrow(LoggerRef& logger, std::unique_ptr<
         logger(INFO, BRIGHT_GREEN) << "Stored ok";
         return walletFileName;
       } else { // no keys, wallet error loading
-        throw std::runtime_error("can't load wallet file '" + walletFileName + "', check password");
+        throw std::runtime_error("can't load wallet file '" + walletFileName + "', check password\n");
       }
     } else { //new wallet ok 
       return walletFileName;
@@ -552,7 +552,7 @@ std::string simple_wallet::get_commands_str() {
 }
 
 bool simple_wallet::help(const std::vector<std::string> &args/* = std::vector<std::string>()*/) {
-  logger(INFO, BRIGHT_CYAN) << get_commands_str();
+  std::cout << get_commands_str();
   return true;
 }
 
@@ -639,83 +639,10 @@ bool simple_wallet::get_tx_key(const std::vector<std::string> &args) {
 bool simple_wallet::init(const boost::program_options::variables_map& vm) {
   handle_command_line(vm);
 
+  // Check daemon connection first
   if (!m_daemon_address.empty() && (!m_daemon_host.empty() || 0 != m_daemon_port)) {
-    fail_msg_writer() << "you can't specify daemon host or port several times";
+    fail_msg_writer() << "Can't specify daemon address and daemon host and port at the same time";
     return false;
-  }
-
-  char c;
-  if (m_generate_new.empty() && m_wallet_file_arg.empty()) {
-    std::cout << "\nWhat would you like to do?\n\n [1] Open existing wallet\n [2] Create new wallet\n [3] Restore wallet from private keys\n [4] Exit\n\n";
-    do {
-      std::string answer;
-      std::getline(std::cin, answer);
-      c = answer[0];
-      if (!(c == '1' || c == '2' || c == '3' || c == '4')) {
-        std::cout << "Unknown command : " << c <<std::endl;
-      } else {
-        break;
-      }
-    } while (true);
-
-    if (c == '4') {
-      return false;
-    }
-
-    if (c == '3')
-    {
-      std::string spendPrivateKeyInput;
-      do
-      {
-        std::cout << "\nSpend private key : ";
-        std::getline(std::cin, spendPrivateKeyInput);
-        boost::algorithm::trim(spendPrivateKeyInput);
-      } while (spendPrivateKeyInput.empty());
-
-      m_spend_secret_key = spendPrivateKeyInput;
-
-      std::string viewPrivateKeyInput;
-      do
-      {
-        std::cout << "View private key : ";
-        std::getline(std::cin, viewPrivateKeyInput);
-        boost::algorithm::trim(viewPrivateKeyInput);
-      } while (viewPrivateKeyInput.empty());
-
-      m_view_secret_key = viewPrivateKeyInput;
-    }
-
-    std::string userInput;
-    do {
-      std::cout << "Wallet name : ";
-      std::getline(std::cin, userInput);
-      boost::algorithm::trim(userInput);
-    } while (userInput.empty());
-
-    if (c == '1')
-    {
-      m_wallet_file_arg = userInput;
-    }
-    else
-    {
-      m_generate_new = userInput;
-    }
-  }
-
-  if (!m_generate_new.empty() && !m_wallet_file_arg.empty()) {
-    fail_msg_writer() << "you can't specify 'generate-new-wallet' and 'wallet-file' arguments simultaneously";
-    return false;
-  }
-
-  std::string walletFileName;
-  if (!m_generate_new.empty()) {
-    std::string ignoredString;
-    WalletHelper::prepareFileNames(m_generate_new, ignoredString, walletFileName);
-    boost::system::error_code ignore;
-    if (boost::filesystem::exists(walletFileName, ignore)) {
-      fail_msg_writer() << walletFileName << " already exists";
-      return false;
-    }
   }
 
   if (m_daemon_host.empty())
@@ -732,116 +659,153 @@ bool simple_wallet::init(const boost::program_options::variables_map& vm) {
     m_daemon_address = std::string("http://") + m_daemon_host + ":" + std::to_string(m_daemon_port);
   }
 
-  Tools::PasswordContainer pwd_container;
-  if (command_line::has_arg(vm, arg_password)) {
-    pwd_container.password(command_line::get_arg(vm, arg_password));
-  }
-  else if (!pwd_container.read_password())
-  {
-    fail_msg_writer() << "Failed to read password";
-    return false;
-  }
+  // Show the user the "What would you like to do?" prompt
 
-  // ask to confirm password when generating a new wallet or restoring wallet
-  if (c == '2' || c == '3')
-  {
-    bool passwordSuccess = false;
+  char c;
 
-    while(!passwordSuccess)
+  Common::Console::setTextColor(Common::Console::Color::BrightRed);
+  std::cout << "\nCash2 SimpleWallet 5.1.1\n";
+  Common::Console::setTextColor(Common::Console::Color::Default);
+
+  std::cout << "\nWhat would you like to do?\n\n [";
+
+  Common::Console::setTextColor(Common::Console::Color::BrightRed);
+  std::cout << "1";
+  Common::Console::setTextColor(Common::Console::Color::Default);
+
+  std::cout << "] Open existing wallet\n [";
+
+  Common::Console::setTextColor(Common::Console::Color::BrightRed);
+  std::cout << "2";
+  Common::Console::setTextColor(Common::Console::Color::Default);
+
+  std::cout << "] Create new wallet\n [";
+
+  Common::Console::setTextColor(Common::Console::Color::BrightRed);
+  std::cout << "3";
+  Common::Console::setTextColor(Common::Console::Color::Default);
+
+  std::cout << "] Restore wallet from private keys\n [";
+
+  Common::Console::setTextColor(Common::Console::Color::BrightRed);
+  std::cout << "4";
+  Common::Console::setTextColor(Common::Console::Color::Default);
+
+  std::cout << "] Exit\n\n";
+
+  // Ask the user to choose option 1, 2, 3, or 4
+  do {
+    std::string answer;
+    std::getline(std::cin, answer);
+    c = answer[0];
+    if (!(c == '1' || c == '2' || c == '3' || c == '4')) {
+      std::cout << "Unknown command : " << c << std::endl << "Please choose 1, 2, 3, or 4";
+    } else {
+      break;
+    }
+  } while (true);
+
+  
+  if (c == '1')
+  {
+    // Open existing wallet
+
+    bool walletNameValid = false;
+    bool passwordCorrect = false;
+    bool nodeInitSuccess = false;
+    bool loadWalletSuccess = false;
+
+    while (!loadWalletSuccess)
     {
-      if (!pwd_container.read_confirm_password())
+      if (!walletNameValid)
       {
-        logger(Logging::ERROR, Logging::BRIGHT_RED) << "\nFailed to confirm password\n";
+        // Ask the user for wallet name
+        std::string walletName;
+        do {
+          std::cout << "Wallet name : ";
+          std::getline(std::cin, walletName);
+          boost::algorithm::trim(walletName);
+        } while (walletName.empty());
 
-        // ask for the password again
-        if (!pwd_container.read_password())
+        m_wallet_file_arg = walletName;
+
+        // Check that the wallet name exists
+        bool walletExists = false;
+        while(!walletExists)
         {
-          fail_msg_writer() << "Failed to read password";
-          return false;
+          std::string walletFileName;
+          std::string ignoredString;
+          WalletHelper::prepareFileNames(walletName, ignoredString, walletFileName);
+          boost::system::error_code ignore;
+
+          if (!boost::filesystem::exists(walletFileName, ignore)) {
+            Common::Console::setTextColor(Common::Console::Color::BrightRed);
+            std::cout << "\n" << walletFileName << " does not exist, please try again\n\n";
+            Common::Console::setTextColor(Common::Console::Color::Default);
+            
+            // Ask the user again for the wallet name
+            do {
+              std::cout << "Wallet name : ";
+              std::getline(std::cin, walletName);
+              boost::algorithm::trim(walletName);
+            } while (walletName.empty());
+          }
+          else
+          {
+            m_wallet_file_arg = walletName;
+            walletExists = true;
+          }
+        }
+
+        walletNameValid = true;
+      }
+
+      // Ask the user for wallet password
+      Tools::PasswordContainer pwd_container;
+      if (!passwordCorrect)
+      {
+        if (command_line::has_arg(vm, arg_password)) {
+          pwd_container.password(command_line::get_arg(vm, arg_password));
+        }
+        else
+        {
+          while (!pwd_container.read_password())
+          {
+            fail_msg_writer() << "Sorry could not read password, please try again";
+          }
         }
       }
-      else if (!pwd_container.passwords_match())
-      {
-        logger(Logging::ERROR, Logging::BRIGHT_RED) << "\nPasswords do not match\n";
 
-        // ask for the password again
-        if (!pwd_container.read_password())
-        {
-          fail_msg_writer() << "Failed to read password";
+      // Try to init NodeRPCProxy
+      if (!nodeInitSuccess)
+      {
+        this->m_node.reset(new NodeRpcProxy(m_daemon_host, m_daemon_port));
+
+        std::promise<std::error_code> errorPromise;
+        std::future<std::error_code> f_error = errorPromise.get_future();
+        auto callback = [&errorPromise](std::error_code e) {errorPromise.set_value(e); };
+
+        m_node->addObserver(static_cast<INodeRpcProxyObserver*>(this));
+        m_node->init(callback);
+        auto error = f_error.get();
+        if (error) {
+          fail_msg_writer() << "failed to init NodeRPCProxy: " << error.message();
           return false;
         }
-      }
-      else
-      {
-        passwordSuccess = true;
-      }
-    }
-  }
 
-  this->m_node.reset(new NodeRpcProxy(m_daemon_host, m_daemon_port));
+        nodeInitSuccess = true;
 
-  std::promise<std::error_code> errorPromise;
-  std::future<std::error_code> f_error = errorPromise.get_future();
-  auto callback = [&errorPromise](std::error_code e) {errorPromise.set_value(e); };
-
-  m_node->addObserver(static_cast<INodeRpcProxyObserver*>(this));
-  m_node->init(callback);
-  auto error = f_error.get();
-  if (error) {
-    fail_msg_writer() << "failed to init NodeRPCProxy: " << error.message();
-    return false;
-  }
-
-  if (!m_generate_new.empty())
-  {
-    std::string walletAddressFile = prepareWalletAddressFilename(m_generate_new);
-    boost::system::error_code ignore;
-    if (boost::filesystem::exists(walletAddressFile, ignore)) {
-      logger(ERROR, BRIGHT_RED) << "Address file already exists: " + walletAddressFile;
-      return false;
-    }
-
-    if (m_spend_secret_key.empty() && m_view_secret_key.empty())
-    {
-      // generate new wallet
-      if (!new_wallet(walletFileName, pwd_container.password())) {
-        logger(ERROR, BRIGHT_RED) << "Wallet creation failed";
-        return false;
+        m_wallet.reset(new WalletLegacy(m_currency, *m_node));
       }
 
-      if (!writeAddressFile(walletAddressFile, m_wallet->getAddress())) {
-        logger(WARNING, BRIGHT_RED) << "Couldn't write wallet address file: " + walletAddressFile;
-      }
-    }
-    else if (!m_spend_secret_key.empty() && !m_view_secret_key.empty())
-    {
-      // restore wallet from private keys
-      if (!restore_wallet_from_private_keys(walletFileName, pwd_container.password()))
-      {
-        logger(ERROR, BRIGHT_RED) << "Wallet restore failed";
-        return false;
-      }
-
-      if (!writeAddressFile(walletAddressFile, m_wallet->getAddress()))
-      {
-        logger(WARNING, BRIGHT_RED) << "Couldn't write wallet address file: " + walletAddressFile;
-      }
-    }
-    else
-    {
-      logger(ERROR, BRIGHT_RED) << "Wallet creation failed";
-      return false;
-    }
-  }
-  else {
-    // open existing wallet
-    m_wallet.reset(new WalletLegacy(m_currency, *m_node));
-
-    try {
-      m_wallet_file = tryToOpenWalletOrLoadKeysOrThrow(logger, m_wallet, m_wallet_file_arg, pwd_container.password());
-    } catch (const std::exception& e) {
-      fail_msg_writer() << "failed to load wallet: " << e.what();
-      return false;
+      // Try to open wallet with password
+      try {
+        m_wallet_file = tryToOpenWalletOrLoadKeysOrThrow(logger, m_wallet, m_wallet_file_arg, pwd_container.password());
+        loadWalletSuccess = true;
+        passwordCorrect = true;
+      } catch (const std::exception& e) {
+        fail_msg_writer() << e.what() << std::endl;
+      } 
     }
 
     m_wallet->addObserver(this);
@@ -850,6 +814,256 @@ bool simple_wallet::init(const boost::program_options::variables_map& vm) {
     logger(INFO, BRIGHT_WHITE) << "Wallet Address\n" << m_wallet->getAddress() << '\n';
 
     success_msg_writer() << "Type \"help\" to see the list of available commands.\n";
+  }
+  else if (c == '2')
+  {
+    // Create new wallet
+
+    bool createNewWalletSuccess = false;
+    bool nodeInitSuccess = false;
+    while(!createNewWalletSuccess)
+    {
+      // Ask the user for wallet name
+      std::string walletName;
+      do {
+        std::cout << "Wallet name : ";
+        std::getline(std::cin, walletName);
+        boost::algorithm::trim(walletName);
+      } while (walletName.empty());
+
+      m_generate_new = walletName;
+
+      std::string walletFileName;
+
+      // Check that wallet name does not already exists
+      bool walletNameValid = false;
+      while(!walletNameValid)
+      {
+        std::string ignoredString;
+        WalletHelper::prepareFileNames(m_generate_new, ignoredString, walletFileName);
+        boost::system::error_code ignore;
+
+        if (boost::filesystem::exists(walletFileName, ignore)) {
+          Common::Console::setTextColor(Common::Console::Color::BrightRed);
+          std::cout << "\n" << walletFileName << " already exists, please pick a new wallet name\n\n";
+          Common::Console::setTextColor(Common::Console::Color::Default);
+          
+          // Ask the user again for the wallet name
+          do {
+            std::cout << "Wallet name : ";
+            std::getline(std::cin, walletName);
+            boost::algorithm::trim(walletName);
+          } while (walletName.empty());
+
+          m_generate_new = walletName;
+        }
+        else
+        {
+          walletNameValid = true;
+        }
+      }
+
+      // Ask the user for wallet password
+      Tools::PasswordContainer pwd_container;
+      while (!pwd_container.read_password())
+      {
+        fail_msg_writer() << "Sorry could not read password, please try again";
+      }
+      
+      // Ask the user to confirm the password
+      bool passwordSuccess = false;
+      while(!passwordSuccess)
+      {
+        while (!pwd_container.read_confirm_password())
+        {
+          fail_msg_writer() << "Sorry could not read confirm password, please try again";
+        }
+
+        if (!pwd_container.passwords_match())
+        {
+          logger(ERROR, BRIGHT_RED) << "\nPasswords do not match, please try again\n";
+
+          // ask for the password again
+          while (!pwd_container.read_password())
+          {
+            fail_msg_writer() << "Sorry could not read password, please try again";
+          }
+        }
+        else
+        {
+          passwordSuccess = true;
+        }
+      }
+
+      // Try to init NodeRPCProxy
+      if (!nodeInitSuccess)
+      {
+        this->m_node.reset(new NodeRpcProxy(m_daemon_host, m_daemon_port));
+
+        std::promise<std::error_code> errorPromise;
+        std::future<std::error_code> f_error = errorPromise.get_future();
+        auto callback = [&errorPromise](std::error_code e) {errorPromise.set_value(e); };
+
+        m_node->addObserver(static_cast<INodeRpcProxyObserver*>(this));
+        m_node->init(callback);
+        auto error = f_error.get();
+        if (error) {
+          fail_msg_writer() << "Failed to init NodeRPCProxy: " << error.message();
+          return false;
+        }
+
+        nodeInitSuccess = true;
+      }
+
+      // Try to create a new wallet file
+      if (!new_wallet(walletFileName, pwd_container.password())) {
+        logger(ERROR, BRIGHT_RED) << "Wallet creation failed";
+      }
+      else
+      {
+        createNewWalletSuccess = true;
+      }
+    }
+  }
+  else if (c == '3')
+  {
+    // Restore wallet from private keys
+
+    bool restoreWalletSuccess = false;
+    bool nodeInitSuccess = false;
+    while(!restoreWalletSuccess)
+    {
+      // Ask the user for wallet name
+      std::string walletName;
+      do {
+        std::cout << "Wallet name : ";
+        std::getline(std::cin, walletName);
+        boost::algorithm::trim(walletName);
+      } while (walletName.empty());
+
+      m_generate_new = walletName;
+
+      std::string walletFileName;
+
+      // Check that wallet name does not already exists
+      bool walletNameValid = false;
+      while(!walletNameValid)
+      {
+        std::string ignoredString;
+        WalletHelper::prepareFileNames(m_generate_new, ignoredString, walletFileName);
+        boost::system::error_code ignore;
+
+        if (boost::filesystem::exists(walletFileName, ignore)) {
+          Common::Console::setTextColor(Common::Console::Color::BrightRed);
+          std::cout << "\n" << walletFileName << " already exists, please pick a new wallet name\n\n";
+          Common::Console::setTextColor(Common::Console::Color::Default);
+          
+          // Ask the user again for the wallet name
+          do {
+            std::cout << "Wallet name : ";
+            std::getline(std::cin, walletName);
+            boost::algorithm::trim(walletName);
+          } while (walletName.empty());
+
+          m_generate_new = walletName;
+        }
+        else
+        {
+          walletNameValid = true;
+        }
+      }
+
+      // Ask the user for wallet password
+      Tools::PasswordContainer pwd_container;
+      while (!pwd_container.read_password())
+      {
+        fail_msg_writer() << "Sorry could not read password, please try again";
+      }
+      
+      // Ask the user to confirm the password
+      bool passwordSuccess = false;
+      while(!passwordSuccess)
+      {
+        while (!pwd_container.read_confirm_password())
+        {
+          fail_msg_writer() << "Sorry could not read confirm password, please try again";
+        }
+
+        if (!pwd_container.passwords_match())
+        {
+          logger(ERROR, BRIGHT_RED) << "\nPasswords do not match, please try again\n";
+
+          // ask for the password again
+          while (!pwd_container.read_password())
+          {
+            fail_msg_writer() << "Sorry could not read password, please try again";
+          }
+        }
+        else
+        {
+          passwordSuccess = true;
+        }
+      }
+
+      // Ask the user for the spend private key
+      std::string spendPrivateKeyInput;
+      do
+      {
+        std::cout << "Spend private key : ";
+        std::getline(std::cin, spendPrivateKeyInput);
+        boost::algorithm::trim(spendPrivateKeyInput);
+      } while (spendPrivateKeyInput.empty());
+      m_spend_secret_key = spendPrivateKeyInput;
+
+      // Ask the user for the view private key
+      std::string viewPrivateKeyInput;
+      do
+      {
+        std::cout << "View private key : ";
+        std::getline(std::cin, viewPrivateKeyInput);
+        boost::algorithm::trim(viewPrivateKeyInput);
+      } while (viewPrivateKeyInput.empty());
+      m_view_secret_key = viewPrivateKeyInput;
+     
+      // Try to init NodeRPCProxy
+      if (!nodeInitSuccess)
+      {
+        this->m_node.reset(new NodeRpcProxy(m_daemon_host, m_daemon_port));
+
+        std::promise<std::error_code> errorPromise;
+        std::future<std::error_code> f_error = errorPromise.get_future();
+        auto callback = [&errorPromise](std::error_code e) {errorPromise.set_value(e); };
+
+        m_node->addObserver(static_cast<INodeRpcProxyObserver*>(this));
+        m_node->init(callback);
+        auto error = f_error.get();
+        if (error) {
+          fail_msg_writer() << "Failed to init NodeRPCProxy: " << error.message();
+          return false;
+        }
+
+        nodeInitSuccess = true;
+      }
+
+      // Try to restore wallet from private keys
+      if (!restore_wallet_from_private_keys(walletFileName, pwd_container.password()))
+      {
+        logger(ERROR, BRIGHT_RED) << "Wallet restore failed, please try again";
+      }
+      else
+      {
+        restoreWalletSuccess = true;
+      }
+    }
+
+  }
+  else if (c =='4') {
+    // Exit SimpleWallet
+    return false;
+  }
+  else
+  {
+    return false;
   }
 
   return true;
@@ -1569,7 +1783,7 @@ int main(int argc, char* argv[]) {
     CryptoNote::simple_wallet wal(dispatcher, currency, logManager);
     
     if (!wal.init(vm)) {
-      logger(ERROR, BRIGHT_RED) << "Failed to initialize wallet"; 
+      logger(ERROR, DEFAULT) << "\nExiting SimpleWallet"; 
       return 1; 
     }
 
