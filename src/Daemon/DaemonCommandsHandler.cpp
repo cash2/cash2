@@ -39,7 +39,7 @@ DaemonCommandsHandler::DaemonCommandsHandler(CryptoNote::core& core, CryptoNote:
   m_consoleHandler.setHandler("print_tx", boost::bind(&DaemonCommandsHandler::print_tx, this, _1), "Print transaction\n * print_tx <transaction_hash>");
   m_consoleHandler.setHandler("print_white_pl", boost::bind(&DaemonCommandsHandler::print_white_pl, this, _1), "Print the IP addresses of currently active peers");
   m_consoleHandler.setHandler("print_white_pl_count", boost::bind(&DaemonCommandsHandler::print_white_pl_count, this, _1), "Print the number of currently active peers");
-  m_consoleHandler.setHandler("set_log", boost::bind(&DaemonCommandsHandler::set_log, this, _1), "Change current log level\n * set_log <level>\n * <level> is a number 0-5");
+  m_consoleHandler.setHandler("set_log", boost::bind(&DaemonCommandsHandler::set_log, this, _1), "Change current log level\n * set_log <level>\n * <level> is a number 0-4");
   m_consoleHandler.setHandler("show_hr", boost::bind(&DaemonCommandsHandler::show_hr, this, _1), "Start showing hash rate");
   m_consoleHandler.setHandler("start_mining", boost::bind(&DaemonCommandsHandler::start_mining, this, _1), "Start mining for specified address\n * start_mining <addr> [threads=1]");
   m_consoleHandler.setHandler("stop_mining", boost::bind(&DaemonCommandsHandler::stop_mining, this, _1), "Stop mining");
@@ -392,20 +392,20 @@ bool DaemonCommandsHandler::print_white_pl_count(const std::vector<std::string>&
 bool DaemonCommandsHandler::set_log(const std::vector<std::string>& args)
 {
   if (args.size() != 1) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Expected : set_log <log_level_number_0-5>" << ENDL;
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Expected : set_log <log_level_number_0-4>" << ENDL;
     return true;
   }
 
   uint16_t l = 0;
   if (!Common::fromString(args[0], l)) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wrong number format, set_log <log_level_number_0-5>" << ENDL;
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wrong number format, set_log <log_level_number_0-4>" << ENDL;
     return true;
   }
 
   ++l;
 
   if (l > Logging::TRACE) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wrong number range, set_log <log_level_number_0-5>" << ENDL;
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wrong number range, set_log <log_level_number_0-4>" << ENDL;
     return true;
   }
 
