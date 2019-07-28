@@ -29,6 +29,7 @@ DaemonCommandsHandler::DaemonCommandsHandler(CryptoNote::core& core, CryptoNote:
   m_consoleHandler.setHandler("print_height", boost::bind(&DaemonCommandsHandler::print_blockchain_height, this, _1), "Print height of local blockchain");
   m_consoleHandler.setHandler("print_incoming_cn", boost::bind(&DaemonCommandsHandler::print_incoming_cn, this, _1), "Print the IP address and ports of the peers connected to you and pulling information from your node");
   m_consoleHandler.setHandler("print_incoming_cn_count", boost::bind(&DaemonCommandsHandler::print_incoming_cn_count, this, _1), "Print the number of the peers connected to you and pulling information from your node");
+  m_consoleHandler.setHandler("print_network_height", boost::bind(&DaemonCommandsHandler::print_network_height, this, _1), "Print the height of the tallest blockchain of your peer nodes");
   m_consoleHandler.setHandler("print_outgoing_cn", boost::bind(&DaemonCommandsHandler::print_outgoing_cn, this, _1), "Print the IP addresses and ports of the peers you are connected to and that you are pulling information from");
   m_consoleHandler.setHandler("print_outgoing_cn_count", boost::bind(&DaemonCommandsHandler::print_outgoing_cn_count, this, _1), "Print the number of the peers you are connected to and that you are pulling information from");
   m_consoleHandler.setHandler("print_pl", boost::bind(&DaemonCommandsHandler::print_pl, this, _1), "Print peer list");
@@ -277,6 +278,12 @@ bool DaemonCommandsHandler::print_incoming_cn_count(const std::vector<std::strin
   size_t incoming_connections_count = totalConnections - outgoingConnectionsCount;
 
   logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Incoming Connections Count : " << incoming_connections_count << std::endl;
+  return true;
+}
+
+bool DaemonCommandsHandler::print_network_height(const std::vector<std::string>& args)
+{
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Network Blockchain Height : " << m_srv.get_payload_object().getObservedHeight();
   return true;
 }
 
