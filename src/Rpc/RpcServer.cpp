@@ -164,17 +164,17 @@ bool RpcServer::processJsonRpcRequest(const HttpRequest& request, HttpResponse& 
 
     static std::unordered_map<std::string, RpcServer::RpcHandler<JsonMemberMethod>> jsonRpcHandlers = {
       { "check_payment", { makeMemberMethod(&RpcServer::on_check_payment), false } },
+      { "get_block", { makeMemberMethod(&RpcServer::on_get_block), false } },
       { "get_block_count", { makeMemberMethod(&RpcServer::on_get_block_count), true } },
-      { "get_block_template", { makeMemberMethod(&RpcServer::on_get_block_template), false } },
-      { "get_currency_id", { makeMemberMethod(&RpcServer::on_get_currency_id), true } },
-      { "on_get_block_hash", { makeMemberMethod(&RpcServer::on_get_block_hash), false } },
-      { "get_last_block_header", { makeMemberMethod(&RpcServer::on_get_last_block_header), false } },
       { "get_block_header_by_hash", { makeMemberMethod(&RpcServer::on_get_block_header_by_hash), false } },
       { "get_block_header_by_height", { makeMemberMethod(&RpcServer::on_get_block_header_by_height), false } },
+      { "get_block_template", { makeMemberMethod(&RpcServer::on_get_block_template), false } },
       { "get_blocks", { makeMemberMethod(&RpcServer::on_get_blocks_json), false } },
-      { "get_block", { makeMemberMethod(&RpcServer::on_get_block), false } },
-      { "get_transaction", { makeMemberMethod(&RpcServer::on_get_transaction), false } },
+      { "get_currency_id", { makeMemberMethod(&RpcServer::on_get_currency_id), true } },
+      { "get_last_block_header", { makeMemberMethod(&RpcServer::on_get_last_block_header), false } },
       { "get_mempool", { makeMemberMethod(&RpcServer::on_get_mempool), false } },
+      { "get_transaction", { makeMemberMethod(&RpcServer::on_get_transaction), false } },
+      { "on_get_block_hash", { makeMemberMethod(&RpcServer::on_get_block_hash), false } },
       { "submit_block", { makeMemberMethod(&RpcServer::on_submit_block), false } },
     };
 
@@ -1127,7 +1127,7 @@ bool RpcServer::on_get_mempool(const COMMAND_RPC_GET_MEMPOOL::request& req, COMM
 
     mempool_transaction.hash = Common::podToHex(txd.id);
     mempool_transaction.fee = txd.fee;
-    mempool_transaction.amount = amount_out;
+    mempool_transaction.amount_out = amount_out;
     mempool_transaction.size = txd.blobSize;
     mempool_transaction.receive_time = txd.receiveTime;
     res.mempool.push_back(mempool_transaction);

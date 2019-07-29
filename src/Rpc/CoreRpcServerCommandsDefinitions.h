@@ -876,14 +876,14 @@ struct COMMAND_RPC_GET_TRANSACTION {
 struct mempool_transaction_response {
   std::string hash;
   uint64_t fee;
-  uint64_t amount;
+  uint64_t amount_out;
   uint64_t size;
   uint64_t receive_time;
 
   void serialize(ISerializer &s) {
     KV_MEMBER(hash)
     KV_MEMBER(fee)
-    KV_MEMBER(amount)
+    KV_MEMBER(amount_out)
     KV_MEMBER(size)
     KV_MEMBER(receive_time)
   }
