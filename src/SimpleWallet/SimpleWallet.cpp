@@ -445,7 +445,7 @@ void printTransaction(LoggerRef& logger, const WalletLegacyTransaction& txInfo, 
   logger(INFO, rowColor) << " "; //just to make logger print one endline
 }
 
-std::string printIncomingTransaction(LoggerRef& logger, const WalletLegacyTransaction& txInfo, IWalletLegacy& wallet, const Currency& currency) {
+void printIncomingTransaction(LoggerRef& logger, const WalletLegacyTransaction& txInfo, IWalletLegacy& wallet, const Currency& currency) {
   std::vector<uint8_t> extraVec = Common::asBinaryArray(txInfo.extra);
 
   Crypto::Hash paymentId;
