@@ -116,6 +116,8 @@ const std::initializer_list<const char*> SEED_NODES = {
   "seed1.cash2.org:12275",
   "seed2.cash2.org:12275",
   "seed3.cash2.org:12275",
+  "seed4.cash2.org:12275",
+  "seed5.cash2.org:12275",
 };
 
 struct CheckpointData {
