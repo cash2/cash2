@@ -26,6 +26,7 @@ PaymentServiceJsonRpcServer::PaymentServiceJsonRpcServer(System::Dispatcher& sys
   handlers.emplace("create_delayed_transaction", jsonHandler<CreateDelayedTransaction::Request, CreateDelayedTransaction::Response>(std::bind(&PaymentServiceJsonRpcServer::handleCreateDelayedTransaction, this, std::placeholders::_1, std::placeholders::_2)));
   handlers.emplace("delete_address", jsonHandler<DeleteAddress::Request, DeleteAddress::Response>(std::bind(&PaymentServiceJsonRpcServer::handleDeleteAddress, this, std::placeholders::_1, std::placeholders::_2)));
   handlers.emplace("delete_delayed_transaction", jsonHandler<DeleteDelayedTransaction::Request, DeleteDelayedTransaction::Response>(std::bind(&PaymentServiceJsonRpcServer::handleDeleteDelayedTransaction, this, std::placeholders::_1, std::placeholders::_2)));
+  handlers.emplace("get_address", jsonHandler<GetAddress::Request, GetAddress::Response>(std::bind(&PaymentServiceJsonRpcServer::handleGetAddress, this, std::placeholders::_1, std::placeholders::_2)));
   handlers.emplace("get_addresses", jsonHandler<GetAddresses::Request, GetAddresses::Response>(std::bind(&PaymentServiceJsonRpcServer::handleGetAddresses, this, std::placeholders::_1, std::placeholders::_2)));
   handlers.emplace("get_balance", jsonHandler<GetBalance::Request, GetBalance::Response>(std::bind(&PaymentServiceJsonRpcServer::handleGetBalance, this, std::placeholders::_1, std::placeholders::_2)));
   handlers.emplace("get_block_hashes", jsonHandler<GetBlockHashes::Request, GetBlockHashes::Response>(std::bind(&PaymentServiceJsonRpcServer::handleGetBlockHashes, this, std::placeholders::_1, std::placeholders::_2)));
@@ -103,10 +104,6 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     makeGenericErrorReponse(resp, e.what());
   }
 }
-
-                                                                                                                         
-                                     
- 
 
 std::error_code PaymentServiceJsonRpcServer::handleReset(const Reset::Request& request, Reset::Response& response) {
   if (request.view_private_key.empty()) {
@@ -198,20 +195,12 @@ std::error_code PaymentServiceJsonRpcServer::handleGetStatus(const GetStatus::Re
   return service.getStatus(response.block_count, response.known_block_count, response.last_block_hash, response.peer_count, response.minimal_fee);
 }
 
-                                                                                                                                                  
-                                                                                                                                       
- 
+std::error_code PaymentServiceJsonRpcServer::handleGetAddress(const GetAddress::Request& request, GetAddress::Response& response) {
+  return service.getAddress(response.address);
+}
 
 std::error_code PaymentServiceJsonRpcServer::handleGetAddresses(const GetAddresses::Request& request, GetAddresses::Response& response) {
   return service.getAddresses(response.addresses);
 }
 
-                                                                                                                                                                    
-                                                                                                                                                      
-}
-
-                                                                                                                                               
-                                                                                                                            
- 
-
- 
+} // end namespace PaymentService

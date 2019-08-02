@@ -61,6 +61,18 @@ struct GetStatus {
   };
 };
 
+struct GetAddress {
+  struct Request {
+    void serialize(CryptoNote::ISerializer& serializer);
+  };
+
+  struct Response {
+    std::string address;
+
+    void serialize(CryptoNote::ISerializer& serializer);
+  };
+};
+
 struct GetAddresses {
   struct Request {
     void serialize(CryptoNote::ISerializer& serializer);

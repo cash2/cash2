@@ -808,6 +808,20 @@ std::error_code WalletService::getTransaction(const std::string& transactionHash
   return std::error_code();
 }
 
+std::error_code WalletService::getAddress(std::string& address) {
+  try {
+    System::EventLock lk(readyEvent);
+
+    address = wallet.getAddress(0);
+
+  } catch (std::exception& e) {
+    logger(Logging::WARNING) << "Can't get wallet container address : " << e.what();
+    return make_error_code(CryptoNote::error::INTERNAL_WALLET_ERROR);
+  }
+
+  return std::error_code();
+}
+
 std::error_code WalletService::getAddresses(std::vector<std::string>& addresses) {
   try {
     System::EventLock lk(readyEvent);

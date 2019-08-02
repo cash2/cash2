@@ -33,6 +33,13 @@ void GetStatus::Response::serialize(CryptoNote::ISerializer& serializer) {
   serializer(peer_count, "peer_count");
 }
 
+void GetAddress::Request::serialize(CryptoNote::ISerializer& serializer) {
+}
+
+void GetAddress::Response::serialize(CryptoNote::ISerializer& serializer) {
+  serializer(address, "address");
+}
+
 void GetAddresses::Request::serialize(CryptoNote::ISerializer& serializer) {
 }
 
