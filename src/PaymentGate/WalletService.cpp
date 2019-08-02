@@ -826,6 +826,19 @@ std::error_code WalletService::getAddresses(std::vector<std::string>& addresses)
   return std::error_code();
 }
 
+std::error_code WalletService::getAddressesCount(size_t& addressesCount) {
+  try {
+    System::EventLock lk(readyEvent);
+
+    addressesCount = wallet.getAddressCount();
+  } catch (std::exception& e) {
+    logger(Logging::WARNING) << "Can't get addresses count : " << e.what();
+    return make_error_code(CryptoNote::error::INTERNAL_WALLET_ERROR);
+  }
+
+  return std::error_code();
+}
+
 std::error_code WalletService::sendTransaction(const SendTransaction::Request& request, std::string& transactionHash, std::string& transactionSecretKey) {
   try {
     System::EventLock lk(readyEvent);

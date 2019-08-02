@@ -73,6 +73,18 @@ struct GetAddresses {
   };
 };
 
+struct GetAddressesCount {
+  struct Request {
+    void serialize(CryptoNote::ISerializer& serializer);
+  };
+
+  struct Response {
+    size_t addresses_count;
+
+    void serialize(CryptoNote::ISerializer& serializer);
+  };
+};
+
 struct CreateAddress {
   struct Request {
     std::string spend_private_key;

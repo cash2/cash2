@@ -65,6 +65,7 @@ private:
   std::error_code handleDeleteAddress(const DeleteAddress::Request& request, DeleteAddress::Response& response);
   std::error_code handleDeleteDelayedTransaction(const DeleteDelayedTransaction::Request& request, DeleteDelayedTransaction::Response& response);
   std::error_code handleGetAddresses(const GetAddresses::Request& request, GetAddresses::Response& response);
+  std::error_code handleGetAddressesCount(const GetAddressesCount::Request& request, GetAddressesCount::Response& response);
   std::error_code handleGetBalance(const GetBalance::Request& request, GetBalance::Response& response);
   std::error_code handleGetBlockHashes(const GetBlockHashes::Request& request, GetBlockHashes::Response& response);
   std::error_code handleGetDelayedTransactionHashes(const GetDelayedTransactionHashes::Request& request, GetDelayedTransactionHashes::Response& response);

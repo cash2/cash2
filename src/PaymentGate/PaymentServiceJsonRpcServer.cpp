@@ -27,6 +27,7 @@ PaymentServiceJsonRpcServer::PaymentServiceJsonRpcServer(System::Dispatcher& sys
   handlers.emplace("delete_address", jsonHandler<DeleteAddress::Request, DeleteAddress::Response>(std::bind(&PaymentServiceJsonRpcServer::handleDeleteAddress, this, std::placeholders::_1, std::placeholders::_2)));
   handlers.emplace("delete_delayed_transaction", jsonHandler<DeleteDelayedTransaction::Request, DeleteDelayedTransaction::Response>(std::bind(&PaymentServiceJsonRpcServer::handleDeleteDelayedTransaction, this, std::placeholders::_1, std::placeholders::_2)));
   handlers.emplace("get_addresses", jsonHandler<GetAddresses::Request, GetAddresses::Response>(std::bind(&PaymentServiceJsonRpcServer::handleGetAddresses, this, std::placeholders::_1, std::placeholders::_2)));
+  handlers.emplace("get_addresses_count", jsonHandler<GetAddressesCount::Request, GetAddressesCount::Response>(std::bind(&PaymentServiceJsonRpcServer::handleGetAddressesCount, this, std::placeholders::_1, std::placeholders::_2)));
   handlers.emplace("get_balance", jsonHandler<GetBalance::Request, GetBalance::Response>(std::bind(&PaymentServiceJsonRpcServer::handleGetBalance, this, std::placeholders::_1, std::placeholders::_2)));
   handlers.emplace("get_block_hashes", jsonHandler<GetBlockHashes::Request, GetBlockHashes::Response>(std::bind(&PaymentServiceJsonRpcServer::handleGetBlockHashes, this, std::placeholders::_1, std::placeholders::_2)));
   handlers.emplace("get_delayed_transaction_hashes", jsonHandler<GetDelayedTransactionHashes::Request, GetDelayedTransactionHashes::Response>(std::bind(&PaymentServiceJsonRpcServer::handleGetDelayedTransactionHashes, this, std::placeholders::_1, std::placeholders::_2)));
@@ -196,6 +197,10 @@ std::error_code PaymentServiceJsonRpcServer::handleGetStatus(const GetStatus::Re
 
 std::error_code PaymentServiceJsonRpcServer::handleGetAddresses(const GetAddresses::Request& request, GetAddresses::Response& response) {
   return service.getAddresses(response.addresses);
+}
+
+std::error_code PaymentServiceJsonRpcServer::handleGetAddressesCount(const GetAddressesCount::Request& request, GetAddressesCount::Response& response) {
+  return service.getAddressesCount(response.addresses_count);
 }
 
 } // end namespace PaymentService

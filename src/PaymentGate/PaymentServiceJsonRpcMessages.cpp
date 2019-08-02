@@ -40,6 +40,13 @@ void GetAddresses::Response::serialize(CryptoNote::ISerializer& serializer) {
   serializer(addresses, "addresses");
 }
 
+void GetAddressesCount::Request::serialize(CryptoNote::ISerializer& serializer) {
+}
+
+void GetAddressesCount::Response::serialize(CryptoNote::ISerializer& serializer) {
+  serializer(addresses_count, "addresses_count");
+}
+
 void CreateAddress::Request::serialize(CryptoNote::ISerializer& serializer) {
   bool hasSecretKey = serializer(spend_private_key, "spend_private_key");
   bool hasPublicKey = serializer(spend_public_key, "spend_public_key");
