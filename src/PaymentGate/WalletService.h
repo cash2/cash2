@@ -41,36 +41,33 @@ public:
   void init();
   void saveWallet();
 
-  std::error_code resetWallet();
-  std::error_code replaceWithNewWallet(const std::string& viewSecretKey);
+
   std::error_code createAddress(const std::string& spendSecretKeyText, std::string& address);
   std::error_code createAddress(std::string& address);
+  std::error_code createDelayedTransaction(const CreateDelayedTransaction::Request& request, std::string& transactionHash);
   std::error_code createTrackingAddress(const std::string& spendPublicKeyText, std::string& address);
   std::error_code deleteAddress(const std::string& address);
-  std::error_code getSpendkeys(const std::string& address, std::string& publicSpendKeyText, std::string& secretSpendKeyText);
+  std::error_code deleteDelayedTransaction(const std::string& transactionHash);
+  std::error_code getAddresses(std::vector<std::string>& addresses);
+  std::error_code getAddressesCount(size_t& addressesCount);
   std::error_code getBalance(const std::string& address, uint64_t& availableBalance, uint64_t& lockedAmount);
   std::error_code getBalance(uint64_t& availableBalance, uint64_t& lockedAmount);
   std::error_code getBlockHashes(uint32_t firstBlockIndex, uint32_t blockCount, std::vector<std::string>& blockHashes);
-  std::error_code getViewKey(std::string& viewSecretKey);
-  std::error_code getTransactionHashes(const std::vector<std::string>& addresses, const std::string& blockHash,
-    uint32_t blockCount, const std::string& paymentId, std::vector<TransactionHashesInBlockRpcInfo>& transactionHashes);
-  std::error_code getTransactionHashes(const std::vector<std::string>& addresses, uint32_t firstBlockIndex,
-    uint32_t blockCount, const std::string& paymentId, std::vector<TransactionHashesInBlockRpcInfo>& transactionHashes);
-  std::error_code getTransactions(const std::vector<std::string>& addresses, const std::string& blockHash,
-    uint32_t blockCount, const std::string& paymentId, std::vector<TransactionsInBlockRpcInfo>& transactionHashes);
-  std::error_code getTransactions(const std::vector<std::string>& addresses, uint32_t firstBlockIndex,
-    uint32_t blockCount, const std::string& paymentId, std::vector<TransactionsInBlockRpcInfo>& transactionHashes);
-  std::error_code getTransaction(const std::string& transactionHash, TransactionRpcInfo& transaction);
-  std::error_code getAddresses(std::vector<std::string>& addresses);
-  std::error_code getAddressesCount(size_t& addressesCount);
-  std::error_code sendTransaction(const SendTransaction::Request& request, std::string& transactionHash, std::string& transactionSecretKey);
-  std::error_code createDelayedTransaction(const CreateDelayedTransaction::Request& request, std::string& transactionHash);
   std::error_code getDelayedTransactionHashes(std::vector<std::string>& transactionHashes);
-  std::error_code deleteDelayedTransaction(const std::string& transactionHash);
-  std::error_code sendDelayedTransaction(const std::string& transactionHash);
-  std::error_code getUnconfirmedTransactionHashes(const std::vector<std::string>& addresses, std::vector<std::string>& transactionHashes);
+  std::error_code getSpendkeys(const std::string& address, std::string& publicSpendKeyText, std::string& secretSpendKeyText);
+  std::error_code getSpendPrivateKey(const std::string& address, std::string& spendPrivateKeyText);
   std::error_code getStatus(uint32_t& blockCount, uint32_t& knownBlockCount, std::string& lastBlockHash, uint32_t& peerCount, uint64_t& minimalFee);
-
+  std::error_code getTransaction(const std::string& transactionHash, TransactionRpcInfo& transaction);
+  std::error_code getTransactionHashes(const std::vector<std::string>& addresses, const std::string& blockHash, uint32_t blockCount, const std::string& paymentId, std::vector<TransactionHashesInBlockRpcInfo>& transactionHashes);
+  std::error_code getTransactionHashes(const std::vector<std::string>& addresses, uint32_t firstBlockIndex, uint32_t blockCount, const std::string& paymentId, std::vector<TransactionHashesInBlockRpcInfo>& transactionHashes);
+  std::error_code getTransactions(const std::vector<std::string>& addresses, const std::string& blockHash, uint32_t blockCount, const std::string& paymentId, std::vector<TransactionsInBlockRpcInfo>& transactionHashes);
+  std::error_code getTransactions(const std::vector<std::string>& addresses, uint32_t firstBlockIndex, uint32_t blockCount, const std::string& paymentId, std::vector<TransactionsInBlockRpcInfo>& transactionHashes);
+  std::error_code getUnconfirmedTransactionHashes(const std::vector<std::string>& addresses, std::vector<std::string>& transactionHashes);
+  std::error_code getViewKey(std::string& viewSecretKey);
+  std::error_code replaceWithNewWallet(const std::string& viewSecretKey);
+  std::error_code resetWallet();
+  std::error_code sendDelayedTransaction(const std::string& transactionHash);
+  std::error_code sendTransaction(const SendTransaction::Request& request, std::string& transactionHash, std::string& transactionSecretKey);
 private:
   void refresh();
   void reset();
