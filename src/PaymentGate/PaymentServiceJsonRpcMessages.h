@@ -112,21 +112,6 @@ struct DeleteAddress {
   };
 };
 
-struct GetSpendKeys {
-  struct Request {
-    std::string address;
-
-    void serialize(CryptoNote::ISerializer& serializer);
-  };
-
-  struct Response {
-    std::string spend_private_key;
-    std::string spend_public_key;
-
-    void serialize(CryptoNote::ISerializer& serializer);
-  };
-};
-
 struct GetSpendPrivateKey {
   struct Request {
     std::string address;

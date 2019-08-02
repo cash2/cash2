@@ -54,7 +54,6 @@ public:
   std::error_code getBalance(uint64_t& availableBalance, uint64_t& lockedAmount);
   std::error_code getBlockHashes(uint32_t firstBlockIndex, uint32_t blockCount, std::vector<std::string>& blockHashes);
   std::error_code getDelayedTransactionHashes(std::vector<std::string>& transactionHashes);
-  std::error_code getSpendkeys(const std::string& address, std::string& publicSpendKeyText, std::string& secretSpendKeyText);
   std::error_code getSpendPrivateKey(const std::string& address, std::string& spendPrivateKeyText);
   std::error_code getStatus(uint32_t& blockCount, uint32_t& knownBlockCount, std::string& lastBlockHash, uint32_t& peerCount, uint64_t& minimalFee);
   std::error_code getTransaction(const std::string& transactionHash, TransactionRpcInfo& transaction);

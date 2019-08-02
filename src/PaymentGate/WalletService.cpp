@@ -606,23 +606,6 @@ std::error_code WalletService::deleteAddress(const std::string& address) {
   return std::error_code();
 }
 
-std::error_code WalletService::getSpendkeys(const std::string& address, std::string& publicSpendKeyText, std::string& secretSpendKeyText) {
-  try {
-    System::EventLock lk(readyEvent);
-
-    CryptoNote::KeyPair key = wallet.getAddressSpendKey(address);
-
-    publicSpendKeyText = Common::podToHex(key.publicKey);
-    secretSpendKeyText = Common::podToHex(key.secretKey);
-
-  } catch (std::system_error& x) {
-    logger(Logging::WARNING) << "Error while getting spend key: " << x.what();
-    return x.code();
-  }
-
-  return std::error_code();
-}
-
 std::error_code WalletService::getSpendPrivateKey(const std::string& address, std::string& spendPrivateKeyText) {
   try {
     System::EventLock lk(readyEvent);

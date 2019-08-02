@@ -235,11 +235,11 @@ TEST_F(WalletServiceTest_createAddress, correctPublicKey) {
   ASSERT_EQ(wallet.address, address);
 }
 
-class WalletServiceTest_getSpendKeys : public WalletServiceTest {
+class WalletServiceTest_getSpendPrivateKey : public WalletServiceTest {
 };
 
-struct WalletgetSpendKeysStub: public IWalletBaseStub {
-  WalletgetSpendKeysStub(System::Dispatcher& d) : IWalletBaseStub(d) {
+struct WalletGetSpendPrivateKeyStub: public IWalletBaseStub {
+  WalletGetSpendPrivateKeyStub(System::Dispatcher& d) : IWalletBaseStub(d) {
     Crypto::generate_keys(keyPair.publicKey, keyPair.secretKey);
   }
 
@@ -250,15 +250,13 @@ struct WalletgetSpendKeysStub: public IWalletBaseStub {
   KeyPair keyPair;
 };
 
-TEST_F(WalletServiceTest_getSpendKeys, returnsKeysCorrectly) {
-  WalletgetSpendKeysStub wallet(dispatcher);
+TEST_F(WalletServiceTest_getSpendPrivateKey, returnsKeysCorrectly) {
+  WalletGetSpendPrivateKeyStub wallet(dispatcher);
   std::unique_ptr<WalletService> service = createWalletService(wallet);
 
-  std::string publicSpendKey;
   std::string secretSpendKey;
-  auto ec = service->getSpendkeys("address", publicSpendKey, secretSpendKey);
+  auto ec = service->getSpendPrivateKey("address", secretSpendKey);
   ASSERT_FALSE(ec);
-  ASSERT_EQ(Common::podToHex(wallet.keyPair.publicKey), publicSpendKey);
   ASSERT_EQ(Common::podToHex(wallet.keyPair.secretKey), secretSpendKey);
 }
 
