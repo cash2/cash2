@@ -126,6 +126,18 @@ struct GetSpendPrivateKey {
   };
 };
 
+struct GetSpendPrivateKeys {
+  struct Request {
+    void serialize(CryptoNote::ISerializer& serializer);
+  };
+
+  struct Response {
+    std::vector<std::string> spend_private_keys;
+
+    void serialize(CryptoNote::ISerializer& serializer);
+  };
+};
+
 struct GetBalance {
   struct Request {
     std::string address;

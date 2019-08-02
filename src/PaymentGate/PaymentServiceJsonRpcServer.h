@@ -70,6 +70,7 @@ private:
   std::error_code handleGetBlockHashes(const GetBlockHashes::Request& request, GetBlockHashes::Response& response);
   std::error_code handleGetDelayedTransactionHashes(const GetDelayedTransactionHashes::Request& request, GetDelayedTransactionHashes::Response& response);
   std::error_code handleGetSpendPrivateKey(const GetSpendPrivateKey::Request& request, GetSpendPrivateKey::Response& response);
+  std::error_code handleGetSpendPrivateKeys(const GetSpendPrivateKeys::Request& request, GetSpendPrivateKeys::Response& response);
   std::error_code handleGetStatus(const GetStatus::Request& request, GetStatus::Response& response);
   std::error_code handleGetTransaction(const GetTransaction::Request& request, GetTransaction::Response& response);
   std::error_code handleGetTransactionHashes(const GetTransactionHashes::Request& request, GetTransactionHashes::Response& response);

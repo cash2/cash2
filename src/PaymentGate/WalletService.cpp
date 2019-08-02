@@ -622,6 +622,26 @@ std::error_code WalletService::getSpendPrivateKey(const std::string& address, st
   return std::error_code();
 }
 
+std::error_code WalletService::getSpendPrivateKeys(std::vector<std::string>& spendPrivateKeyStrings) {
+  try {
+    System::EventLock lk(readyEvent);
+
+    size_t numAddresses = wallet.getAddressCount();
+
+    for (size_t i = 0; i < numAddresses; i++)
+    {
+      CryptoNote::KeyPair key = wallet.getAddressSpendKey(i);
+      spendPrivateKeyStrings.push_back(Common::podToHex(key.secretKey));
+    }
+
+  } catch (std::system_error& x) {
+    logger(Logging::WARNING) << "Error while getting spend key: " << x.what();
+    return x.code();
+  }
+
+  return std::error_code();
+}
+
 std::error_code WalletService::getBalance(const std::string& address, uint64_t& availableBalance, uint64_t& lockedAmount) {
   try {
     System::EventLock lk(readyEvent);
