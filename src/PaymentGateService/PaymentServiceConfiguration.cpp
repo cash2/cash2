@@ -33,21 +33,23 @@ Configuration::Configuration() {
 
 void Configuration::initOptions(boost::program_options::options_description& desc) {
   desc.add_options()
+      ("address", "print wallet addresses and exit")
       ("bind-address", po::value<std::string>()->default_value("127.0.0.1"), "payment service bind address")
       ("bind-port", po::value<uint16_t>()->default_value(CryptoNote::WALLETD_DEFAULT_PORT), "payment service bind port")
-      ("rpc-password", po::value<std::string>(), "Specify a password for access to the wallet RPC server.")
       ("container-file,w", po::value<std::string>(), "container file")
       ("container-password,p", po::value<std::string>(), "container password")
-      ("generate-container,g", "generate new container file with one wallet and exit")
       ("daemon,d", "run as daemon in Unix or as service in Windows")
+      ("generate-container,g", "generate new container file with one wallet and exit")
+      ("log-file,l", po::value<std::string>(), "log file")
+      ("log-level", po::value<size_t>(), "log level")
 #ifdef _WIN32
       ("register-service", "register service and exit (Windows only)")
+#endif
+      ("rpc-password", po::value<std::string>(), "Specify a password for access to the wallet RPC server.")
+#ifdef _WIN32
       ("unregister-service", "unregister service and exit (Windows only)")
 #endif
-      ("log-file,l", po::value<std::string>(), "log file")
-      ("server-root", po::value<std::string>(), "server root. The service will use it as working directory. Don't set it if don't want to change it")
-      ("log-level", po::value<size_t>(), "log level")
-      ("address", "print wallet addresses and exit");
+      ("server-root", po::value<std::string>(), "server root. The service will use it as working directory. Don't set it if don't want to change it");
 }
 
 void Configuration::init(const boost::program_options::variables_map& options) {
