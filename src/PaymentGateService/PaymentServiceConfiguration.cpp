@@ -44,11 +44,9 @@ void Configuration::initOptions(boost::program_options::options_description& des
       ("log-level", po::value<size_t>(), "log level")
 #ifdef _WIN32
       ("register-service", "register service and exit (Windows only)")
-#endif
-      ("rpc-password", po::value<std::string>(), "Specify a password for access to the wallet RPC server.")
-#ifdef _WIN32
       ("unregister-service", "unregister service and exit (Windows only)")
 #endif
+      ("rpc-password", po::value<std::string>(), "Specify a password for access to the wallet RPC server.")
       ("server-root", po::value<std::string>(), "server root. The service will use it as working directory. Don't set it if don't want to change it");
 }
 
