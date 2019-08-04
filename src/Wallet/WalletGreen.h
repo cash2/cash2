@@ -18,6 +18,8 @@
 #include <System/Event.h>
 #include "Transfers/TransfersSynchronizer.h"
 #include "Transfers/BlockchainSynchronizer.h"
+#include "CryptoNoteCore/Currency.h"
+#include "Common/ConsoleTools.h"
 
 namespace CryptoNote {
 
@@ -273,6 +275,9 @@ protected:
   std::vector<size_t> deleteTransfersForAddress(const std::string& address, std::vector<size_t>& deletedTransactions);
   void deleteFromUncommitedTransactions(const std::vector<size_t>& deletedTransactions);
 
+  const CryptoNote::Currency& currency() const { return m_currency; }
+  const CryptoNote::INode& node() const { return m_node; }
+
   System::Dispatcher& m_dispatcher;
   const Currency& m_currency;
   INode& m_node;
@@ -307,6 +312,50 @@ protected:
   uint32_t m_transactionSoftLockTime;
 
   BlockHashesContainer m_blockchain;
-};
 
-} //namespace CryptoNote
+  friend class refresh_progress_reporter_t;
+
+  class refresh_progress_reporter_t
+  {
+  public:
+    refresh_progress_reporter_t(CryptoNote::WalletGreen& wallet_green) :
+      m_wallet_green(wallet_green),
+      m_blockchain_height(0),
+      m_blockchain_height_update_time(),
+      m_print_time() {}
+
+    void update(uint64_t height, bool force = false)
+    {
+      auto current_time = std::chrono::system_clock::now();
+      if (std::chrono::seconds(m_wallet_green.currency().difficultyTarget() / 2) < current_time - m_blockchain_height_update_time || m_blockchain_height <= height) {
+        update_blockchain_height();
+        m_blockchain_height = (std::max)(m_blockchain_height, height);
+      }
+
+      if (std::chrono::milliseconds(1) < current_time - m_print_time || force) {
+        Common::Console::setTextColor(Common::Console::Color::BrightCyan);
+        std::cout << "Height " << height << " of " << m_blockchain_height << '\r';
+        Common::Console::setTextColor(Common::Console::Color::Default);
+        m_print_time = current_time;
+      }
+    }
+
+  private:
+    void update_blockchain_height()
+    {
+      uint64_t blockchain_height = m_wallet_green.node().getLastLocalBlockHeight();
+      m_blockchain_height = blockchain_height;
+      m_blockchain_height_update_time = std::chrono::system_clock::now();
+    }
+
+    CryptoNote::WalletGreen& m_wallet_green;
+    uint64_t m_blockchain_height;
+    std::chrono::system_clock::time_point m_blockchain_height_update_time;
+    std::chrono::system_clock::time_point m_print_time;
+  }; // class refresh_progress_reporter_t
+
+  refresh_progress_reporter_t m_refresh_progress_reporter;
+
+}; // end class WalletGreen
+
+} // end namespace CryptoNote

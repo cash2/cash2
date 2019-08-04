@@ -33,6 +33,8 @@ struct Configuration {
   std::string containerPassword;
   std::string logFile;
   std::string serverRoot;
+  std::string spendPrivateKey;
+  std::string viewPrivateKey;
 
   bool generateNewContainer;
   bool daemonize;

@@ -241,7 +241,8 @@ WalletGreen::WalletGreen(System::Dispatcher& dispatcher, const Currency& currenc
   m_state(WalletState::NOT_INITIALIZED),
   m_actualBalance(0),
   m_pendingBalance(0),
-  m_transactionSoftLockTime(transactionSoftLockTime)
+  m_transactionSoftLockTime(transactionSoftLockTime),
+  m_refresh_progress_reporter(*this)
 {
   m_upperTransactionSizeLimit = m_currency.blockGrantedFullRewardZone() * 2 - m_currency.minerTxBlobReservedSize();
   m_readyEvent.set();
@@ -1771,6 +1772,8 @@ void WalletGreen::onSynchronizationProgressUpdated(uint32_t processedBlockCount,
 
   uint32_t currentHeight = processedBlockCount - 1;
   unlockBalances(currentHeight);
+
+  m_refresh_progress_reporter.update(currentHeight, false);
 }
 
 void WalletGreen::onSynchronizationCompleted() {

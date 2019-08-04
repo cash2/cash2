@@ -18,6 +18,7 @@
 #include <System/InterruptedException.h>
 #include "Common/Util.h"
 #include "Common/StringTools.h"
+#include "Common/ConsoleTools.h"
 
 #include "crypto/crypto.h"
 #include "CryptoNote.h"
@@ -374,34 +375,111 @@ void secureSaveWallet(CryptoNote::IWallet& wallet, const std::string& path, bool
 }
 
 void generateNewWallet(const CryptoNote::Currency &currency, const WalletConfiguration &conf, Logging::ILogger& logger, System::Dispatcher& dispatcher) {
-  Logging::LoggerRef log(logger, "generateNewWallet");
+  Logging::LoggerRef log(logger, "Create New Wallet");
 
-  CryptoNote::INode* nodeStub = NodeFactory::createNodeStub();
-  std::unique_ptr<CryptoNote::INode> nodeGuard(nodeStub);
+  if (!conf.walletSpendPrivateKey.empty() && !conf.walletViewPrivateKey.empty())
+  {
+    // spend private key and view private key are given
 
-  CryptoNote::IWallet* wallet = WalletFactory::createWallet(currency, *nodeStub, dispatcher);
-  std::unique_ptr<CryptoNote::IWallet> walletGuard(wallet);
+    // check if spend private key is valid
+    Crypto::Hash spendPrivateKeyHash;
+    size_t spendPrivateKeyHashSize;
 
-  log(Logging::INFO) << "Generating new wallet";
+    if (!Common::fromHex(conf.walletSpendPrivateKey, &spendPrivateKeyHash, sizeof(spendPrivateKeyHash), spendPrivateKeyHashSize) ||
+      spendPrivateKeyHashSize != sizeof(spendPrivateKeyHash)) {
+      log(Logging::ERROR, Logging::BRIGHT_RED) << "Invalid spend private key";
+      return;
+    }
 
-  std::fstream walletFile;
-  createWalletFile(walletFile, conf.walletFile);
+    // check if view private key is valid
+    Crypto::Hash viewPrivateKeyHash;
+    size_t viewPrivateKeyHashSize;
 
-  wallet->initialize(conf.walletPassword);
+    if (!Common::fromHex(conf.walletViewPrivateKey, &viewPrivateKeyHash, sizeof(viewPrivateKeyHash), viewPrivateKeyHashSize) ||
+      viewPrivateKeyHashSize != sizeof(viewPrivateKeyHash)) {
+      log(Logging::ERROR, Logging::BRIGHT_RED) << "Invalid view private key";
+      return;
+    }
 
-  auto address = wallet->createAddress();
-  CryptoNote::KeyPair spendKeyPair = wallet->getAddressSpendKey(address);
-  CryptoNote::KeyPair viewKeyPair = wallet->getViewKey();
+    // convert spend private key and view private key from string to Crypto::SecretKey
+    Crypto::SecretKey spendPrivateKey = *(struct Crypto::SecretKey *) &spendPrivateKeyHash;
+    Crypto::SecretKey viewPrivateKey = *(struct Crypto::SecretKey *) &viewPrivateKeyHash;
 
-  std::string spendSecretKey = Common::podToHex<Crypto::SecretKey>(spendKeyPair.secretKey);
-  std::string viewSecretKey = Common::podToHex<Crypto::SecretKey>(viewKeyPair.secretKey);
+    log(Logging::INFO) << "Creating a new wallet container with the given spend private key and view private key ...";
 
-  log(Logging::INFO) << "New wallet is generated";
-  log(Logging::INFO) <<  "Address : " << address << "\nSpend secret key : " << spendSecretKey <<
-    "\nView secret key : " << viewSecretKey;
+    CryptoNote::INode* nodeStub = NodeFactory::createNodeStub();
+    std::unique_ptr<CryptoNote::INode> nodeGuard(nodeStub);
 
-  saveWallet(*wallet, walletFile, false, false);
-  log(Logging::INFO) << "Wallet is saved";
+    // create the wallet file
+    std::fstream walletFile;
+    createWalletFile(walletFile, conf.walletFile);
+
+    // create and initialize the wallet
+    CryptoNote::IWallet* wallet = WalletFactory::createWallet(currency, *nodeStub, dispatcher);
+    std::unique_ptr<CryptoNote::IWallet> walletGuard(wallet);
+    wallet->initializeWithViewKey(viewPrivateKey, conf.walletPassword);
+    std::string address = wallet->createAddress(spendPrivateKey);
+
+    log(Logging::INFO) << "A new wallet was successfully created :";
+
+    std::string spendSecretKeyStr = conf.walletSpendPrivateKey;
+    std::string viewSecretKeyStr = conf.walletViewPrivateKey;
+
+    Common::Console::setTextColor(Common::Console::Color::BrightCyan);
+    std::cout <<
+      "Address : " << address <<
+      "\nSpend private key : " << spendSecretKeyStr <<
+      "\nView private key : " << viewSecretKeyStr << '\n';
+    Common::Console::setTextColor(Common::Console::Color::Default);
+
+    log(Logging::INFO) << "Wallet is saving ...";
+    saveWallet(*wallet, walletFile, false, false);
+    log(Logging::INFO) << "Wallet is saved";
+    log(Logging::INFO) << "Walletd is now closing ...";
+  }
+  else if (conf.walletSpendPrivateKey.empty() && conf.walletViewPrivateKey.empty())
+  {
+    // neither the spend private key nor the view private key are given
+
+    log(Logging::INFO) << "Creating a new wallet container ...";
+
+    CryptoNote::INode* nodeStub = NodeFactory::createNodeStub();
+    std::unique_ptr<CryptoNote::INode> nodeGuard(nodeStub);
+
+    // create the wallet file
+    std::fstream walletFile;
+    createWalletFile(walletFile, conf.walletFile);
+
+    // create and initialize the wallet
+    CryptoNote::IWallet* wallet = WalletFactory::createWallet(currency, *nodeStub, dispatcher);
+    std::unique_ptr<CryptoNote::IWallet> walletGuard(wallet);
+    wallet->initialize(conf.walletPassword);
+    std::string address = wallet->createAddress();
+    CryptoNote::KeyPair spendKeyPair = wallet->getAddressSpendKey(address);
+    CryptoNote::KeyPair viewKeyPair = wallet->getViewKey();
+
+    log(Logging::INFO) << "A new wallet was successfully created :";
+
+    std::string spendSecretKeyStr = Common::podToHex<Crypto::SecretKey>(spendKeyPair.secretKey);
+    std::string viewSecretKeyStr = Common::podToHex<Crypto::SecretKey>(viewKeyPair.secretKey);
+
+    Common::Console::setTextColor(Common::Console::Color::BrightCyan);
+    std::cout <<
+      "Address : " << address <<
+      "\nSpend private key : " << spendSecretKeyStr <<
+      "\nView private key : " << viewSecretKeyStr << '\n';
+    Common::Console::setTextColor(Common::Console::Color::Default);
+
+    log(Logging::INFO) << "Wallet is saving ...";
+    saveWallet(*wallet, walletFile, false, false);
+    log(Logging::INFO) << "Wallet is saved";
+    log(Logging::INFO) << "Walletd is now closing ...";
+  }
+  else
+  {
+    // either the spend private key was given or the view private key was given but not both
+    log(Logging::ERROR, Logging::BRIGHT_RED) << "Must specify both spend private key and view private key to restore wallet";
+  }
 }
 
 void importLegacyKeys(const std::string &legacyKeysFile, const WalletConfiguration &conf) {

@@ -47,7 +47,9 @@ void Configuration::initOptions(boost::program_options::options_description& des
       ("unregister-service", "unregister service and exit (Windows only)")
 #endif
       ("rpc-password", po::value<std::string>(), "Specify a password for access to the wallet RPC server.")
-      ("server-root", po::value<std::string>(), "server root. The service will use it as working directory. Don't set it if don't want to change it");
+      ("server-root", po::value<std::string>(), "server root. The service will use it as working directory. Don't set it if don't want to change it")
+      ("spend-private-key", po::value<std::string>(), "Specify the spend private key that you want your first wallet file to have")
+      ("view-private-key", po::value<std::string>(), "Specify the view private key that you want your wallet container");
 }
 
 void Configuration::init(const boost::program_options::variables_map& options) {
@@ -105,6 +107,27 @@ void Configuration::init(const boost::program_options::variables_map& options) {
 
   if (options.count("generate-container") != 0) {
     generateNewContainer = true;
+  }
+
+  if (options.count("spend-private-key") != 0) {
+    if (!generateNewContainer) {
+      throw ConfigurationError("generate-container parameter is required");
+    }
+
+    spendPrivateKey = options["spend-private-key"].as<std::string>();
+  }
+
+  if (options.count("view-private-key") != 0) {
+    if (!generateNewContainer) {
+      throw ConfigurationError("generate-container parameter is required");
+    }
+
+    viewPrivateKey = options["view-private-key"].as<std::string>();
+  }
+
+  if((!spendPrivateKey.empty() && viewPrivateKey.empty()) || (spendPrivateKey.empty() && !viewPrivateKey.empty()))
+  {
+    throw ConfigurationError("Must specify both spend private key and view private key to restore wallet");
   }
 
   if (options.count("address") != 0) {
