@@ -42,7 +42,9 @@ protected:
   static void makeErrorResponse(const std::error_code& ec, Common::JsonValue& resp);
   static void makeMethodNotFoundResponse(Common::JsonValue& resp);
   static void makeGenericErrorReponse(Common::JsonValue& resp, const char* what, int errorCode = -32001);
-  static void makeIncorrectPasswordResponse(Common::JsonValue& resp);
+  static void makeMissingRpcPasswordKeyResponse(Common::JsonValue& resp);
+  static void makeIncorrectRpcPasswordResponse(Common::JsonValue& resp);
+  static void makeInvalidRpcPasswordResponse(Common::JsonValue& resp);
   static void fillJsonResponse(const Common::JsonValue& v, Common::JsonValue& resp);
   static void prepareJsonResponse(const Common::JsonValue& req, Common::JsonValue& resp);
   static void makeJsonParsingErrorResponse(Common::JsonValue& resp);

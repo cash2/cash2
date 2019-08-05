@@ -154,7 +154,7 @@ void JsonRpcServer::makeMethodNotFoundResponse(Common::JsonValue& resp) {
   resp.insert("error", error);
 }
 
-void JsonRpcServer::makeIncorrectPasswordResponse(Common::JsonValue& resp) {
+void JsonRpcServer::makeMissingRpcPasswordKeyResponse(Common::JsonValue& resp) {
   using Common::JsonValue;
 
   JsonValue error(JsonValue::OBJECT);
@@ -163,7 +163,41 @@ void JsonRpcServer::makeIncorrectPasswordResponse(Common::JsonValue& resp) {
   code = static_cast<int64_t>(-32604);
 
   JsonValue message;
-  message = "Incorrect wallet RPC password";
+  message = "Missing rpc_password key in JSON RPC request";
+
+  error.insert("code", code);
+  error.insert("message", message);
+
+  resp.insert("error", error);
+}
+
+void JsonRpcServer::makeIncorrectRpcPasswordResponse(Common::JsonValue& resp) {
+  using Common::JsonValue;
+
+  JsonValue error(JsonValue::OBJECT);
+
+  JsonValue code;
+  code = static_cast<int64_t>(-32604);
+
+  JsonValue message;
+  message = "Incorrect RPC password";
+
+  error.insert("code", code);
+  error.insert("message", message);
+
+  resp.insert("error", error);
+}
+
+void JsonRpcServer::makeInvalidRpcPasswordResponse(Common::JsonValue& resp) {
+  using Common::JsonValue;
+
+  JsonValue error(JsonValue::OBJECT);
+
+  JsonValue code;
+  code = static_cast<int64_t>(-32604);
+
+  JsonValue message;
+  message = "Invalid RPC password";
 
   error.insert("code", code);
   error.insert("message", message);

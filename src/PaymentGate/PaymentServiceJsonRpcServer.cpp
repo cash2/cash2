@@ -49,26 +49,44 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     prepareJsonResponse(req, resp);
 
     // Check that the wallet RPC password of the request matches the RPC password set when the server was started
-    std::string clientPassword = "";
+    std::string rpcConfigurationPassword = getRpcConfigurationPassword();
 
-    if (req.contains("password") && req("password").isString())
+    if (rpcConfigurationPassword != "")
     {
-      clientPassword = req("password").getString();
-    }
-
-    if (clientPassword != getRpcConfigurationPassword())
-    {
-      if (clientPassword == "")
+      std::string clientRpcPassword = "";
+    
+      if (req.contains("rpc_password") && req("rpc_password").isString())
       {
-        logger(Logging::WARNING) << "Your request does not include a wallet RPC password";
+        clientRpcPassword = req("rpc_password").getString();
+      }
+      else if (!req.contains("rpc_password"))
+      {
+        logger(Logging::WARNING) << "Missing rpc_password key in JSON RPC request";
+        makeMissingRpcPasswordKeyResponse(resp);
+        return;
       }
       else
       {
-        logger(Logging::WARNING) << "Incorrect wallet RPC password : " << clientPassword;
+        logger(Logging::WARNING) << "RPC password provided is invalid";
+        makeInvalidRpcPasswordResponse(resp);
+        return;
       }
 
-      makeIncorrectPasswordResponse(resp);
-      return;
+      if (clientRpcPassword != rpcConfigurationPassword)
+      {
+        if (clientRpcPassword == "")
+        {
+          logger(Logging::WARNING) << "Your request does not include an RPC password";
+        }
+        else
+        {
+          logger(Logging::WARNING) << "Incorrect RPC password : " << clientRpcPassword;
+        }
+
+        makeIncorrectRpcPasswordResponse(resp);
+        return;
+      }
+
     }
 
     if (!req.contains("method")) {
