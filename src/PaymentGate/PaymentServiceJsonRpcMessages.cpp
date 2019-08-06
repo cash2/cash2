@@ -141,7 +141,7 @@ void TransferRpcInfo::serialize(CryptoNote::ISerializer& serializer) {
 void TransactionRpcInfo::serialize(CryptoNote::ISerializer& serializer) {
   serializer(state, "state");
   serializer(transaction_hash, "transaction_hash");
-  serializer(block_height, "block_height");
+  serializer(block_index, "block_index");
   serializer(timestamp, "timestamp");
   serializer(is_base, "is_base");
   serializer(unlock_time, "unlock_time");

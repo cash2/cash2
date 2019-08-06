@@ -234,7 +234,7 @@ PaymentService::TransactionRpcInfo convertTransactionWithTransfersToTransactionR
 
   transactionInfo.state = static_cast<uint8_t>(transactionWithTransfers.transaction.state);
   transactionInfo.transaction_hash = Common::podToHex(transactionWithTransfers.transaction.hash);
-  transactionInfo.block_height = transactionWithTransfers.transaction.blockHeight;
+  transactionInfo.block_index = transactionWithTransfers.transaction.blockHeight;
   transactionInfo.timestamp = transactionWithTransfers.transaction.timestamp;
   transactionInfo.is_base = transactionWithTransfers.transaction.isBase;
   transactionInfo.unlock_time = transactionWithTransfers.transaction.unlockTime;

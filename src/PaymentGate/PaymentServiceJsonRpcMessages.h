@@ -205,7 +205,7 @@ struct TransferRpcInfo {
 struct TransactionRpcInfo {
   uint8_t state;
   std::string transaction_hash;
-  uint32_t block_height;
+  uint32_t block_index;
   uint64_t timestamp;
   bool is_base;
   uint64_t unlock_time;

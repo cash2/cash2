@@ -684,7 +684,7 @@ TEST_F(WalletServiceTest_getTransaction, returnsCorrectFields) {
 
   ASSERT_FALSE(ec);
   ASSERT_EQ(static_cast<uint8_t>(wallet.transaction.transaction.state), transaction.state);
-  ASSERT_EQ(wallet.transaction.transaction.blockHeight, transaction.block_height);
+  ASSERT_EQ(wallet.transaction.transaction.blockHeight, transaction.block_index);
   ASSERT_EQ(Common::toHex(Common::asBinaryArray(wallet.transaction.transaction.extra)), transaction.extra);
   ASSERT_EQ(PAYMENT_ID, transaction.payment_id);
   ASSERT_EQ(wallet.transaction.transaction.fee, transaction.fee);
