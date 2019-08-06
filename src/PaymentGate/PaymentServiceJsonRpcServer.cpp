@@ -168,10 +168,11 @@ std::error_code PaymentServiceJsonRpcServer::handleGetBlockHashes(const GetBlock
 }
 
 std::error_code PaymentServiceJsonRpcServer::handleGetTransactionHashes(const GetTransactionHashes::Request& request, GetTransactionHashes::Response& response) {
-  if (!request.block_hash.empty()) {
-    return service.getTransactionHashes(request.addresses, request.block_hash, request.block_count, request.payment_id, response.items);
+  if (!request.start_block_hash.empty()) {
+    return service.getTransactionHashes(request.addresses, request.start_block_hash, request.number_of_blocks, request.payment_id, response.items);
   } else {
-    return service.getTransactionHashes(request.addresses, request.first_block_index, request.block_count, request.payment_id, response.items);
+    uint32_t startBlockIndex = request.start_block_height - 1;
+    return service.getTransactionHashes(request.addresses, startBlockIndex, request.number_of_blocks, request.payment_id, response.items);
   }
 }
 

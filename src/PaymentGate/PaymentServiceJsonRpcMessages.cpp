@@ -117,11 +117,11 @@ void TransactionHashesInBlockRpcInfo::serialize(CryptoNote::ISerializer& seriali
 void GetTransactionHashes::Request::serialize(CryptoNote::ISerializer& serializer) {
   serializer(addresses, "addresses");
 
-  if (serializer(block_hash, "block_hash") == serializer(first_block_index, "first_block_index")) {
+  if (serializer(start_block_hash, "start_block_hash") == serializer(start_block_height, "start_block_height")) {
     throw RequestSerializationError();
   }
 
-  if (!serializer(block_count, "block_count")) {
+  if (!serializer(number_of_blocks, "number_of_blocks")) {
     throw RequestSerializationError();
   }
 
