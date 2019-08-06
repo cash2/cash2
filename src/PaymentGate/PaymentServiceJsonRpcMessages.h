@@ -242,9 +242,9 @@ struct TransactionsInBlockRpcInfo {
 struct GetTransactions {
   struct Request {
     std::vector<std::string> addresses;
-    std::string block_hash;
-    uint32_t first_block_index = std::numeric_limits<uint32_t>::max();
-    uint32_t block_count;
+    std::string start_block_hash;
+    uint32_t start_block_height = std::numeric_limits<uint32_t>::max();
+    uint32_t number_of_blocks;
     std::string payment_id;
 
     void serialize(CryptoNote::ISerializer& serializer);
