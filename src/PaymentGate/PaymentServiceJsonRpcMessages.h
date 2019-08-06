@@ -156,8 +156,8 @@ struct GetBalance {
 
 struct GetBlockHashes {
   struct Request {
-    uint32_t first_block_index;
-    uint32_t block_count;
+    uint32_t start_block_height;
+    uint32_t number_of_blocks;
 
     void serialize(CryptoNote::ISerializer& serializer);
   };

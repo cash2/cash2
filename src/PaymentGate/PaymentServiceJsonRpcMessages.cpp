@@ -97,8 +97,8 @@ void GetBalance::Response::serialize(CryptoNote::ISerializer& serializer) {
 }
 
 void GetBlockHashes::Request::serialize(CryptoNote::ISerializer& serializer) {
-  bool r = serializer(first_block_index, "first_block_index");
-  r &= serializer(block_count, "block_count");
+  bool r = serializer(start_block_height, "start_block_height");
+  r &= serializer(number_of_blocks, "number_of_blocks");
 
   if (!r) {
     throw RequestSerializationError();

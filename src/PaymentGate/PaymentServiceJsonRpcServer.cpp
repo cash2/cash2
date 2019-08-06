@@ -163,7 +163,8 @@ std::error_code PaymentServiceJsonRpcServer::handleGetBalance(const GetBalance::
 }
 
 std::error_code PaymentServiceJsonRpcServer::handleGetBlockHashes(const GetBlockHashes::Request& request, GetBlockHashes::Response& response) {
-  return service.getBlockHashes(request.first_block_index, request.block_count, response.block_hashes);
+  uint32_t startBlockIndex = request.start_block_height - 1;
+  return service.getBlockHashes(startBlockIndex, request.number_of_blocks, response.block_hashes);
 }
 
 std::error_code PaymentServiceJsonRpcServer::handleGetTransactionHashes(const GetTransactionHashes::Request& request, GetTransactionHashes::Response& response) {
