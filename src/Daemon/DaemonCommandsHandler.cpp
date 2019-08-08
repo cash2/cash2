@@ -8,6 +8,7 @@
 #include "P2p/NetNode.h"
 #include "CryptoNoteCore/Miner.h"
 #include "CryptoNoteCore/Core.h"
+#include "CryptoNoteCore/CryptoNoteTools.h"
 #include "CryptoNoteProtocol/CryptoNoteProtocolHandler.h"
 #include "Serialization/SerializationTools.h"
 #include "version.h"
@@ -54,19 +55,153 @@ std::string DaemonCommandsHandler::get_commands_str()
   return ss.str();
 }
 
-bool DaemonCommandsHandler::print_block_by_height(uint32_t height)
+bool DaemonCommandsHandler::print_block_helper(uint32_t blockIndex)
 {
   std::list<CryptoNote::Block> blocks;
-  m_core.get_blocks(height, 1, blocks);
+  m_core.get_blocks(blockIndex, 1, blocks);
 
   if (1 == blocks.size()) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << '\n' << '\n' << "Block hash : " << get_block_hash(blocks.front()) << '\n' <<
-    CryptoNote::storeToJson(blocks.front()) << ENDL;
-  } else {
-    uint32_t current_height;
-    Crypto::Hash top_id;
-    m_core.get_blockchain_top(current_height, top_id);
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Block wasn't found. Current block chain height: " << current_height << ", requested: " << height << std::endl;
+    CryptoNote::Block block = blocks.front();
+
+    Crypto::Hash blockHash = get_block_hash(block);
+
+    Crypto::Hash blockHashFromIndex = m_core.getBlockIdByHeight(blockIndex);
+    bool isOrphaned = blockHash != blockHashFromIndex;
+
+    // get block index from coinbase transaction
+    uint32_t tempBlockIndex = boost::get<CryptoNote::BaseInput>(block.baseTransaction.inputs.front()).blockIndex;
+    if (tempBlockIndex != blockIndex)
+    {
+      return false;
+    }
+
+    // get total reward
+    uint64_t totalReward = 0;
+    for (const CryptoNote::TransactionOutput& out : block.baseTransaction.outputs) {
+      totalReward += out.amount;
+    }
+
+    // get block's proof of work hash
+    Crypto::cn_context cryptoContext;
+    Crypto::Hash blockProofOfWorkHash;
+    get_block_longhash(cryptoContext, block, blockProofOfWorkHash);
+
+    // get block's difficulty
+    CryptoNote::difficulty_type blockDifficulty;
+    m_core.getBlockDifficulty(blockIndex, blockDifficulty);
+
+    // get total fees
+    std::list<Crypto::Hash> missedTransactionsIgnore;
+    std::list<CryptoNote::Transaction> blockTransactions;
+    m_core.getTransactions(block.transactionHashes, blockTransactions, missedTransactionsIgnore);
+
+    uint64_t totalFees = 0;
+
+    for (const CryptoNote::Transaction& tx : blockTransactions) {
+      uint64_t amountIn = 0;
+      get_inputs_money_amount(tx, amountIn);
+      uint64_t amountOut = get_outs_money_amount(tx);
+      uint64_t fee = amountIn - amountOut;
+      totalFees += fee;
+    }
+
+    // get size of all block transactions combined
+    size_t allTransactionsSize = 0;
+    if (!m_core.getBlockSize(blockHash, allTransactionsSize)) {
+      return false;
+    }
+
+    size_t blockBlobSize = getObjectBinarySize(block);
+    size_t coinbaseTransactionSize = getObjectBinarySize(block.baseTransaction);
+    size_t blockSize = blockBlobSize + allTransactionsSize - coinbaseTransactionSize;
+
+    // get coinbase reward
+    uint64_t prevBlockCirculatingSupply = 0;
+
+    if (blockIndex > 0)
+    {
+      // if blockIndex is 0, then we are dealing with the genesis block and the genesis block previous hash is all zeros which is an invalid block hash so that is the reason for the if (blockIndex > 0) clause 
+      
+      if (!m_core.getAlreadyGeneratedCoins(block.previousBlockHash, prevBlockCirculatingSupply)) {
+        return false;
+      }
+    }
+
+    uint64_t coinbaseReward = 0;
+    int64_t emissionChangeIgnore = 0;
+    if (!m_core.getBlockReward2(blockIndex, allTransactionsSize, prevBlockCirculatingSupply, 0, coinbaseReward, emissionChangeIgnore)) {
+      return false;
+    }
+
+    if (totalReward - totalFees != coinbaseReward)
+    {
+      return false;
+    }
+
+    // get circulating supply
+    uint64_t alreadyGeneratedCoins;
+    if (!m_core.getAlreadyGeneratedCoins(blockHash, alreadyGeneratedCoins)) {
+      return false;
+    }
+
+    // get block cumulative difficulty
+    uint64_t blockCumulativeDifficulty;
+    m_core.getBlockCumulativeDifficulty(blockIndex, blockCumulativeDifficulty);
+
+    // get transaction hashes string
+    std::string txHashesStr;
+    if (block.transactionHashes.empty())
+    {
+      txHashesStr = "None";
+    }
+    else
+    {
+      for (const Crypto::Hash txHash : block.transactionHashes) {
+        txHashesStr += "\n\t";
+        txHashesStr += Common::podToHex(txHash);
+      }
+    }
+
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << '\n' << '\n' <<
+      "- Block cumulative difficulty : " << blockCumulativeDifficulty << '\n' <<
+      "- Block difficulty : " << blockDifficulty << '\n' <<
+      "- Block hash : " << blockHash << '\n' <<
+      "- Block height : " << blockIndex + 1 << '\n' <<
+      "- Block index : " << blockIndex << '\n' <<
+      "- Block merkle root : " << block.merkleRoot << '\n' <<
+      "- Block nonce : " << std::hex << block.nonce << std::dec << '\n' <<
+      "- Block orphaned : " << std::boolalpha << isOrphaned << '\n' <<
+      "- Block previous block hash : " << block.previousBlockHash << '\n' <<
+      "- Block proof of work hash : " << blockProofOfWorkHash << '\n' <<
+      "- Block size : " << blockSize << " bytes" << '\n' <<
+      "- Block timestamp : " << std::hex << block.timestamp << std::dec << '\n' <<
+      "- Block total reward : " << m_core.currency().formatAmount(totalReward) << " CASH2" << '\n' <<
+      "- Block transaction fees collected : " << m_core.currency().formatAmount(totalFees) << " CASH2" << '\n' <<
+      "- Block transactions count : " << block.transactionHashes.size()<< '\n' <<
+      "- Block transactions hashes : " << txHashesStr << '\n' <<
+      "- Block transactions size : " << allTransactionsSize - coinbaseTransactionSize << " bytes" << '\n' <<
+      "- Circulating supply : " << m_core.currency().formatAmount(alreadyGeneratedCoins) << " CASH2" << '\n' <<
+      "- Coinbase reward : " << m_core.currency().formatAmount(coinbaseReward) << " CASH2" << '\n' <<
+      "- Coinbase transaction extra : " << Common::toHex(block.baseTransaction.extra) << '\n' <<
+      "- Coinbase transaction extra size : " << block.baseTransaction.extra.size() << " bytes" << '\n' <<
+      "- Coinbase transaction size : " << coinbaseTransactionSize << " bytes" << '\n' <<
+      "- Coinbase transaction unlock time : " << block.baseTransaction.unlockTime << '\n' <<
+      "- Coinbase transaction version : " << unsigned(block.baseTransaction.version) << '\n';
+  
+    return true;
+  }
+
+  return false;
+}
+
+bool DaemonCommandsHandler::print_block_by_index(uint32_t blockIndex)
+{
+  if (!print_block_helper(blockIndex))
+  {
+    uint32_t topBlockIndex;
+    Crypto::Hash topBlockHashIgnore;
+    m_core.get_blockchain_top(topBlockIndex, topBlockHashIgnore);
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Block wasn't found. Current block chain height: " << topBlockIndex + 1 << ", requested: " << blockIndex + 1 << std::endl;
     return false;
   }
 
@@ -75,27 +210,19 @@ bool DaemonCommandsHandler::print_block_by_height(uint32_t height)
 
 bool DaemonCommandsHandler::print_block_by_hash(const std::string& arg)
 {
-  Crypto::Hash block_hash;
-  if (!parse_hash256(arg, block_hash)) {
+  Crypto::Hash blockHash;
+  if (!parse_hash256(arg, blockHash)) {
     return false;
   }
 
-  std::list<Crypto::Hash> block_ids;
-  block_ids.push_back(block_hash);
-  std::list<CryptoNote::Block> blocks;
-  std::list<Crypto::Hash> missed_ids;
-  m_core.get_blocks(block_ids, blocks, missed_ids);
-
-  if (1 == blocks.size())
+  uint32_t blockIndex;
+  if(!m_core.getBlockHeight(blockHash, blockIndex))
   {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << CryptoNote::storeToJson(blocks.front()) << ENDL;
-  } else
-  {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "block wasn't found: " << arg << std::endl;
+    std::cout << "Block with hash " << arg << " was not found." << std::endl;
     return false;
   }
 
-  return true;
+  return print_block_by_index(blockIndex);
 }
 
 bool DaemonCommandsHandler::exit(const std::vector<std::string>& args)
@@ -210,7 +337,7 @@ bool DaemonCommandsHandler::print_block(const std::vector<std::string> &args)
       return false;
     }
 
-    print_block_by_height(height - 1);
+    print_block_by_index(height - 1);
   } catch (boost::bad_lexical_cast &) {
     print_block_by_hash(arg);
   }

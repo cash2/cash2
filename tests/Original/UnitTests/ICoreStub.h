@@ -85,6 +85,7 @@ public:
   virtual uint64_t getMinimalFeeForHeight(uint32_t height) override;
   virtual uint64_t getMinimalFee() override;
   virtual uint32_t get_current_blockchain_height() override;
+  virtual bool getBlockCumulativeDifficulty(uint32_t blockIndex, uint64_t& cumulativeDifficulty) override;
 
   void set_blockchain_top(uint32_t height, const Crypto::Hash& top_id);
   void set_outputs_gindexes(const std::vector<uint32_t>& indexes, bool result);

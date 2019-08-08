@@ -94,6 +94,11 @@ uint32_t core::get_current_blockchain_height() {
   return m_blockchain.getCurrentBlockchainHeight();
 }
 
+bool core::getBlockCumulativeDifficulty(uint32_t blockIndex, uint64_t& cumulativeDifficulty)
+{
+  return m_blockchain.getBlockCumulativeDifficulty(blockIndex, cumulativeDifficulty);
+}
+
 void core::get_blockchain_top(uint32_t& height, Crypto::Hash& top_id) {
   assert(m_blockchain.getCurrentBlockchainHeight() > 0);
   top_id = m_blockchain.getTailId(height);

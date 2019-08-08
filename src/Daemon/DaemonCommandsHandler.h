@@ -39,7 +39,9 @@ private:
 
   std::string get_commands_str();
   bool print_block_by_hash(const std::string& arg);
-  bool print_block_by_height(uint32_t height);
+  bool print_block_by_index(uint32_t index);
+  bool print_block_helper(uint32_t index);
+
 
   bool exit(const std::vector<std::string>& args);
   bool help(const std::vector<std::string>& args);

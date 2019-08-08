@@ -370,3 +370,8 @@ uint64_t ICoreStub::getMinimalFee() {
 uint32_t ICoreStub::get_current_blockchain_height() {
   return 0;
 };
+
+bool ICoreStub::getBlockCumulativeDifficulty(uint32_t blockIndex, uint64_t& cumulativeDifficulty)
+{
+  return true;
+}

@@ -1349,6 +1349,18 @@ uint64_t Blockchain::blockDifficulty(size_t i) {
   return m_blocks[i].cumulative_difficulty - m_blocks[i - 1].cumulative_difficulty;
 }
 
+bool Blockchain::getBlockCumulativeDifficulty(uint32_t blockIndex, uint64_t& cumulativeDifficulty) {
+  std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
+  if (blockIndex >= m_blocks.size())
+  {
+    logger(ERROR, BRIGHT_RED) << "Wrong block index = " << blockIndex << " at Blockchain::getBlockCumulativeDifficulty()";
+    return false;
+  }
+
+  cumulativeDifficulty = m_blocks[blockIndex].cumulative_difficulty;
+  return true;
+}
+
 void Blockchain::print_blockchain(uint64_t start_index, uint64_t end_index) {
   std::stringstream ss;
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
