@@ -861,44 +861,54 @@ bool RpcServer::on_get_block_header_by_height(const COMMAND_RPC_GET_BLOCK_HEADER
 }
 
 bool RpcServer::on_get_blocks_json(const COMMAND_RPC_GET_BLOCKS_JSON::request& req, COMMAND_RPC_GET_BLOCKS_JSON::response& res) {
-  if (m_core.get_current_blockchain_height() <= req.height) {
-    throw JsonRpc::JsonRpcError{ CORE_RPC_ERROR_CODE_TOO_BIG_HEIGHT,
-      std::string("To big height: ") + std::to_string(req.height) + ", current blockchain height = " + std::to_string(m_core.get_current_blockchain_height()) };
+  if (req.height == 0) {
+    throw JsonRpc::JsonRpcError{ CORE_RPC_ERROR_CODE_TOO_SMALL_HEIGHT,
+      std::string("Height must be greater than 0") };
   }
 
-  uint32_t print_blocks_count = 30;
-  uint32_t last_height = req.height - print_blocks_count;
-  if (req.height <= print_blocks_count)  {
-    last_height = 0;
-  } 
+  uint32_t currentBlockchainHeight = m_core.get_current_blockchain_height();
+  if (req.height > currentBlockchainHeight) {
+    throw JsonRpc::JsonRpcError{ CORE_RPC_ERROR_CODE_TOO_BIG_HEIGHT,
+      std::string("Height is too big : ") + std::to_string(req.height) + ", current blockchain height = " + std::to_string(currentBlockchainHeight) };
+  }
 
-  for (uint32_t i = req.height; i >= last_height; i--) {
-    Hash block_hash = m_core.getBlockIdByHeight(static_cast<uint32_t>(i));
-    Block blk;
-    if (!m_core.getBlockByHash(block_hash, blk)) {
+  uint32_t startBlockIndex = req.height - 1;
+  uint32_t numBlocksToPrint = 30;
+  uint32_t lastBlockIndex = 0;
+  if (req.height > numBlocksToPrint)  {
+    uint32_t lastBlockHeight = req.height - numBlocksToPrint;
+    lastBlockIndex = lastBlockHeight - 1;
+  }
+
+  for (uint32_t i = startBlockIndex; i >= lastBlockIndex; i--) {
+    Hash blockHash = m_core.getBlockIdByHeight(static_cast<uint32_t>(i));
+    Block block;
+    if (!m_core.getBlockByHash(blockHash, block)) {
       throw JsonRpc::JsonRpcError{ CORE_RPC_ERROR_CODE_INTERNAL_ERROR,
-        "Internal error: can't get block by height. Height = " + std::to_string(i) + '.' };
+        "Internal error: Cannot get block at height " + std::to_string(i + 1) };
     }
 
     size_t tx_cumulative_block_size;
-    m_core.getBlockSize(block_hash, tx_cumulative_block_size);
-    size_t blokBlobSize = getObjectBinarySize(blk);
-    size_t minerTxBlobSize = getObjectBinarySize(blk.baseTransaction);
-    difficulty_type blockDiff;
-    m_core.getBlockDifficulty(static_cast<uint32_t>(i), blockDiff);
+    m_core.getBlockSize(blockHash, tx_cumulative_block_size);
+    size_t blockBlobSize = getObjectBinarySize(block);
+    size_t minerTxBlobSize = getObjectBinarySize(block.baseTransaction);
+    difficulty_type difficulty;
+    m_core.getBlockDifficulty(static_cast<uint32_t>(i), difficulty);
 
     block_short_response block_short;
-    block_short.timestamp = blk.timestamp;
-    block_short.height = i;
-    block_short.hash = Common::podToHex(block_hash);
-    block_short.size = blokBlobSize + tx_cumulative_block_size - minerTxBlobSize;
-    block_short.transaction_count = blk.transactionHashes.size() + 1;
-    block_short.difficulty = blockDiff;
+    block_short.timestamp = block.timestamp;
+    block_short.height = i + 1;
+    block_short.hash = Common::podToHex(blockHash);
+    block_short.size = blockBlobSize + tx_cumulative_block_size - minerTxBlobSize;
+    block_short.transaction_count = block.transactionHashes.size();
+    block_short.difficulty = difficulty;
 
     res.blocks.push_back(block_short);
 
     if (i == 0)
+    {
       break;
+    }
   }
 
   res.status = CORE_RPC_STATUS_OK;
