@@ -93,7 +93,7 @@ private:
 
   bool getRingSignatureSize(const Transaction& transaction, uint64_t& ringSignatureSize);
 
-  void fill_block_header_response(const Block& blk, bool orphan_status, uint64_t height, const Crypto::Hash& hash, block_header_response& responce);
+  void fill_block_header_response(const Block& blk, bool orphan_status, uint64_t blockIndex, const Crypto::Hash& hash, block_header_response& response);
 
   Logging::LoggerRef logger;
   core& m_core;
