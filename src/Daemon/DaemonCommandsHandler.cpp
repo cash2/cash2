@@ -184,16 +184,16 @@ bool DaemonCommandsHandler::print_block_helper(uint32_t blockIndex)
       "- Block index : " << blockIndex << '\n' <<
       "- Block merkle root : " << block.merkleRoot << '\n' <<
       "- Block nonce : " << std::hex << block.nonce << std::dec << '\n' <<
+      "- Block noncoinbase transactions count : " << block.transactionHashes.size()<< '\n' <<
+      "- Block noncoinbase transactions hashes : " << txHashesStr << '\n' <<
+      "- Block noncoinbase transactions size : " << allTransactionsSize - coinbaseTransactionSize << " bytes" << '\n' <<
       "- Block orphaned : " << std::boolalpha << isOrphaned << '\n' <<
       "- Block previous block hash : " << block.previousBlockHash << '\n' <<
       "- Block proof of work hash : " << blockProofOfWorkHash << '\n' <<
       "- Block size : " << blockSize << " bytes" << '\n' <<
       "- Block timestamp : " << std::hex << block.timestamp << std::dec << '\n' <<
       "- Block total reward : " << m_core.currency().formatAmount(totalReward) << " CASH2" << '\n' <<
-      "- Block transaction fees collected : " << m_core.currency().formatAmount(totalFees) << " CASH2" << '\n' <<
-      "- Block transactions count : " << block.transactionHashes.size()<< '\n' <<
-      "- Block transactions hashes : " << txHashesStr << '\n' <<
-      "- Block transactions size : " << allTransactionsSize - coinbaseTransactionSize << " bytes" << '\n' <<
+      "- Block transaction fees : " << m_core.currency().formatAmount(totalFees) << " CASH2" << '\n' <<
       "- Circulating supply : " << m_core.currency().formatAmount(alreadyGeneratedCoins) << " CASH2" << '\n' <<
       "- Coinbase reward : " << m_core.currency().formatAmount(coinbaseReward) << " CASH2" << '\n' <<
       "- Coinbase transaction extra : " << Common::toHex(block.baseTransaction.extra) << '\n' <<
