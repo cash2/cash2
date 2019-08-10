@@ -1378,15 +1378,15 @@ void Blockchain::print_blockchain(uint64_t start_index, uint64_t end_index) {
     get_block_longhash(m_cn_context, m_blocks[i].bl, proofOfWorkHash);
 
     ss <<
-      std::setw(30) << std::left << "Height"                  << std::setw(50) << std::left << i + 1 << ENDL <<
-      std::setw(30) << std::left << "Hash"                    << std::setw(50) << std::left << get_block_hash(m_blocks[i].bl) << ENDL <<
-      std::setw(30) << std::left << "Proof of Work Hash"      << std::setw(50) << std::left << proofOfWorkHash << ENDL <<
-      std::setw(30) << std::left << "Timestamp "              << std::setw(50) << std::left << m_blocks[i].bl.timestamp << ENDL <<
-      std::setw(30) << std::left << "Cumulative Difficulty "  << std::setw(50) << std::left << m_blocks[i].cumulative_difficulty << ENDL <<
-      std::setw(30) << std::left << "Size"                    << std::setw(50) << std::left << m_blocks[i].block_cumulative_size << ENDL <<
-      std::setw(30) << std::left << "Difficulty"              << std::setw(50) << std::left << blockDifficulty(i) << ENDL <<
-      std::setw(30) << std::left << "Nonce"                   << std::setw(50) << std::left << m_blocks[i].bl.nonce << ENDL <<
-      std::setw(30) << std::left << "Transaction Count"       << std::setw(50) << std::left << m_blocks[i].bl.transactionHashes.size() << ENDL << ENDL;
+      std::setw(35) << std::left << "Height"                          << std::setw(50) << std::left << i + 1 << ENDL <<
+      std::setw(35) << std::left << "Hash"                            << std::setw(50) << std::left << get_block_hash(m_blocks[i].bl) << ENDL <<
+      std::setw(35) << std::left << "Proof of work hash"              << std::setw(50) << std::left << proofOfWorkHash << ENDL <<
+      std::setw(35) << std::left << "Timestamp "                      << std::setw(50) << std::left << m_blocks[i].bl.timestamp << ENDL <<
+      std::setw(35) << std::left << "Difficulty"                      << std::setw(50) << std::left << blockDifficulty(i) << ENDL <<
+      std::setw(35) << std::left << "Size"                            << std::setw(50) << std::left << m_blocks[i].block_cumulative_size << ENDL <<
+      std::setw(35) << std::left << "Nonce"                           << std::setw(50) << std::left << m_blocks[i].bl.nonce << ENDL <<
+      std::setw(35) << std::left << "Noncoinbase transactions count"  << std::setw(50) << std::left << m_blocks[i].bl.transactionHashes.size() << ENDL <<
+      std::setw(35) << std::left << "Cumulative difficulty "          << std::setw(50) << std::left << m_blocks[i].cumulative_difficulty << ENDL << ENDL;
 
     printCount++;
   }
