@@ -362,10 +362,7 @@ bool DaemonCommandsHandler::print_block(const std::vector<std::string> &args)
 
 bool DaemonCommandsHandler::print_blockchain_height(const std::vector<std::string>& args)
 {
-  uint32_t height;
-  Crypto::Hash blockHashIgnore;
-  m_core.get_blockchain_top(height, blockHashIgnore);
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Blockchain Height : " << height << std::endl;
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Blockchain height : " << m_core.get_current_blockchain_height() << std::endl;
   return true;
 }
 
