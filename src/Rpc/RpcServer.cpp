@@ -1045,23 +1045,23 @@ bool RpcServer::on_get_block(const COMMAND_RPC_GET_BLOCK::request& req, COMMAND_
 }
 
 bool RpcServer::on_get_transaction(const COMMAND_RPC_GET_TRANSACTION::request& req, COMMAND_RPC_GET_TRANSACTION::response& res) {
-  Hash hash;
+  Hash transactionHash;
 
-  if (!parse_hash256(req.hash, hash)) {
+  if (!parse_hash256(req.hash, transactionHash)) {
     throw JsonRpc::JsonRpcError{
       CORE_RPC_ERROR_CODE_WRONG_PARAM,
       "Failed to parse hex representation of transaction hash. Hex = " + req.hash + '.' };
   }
 
-  std::vector<Crypto::Hash> tx_ids;
-  tx_ids.push_back(hash);
+  std::vector<Crypto::Hash> transactionHashes;
+  transactionHashes.push_back(transactionHash);
 
-  std::list<Crypto::Hash> missed_txs;
-  std::list<Transaction> txs;
-  m_core.getTransactions(tx_ids, txs, missed_txs, true);
+  std::list<Crypto::Hash> missedTransactionsIgnore;
+  std::list<Transaction> transactions;
+  m_core.getTransactions(transactionHashes, transactions, missedTransactionsIgnore, true);
 
-  if (1 == txs.size()) {
-    res.transaction = txs.front();
+  if (1 == transactions.size()) {
+    res.transaction = transactions.front();
   } else {
     throw JsonRpc::JsonRpcError{
       CORE_RPC_ERROR_CODE_WRONG_PARAM,
@@ -1069,25 +1069,25 @@ bool RpcServer::on_get_transaction(const COMMAND_RPC_GET_TRANSACTION::request& r
   }
 
   Crypto::Hash blockHash;
-  uint32_t blockHeight;
-  if (m_core.getBlockContainingTx(hash, blockHash, blockHeight)) {
-    Block blk;
-    if (m_core.getBlockByHash(blockHash, blk)) {
-      size_t tx_cumulative_block_size;
-      m_core.getBlockSize(blockHash, tx_cumulative_block_size);
-      size_t blokBlobSize = getObjectBinarySize(blk);
-      size_t minerTxBlobSize = getObjectBinarySize(blk.baseTransaction);
+  uint32_t blockIndex;
+  if (m_core.getBlockContainingTx(transactionHash, blockHash, blockIndex)) {
+    Block block;
+    if (m_core.getBlockByHash(blockHash, block)) {
+      size_t totalBlockTransactionsSize;
+      m_core.getBlockSize(blockHash, totalBlockTransactionsSize);
+      size_t blockBlobSize = getObjectBinarySize(block);
+      size_t minerTxBlobSize = getObjectBinarySize(block.baseTransaction);
       block_short_response block_short;
 
-      block_short.timestamp = blk.timestamp;
-      block_short.height = blockHeight;
+      block_short.timestamp = block.timestamp;
+      block_short.height = blockIndex + 1;
       block_short.hash = Common::podToHex(blockHash);
-      block_short.size = blokBlobSize + tx_cumulative_block_size - minerTxBlobSize;
-      block_short.transaction_count = blk.transactionHashes.size() + 1;
+      block_short.size = blockBlobSize + totalBlockTransactionsSize - minerTxBlobSize;
+      block_short.transaction_count = block.transactionHashes.size() + 1;
 
-      difficulty_type blockDiff;
-      m_core.getBlockDifficulty(static_cast<uint32_t>(blockHeight), blockDiff);
-      block_short.difficulty = blockDiff;
+      difficulty_type difficulty;
+      m_core.getBlockDifficulty(static_cast<uint32_t>(blockIndex), difficulty);
+      block_short.difficulty = difficulty;
 
       res.block = block_short;
     }
@@ -1100,7 +1100,9 @@ bool RpcServer::on_get_transaction(const COMMAND_RPC_GET_TRANSACTION::request& r
   res.transaction_details.hash = Common::podToHex(getObjectHash(res.transaction));
   res.transaction_details.fee = amount_in - amount_out;
   if (amount_in == 0)
+  {
     res.transaction_details.fee = 0;
+  }
   res.transaction_details.amount_out = amount_out;
   res.transaction_details.size = getObjectBinarySize(res.transaction);
 
