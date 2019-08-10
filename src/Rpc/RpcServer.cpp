@@ -900,7 +900,7 @@ bool RpcServer::on_get_blocks_json(const COMMAND_RPC_GET_BLOCKS_JSON::request& r
     block_short.height = i + 1;
     block_short.hash = Common::podToHex(blockHash);
     block_short.size = blockBlobSize + tx_cumulative_block_size - minerTxBlobSize;
-    block_short.transaction_count = block.transactionHashes.size();
+    block_short.transaction_count = block.transactionHashes.size() + 1;
     block_short.difficulty = difficulty;
 
     res.blocks.push_back(block_short);
