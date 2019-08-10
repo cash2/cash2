@@ -394,23 +394,26 @@ void printTransaction(LoggerRef& logger, const WalletLegacyTransaction& txInfo, 
 
   char timeString[TIMESTAMP_MAX_WIDTH + 1];
   time_t timestamp = static_cast<time_t>(txInfo.timestamp);
-  if (std::strftime(timeString, sizeof(timeString), "%Y-%m-%d %H:%M:%S", std::gmtime(&timestamp)) == 0) {
+  if (std::strftime(timeString, sizeof(timeString), "%b %d, %Y, %A, %I:%M:%S %p", std::gmtime(&timestamp)) == 0) {
     throw std::runtime_error("time buffer is too small");
   }
 
   std::string rowColor = txInfo.totalAmount < 0 ? RED : GREEN;
+
+  std::stringstream ss;
 
   if (txInfo.totalAmount >= 0)
   {
 
     // Received money into your wallet
 
-    logger(INFO, rowColor)
-      << "Received : " << currency.formatAmount(txInfo.totalAmount) << "\n"
-      << "Timestamp : " << timeString << "\n"
-      << "Transaction ID : " << Common::podToHex(txInfo.hash) << "\n"
-      << "Fee : " << currency.formatAmount(txInfo.fee) << "\n"
-      << "Block Height : " << txInfo.blockHeight << "\n\n";
+    ss <<
+      "Received" << '\n' <<
+      "Amount : " << currency.formatAmount(txInfo.totalAmount) << " CASH2" << '\n' <<
+      "Timestamp : " << timeString << '\n' <<
+      "Transaction hash : " << Common::podToHex(txInfo.hash) << '\n' <<
+      "Fee : " << currency.formatAmount(txInfo.fee) << " CASH2" << '\n' <<
+      "Block height : " << addCommasToBlockHeight(txInfo.blockHeight + 1) << '\n';
   }
   else
   {
@@ -419,30 +422,35 @@ void printTransaction(LoggerRef& logger, const WalletLegacyTransaction& txInfo, 
 
     Crypto::SecretKey transactionSecretKey = wallet.getTxKey(txInfo.hash);
 
-    logger(INFO, rowColor)
-      << "Sent\n"
-      << "Timestamp : " << timeString << "\n"
-      << "Transaction ID : " << Common::podToHex(txInfo.hash) << "\n"
-      << "Transaction Secret Key : " << Common::podToHex(transactionSecretKey) << "\n"
-      << "Fee : " << currency.formatAmount(txInfo.fee) << "\n"
-      << "Block Height : " << txInfo.blockHeight << "\n";
+    ss <<
+      "Sent" << '\n' <<
+      "Timestamp : " << timeString << '\n' <<
+      "Transaction hash : " << Common::podToHex(txInfo.hash) << '\n' <<
+      "Transaction private key : " << Common::podToHex(transactionSecretKey) << '\n' <<
+      "Fee : " << currency.formatAmount(txInfo.fee) << " CASH2" << '\n' <<
+      "Block height : " << addCommasToBlockHeight(txInfo.blockHeight + 1) << '\n';
 
     if (txInfo.transferCount > 0) {
       for (TransferId id = txInfo.firstTransferId; id < txInfo.firstTransferId + txInfo.transferCount; ++id) {
         WalletLegacyTransfer tr;
         wallet.getTransfer(id, tr);
-        logger(INFO, rowColor)
-        << "Receiver's Address : " << tr.address << "\n"
-        << "Amount :  " << currency.formatAmount(tr.amount) << "\n\n";
+
+        ss <<
+        "Receiver's address : " << tr.address << '\n' <<
+        "Amount : " << currency.formatAmount(tr.amount) << " CASH2" << '\n';
       }
     }
   }
 
   if (!paymentIdStr.empty()) {
-    logger(INFO, rowColor) << "Payment ID : " << paymentIdStr;
+    ss << "Payment ID : " << paymentIdStr << "\n\n";
+  }
+  else
+  {
+    ss << '\n';
   }
 
-  logger(INFO, rowColor) << " "; //just to make logger print one endline
+  logger(INFO, rowColor) << ss.str();
 }
 
 void printIncomingTransaction(LoggerRef& logger, const WalletLegacyTransaction& txInfo, IWalletLegacy& wallet, const Currency& currency) {
