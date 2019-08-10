@@ -174,7 +174,7 @@ void CryptoNoteProtocolHandler::log_incoming_connections() {
 
   if (!incomingConnectionFound)
   {
-    output = "\n\nIncoming Connections : None";
+    output = "\n\nIncoming connections : None";
   }
 
   logger(INFO, BRIGHT_CYAN) << output;
@@ -215,7 +215,7 @@ void CryptoNoteProtocolHandler::log_outgoing_connections() {
 
   if (!outgoingConnectionFound)
   {
-    output = "\n\nOutgoing Connections : None";
+    output = "\n\nOutgoing connections : None";
   }
 
   logger(INFO, BRIGHT_CYAN) << output;

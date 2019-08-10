@@ -369,7 +369,7 @@ bool DaemonCommandsHandler::print_blockchain_height(const std::vector<std::strin
 bool DaemonCommandsHandler::print_circulating_supply(const std::vector<std::string>& args)
 {
   std::string circulatingSupply = m_core.currency().formatAmount(m_core.getTotalGeneratedAmount());
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Circulating Supply : " << circulatingSupply << " CASH2" << std::endl;
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Circulating supply : " << circulatingSupply << " CASH2" << std::endl;
   return true;
 }
 
@@ -381,13 +381,13 @@ bool DaemonCommandsHandler::print_cn(const std::vector<std::string>& args)
 
 bool DaemonCommandsHandler::print_cn_count(const std::vector<std::string>& args)
 {
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Number of Connections : " << m_srv.get_connections_count() << std::endl;
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Number of connections : " << m_srv.get_connections_count() << std::endl;
   return true;
 }
 
 bool DaemonCommandsHandler::print_difficulty(const std::vector<std::string>& args)
 {
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Network Difficulty : " << m_core.getNextBlockDifficulty() << std::endl;
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Network difficulty : " << m_core.getNextBlockDifficulty() << std::endl;
   return true;
 }
 
@@ -400,7 +400,7 @@ bool DaemonCommandsHandler::print_grey_pl(const std::vector<std::string>& args)
 bool DaemonCommandsHandler::print_grey_pl_count(const std::vector<std::string>& args)
 {
   uint64_t greyPeerlistCount = m_srv.getPeerlistManager().get_gray_peers_count();
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Grey Peerlist Count : " << greyPeerlistCount << std::endl;
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Grey peerlist count : " << greyPeerlistCount << std::endl;
   return true;
 }
 
@@ -416,13 +416,13 @@ bool DaemonCommandsHandler::print_incoming_cn_count(const std::vector<std::strin
   size_t outgoingConnectionsCount = m_srv.get_outgoing_connections_count();
   size_t incoming_connections_count = totalConnections - outgoingConnectionsCount;
 
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Incoming Connections Count : " << incoming_connections_count << std::endl;
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Incoming connections count : " << incoming_connections_count << std::endl;
   return true;
 }
 
 bool DaemonCommandsHandler::print_network_height(const std::vector<std::string>& args)
 {
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Network Blockchain Height : " << m_srv.get_payload_object().getObservedHeight();
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Network blockchain height : " << m_srv.get_payload_object().getObservedHeight();
   return true;
 }
 
@@ -436,7 +436,7 @@ bool DaemonCommandsHandler::print_outgoing_cn_count(const std::vector<std::strin
 {
   size_t outgoingConnectionsCount = m_srv.get_outgoing_connections_count();
 
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Outgoing Connections Count : " << outgoingConnectionsCount << std::endl;
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Outgoing connections count : " << outgoingConnectionsCount << std::endl;
   return true;
 }
 
@@ -482,14 +482,14 @@ bool DaemonCommandsHandler::print_total_transactions_count(const std::vector<std
 {
   uint32_t numCoinbaseTransactions = m_core.get_current_blockchain_height();
   size_t totalTransactionsCount = m_core.get_blockchain_total_transactions() - numCoinbaseTransactions;
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Total Transactions Count : " << totalTransactionsCount << std::endl;
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Total transactions count : " << totalTransactionsCount << std::endl;
   return true;
 }
 
 bool DaemonCommandsHandler::print_transaction_fee(const std::vector<std::string>& args)
 {
   std::string transactionFee = m_core.currency().formatAmount(m_core.getMinimalFee());
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Transaction Fee : " << transactionFee << " CASH2"  << std::endl;
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Transaction fee : " << transactionFee << " CASH2"  << std::endl;
   return true;
 }
 
@@ -531,7 +531,7 @@ bool DaemonCommandsHandler::print_white_pl(const std::vector<std::string>& args)
 bool DaemonCommandsHandler::print_white_pl_count(const std::vector<std::string>& args)
 {
   uint64_t whitePeerlistCount = m_srv.getPeerlistManager().get_white_peers_count();
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "White Peerlist Count : " << whitePeerlistCount << std::endl;
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "White peerlist count : " << whitePeerlistCount << std::endl;
   return true;
 }
 
