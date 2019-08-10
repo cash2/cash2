@@ -72,6 +72,7 @@ bool DaemonCommandsHandler::print_block_helper(uint32_t blockIndex)
     uint32_t tempBlockIndex = boost::get<CryptoNote::BaseInput>(block.baseTransaction.inputs.front()).blockIndex;
     if (tempBlockIndex != blockIndex)
     {
+      std::cout << "Block indexes do not match" << std::endl;
       return false;
     }
 
@@ -108,6 +109,7 @@ bool DaemonCommandsHandler::print_block_helper(uint32_t blockIndex)
     // get size of all block transactions combined
     size_t allTransactionsSize = 0;
     if (!m_core.getBlockSize(blockHash, allTransactionsSize)) {
+      std::cout << "Unable to get total size of all transactions in the block" << std::endl;
       return false;
     }
 
@@ -123,6 +125,7 @@ bool DaemonCommandsHandler::print_block_helper(uint32_t blockIndex)
       // if blockIndex is 0, then we are dealing with the genesis block and the genesis block previous hash is all zeros which is an invalid block hash so that is the reason for the if (blockIndex > 0) clause 
       
       if (!m_core.getAlreadyGeneratedCoins(block.previousBlockHash, prevBlockCirculatingSupply)) {
+        std::cout << "Unable to get circulating supply from previous block" << std::endl;
         return false;
       }
     }
@@ -130,17 +133,20 @@ bool DaemonCommandsHandler::print_block_helper(uint32_t blockIndex)
     uint64_t coinbaseReward = 0;
     int64_t emissionChangeIgnore = 0;
     if (!m_core.getBlockReward2(blockIndex, allTransactionsSize, prevBlockCirculatingSupply, 0, coinbaseReward, emissionChangeIgnore)) {
+      std::cout << "Unable to calculate the block reward" << std::endl;
       return false;
     }
 
     if (totalReward - totalFees != coinbaseReward)
     {
+      std::cout << "Block reward mismatch" << std::endl;
       return false;
     }
 
     // get circulating supply
     uint64_t alreadyGeneratedCoins;
     if (!m_core.getAlreadyGeneratedCoins(blockHash, alreadyGeneratedCoins)) {
+      std::cout << "Unable to get circulating supply" << std::endl;
       return false;
     }
 
@@ -160,6 +166,14 @@ bool DaemonCommandsHandler::print_block_helper(uint32_t blockIndex)
         txHashesStr += "\n\t";
         txHashesStr += Common::podToHex(txHash);
       }
+    }
+
+    // get coinbase transaction hash
+    Crypto::Hash coinbaseTransactionHash;
+    if (!getObjectHash(block.baseTransaction, coinbaseTransactionHash))
+    {
+      std::cout << "Unable to get coinbase transaction hash" << std::endl;
+      return false;
     }
 
     logger(Logging::INFO, Logging::BRIGHT_CYAN) << '\n' << '\n' <<
@@ -184,6 +198,7 @@ bool DaemonCommandsHandler::print_block_helper(uint32_t blockIndex)
       "- Coinbase reward : " << m_core.currency().formatAmount(coinbaseReward) << " CASH2" << '\n' <<
       "- Coinbase transaction extra : " << Common::toHex(block.baseTransaction.extra) << '\n' <<
       "- Coinbase transaction extra size : " << block.baseTransaction.extra.size() << " bytes" << '\n' <<
+      "- Coinbase transaction hash : " << coinbaseTransactionHash << '\n' <<
       "- Coinbase transaction size : " << coinbaseTransactionSize << " bytes" << '\n' <<
       "- Coinbase transaction unlock time : " << block.baseTransaction.unlockTime << '\n' <<
       "- Coinbase transaction version : " << unsigned(block.baseTransaction.version) << '\n';
