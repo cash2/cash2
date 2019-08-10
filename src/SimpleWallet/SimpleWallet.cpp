@@ -135,7 +135,7 @@ private:
 };
 
 uint64_t getMinimalFee(const CryptoNote::NodeRpcProxy& node) {
-  if (node.getLastLocalBlockHeight() < CryptoNote::parameters::SOFT_FORK_HEIGHT_1)
+  if ((node.getLastLocalBlockHeight() + 1) < CryptoNote::parameters::SOFT_FORK_HEIGHT_1)
   {
     return CryptoNote::parameters::MINIMUM_FEE_1;
   }
@@ -1518,7 +1518,7 @@ bool simple_wallet::show_payments(const std::vector<std::string> &args) {
 //----------------------------------------------------------------------------------------------------
 bool simple_wallet::show_blockchain_height(const std::vector<std::string>& args) {
   try {
-    uint64_t bc_height = m_node->getLastLocalBlockHeight();
+    uint64_t bc_height = m_node->getLastLocalBlockHeight() + 1;
     success_msg_writer() << bc_height;
   } catch (std::exception &e) {
     fail_msg_writer() << "failed to get blockchain height: " << e.what();
@@ -1528,7 +1528,7 @@ bool simple_wallet::show_blockchain_height(const std::vector<std::string>& args)
 }
 //----------------------------------------------------------------------------------------------------
 uint64_t simple_wallet::getMinimalFee() {
-  if (m_node->getLastLocalBlockHeight() < CryptoNote::parameters::SOFT_FORK_HEIGHT_1)
+  if ((m_node->getLastLocalBlockHeight() + 1) < CryptoNote::parameters::SOFT_FORK_HEIGHT_1)
   {
     return CryptoNote::parameters::MINIMUM_FEE_1;
   }

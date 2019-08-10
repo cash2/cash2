@@ -214,7 +214,7 @@ void NodeRpcProxy::updateBlockchainStatus() {
 
     if (blockHash != m_lastKnowHash) {
       m_lastKnowHash = blockHash;
-      m_nodeHeight.store(static_cast<uint32_t>(rsp.block_header.height), std::memory_order_relaxed);
+      m_nodeHeight.store(static_cast<uint32_t>(rsp.block_header.height - 1), std::memory_order_relaxed);
       m_lastLocalBlockTimestamp.store(rsp.block_header.timestamp, std::memory_order_relaxed);
       m_observerManager.notify(&INodeObserver::localBlockchainUpdated, m_nodeHeight.load(std::memory_order_relaxed));
     }
