@@ -420,13 +420,13 @@ void printTransaction(LoggerRef& logger, const WalletLegacyTransaction& txInfo, 
 
     // Sent money out of your wallet
 
-    Crypto::SecretKey transactionSecretKey = wallet.getTxKey(txInfo.hash);
+    Crypto::SecretKey transactionPrivateKey = wallet.getTxKey(txInfo.hash);
 
     ss <<
       "Sent" << '\n' <<
       "Timestamp : " << timeString << '\n' <<
       "Transaction hash : " << Common::podToHex(txInfo.hash) << '\n' <<
-      "Transaction private key : " << Common::podToHex(transactionSecretKey) << '\n' <<
+      "Transaction private key : " << Common::podToHex(transactionPrivateKey) << '\n' <<
       "Fee : " << currency.formatAmount(txInfo.fee) << " CASH2" << '\n' <<
       "Block height : " << addCommasToBlockHeight(txInfo.blockHeight + 1) << '\n';
 
