@@ -715,7 +715,7 @@ bool simple_wallet::init(const boost::program_options::variables_map& vm) {
     std::getline(std::cin, answer);
     c = answer[0];
     if (!(c == '1' || c == '2' || c == '3' || c == '4')) {
-      std::cout << "Unknown command : " << c << std::endl << "Please choose 1, 2, 3, or 4";
+      std::cout << "Unknown command : " << c << std::endl << "Please choose 1, 2, 3, or 4\n";
     } else {
       break;
     }
