@@ -469,19 +469,24 @@ void printIncomingTransaction(LoggerRef& logger, const WalletLegacyTransaction& 
 
   if (txInfo.totalAmount >= 0)
   {
+
     // Received money into your wallet
+
     ss <<
-      "Received : " << currency.formatAmount(txInfo.totalAmount) << " CASH2" << std::endl <<
-      "Timestamp : " << timeString << "\n" <<
-      "Transaction Hash : " << Common::podToHex(txInfo.hash) << std::endl <<
-      "Transaction Fee : " << currency.formatAmount(txInfo.fee) << " CASH2" << std::endl <<
-      "Block Height : " << addCommasToBlockHeight(txInfo.blockHeight) << std::endl;
-
-    if (!paymentIdStr.empty()) {
-      ss << "Payment ID : " << paymentIdStr << std::endl;
-    }
-
-    ss << std::endl;
+      "Received" << '\n' <<
+      "Amount : " << currency.formatAmount(txInfo.totalAmount) << " CASH2" << '\n' <<
+      "Timestamp : " << timeString << '\n' <<
+      "Transaction hash : " << Common::podToHex(txInfo.hash) << '\n' <<
+      "Fee : " << currency.formatAmount(txInfo.fee) << " CASH2" << '\n' <<
+      "Block height : " << addCommasToBlockHeight(txInfo.blockHeight + 1) << '\n';
+  }
+  
+  if (!paymentIdStr.empty()) {
+    ss << "Payment ID : " << paymentIdStr << "\n\n";
+  }
+  else
+  {
+    ss << '\n';
   }
 
   logger(INFO, GREEN) << ss.str();
