@@ -504,39 +504,42 @@ void printOutgoingTransaction(LoggerRef& logger, const WalletLegacyTransaction& 
     throw std::runtime_error("time buffer is too small");
   }
 
-  // Sent money out of your wallet
-
-  Crypto::SecretKey transactionSecretKey = wallet.getTxKey(txInfo.hash);
-
   std::stringstream ss;
 
-  ss <<
-    "Sent" << std::endl <<
-    "Timestamp : " << timeString << std::endl <<
-    "Transaction Hash : " << Common::podToHex(txInfo.hash) << std::endl <<
-    "Transaction Fee : " << currency.formatAmount(txInfo.fee) << " CASH2" << std::endl <<
-    "Block Height : " << addCommasToBlockHeight(txInfo.blockHeight) << std::endl;
-
-  if (transactionSecretKey != NULL_SECRET_KEY)
+  if (txInfo.totalAmount < 0)
   {
-    ss << "Transaction Private Key : " << Common::podToHex(transactionSecretKey) << std::endl;
-  }
 
-  if (txInfo.transferCount > 0) {
-    for (TransferId id = txInfo.firstTransferId; id < txInfo.firstTransferId + txInfo.transferCount; ++id) {
-      WalletLegacyTransfer tr;
-      wallet.getTransfer(id, tr);
-      ss <<
-      "Receiver's Address : " << tr.address << std::endl <<
-      "Amount :  " << currency.formatAmount(tr.amount) << " CASH2" << std::endl;
+    // Sent money out of your wallet
+
+    Crypto::SecretKey transactionPrivateKey = wallet.getTxKey(txInfo.hash);
+
+    ss <<
+      "Sent" << '\n' <<
+      "Timestamp : " << timeString << '\n' <<
+      "Transaction hash : " << Common::podToHex(txInfo.hash) << '\n' <<
+      "Transaction private key : " << Common::podToHex(transactionPrivateKey) << '\n' <<
+      "Fee : " << currency.formatAmount(txInfo.fee) << " CASH2" << '\n' <<
+      "Block height : " << addCommasToBlockHeight(txInfo.blockHeight + 1) << '\n';
+
+    if (txInfo.transferCount > 0) {
+      for (TransferId id = txInfo.firstTransferId; id < txInfo.firstTransferId + txInfo.transferCount; ++id) {
+        WalletLegacyTransfer tr;
+        wallet.getTransfer(id, tr);
+
+        ss <<
+        "Receiver's address : " << tr.address << '\n' <<
+        "Amount : " << currency.formatAmount(tr.amount) << " CASH2" << '\n';
+      }
     }
   }
 
   if (!paymentIdStr.empty()) {
-    ss << "Payment ID : " << paymentIdStr;
+    ss << "Payment ID : " << paymentIdStr << "\n\n";
   }
-
-  ss << std::endl;
+  else
+  {
+    ss << '\n';
+  }
 
   logger(INFO, RED) << ss.str();
 }
