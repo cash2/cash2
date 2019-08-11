@@ -1500,12 +1500,13 @@ bool simple_wallet::show_payments(const std::vector<std::string> &args) {
             }
 
             ss <<
-              "Received : " << m_currency.formatAmount(txInfo.totalAmount) << " CASH2" << std::endl <<
-              "Timestamp : " << timeString << std::endl <<
-              "Transaction Hash : " << Common::podToHex(txInfo.hash) << std::endl <<
-              "Transaction Fee : " << m_currency.formatAmount(txInfo.fee) << " CASH2" << std::endl <<
-              "Block Height : " << addCommasToBlockHeight(txInfo.blockHeight) << std::endl <<
-              "Payment ID : " << paymentId << std::endl << std::endl;
+              "Received" << '\n' <<
+              "Amount : " << m_currency.formatAmount(txInfo.totalAmount) << " CASH2" << '\n' <<
+              "Timestamp : " << timeString << '\n' <<
+              "Transaction hash : " << Common::podToHex(txInfo.hash) << '\n' <<
+              "Fee : " << m_currency.formatAmount(txInfo.fee) << " CASH2" << '\n' <<
+              "Block height : " << addCommasToBlockHeight(txInfo.blockHeight + 1) << '\n' <<
+              "Payment ID : " << paymentId << '\n' << '\n';
           }
         }
       }
