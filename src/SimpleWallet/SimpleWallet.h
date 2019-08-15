@@ -134,7 +134,7 @@ namespace CryptoNote
     private:
       void update_blockchain_height()
       {
-        uint64_t blockchain_height = m_simple_wallet.m_node->getLastLocalBlockHeight();
+        uint64_t blockchain_height = m_simple_wallet.m_node->getLastLocalBlockHeight() + 1;
         m_blockchain_height = blockchain_height;
         m_blockchain_height_update_time = std::chrono::system_clock::now();
       }
