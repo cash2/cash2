@@ -1384,9 +1384,9 @@ void simple_wallet::externalTransactionCreated(CryptoNote::TransactionId transac
   }
 
   if (txInfo.blockHeight == WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT) {
-    m_refresh_progress_reporter.update(m_node->getLastLocalBlockHeight(), true);
+    m_refresh_progress_reporter.update(m_node->getLastLocalBlockHeight() + 1, true);
   } else {
-    m_refresh_progress_reporter.update(txInfo.blockHeight, true);
+    m_refresh_progress_reporter.update(txInfo.blockHeight + 1, true);
   }
 }
 //----------------------------------------------------------------------------------------------------
