@@ -1773,7 +1773,7 @@ void WalletGreen::onSynchronizationProgressUpdated(uint32_t processedBlockCount,
   uint32_t currentHeight = processedBlockCount - 1;
   unlockBalances(currentHeight);
 
-  m_refresh_progress_reporter.update(currentHeight, false);
+  m_refresh_progress_reporter.update(processedBlockCount, false);
 }
 
 void WalletGreen::onSynchronizationCompleted() {

@@ -343,7 +343,7 @@ protected:
   private:
     void update_blockchain_height()
     {
-      uint64_t blockchain_height = m_wallet_green.node().getLastLocalBlockHeight();
+      uint64_t blockchain_height = m_wallet_green.node().getLastLocalBlockHeight() + 1;
       m_blockchain_height = blockchain_height;
       m_blockchain_height_update_time = std::chrono::system_clock::now();
     }
