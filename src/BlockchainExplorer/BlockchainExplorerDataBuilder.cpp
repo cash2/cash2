@@ -195,11 +195,11 @@ bool BlockchainExplorerDataBuilder::fillTransactionDetails(const Transaction& tr
   uint32_t blockHeight;
   if (!core.getBlockContainingTx(hash, blockHash, blockHeight)) {
     transactionDetails.inBlockchain = false;
-    transactionDetails.blockHeight = boost::value_initialized<uint32_t>();
+    transactionDetails.blockIndex = boost::value_initialized<uint32_t>();
     transactionDetails.blockHash = boost::value_initialized<Crypto::Hash>();
   } else {
     transactionDetails.inBlockchain = true;
-    transactionDetails.blockHeight = blockHeight;
+    transactionDetails.blockIndex = blockHeight;
     transactionDetails.blockHash = blockHash;
     if (timestamp == 0) {
       Block block;

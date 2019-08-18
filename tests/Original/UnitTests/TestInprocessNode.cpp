@@ -509,7 +509,7 @@ TEST_F(InProcessNodeTests, getTxMany) {
       EXPECT_TRUE(sameHeight.get<0>().get<1>().inBlockchain);
       Hash expectedBlockHash = reinterpret_cast<const Hash&>(std::get<1>(sameHeight.get<1>()));
       EXPECT_EQ(sameHeight.get<0>().get<1>().blockHash, expectedBlockHash);
-      EXPECT_EQ(sameHeight.get<0>().get<1>().blockHeight, std::get<2>(sameHeight.get<1>()));
+      EXPECT_EQ(sameHeight.get<0>().get<1>().blockIndex, std::get<2>(sameHeight.get<1>()));
     } else {
       EXPECT_FALSE(sameHeight.get<0>().get<1>().inBlockchain);
     }

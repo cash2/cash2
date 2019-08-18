@@ -88,7 +88,7 @@ struct TransactionDetails {
   Crypto::Hash paymentId;
   bool inBlockchain;
   Crypto::Hash blockHash;
-  uint32_t blockHeight;
+  uint32_t blockIndex;
   TransactionExtraDetails extra;
   std::vector<std::vector<Crypto::Signature>> signatures;
   std::vector<TransactionInputDetails> inputs;
