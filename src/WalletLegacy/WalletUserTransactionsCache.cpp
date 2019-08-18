@@ -71,7 +71,7 @@ TransactionId WalletUserTransactionsCache::addNewTransaction(
   transaction.isCoinbase = false;
   transaction.timestamp = 0;
   transaction.extra = extra;
-  transaction.blockHeight = WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT;
+  transaction.blockIndex = WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT;
   transaction.state = WalletLegacyTransactionState::Sending;
   transaction.unlockTime = unlockTime;
   transaction.secretKey = NULL_SECRET_KEY;
@@ -120,7 +120,7 @@ std::shared_ptr<WalletLegacyEvent> WalletUserTransactionsCache::onTransactionUpd
     transaction.fee = isCoinbase ? 0 : txInfo.totalAmountIn - txInfo.totalAmountOut;
     transaction.sentTime = 0;
     transaction.hash = txInfo.transactionHash;
-    transaction.blockHeight = txInfo.blockHeight;
+    transaction.blockIndex = txInfo.blockHeight;
     transaction.isCoinbase = isCoinbase;
     transaction.timestamp = txInfo.timestamp;
     transaction.extra.assign(txInfo.extra.begin(), txInfo.extra.end());
@@ -133,7 +133,7 @@ std::shared_ptr<WalletLegacyEvent> WalletUserTransactionsCache::onTransactionUpd
     event = std::make_shared<WalletExternalTransactionCreatedEvent>(id);
   } else {
     WalletLegacyTransaction& tr = getTransaction(id);
-    tr.blockHeight = txInfo.blockHeight;
+    tr.blockIndex = txInfo.blockHeight;
     tr.timestamp = txInfo.timestamp;
     tr.state = WalletLegacyTransactionState::Active;
     // notification event
@@ -156,7 +156,7 @@ std::shared_ptr<WalletLegacyEvent> WalletUserTransactionsCache::onTransactionDel
   std::shared_ptr<WalletLegacyEvent> event;
   if (id != CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_ID) {
     WalletLegacyTransaction& tr = getTransaction(id);
-    tr.blockHeight = WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT;
+    tr.blockIndex = WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT;
     tr.timestamp = 0;
     tr.state = WalletLegacyTransactionState::Deleted;
 
@@ -280,7 +280,7 @@ TransferId WalletUserTransactionsCache::insertTransfers(const std::vector<Wallet
 
 void WalletUserTransactionsCache::updateUnconfirmedTransactions() {
   for (TransactionId id = 0; id < m_transactions.size(); ++id) {
-    if (m_transactions[id].blockHeight == WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT) {
+    if (m_transactions[id].blockIndex == WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT) {
       m_unconfirmedTransactions.updateTransactionId(m_transactions[id].hash, id);
     }
   }

@@ -48,7 +48,7 @@ struct WalletLegacyTransaction {
   Crypto::Hash     hash;
   boost::optional<Crypto::SecretKey> secretKey = CryptoNote::NULL_SECRET_KEY;                                                                           
   bool             isCoinbase;
-  uint32_t         blockHeight; // I think this should be renamed to blockIndex
+  uint32_t         blockIndex; // I think this should be renamed to blockIndex
   uint64_t         timestamp;
   std::string      extra;
   WalletLegacyTransactionState state;

@@ -438,13 +438,13 @@ TEST_F(DetachTest, testDetachWithWallet) {
 
   Bob.getTransaction(txId, txInfo);
 
-  ASSERT_EQ(txInfo.blockHeight, expectedTransactionBlockHeight);
+  ASSERT_EQ(txInfo.blockIndex, expectedTransactionBlockHeight);
   ASSERT_EQ(txInfo.totalAmount, tr.amount);
 
   ASSERT_EQ(Bob.pendingBalance(), 0);
   ASSERT_EQ(Bob.actualBalance(), tr.amount);
 
-  m_node.startAlternativeChain(txInfo.blockHeight - 1);
+  m_node.startAlternativeChain(txInfo.blockIndex - 1);
   generator.generateEmptyBlocks(2);
 
   //sync Bob
@@ -463,7 +463,7 @@ TEST_F(DetachTest, testDetachWithWallet) {
   Bob.removeObserver(&BobCompleted);
 
   Bob.getTransaction(txId, txInfo);
-  ASSERT_EQ(txInfo.blockHeight, WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT);
+  ASSERT_EQ(txInfo.blockIndex, WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT);
   ASSERT_EQ(txInfo.totalAmount, tr.amount);
 
   ASSERT_EQ(Bob.pendingBalance(), tr.amount);

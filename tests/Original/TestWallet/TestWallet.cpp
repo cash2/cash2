@@ -1088,7 +1088,7 @@ void WalletApi::testIWalletDataCompatibility(bool details, const std::string& ca
     ASSERT_EQ(txs.size(), outcomingTxCount);
     for (size_t i = 0; i < outcomingTxCount; ++i) {
       auto tx = wallet.getTransaction(i);
-      EXPECT_EQ(WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT, tx.blockHeight);
+      EXPECT_EQ(WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT, tx.blockIndex);
       EXPECT_EQ(txs[i].extra, tx.extra);
       EXPECT_EQ(txs[i].fee, tx.fee);
       EXPECT_EQ(WalletTransactionState::SUCCEEDED, tx.state);

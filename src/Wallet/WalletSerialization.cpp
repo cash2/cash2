@@ -249,7 +249,7 @@ CryptoNote::WalletTransaction convert(const CryptoNote::WalletLegacyTransaction&
 
   mtx.state = CryptoNote::WalletTransactionState::SUCCEEDED;
   mtx.timestamp = tx.timestamp;
-  mtx.blockHeight = tx.blockHeight;
+  mtx.blockHeight = tx.blockIndex;
   mtx.hash = tx.hash;
   mtx.totalAmount = tx.totalAmount;
   mtx.fee = tx.fee;

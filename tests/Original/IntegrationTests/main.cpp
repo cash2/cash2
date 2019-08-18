@@ -588,7 +588,7 @@ public:
     auto wallet1PendingAfterTransaction = wallet1->pendingBalance();
     auto w2PendingDiff = wallet2PendingAfterTransaction - wallet2PendingBeforeTransaction;
     auto w1PendingDiff = wallet1PendingBeforeTransaction - wallet1PendingAfterTransaction;
-    CHECK_AND_ASSERT_MES((txInfo.blockHeight == WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT), false, "STEP 5 ASSERTION 1 FAILED\r\n Transaction blockHeight differs unconfirmed_tx_height");
+    CHECK_AND_ASSERT_MES((txInfo.blockIndex == WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT), false, "STEP 5 ASSERTION 1 FAILED\r\n Transaction blockHeight differs unconfirmed_tx_height");
     CHECK_AND_ASSERT_MES((tr.amount == txInfo.totalAmount), false, "STEP 5 ASSERTION 2 FAILED\r\n Transfered amount " + m_currency.formatAmount(tr.amount) + " doesn't match recieved amount from pool transaction " + m_currency.formatAmount(txInfo.totalAmount));
     CHECK_AND_ASSERT_MES((tr.amount == w2PendingDiff), false, "STEP 5 ASSERTION 3 FAILED\r\n Transfered amount " + m_currency.formatAmount(tr.amount) + " doesn't match recieved amount " + m_currency.formatAmount(w2PendingDiff));
     CHECK_AND_ASSERT_MES((w1PendingDiff - tr.amount - FEE == 0), false,
@@ -613,7 +613,7 @@ public:
     wallet2->getTransaction(txId, txInfo);
     wallet2->removeObserver(&trasactionConfirmationObserver);
 
-    CHECK_AND_ASSERT_MES(txInfo.blockHeight <= inprocNode->getLastLocalBlockHeight(), false, "STEP 6 ASSERTION FAILED tx height confirmation failed");
+    CHECK_AND_ASSERT_MES(txInfo.blockIndex <= inprocNode->getLastLocalBlockHeight(), false, "STEP 6 ASSERTION FAILED tx height confirmation failed");
     LOG_TRACE("STEP 6 PASSED");
     LOG_DEBUG("Wallet1 pending: " + m_currency.formatAmount(wallet1->pendingBalance()));
     LOG_DEBUG("Wallet1 actual:  " + m_currency.formatAmount(wallet1->actualBalance()));
@@ -736,7 +736,7 @@ public:
     auto wallet1PendingAfterTransaction = wallet1->pendingBalance();
     auto w2PendingDiff = wallet2PendingAfterTransaction - wallet2PendingBeforeTransaction;
     auto w1PendingDiff = wallet1PendingBeforeTransaction - wallet1PendingAfterTransaction;
-    CHECK_AND_ASSERT_MES((txInfo.blockHeight == WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT), false, "STEP 5 ASSERTION 1 FAILED\r\n Transaction blockHeight differs unconfirmed_tx_height");
+    CHECK_AND_ASSERT_MES((txInfo.blockIndex == WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT), false, "STEP 5 ASSERTION 1 FAILED\r\n Transaction blockHeight differs unconfirmed_tx_height");
     CHECK_AND_ASSERT_MES((tr.amount == txInfo.totalAmount), false, "STEP 5 ASSERTION 2 FAILED\r\n Transfered amount " + m_currency.formatAmount(tr.amount) + " doesn't match recieved amount from pool transaction " + m_currency.formatAmount(txInfo.totalAmount));
     CHECK_AND_ASSERT_MES((tr.amount == w2PendingDiff), false, "STEP 5 ASSERTION 3 FAILED\r\n Transfered amount " + m_currency.formatAmount(tr.amount) + " doesn't match recieved amount " + m_currency.formatAmount(w2PendingDiff));
     CHECK_AND_ASSERT_MES((w1PendingDiff - tr.amount - FEE == 0), false,

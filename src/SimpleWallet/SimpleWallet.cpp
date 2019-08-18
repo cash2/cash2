@@ -413,7 +413,7 @@ void printTransaction(LoggerRef& logger, const WalletLegacyTransaction& txInfo, 
       "Timestamp : " << timeString << '\n' <<
       "Transaction hash : " << Common::podToHex(txInfo.hash) << '\n' <<
       "Fee : " << currency.formatAmount(txInfo.fee) << " CASH2" << '\n' <<
-      "Block height : " << addCommasToBlockHeight(txInfo.blockHeight + 1) << '\n';
+      "Block height : " << addCommasToBlockHeight(txInfo.blockIndex + 1) << '\n';
   }
   else
   {
@@ -428,7 +428,7 @@ void printTransaction(LoggerRef& logger, const WalletLegacyTransaction& txInfo, 
       "Transaction hash : " << Common::podToHex(txInfo.hash) << '\n' <<
       "Transaction private key : " << Common::podToHex(transactionPrivateKey) << '\n' <<
       "Fee : " << currency.formatAmount(txInfo.fee) << " CASH2" << '\n' <<
-      "Block height : " << addCommasToBlockHeight(txInfo.blockHeight + 1) << '\n';
+      "Block height : " << addCommasToBlockHeight(txInfo.blockIndex + 1) << '\n';
 
     if (txInfo.transferCount > 0) {
       for (TransferId id = txInfo.firstTransferId; id < txInfo.firstTransferId + txInfo.transferCount; ++id) {
@@ -478,7 +478,7 @@ void printIncomingTransaction(LoggerRef& logger, const WalletLegacyTransaction& 
       "Timestamp : " << timeString << '\n' <<
       "Transaction hash : " << Common::podToHex(txInfo.hash) << '\n' <<
       "Fee : " << currency.formatAmount(txInfo.fee) << " CASH2" << '\n' <<
-      "Block height : " << addCommasToBlockHeight(txInfo.blockHeight + 1) << '\n';
+      "Block height : " << addCommasToBlockHeight(txInfo.blockIndex + 1) << '\n';
   }
   
   if (!paymentIdStr.empty()) {
@@ -519,7 +519,7 @@ void printOutgoingTransaction(LoggerRef& logger, const WalletLegacyTransaction& 
       "Transaction hash : " << Common::podToHex(txInfo.hash) << '\n' <<
       "Transaction private key : " << Common::podToHex(transactionPrivateKey) << '\n' <<
       "Fee : " << currency.formatAmount(txInfo.fee) << " CASH2" << '\n' <<
-      "Block height : " << addCommasToBlockHeight(txInfo.blockHeight + 1) << '\n';
+      "Block height : " << addCommasToBlockHeight(txInfo.blockIndex + 1) << '\n';
 
     if (txInfo.transferCount > 0) {
       for (TransferId id = txInfo.firstTransferId; id < txInfo.firstTransferId + txInfo.transferCount; ++id) {
@@ -1367,10 +1367,10 @@ void simple_wallet::externalTransactionCreated(CryptoNote::TransactionId transac
   m_wallet->getTransaction(transactionId, txInfo);
   
   std::stringstream logPrefix;
-  if (txInfo.blockHeight == WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT) {
+  if (txInfo.blockIndex == WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT) {
     logPrefix << "Unconfirmed";
   } else {
-    logPrefix << "Height " << txInfo.blockHeight << ',';
+    logPrefix << "Height " << txInfo.blockIndex << ',';
   }
 
   if (txInfo.totalAmount >= 0) {
@@ -1383,10 +1383,10 @@ void simple_wallet::externalTransactionCreated(CryptoNote::TransactionId transac
       ", spent " << m_currency.formatAmount(static_cast<uint64_t>(-txInfo.totalAmount));
   }
 
-  if (txInfo.blockHeight == WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT) {
+  if (txInfo.blockIndex == WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT) {
     m_refresh_progress_reporter.update(m_node->getLastLocalBlockHeight() + 1, true);
   } else {
-    m_refresh_progress_reporter.update(txInfo.blockHeight + 1, true);
+    m_refresh_progress_reporter.update(txInfo.blockIndex + 1, true);
   }
 }
 //----------------------------------------------------------------------------------------------------
@@ -1449,7 +1449,7 @@ bool simple_wallet::list_transactions(const std::vector<std::string>& args) {
   for (size_t trantransactionNumber = 0; trantransactionNumber < transactionsCount; ++trantransactionNumber) {
     WalletLegacyTransaction txInfo;
     m_wallet->getTransaction(trantransactionNumber, txInfo);
-    if (txInfo.state != WalletLegacyTransactionState::Active || txInfo.blockHeight == WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT) {
+    if (txInfo.state != WalletLegacyTransactionState::Active || txInfo.blockIndex == WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT) {
       continue;
     }
 
@@ -1505,7 +1505,7 @@ bool simple_wallet::show_payments(const std::vector<std::string> &args) {
               "Timestamp : " << timeString << '\n' <<
               "Transaction hash : " << Common::podToHex(txInfo.hash) << '\n' <<
               "Fee : " << m_currency.formatAmount(txInfo.fee) << " CASH2" << '\n' <<
-              "Block height : " << addCommasToBlockHeight(txInfo.blockHeight + 1) << '\n' <<
+              "Block height : " << addCommasToBlockHeight(txInfo.blockIndex + 1) << '\n' <<
               "Payment ID : " << paymentId << '\n' << '\n';
           }
         }

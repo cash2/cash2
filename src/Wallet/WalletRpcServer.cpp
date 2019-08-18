@@ -245,7 +245,7 @@ bool wallet_rpc_server::on_get_payments(const wallet_rpc::COMMAND_RPC_GET_PAYMEN
   for (size_t trantransactionNumber = 0; trantransactionNumber < transactionsCount; ++trantransactionNumber) {
     WalletLegacyTransaction txInfo;
     m_wallet.getTransaction(trantransactionNumber, txInfo);
-    if (txInfo.state != WalletLegacyTransactionState::Active || txInfo.blockHeight == WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT) {
+    if (txInfo.state != WalletLegacyTransactionState::Active || txInfo.blockIndex == WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT) {
       continue;
     }
 
@@ -259,7 +259,7 @@ bool wallet_rpc_server::on_get_payments(const wallet_rpc::COMMAND_RPC_GET_PAYMEN
       wallet_rpc::payment_details rpc_payment;
       rpc_payment.transaction_hash = Common::podToHex(txInfo.hash);
       rpc_payment.amount = txInfo.totalAmount;
-      rpc_payment.block_height = txInfo.blockHeight;
+      rpc_payment.block_height = txInfo.blockIndex;
       rpc_payment.unlock_time = txInfo.unlockTime;
       res.payments.push_back(rpc_payment);
     }
@@ -283,7 +283,7 @@ bool wallet_rpc_server::on_get_transfers(const wallet_rpc::COMMAND_RPC_GET_TRANS
   for (size_t trantransactionNumber = 0; trantransactionNumber < transactionsCount; ++trantransactionNumber) {
     WalletLegacyTransaction txInfo;
     m_wallet.getTransaction(trantransactionNumber, txInfo);
-    if (txInfo.state != WalletLegacyTransactionState::Active || txInfo.blockHeight == WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT) {
+    if (txInfo.state != WalletLegacyTransactionState::Active || txInfo.blockIndex == WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT) {
       continue;
     }
 
@@ -303,7 +303,7 @@ bool wallet_rpc_server::on_get_transfers(const wallet_rpc::COMMAND_RPC_GET_TRANS
     transfer.amount = std::abs(txInfo.totalAmount);
     transfer.fee = txInfo.fee;
     transfer.address = address;
-    transfer.block_height = txInfo.blockHeight;
+    transfer.block_height = txInfo.blockIndex;
     transfer.unlock_time = txInfo.unlockTime;
     transfer.payment_id = "";
 

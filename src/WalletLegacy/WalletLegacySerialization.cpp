@@ -45,7 +45,7 @@ void serialize(WalletLegacyTransaction& txi, CryptoNote::ISerializer& serializer
   serializer(txi.hash, "hash");
   serializer(txi.isCoinbase, "is_coinbase");
 
-  CryptoNote::serializeBlockHeight(serializer, txi.blockHeight, "block_height");
+  CryptoNote::serializeBlockHeight(serializer, txi.blockIndex, "block_index");
 
   serializer(txi.timestamp, "timestamp");
   serializer(txi.unlockTime, "unlock_time");
