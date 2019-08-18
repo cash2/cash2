@@ -45,7 +45,7 @@ struct TransactionOutputReferenceDetails {
 };
 
 struct TransactionInputGenerateDetails {
-  uint32_t height;
+  uint32_t block_index;
 };
 
 struct TransactionInputToKeyDetails {

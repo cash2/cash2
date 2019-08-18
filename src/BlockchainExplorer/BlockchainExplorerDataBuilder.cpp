@@ -262,7 +262,7 @@ bool BlockchainExplorerDataBuilder::fillTransactionDetails(const Transaction& tr
 
     if (txIn.type() == typeid(BaseInput)) {
       TransactionInputGenerateDetails txInGenDetails;
-      txInGenDetails.height = boost::get<BaseInput>(txIn).blockIndex;
+      txInGenDetails.block_index = boost::get<BaseInput>(txIn).blockIndex;
       txInDetails.amount = 0;
       for (const TransactionOutput& out : transaction.outputs) {
         txInDetails.amount += out.amount;
