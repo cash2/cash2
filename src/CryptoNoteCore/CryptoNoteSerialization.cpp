@@ -247,7 +247,7 @@ void serialize(TransactionInput& in, ISerializer& serializer) {
 }
 
 void serialize(BaseInput& gen, ISerializer& serializer) {
-  serializer(gen.blockIndex, "height");
+  serializer(gen.blockIndex, "block_index");
 }
 
 void serialize(KeyInput& key, ISerializer& serializer) {
