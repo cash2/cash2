@@ -10,7 +10,7 @@
 namespace CryptoNote {
 
   struct BlockInfo {
-    uint32_t height;
+    uint32_t blockIndex;
     Crypto::Hash id;
 
     BlockInfo() {
@@ -18,7 +18,7 @@ namespace CryptoNote {
     }
 
     void clear() {
-      height = 0;
+      blockIndex = 0;
       id = CryptoNote::NULL_HASH;
     }
 

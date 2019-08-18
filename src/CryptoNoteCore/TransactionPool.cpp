@@ -367,9 +367,9 @@ namespace CryptoNote {
       ss << "blobSize: " << txd.blobSize << std::endl
         << "fee: " << m_currency.formatAmount(txd.fee) << std::endl
         << "keptByBlock: " << (txd.keptByBlock ? 'T' : 'F') << std::endl
-        << "max_used_block_height: " << txd.maxUsedBlock.height << std::endl
+        << "max_used_block_height: " << txd.maxUsedBlock.blockIndex << std::endl
         << "max_used_block_id: " << txd.maxUsedBlock.id << std::endl
-        << "last_failed_height: " << txd.lastFailedBlock.height << std::endl
+        << "last_failed_height: " << txd.lastFailedBlock.blockIndex << std::endl
         << "last_failed_id: " << txd.lastFailedBlock.id << std::endl
         << "received: " << std::ctime(&txd.receiveTime) << std::endl;
     }
@@ -529,9 +529,9 @@ namespace CryptoNote {
     s(td.blobSize, "blobSize");
     s(td.fee, "fee");
     s(td.tx, "tx");
-    s(td.maxUsedBlock.height, "maxUsedBlock.height");
+    s(td.maxUsedBlock.blockIndex, "maxUsedBlock.blockIndex");
     s(td.maxUsedBlock.id, "maxUsedBlock.id");
-    s(td.lastFailedBlock.height, "lastFailedBlock.height");
+    s(td.lastFailedBlock.blockIndex, "lastFailedBlock.blockIndex");
     s(td.lastFailedBlock.id, "lastFailedBlock.id");
     s(td.keptByBlock, "keptByBlock");
     s(reinterpret_cast<uint64_t&>(td.receiveTime), "receiveTime");

@@ -325,7 +325,7 @@ bool Blockchain::removeObserver(IBlockchainStorageObserver* observer) {
 }
 
 bool Blockchain::checkTransactionInputs(const CryptoNote::Transaction& tx, BlockInfo& maxUsedBlock) {
-  return checkTransactionInputs(tx, maxUsedBlock.height, maxUsedBlock.id);
+  return checkTransactionInputs(tx, maxUsedBlock.blockIndex, maxUsedBlock.id);
 }
 
 bool Blockchain::checkTransactionInputs(const CryptoNote::Transaction& tx, BlockInfo& maxUsedBlock, BlockInfo& lastFailed) {
@@ -336,28 +336,28 @@ bool Blockchain::checkTransactionInputs(const CryptoNote::Transaction& tx, Block
   //check is ring_signature already checked ?
   if (maxUsedBlock.empty()) {
     //not checked, lets try to check
-    if (!lastFailed.empty() && getCurrentBlockchainHeight() > lastFailed.height && getBlockIdByHeight(lastFailed.height) == lastFailed.id) {
+    if (!lastFailed.empty() && getCurrentBlockchainHeight() > lastFailed.blockIndex && getBlockIdByHeight(lastFailed.blockIndex) == lastFailed.id) {
       return false; //we already sure that this tx is broken for this height
     }
 
-    if (!checkTransactionInputs(tx, maxUsedBlock.height, maxUsedBlock.id, &tail)) {
+    if (!checkTransactionInputs(tx, maxUsedBlock.blockIndex, maxUsedBlock.id, &tail)) {
       lastFailed = tail;
       return false;
     }
   } else {
-    if (maxUsedBlock.height >= getCurrentBlockchainHeight()) {
+    if (maxUsedBlock.blockIndex >= getCurrentBlockchainHeight()) {
       return false;
     }
 
-    if (getBlockIdByHeight(maxUsedBlock.height) != maxUsedBlock.id) {
+    if (getBlockIdByHeight(maxUsedBlock.blockIndex) != maxUsedBlock.id) {
       //if we already failed on this height and id, skip actual ring signature check
-      if (lastFailed.id == getBlockIdByHeight(lastFailed.height)) {
+      if (lastFailed.id == getBlockIdByHeight(lastFailed.blockIndex)) {
         return false;
       }
     }
 
     //check ring signature again, it is possible (with very small chance) that this transaction become again valid
-    if (!checkTransactionInputs(tx, maxUsedBlock.height, maxUsedBlock.id, &tail)) {
+    if (!checkTransactionInputs(tx, maxUsedBlock.blockIndex, maxUsedBlock.id, &tail)) {
       lastFailed = tail;
       return false;
     }
@@ -1504,7 +1504,7 @@ bool Blockchain::checkTransactionInputs(const Transaction& tx, uint32_t& max_use
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
 
   if (tail)
-    tail->id = getTailId(tail->height);
+    tail->id = getTailId(tail->blockIndex);
 
   bool res = checkTransactionInputs(tx, &max_used_block_height);
   if (!res) return false;

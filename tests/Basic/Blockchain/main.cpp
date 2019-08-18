@@ -2265,7 +2265,7 @@ TEST(Blockchain, 19)
 
   BlockInfo maxUsedBlock;
   // maxUsedBlock height and id must be filled out or checkTransactionInputs() fails for some reason
-  maxUsedBlock.height = blockchain.getCurrentBlockchainHeight() - 1;
+  maxUsedBlock.blockIndex = blockchain.getCurrentBlockchainHeight() - 1;
   maxUsedBlock.id = blockchain.getTailId();
   BlockInfo lastFailed;
   
