@@ -202,7 +202,7 @@ namespace CryptoNote {
 
     struct BlockEntry {
       Block bl;
-      uint32_t height;
+      uint32_t block_index;
       uint64_t block_cumulative_size;
       difficulty_type cumulative_difficulty;
       uint64_t already_generated_coins;
@@ -210,7 +210,7 @@ namespace CryptoNote {
 
       void serialize(ISerializer& s) {
         s(bl, "block");
-        s(height, "height");
+        s(block_index, "block_index");
         s(block_cumulative_size, "block_cumulative_size");
         s(cumulative_difficulty, "cumulative_difficulty");
         s(already_generated_coins, "already_generated_coins");
