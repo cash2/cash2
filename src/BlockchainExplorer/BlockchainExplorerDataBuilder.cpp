@@ -97,12 +97,12 @@ bool BlockchainExplorerDataBuilder::fillBlockDetails(const Block &block, BlockDe
     return false;
   }
 
-  blockDetails.height = boost::get<BaseInput>(block.baseTransaction.inputs.front()).blockIndex;
+  blockDetails.blockIndex = boost::get<BaseInput>(block.baseTransaction.inputs.front()).blockIndex;
 
-  Crypto::Hash tmpHash = core.getBlockIdByHeight(blockDetails.height);
+  Crypto::Hash tmpHash = core.getBlockIdByHeight(blockDetails.blockIndex);
   blockDetails.isOrphaned = hash != tmpHash;
 
-  if (!core.getBlockDifficulty(blockDetails.height, blockDetails.difficulty)) {
+  if (!core.getBlockDifficulty(blockDetails.blockIndex, blockDetails.difficulty)) {
     return false;
   }
 
@@ -120,12 +120,12 @@ bool BlockchainExplorerDataBuilder::fillBlockDetails(const Block &block, BlockDe
     return false;
   }
 
-  if (!core.getGeneratedTransactionsNumber(blockDetails.height, blockDetails.alreadyGeneratedTransactions)) {
+  if (!core.getGeneratedTransactionsNumber(blockDetails.blockIndex, blockDetails.alreadyGeneratedTransactions)) {
     return false;
   }
 
   uint64_t prevBlockGeneratedCoins = 0;
-  if (blockDetails.height > 0) {
+  if (blockDetails.blockIndex > 0) {
     if (!core.getAlreadyGeneratedCoins(block.previousBlockHash, prevBlockGeneratedCoins)) {
       return false;
     }
@@ -140,10 +140,10 @@ bool BlockchainExplorerDataBuilder::fillBlockDetails(const Block &block, BlockDe
   // removed hard fork 1 if clause here
   blockDetails.sizeMedian = 0;
 
-  if (!core.getBlockReward2(blockDetails.height, 0, prevBlockGeneratedCoins, 0, maxReward, emissionChange)) {
+  if (!core.getBlockReward2(blockDetails.blockIndex, 0, prevBlockGeneratedCoins, 0, maxReward, emissionChange)) {
     return false;
   }
-  if (!core.getBlockReward2(blockDetails.height, blockDetails.transactionsCumulativeSize, prevBlockGeneratedCoins, 0, currentReward, emissionChange)) {
+  if (!core.getBlockReward2(blockDetails.blockIndex, blockDetails.transactionsCumulativeSize, prevBlockGeneratedCoins, 0, currentReward, emissionChange)) {
     return false;
   }
 

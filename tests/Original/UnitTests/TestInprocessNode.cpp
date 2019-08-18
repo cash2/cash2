@@ -290,7 +290,7 @@ TEST_F(InProcessNodeTests, getBlocksByHeightMany) {
   for (const boost::tuple<boost::tuple<size_t, CryptoNote::Block>, std::vector<CryptoNote::BlockDetails>>& sameHeight : range) {
     EXPECT_EQ(sameHeight.get<1>().size(), 1);
     for (const CryptoNote::BlockDetails& block : sameHeight.get<1>()) {
-      EXPECT_EQ(block.height, sameHeight.get<0>().get<0>());
+      EXPECT_EQ(block.blockIndex, sameHeight.get<0>().get<0>());
       Crypto::Hash expectedCryptoHash = CryptoNote::get_block_hash(sameHeight.get<0>().get<1>());
       Hash expectedHash = reinterpret_cast<const Hash&>(expectedCryptoHash);
       EXPECT_EQ(block.hash, expectedHash);

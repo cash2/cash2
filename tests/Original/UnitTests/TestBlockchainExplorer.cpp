@@ -171,7 +171,7 @@ TEST_F(BlockchainExplorerTests, getBlocksByHeightGenesis) {
   ASSERT_EQ(blocks.size(), 1);
   EXPECT_EQ(blockHeights.size(), blocks.size());
   ASSERT_EQ(blocks.front().size(), 1);
-  EXPECT_EQ(blocks.front().front().height, 0);
+  EXPECT_EQ(blocks.front().front().blockIndex, 0);
   EXPECT_FALSE(blocks.front().front().isOrphaned);
 }
 
@@ -194,7 +194,7 @@ TEST_F(BlockchainExplorerTests, getBlocksByHeightMany) {
   for (const boost::tuple<size_t, std::vector<BlockDetails>>& sameHeight : range) {
     EXPECT_EQ(sameHeight.get<1>().size(), 1);
     for (const BlockDetails& block : sameHeight.get<1>()) {
-      EXPECT_EQ(block.height, sameHeight.get<0>());
+      EXPECT_EQ(block.blockIndex, sameHeight.get<0>());
       EXPECT_FALSE(block.isOrphaned);
     }
   }
@@ -297,7 +297,7 @@ TEST_F(BlockchainExplorerTests, getBlockchainTop) {
   ASSERT_GE(generator.getBlockchain().size(), 1);
 
   ASSERT_TRUE(blockchainExplorer.getBlockchainTop(topBlock));
-  EXPECT_EQ(topBlock.height, generator.getBlockchain().size() - 1);
+  EXPECT_EQ(topBlock.blockIndex, generator.getBlockchain().size() - 1);
   EXPECT_FALSE(topBlock.isOrphaned);
 }
 
@@ -469,7 +469,7 @@ TEST_F(BlockchainExplorerTests, getPoolStateEmpty) {
   ASSERT_GE(generator.getBlockchain().size(), 1);
 
   ASSERT_TRUE(blockchainExplorer.getBlockchainTop(topBlock));
-  EXPECT_EQ(topBlock.height, generator.getBlockchain().size() - 1);
+  EXPECT_EQ(topBlock.blockIndex, generator.getBlockchain().size() - 1);
   EXPECT_FALSE(topBlock.isOrphaned);
 
   std::vector<Hash> knownPoolTransactionHashes;
@@ -504,7 +504,7 @@ TEST_F(BlockchainExplorerTests, getPoolStateMany) {
     ASSERT_GE(generator.getBlockchain().size(), 1);
 
     ASSERT_TRUE(blockchainExplorer.getBlockchainTop(topBlock));
-    EXPECT_EQ(topBlock.height, generator.getBlockchain().size() - 1);
+    EXPECT_EQ(topBlock.blockIndex, generator.getBlockchain().size() - 1);
     EXPECT_FALSE(topBlock.isOrphaned);
 
     std::vector<Hash> knownPoolTransactionHashes;
@@ -542,7 +542,7 @@ TEST_F(BlockchainExplorerTests, getPoolStateMany) {
     ASSERT_GE(generator.getBlockchain().size(), 1);
 
     ASSERT_TRUE(blockchainExplorer.getBlockchainTop(topBlock));
-    EXPECT_EQ(topBlock.height, generator.getBlockchain().size() - 1);
+    EXPECT_EQ(topBlock.blockIndex, generator.getBlockchain().size() - 1);
     EXPECT_FALSE(topBlock.isOrphaned);
 
     std::vector<Hash> knownPoolTransactionHashes;
@@ -565,7 +565,7 @@ TEST_F(BlockchainExplorerTests, getPoolStateMany) {
     ASSERT_GE(generator.getBlockchain().size(), 1);
 
     ASSERT_TRUE(blockchainExplorer.getBlockchainTop(topBlock));
-    EXPECT_EQ(topBlock.height, generator.getBlockchain().size() - 1);
+    EXPECT_EQ(topBlock.blockIndex, generator.getBlockchain().size() - 1);
     EXPECT_FALSE(topBlock.isOrphaned);
 
     std::vector<Hash> knownPoolTransactionHashes = poolTxs;
@@ -603,7 +603,7 @@ TEST_F(BlockchainExplorerTests, getPoolStateMany) {
     ASSERT_GE(generator.getBlockchain().size(), 1);
 
     ASSERT_TRUE(blockchainExplorer.getBlockchainTop(topBlock));
-    EXPECT_EQ(topBlock.height, generator.getBlockchain().size() - 1);
+    EXPECT_EQ(topBlock.blockIndex, generator.getBlockchain().size() - 1);
     EXPECT_FALSE(topBlock.isOrphaned);
 
     std::vector<Hash> knownPoolTransactionHashes = poolTxs;
@@ -695,7 +695,7 @@ TEST_F(BlockchainExplorerTests, isSynchronizedNotification) {
   CallbackStatus status;
 
   std::function<void(const BlockDetails& topBlock)> cb = [&status, this](const BlockDetails& topBlock) {
-    EXPECT_EQ(topBlock.height, generator.getBlockchain().size() - 1);
+    EXPECT_EQ(topBlock.blockIndex, generator.getBlockchain().size() - 1);
     status.setStatus(std::error_code());
   };
   observer.setCallback(cb);
@@ -805,7 +805,7 @@ TEST_F(BlockchainExplorerTests, poolUpdatedMany) {
     ASSERT_GE(generator.getBlockchain().size(), 1);
 
     ASSERT_TRUE(blockchainExplorer.getBlockchainTop(topBlock));
-    EXPECT_EQ(topBlock.height, generator.getBlockchain().size() - 1);
+    EXPECT_EQ(topBlock.blockIndex, generator.getBlockchain().size() - 1);
     EXPECT_FALSE(topBlock.isOrphaned);
 
     smartObserver observer;
@@ -859,7 +859,7 @@ TEST_F(BlockchainExplorerTests, poolUpdatedMany) {
     ASSERT_GE(generator.getBlockchain().size(), 1);
 
     ASSERT_TRUE(blockchainExplorer.getBlockchainTop(topBlock));
-    EXPECT_EQ(topBlock.height, generator.getBlockchain().size() - 1);
+    EXPECT_EQ(topBlock.blockIndex, generator.getBlockchain().size() - 1);
     EXPECT_FALSE(topBlock.isOrphaned);
 
     smartObserver observer;
@@ -929,7 +929,7 @@ TEST_F(BlockchainExplorerTests, poolUpdatedManyNotSynchronized) {
   ASSERT_GE(generator.getBlockchain().size(), 1);
 
   ASSERT_TRUE(blockchainExplorer.getBlockchainTop(topBlock));
-  EXPECT_EQ(topBlock.height, generator.getBlockchain().size() - 1);
+  EXPECT_EQ(topBlock.blockIndex, generator.getBlockchain().size() - 1);
   EXPECT_FALSE(topBlock.isOrphaned);
 
   smartObserver observer;
@@ -1119,12 +1119,12 @@ TEST_F(BlockchainExplorerTests, generatedTransactions) {
   for (const boost::tuple<size_t, std::vector<BlockDetails>>& sameHeight : range) {
     EXPECT_EQ(sameHeight.get<1>().size(), 1);
     for (const BlockDetails& block : sameHeight.get<1>()) {
-      EXPECT_EQ(block.height, sameHeight.get<0>());
+      EXPECT_EQ(block.blockIndex, sameHeight.get<0>());
       EXPECT_FALSE(block.isOrphaned);
-      if (block.height != NUMBER_OF_BLOCKS + 2) {
-        EXPECT_EQ(block.alreadyGeneratedTransactions, block.height + 1);
+      if (block.blockIndex != NUMBER_OF_BLOCKS + 2) {
+        EXPECT_EQ(block.alreadyGeneratedTransactions, block.blockIndex + 1);
       } else {
-        EXPECT_EQ(block.alreadyGeneratedTransactions, block.height + 1 + POOL_TX_NUMBER);
+        EXPECT_EQ(block.alreadyGeneratedTransactions, block.blockIndex + 1 + POOL_TX_NUMBER);
       }
     }
   }

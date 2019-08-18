@@ -90,7 +90,7 @@ public:
   {
     for (int i = 0; i < blockHeights.size(); i++) {
       BlockDetails blockDetails = BlockDetails();
-      blockDetails.height = blockHeights[i];
+      blockDetails.blockIndex = blockHeights[i];
       blockDetails.isOrphaned = false;
       blockDetails.hash = getRandHash();
       std::vector<BlockDetails> blockDetailsVector;
@@ -104,7 +104,7 @@ public:
   {
     for (int i = 0; i < blockHashes.size(); i++) {
       BlockDetails blockDetails = BlockDetails();
-      blockDetails.height = blockHashes.size();
+      blockDetails.blockIndex = blockHashes.size();
       blockDetails.isOrphaned = false;
       blockDetails.hash = blockHashes[i];
       blocks.push_back(blockDetails);

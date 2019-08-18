@@ -170,7 +170,7 @@ void BlockchainExplorer::init() {
     throw std::system_error(make_error_code(CryptoNote::error::BlockchainExplorerErrorCodes::INTERNAL_ERROR));
   }
   if (getBlockchainTop(knownBlockchainTop)) {
-    knownBlockchainTopHeight = knownBlockchainTop.height;
+    knownBlockchainTopHeight = knownBlockchainTop.blockIndex;
   } else {
     logger(ERROR) << "Can't get blockchain top.";
     state.store(NOT_INITIALIZED);
@@ -703,14 +703,14 @@ void BlockchainExplorer::localBlockchainUpdated(uint32_t height) {
       std::vector<BlockDetails> orphanedBlocks;
       for (const std::vector<BlockDetails>& sameHeightBlocks : *blocksPtr) {
         for (const BlockDetails& block : sameHeightBlocks) {
-          if (topHeight < block.height) {
-            topHeight = block.height;
+          if (topHeight < block.blockIndex) {
+            topHeight = block.blockIndex;
             gotTopMainchainBlock = false;
           }
           if (block.isOrphaned) {
             orphanedBlocks.push_back(block);
           } else {
-            if (block.height > knownBlockchainTop.height || block.hash != knownBlockchainTop.hash) {
+            if (block.blockIndex > knownBlockchainTop.blockIndex || block.hash != knownBlockchainTop.hash) {
               newBlocks.push_back(block);
             }
             if (!gotTopMainchainBlock) {

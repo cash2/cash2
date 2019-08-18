@@ -367,7 +367,7 @@ void INodeTrivialRefreshStub::doGetBlocks(const std::vector<uint32_t>& blockHeig
       return;
     }
     BlockDetails b = BlockDetails();
-    b.height = height;
+    b.blockIndex = height;
     b.isOrphaned = false;
     Crypto::Hash hash = get_block_hash(m_blockchainGenerator.getBlockchain()[height]);
     b.hash = hash;

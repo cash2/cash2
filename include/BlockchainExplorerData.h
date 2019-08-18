@@ -101,7 +101,7 @@ struct BlockDetails {
   uint64_t nonce;
   Crypto::Hash merkleRoot;
   bool isOrphaned;
-  uint32_t height;
+  uint32_t blockIndex;
   Crypto::Hash hash;
   uint64_t difficulty;
   uint64_t reward;
