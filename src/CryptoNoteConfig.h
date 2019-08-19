@@ -121,7 +121,7 @@ const std::initializer_list<const char*> SEED_NODES = {
 };
 
 struct CheckpointData {
-  uint32_t height;
+  uint32_t blockIndex;
   const char* blockId;
 };
 
