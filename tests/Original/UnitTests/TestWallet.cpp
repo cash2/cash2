@@ -1350,7 +1350,7 @@ TEST_F(WalletApi, checkIncomingTransaction) {
 
 TEST_F(WalletApi, notEnoughMoney) {
   generateAndUnlockMoney();
-  ASSERT_NO_THROW(sendMoney(RANDOM_ADDRESS, TEST_BLOCK_REWARD, FEE)); // changed from ASSERT_ANY_THROW to ASSERT_NO_THROW for MINIMUM_FEE = 0
+  ASSERT_ANY_THROW(sendMoney(RANDOM_ADDRESS, TEST_BLOCK_REWARD, FEE)); // changed from ASSERT_ANY_THROW to ASSERT_NO_THROW for MINIMUM_FEE = 0
 }
 
 TEST_F(WalletApi, changePassword) {
