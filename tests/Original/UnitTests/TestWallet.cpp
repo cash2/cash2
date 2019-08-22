@@ -3559,7 +3559,7 @@ TEST_F(WalletApi, transferFailsIfNoChangeDestinationAndMultipleSourceAddressesSe
 }
 
 TEST_F(WalletApi, transferSendsChangeToAddress) {
-  const uint64_t MONEY = SENT * 3;
+  const uint64_t MONEY = 800000000;
 
   generator.getSingleOutputTransaction(parseAddress(aliceAddress), MONEY);
   unlockMoney();
