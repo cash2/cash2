@@ -1046,7 +1046,7 @@ TEST_F(WalletLegacyApi, checkChange) {
   bob->initAndGenerate("pass");
   ASSERT_NO_FATAL_FAILURE(WaitWalletSync(bobWalletObserver.get()));
 
-  uint64_t banknote = 10000000;
+  uint64_t banknote = 800000000;
   uint64_t sendAmount = 50000;
   uint64_t fee = m_currency.minimumFee();
 
