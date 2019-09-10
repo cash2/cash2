@@ -182,20 +182,20 @@ int main(int argc, char* argv[])
       return 1;
   
     auto modulePath = Common::NativePathToGeneric(argv[0]);
-    auto cfgLogFile = Common::NativePathToGeneric(command_line::get_arg(vm, arg_log_file));
+    auto logFile = Common::NativePathToGeneric(command_line::get_arg(vm, arg_log_file));
 
-    if (cfgLogFile.empty()) {
-      cfgLogFile = Common::ReplaceExtenstion(modulePath, ".log");
+    if (logFile.empty()) {
+      logFile = Common::ReplaceExtenstion(modulePath, ".log");
     } else {
-      if (!Common::HasParentPath(cfgLogFile)) {
-        cfgLogFile = Common::CombinePath(Common::GetPathDirectory(modulePath), cfgLogFile);
+      if (!Common::HasParentPath(logFile)) {
+        logFile = Common::CombinePath(Common::GetPathDirectory(modulePath), logFile);
       }
     }
 
-    Level cfgLogLevel = static_cast<Level>(static_cast<int>(Logging::ERROR) + command_line::get_arg(vm, arg_log_level));
+    Level logLevel = static_cast<Level>(static_cast<int>(Logging::ERROR) + command_line::get_arg(vm, arg_log_level));
 
     // configure logging
-    logManager.configure(buildLoggerConfiguration(cfgLogLevel, cfgLogFile));
+    logManager.configure(buildLoggerConfiguration(logLevel, logFile));
 
     logger(INFO) << CryptoNote::CRYPTONOTE_NAME << " v" << PROJECT_VERSION_LONG;
 
@@ -222,7 +222,7 @@ int main(int argc, char* argv[])
     }
 
     CryptoNote::Currency currency = currencyBuilder.currency();
-    CryptoNote::core ccore(currency, nullptr, logManager);
+    CryptoNote::core core(currency, nullptr, logManager);
 
     CryptoNote::Checkpoints checkpoints(logManager);
     for (const auto& cp : CryptoNote::CHECKPOINTS) {
@@ -230,7 +230,7 @@ int main(int argc, char* argv[])
     }
 
     if (!testnet_mode) {
-      ccore.set_checkpoints(std::move(checkpoints));
+      core.set_checkpoints(std::move(checkpoints));
     }
 
     CoreConfig coreConfig;
@@ -255,17 +255,17 @@ int main(int argc, char* argv[])
 
     System::Dispatcher dispatcher;
 
-    CryptoNote::CryptoNoteProtocolHandler cprotocol(currency, dispatcher, ccore, nullptr, logManager);
-    CryptoNote::NodeServer p2psrv(dispatcher, cprotocol, logManager);
-    CryptoNote::RpcServer rpcServer(dispatcher, logManager, ccore, p2psrv, cprotocol);
+    CryptoNote::CryptoNoteProtocolHandler cryptoNoteProtocolHandler(currency, dispatcher, core, nullptr, logManager);
+    CryptoNote::NodeServer nodeServer(dispatcher, cryptoNoteProtocolHandler, logManager);
+    CryptoNote::RpcServer rpcServer(dispatcher, logManager, core, nodeServer, cryptoNoteProtocolHandler);
 
-    cprotocol.set_p2p_endpoint(&p2psrv);
-    ccore.set_cryptonote_protocol(&cprotocol);
-    DaemonCommandsHandler dch(ccore, p2psrv, logManager);
+    cryptoNoteProtocolHandler.set_p2p_endpoint(&nodeServer);
+    core.set_cryptonote_protocol(&cryptoNoteProtocolHandler);
+    DaemonCommandsHandler daemonCommandsHandler(core, nodeServer, logManager);
 
     // initialize objects
     logger(INFO) << "Initializing p2p server...";
-    if (!p2psrv.init(netNodeConfig)) {
+    if (!nodeServer.init(netNodeConfig)) {
       logger(ERROR, BRIGHT_RED) << "Failed to initialize p2p server.";
       return 1;
     }
@@ -280,7 +280,7 @@ int main(int argc, char* argv[])
 
     // initialize core here
     logger(INFO) << "Initializing core...";
-    if (!ccore.init(coreConfig, minerConfig, true)) {
+    if (!core.init(coreConfig, minerConfig, true)) {
       logger(ERROR, BRIGHT_RED) << "Failed to initialize core";
       return 1;
     }
@@ -288,7 +288,7 @@ int main(int argc, char* argv[])
 
     // start components
     if (!command_line::has_arg(vm, arg_console)) {
-      dch.start_handling();
+      daemonCommandsHandler.start_handling();
     }
 
     logger(INFO) << "Starting core rpc server on address " << rpcConfig.getBindAddress();
@@ -297,16 +297,16 @@ int main(int argc, char* argv[])
     rpcServer.enableCors(command_line::get_arg(vm, arg_enable_cors));
     logger(INFO) << "Core rpc server started ok";
 
-    Tools::SignalHandler::install([&dch, &p2psrv] {
-      dch.stop_handling();
-      p2psrv.sendStopSignal();
+    Tools::SignalHandler::install([&daemonCommandsHandler, &nodeServer] {
+      daemonCommandsHandler.stop_handling();
+      nodeServer.sendStopSignal();
     });
 
     logger(INFO) << "Starting p2p net loop...";
-    p2psrv.run();
+    nodeServer.run();
     logger(INFO) << "p2p net loop stopped";
 
-    dch.stop_handling();
+    daemonCommandsHandler.stop_handling();
 
     //stop components
     logger(INFO) << "Stopping core rpc server...";
@@ -314,12 +314,12 @@ int main(int argc, char* argv[])
 
     //deinitialize components
     logger(INFO) << "Deinitializing core...";
-    ccore.deinit();
+    core.deinit();
     logger(INFO) << "Deinitializing p2p...";
-    p2psrv.deinit();
+    nodeServer.deinit();
 
-    ccore.set_cryptonote_protocol(NULL);
-    cprotocol.set_p2p_endpoint(NULL);
+    core.set_cryptonote_protocol(NULL);
+    cryptoNoteProtocolHandler.set_p2p_endpoint(NULL);
 
   } catch (const std::exception& e) {
     logger(ERROR, BRIGHT_RED) << "Exception: " << e.what();
