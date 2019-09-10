@@ -181,8 +181,8 @@ int main(int argc, char* argv[])
     if (!r)
       return 1;
   
-    auto modulePath = Common::NativePathToGeneric(argv[0]);
-    auto logFile = Common::NativePathToGeneric(command_line::get_arg(vm, arg_log_file));
+    std::string modulePath = Common::NativePathToGeneric(argv[0]);
+    std::string logFile = Common::NativePathToGeneric(command_line::get_arg(vm, arg_log_file));
 
     if (logFile.empty()) {
       logFile = Common::ReplaceExtenstion(modulePath, ".log");
@@ -225,8 +225,8 @@ int main(int argc, char* argv[])
     CryptoNote::core core(currency, nullptr, logManager);
 
     CryptoNote::Checkpoints checkpoints(logManager);
-    for (const auto& cp : CryptoNote::CHECKPOINTS) {
-      checkpoints.add_checkpoint(cp.blockIndex, cp.blockId);
+    for (const CryptoNote::CheckpointData& checkpointData : CryptoNote::CHECKPOINTS) {
+      checkpoints.add_checkpoint(checkpointData.blockIndex, checkpointData.blockId);
     }
 
     if (!testnet_mode) {
