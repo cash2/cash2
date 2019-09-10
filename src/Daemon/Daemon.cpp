@@ -41,17 +41,16 @@ namespace po = boost::program_options;
 
 namespace
 {
-  const command_line::arg_descriptor<std::string> arg_config_file =       {"config-file", "Specify the configuration file", std::string(CryptoNote::CRYPTONOTE_NAME) + ".conf"};
-  const command_line::arg_descriptor<std::string> arg_enable_cors =       {"enable-cors", "Adds header 'Access-Control-Allow-Origin' to Daemon RPC responses. Uses the value as domain. Use * for all", "" };
-  const command_line::arg_descriptor<std::string> arg_log_file =          {"log-file", "", ""};
-  const command_line::arg_descriptor<int>         arg_log_level =         {"log-level", "", 2}; // info level
-  const command_line::arg_descriptor<bool>        arg_console =           {"no-console", "Disable daemon console commands"};
-  const command_line::arg_descriptor<bool>        arg_os_version =        {"os-version", "Shows the Cash2 software version and the OS version"};
-  const command_line::arg_descriptor<bool>        arg_print_genesis_tx =  {"print-genesis-tx", "Prints genesis block's coinbase transaction as hexidecimal to insert it to config" };
-  const command_line::arg_descriptor<bool>        arg_restricted_rpc =    {"restricted-rpc", "Restrict Daemon RPC commands to view only commands to prevent abuse"};
-  const command_line::arg_descriptor<bool>        arg_testnet_on =        {"testnet", "Used to deploy test nets. Checkpoints and hardcoded seeds are ignored, network id is changed. Use it with --data-dir flag. The wallet must be launched with --testnet flag.", false};
 
-}
+const command_line::arg_descriptor<std::string> arg_config_file =       {"config-file", "Specify the configuration file", std::string(CryptoNote::CRYPTONOTE_NAME) + ".conf"};
+const command_line::arg_descriptor<std::string> arg_enable_cors =       {"enable-cors", "Adds header 'Access-Control-Allow-Origin' to Daemon RPC responses. Uses the value as domain. Use * for all", "" };
+const command_line::arg_descriptor<std::string> arg_log_file =          {"log-file", "", ""};
+const command_line::arg_descriptor<int>         arg_log_level =         {"log-level", "", 2}; // info level
+const command_line::arg_descriptor<bool>        arg_console =           {"no-console", "Disable daemon console commands"};
+const command_line::arg_descriptor<bool>        arg_os_version =        {"os-version", "Shows the Cash2 software version and the OS version"};
+const command_line::arg_descriptor<bool>        arg_print_genesis_tx =  {"print-genesis-tx", "Prints genesis block's coinbase transaction as hexidecimal to insert it to config" };
+const command_line::arg_descriptor<bool>        arg_restricted_rpc =    {"restricted-rpc", "Restrict Daemon RPC commands to view only commands to prevent abuse"};
+const command_line::arg_descriptor<bool>        arg_testnet_on =        {"testnet", "Used to deploy test nets. Checkpoints and hardcoded seeds are ignored, network id is changed. Use it with --data-dir flag. The wallet must be launched with --testnet flag.", false};
 
 bool command_line_preprocessor(const boost::program_options::variables_map &vm, LoggerRef &logger) {
   bool exit = false;
@@ -102,6 +101,8 @@ JsonValue buildLoggerConfiguration(Level level, const std::string& logfile) {
 
   return loggerConfiguration;
 }
+
+} // end anonymous namespace
 
 
 int main(int argc, char* argv[])
