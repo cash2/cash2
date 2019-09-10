@@ -53,7 +53,24 @@ namespace
 
 }
 
-bool command_line_preprocessor(const boost::program_options::variables_map& vm, LoggerRef& logger);
+bool command_line_preprocessor(const boost::program_options::variables_map &vm, LoggerRef &logger) {
+  bool exit = false;
+
+  if (command_line::get_arg(vm, command_line::arg_version)) {
+    std::cout << CryptoNote::CRYPTONOTE_NAME << " v" << PROJECT_VERSION_LONG << ENDL;
+    exit = true;
+  }
+  if (command_line::get_arg(vm, arg_os_version)) {
+    std::cout << "OS: " << Tools::get_os_version_string() << ENDL;
+    exit = true;
+  }
+
+  if (exit) {
+    return true;
+  }
+
+  return false;
+}
 
 void print_genesis_tx_hex() {
   Logging::ConsoleLogger logger;
@@ -310,23 +327,4 @@ int main(int argc, char* argv[])
 
   logger(INFO) << "Node stopped.";
   return 0;
-}
-
-bool command_line_preprocessor(const boost::program_options::variables_map &vm, LoggerRef &logger) {
-  bool exit = false;
-
-  if (command_line::get_arg(vm, command_line::arg_version)) {
-    std::cout << CryptoNote::CRYPTONOTE_NAME << " v" << PROJECT_VERSION_LONG << ENDL;
-    exit = true;
-  }
-  if (command_line::get_arg(vm, arg_os_version)) {
-    std::cout << "OS: " << Tools::get_os_version_string() << ENDL;
-    exit = true;
-  }
-
-  if (exit) {
-    return true;
-  }
-
-  return false;
 }
