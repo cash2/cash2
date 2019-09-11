@@ -125,6 +125,8 @@ bool test_generator::constructBlock(CryptoNote::Block& blk, uint32_t height, con
     }
   }
 
+  blk.merkleRoot = get_tx_tree_hash(blk);
+
   // Nonce search...
   blk.nonce = 0;
   Crypto::cn_context context;
@@ -182,6 +184,8 @@ bool test_generator::constructBlockManually(Block& blk, const Block& prevBlock, 
         return false;
     }
   }
+
+  blk.merkleRoot = get_tx_tree_hash(blk);
 
   difficulty_type aDiffic = actualParams & bf_diffic ? diffic : getTestDifficulty();
   if (1 < aDiffic) {
@@ -274,7 +278,8 @@ bool constructMinerTxManually(const CryptoNote::Currency& currency, uint32_t hei
   tx.outputs.push_back(out);
 
   tx.version = CURRENT_TRANSACTION_VERSION;
-  tx.unlockTime = height + currency.minedMoneyUnlockWindow();
+  // tx.unlockTime = height + currency.minedMoneyUnlockWindow();
+  tx.unlockTime = height + 60;
 
   return true;
 }

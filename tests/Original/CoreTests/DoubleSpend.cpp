@@ -76,7 +76,7 @@ bool gen_double_spend_in_different_chains::check_double_spend(CryptoNote::Core& 
 DoubleSpendBase::DoubleSpendBase() :
   m_invalid_tx_index(invalid_index_value),
   m_invalid_block_index(invalid_index_value),
-  send_amount(MK_COINS(17)),
+  send_amount(170000000),
   has_invalid_tx(false)
 {
   m_outputTxKey = generateKeyPair();

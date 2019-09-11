@@ -102,21 +102,21 @@ bool gen_block_reward::generate(std::vector<test_event_entry>& events) const
     return false;
 
   // Test: fee increases block reward
-  Transaction tx_0(construct_tx_with_fee(m_logger, events, blk_5, miner_account, bob_account, MK_COINS(1), 3 * m_currency.minimumFee()));
+  Transaction tx_0(construct_tx_with_fee(m_logger, events, blk_5, miner_account, bob_account, 100000000, 3 * m_currency.minimumFee()));
   MAKE_NEXT_BLOCK_TX1(events, blk_6, blk_5r, miner_account, tx_0);
   DO_CALLBACK(events, "mark_checked_block");
 
   // Test: fee from all block transactions increase block reward
   std::list<Transaction> txs_0;
-  txs_0.push_back(construct_tx_with_fee(m_logger, events, blk_5, miner_account, bob_account, MK_COINS(1), 5 * m_currency.minimumFee()));
-  txs_0.push_back(construct_tx_with_fee(m_logger, events, blk_5, miner_account, bob_account, MK_COINS(1), 7 * m_currency.minimumFee()));
+  txs_0.push_back(construct_tx_with_fee(m_logger, events, blk_5, miner_account, bob_account, 100000000, 5 * m_currency.minimumFee()));
+  txs_0.push_back(construct_tx_with_fee(m_logger, events, blk_5, miner_account, bob_account, 100000000, 7 * m_currency.minimumFee()));
   MAKE_NEXT_BLOCK_TX_LIST(events, blk_7, blk_6, miner_account, txs_0);
   DO_CALLBACK(events, "mark_checked_block");
 
   // Test: block reward == 0
   {
-    Transaction tx_1 = construct_tx_with_fee(m_logger, events, blk_5, miner_account, bob_account, MK_COINS(1), 11 * m_currency.minimumFee());
-    Transaction tx_2 = construct_tx_with_fee(m_logger, events, blk_5, miner_account, bob_account, MK_COINS(1), 13 * m_currency.minimumFee());
+    Transaction tx_1 = construct_tx_with_fee(m_logger, events, blk_5, miner_account, bob_account, 100000000, 11 * m_currency.minimumFee());
+    Transaction tx_2 = construct_tx_with_fee(m_logger, events, blk_5, miner_account, bob_account, 100000000, 13 * m_currency.minimumFee());
     size_t txs_1_size = getObjectBinarySize(tx_1) + getObjectBinarySize(tx_2);
     uint64_t txs_fee = get_tx_fee(tx_1) + get_tx_fee(tx_2);
 
