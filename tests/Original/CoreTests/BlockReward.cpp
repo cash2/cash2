@@ -160,19 +160,19 @@ bool gen_block_reward::check_block_verification_context(const CryptoNote::block_
   }
 }
 
-bool gen_block_reward::mark_invalid_block(CryptoNote::core& /*c*/, size_t ev_index, const std::vector<test_event_entry>& /*events*/)
+bool gen_block_reward::mark_invalid_block(CryptoNote::Core& /*c*/, size_t ev_index, const std::vector<test_event_entry>& /*events*/)
 {
   m_invalid_block_index = ev_index + 1;
   return true;
 }
 
-bool gen_block_reward::mark_checked_block(CryptoNote::core& /*c*/, size_t ev_index, const std::vector<test_event_entry>& /*events*/)
+bool gen_block_reward::mark_checked_block(CryptoNote::Core& /*c*/, size_t ev_index, const std::vector<test_event_entry>& /*events*/)
 {
   m_checked_blocks_indexes.push_back(ev_index - 1);
   return true;
 }
 
-bool gen_block_reward::check_block_rewards(CryptoNote::core& /*c*/, size_t /*ev_index*/, const std::vector<test_event_entry>& events)
+bool gen_block_reward::check_block_rewards(CryptoNote::Core& /*c*/, size_t /*ev_index*/, const std::vector<test_event_entry>& events)
 {
   DEFINE_TESTS_ERROR_CONTEXT("gen_block_reward_without_txs::check_block_rewards");
 

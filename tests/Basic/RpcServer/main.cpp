@@ -36,7 +36,7 @@ TEST(Core, 1)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;

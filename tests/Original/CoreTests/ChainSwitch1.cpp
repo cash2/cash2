@@ -92,7 +92,7 @@ bool gen_chain_switch_1::generate(std::vector<test_event_entry>& events) const
 
 
 //-----------------------------------------------------------------------------------------------------
-bool gen_chain_switch_1::check_split_not_switched(CryptoNote::core& c, size_t ev_index, const std::vector<test_event_entry>& events)
+bool gen_chain_switch_1::check_split_not_switched(CryptoNote::Core& c, size_t ev_index, const std::vector<test_event_entry>& events)
 {
   DEFINE_TESTS_ERROR_CONTEXT("gen_chain_switch_1::check_split_not_switched");
 
@@ -133,7 +133,7 @@ bool gen_chain_switch_1::check_split_not_switched(CryptoNote::core& c, size_t ev
 }
 
 //-----------------------------------------------------------------------------------------------------
-bool gen_chain_switch_1::check_split_switched(CryptoNote::core& c, size_t ev_index, const std::vector<test_event_entry>& events)
+bool gen_chain_switch_1::check_split_switched(CryptoNote::Core& c, size_t ev_index, const std::vector<test_event_entry>& events)
 {
   DEFINE_TESTS_ERROR_CONTEXT("gen_chain_switch_1::check_split_switched");
 

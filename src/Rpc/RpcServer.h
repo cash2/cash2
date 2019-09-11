@@ -14,13 +14,13 @@
 
 namespace CryptoNote {
 
-class core;
+class Core;
 class NodeServer;
 class ICryptoNoteProtocolQuery;
 
 class RpcServer : public HttpServer {
 public:
-  RpcServer(System::Dispatcher& dispatcher, Logging::ILogger& log, core& c, NodeServer& p2p, const ICryptoNoteProtocolQuery& protocolQuery);
+  RpcServer(System::Dispatcher& dispatcher, Logging::ILogger& log, Core& c, NodeServer& p2p, const ICryptoNoteProtocolQuery& protocolQuery);
 
   typedef std::function<bool(RpcServer*, const HttpRequest& request, HttpResponse& response)> HandlerFunction;
   bool restrictRPC(const bool is_resctricted);
@@ -96,7 +96,7 @@ private:
   void fill_block_header_response(const Block& blk, bool orphan_status, uint64_t blockIndex, const Crypto::Hash& hash, block_header_response& response);
 
   Logging::LoggerRef logger;
-  core& m_core;
+  Core& m_core;
   NodeServer& m_p2p;
   const ICryptoNoteProtocolQuery& m_protocolQuery;
   bool m_restricted_rpc;

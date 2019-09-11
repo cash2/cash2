@@ -625,13 +625,13 @@ bool gen_block_invalid_binary_format::check_block_verification_context(const Cry
   }
 }
 
-bool gen_block_invalid_binary_format::corrupt_blocks_boundary(CryptoNote::core& c, size_t ev_index, const std::vector<test_event_entry>& events)
+bool gen_block_invalid_binary_format::corrupt_blocks_boundary(CryptoNote::Core& c, size_t ev_index, const std::vector<test_event_entry>& events)
 {
   m_corrupt_blocks_begin_idx = ev_index + 1;
   return true;
 }
 
-bool gen_block_invalid_binary_format::check_all_blocks_purged(CryptoNote::core& c, size_t ev_index, const std::vector<test_event_entry>& events)
+bool gen_block_invalid_binary_format::check_all_blocks_purged(CryptoNote::Core& c, size_t ev_index, const std::vector<test_event_entry>& events)
 {
   DEFINE_TESTS_ERROR_CONTEXT("gen_block_invalid_binary_format::check_all_blocks_purged");
 

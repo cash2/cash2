@@ -33,10 +33,10 @@ using namespace CryptoNote;
 
 My Notes
 
-class core
+class Core
 public
-  *core()
-  ~core()
+  *Core()
+  ~Core()
   *on_idle()
   handle_incoming_tx()
   *handle_incoming_block_blob()
@@ -266,7 +266,7 @@ size_t getMedianBlockSize(Blockchain& blockchain)
   return Common::medianValue(blockSizes);
 }
 
-size_t getMedianBlockSize(core& core)
+size_t getMedianBlockSize(Core& core)
 {
   size_t fromHeight = core.get_current_blockchain_height() - 1;
   std::vector<size_t> blockSizes;
@@ -278,7 +278,7 @@ size_t getMedianBlockSize(core& core)
 }
 
 // Returns an empty block to be later added to the blockchain
-Block createEmptyBlock(core& core)
+Block createEmptyBlock(Core& core)
 {
   AccountPublicAddress accountPublicAddress;
   KeyPair viewKeyPair = generateKeyPair();
@@ -301,7 +301,7 @@ Block createEmptyBlock(core& core)
 }
 
 // Adds an empty block to the blockchain
-bool addBlock1(core& core)
+bool addBlock1(Core& core)
 {
   AccountPublicAddress accountPublicAddress;
   KeyPair viewKeyPair = generateKeyPair();
@@ -332,7 +332,7 @@ bool addBlock1(core& core)
 
 // Adds an empty block to the blockchain
 // returns the hash of the block added
-bool addBlock3(core& core, Crypto::Hash& blockHash)
+bool addBlock3(Core& core, Crypto::Hash& blockHash)
 {
   AccountPublicAddress accountPublicAddress;
   KeyPair viewKeyPair = generateKeyPair();
@@ -368,7 +368,7 @@ bool addBlock3(core& core, Crypto::Hash& blockHash)
 // Adds an empty block to the blockchain
 // able to set the timestamp
 // returns the hash of the block added
-bool addBlock4(core& core, Crypto::Hash& blockHash, uint64_t timestamp)
+bool addBlock4(Core& core, Crypto::Hash& blockHash, uint64_t timestamp)
 {
   AccountPublicAddress accountPublicAddress;
   KeyPair viewKeyPair = generateKeyPair();
@@ -396,7 +396,7 @@ bool addBlock4(core& core, Crypto::Hash& blockHash, uint64_t timestamp)
 // Adds an empty block to the blockchain
 // returns transaction public key of the coinbase transaction
 // returns hash of the coinbase transaction
-bool addBlock5(core& core, const AccountPublicAddress& minerPublicAddress, Crypto::PublicKey& transactionPublicKey, Crypto::Hash& transactionHash)
+bool addBlock5(Core& core, const AccountPublicAddress& minerPublicAddress, Crypto::PublicKey& transactionPublicKey, Crypto::Hash& transactionHash)
 {
   BinaryArray extraNonce;
 
@@ -426,7 +426,7 @@ bool addBlock5(core& core, const AccountPublicAddress& minerPublicAddress, Crypt
 // Adds an empty block to the blockchain
 // returns transaction public key of the coinbase transaction
 // returns hash of block added
-bool addBlock6(core& core, const AccountPublicAddress& minerPublicAddress,
+bool addBlock6(Core& core, const AccountPublicAddress& minerPublicAddress,
                                   Crypto::PublicKey& transactionPublicKey,
                   Crypto::Hash& transactionHash, Crypto::Hash& blockHash)
 {
@@ -461,7 +461,7 @@ bool addBlock6(core& core, const AccountPublicAddress& minerPublicAddress,
 
 // Adds an empty block to the blockchain
 // returns hash of the coinbase transaction
-bool addBlock6(core& core, Crypto::Hash& transactionHash)
+bool addBlock6(Core& core, Crypto::Hash& transactionHash)
 {
   uint32_t currentBlockchainHeight = core.get_current_blockchain_height();
 
@@ -496,7 +496,7 @@ bool addBlock6(core& core, Crypto::Hash& transactionHash)
 
 // Adds an empty block to the blockchain
 // returns hash of the coinbase transaction
-bool addBlock7(core& core, Crypto::Hash& transactionHash, Crypto::Hash& blockHash, uint32_t& blockHeight)
+bool addBlock7(Core& core, Crypto::Hash& transactionHash, Crypto::Hash& blockHash, uint32_t& blockHeight)
 {
   blockHeight = core.get_current_blockchain_height();
 
@@ -528,7 +528,7 @@ bool addBlock7(core& core, Crypto::Hash& transactionHash, Crypto::Hash& blockHas
 // Adds an empty block to the blockchain
 // able to set timestamp
 // returns coinbase transaction hash
-bool addBlock8(core& core, const uint64_t timestamp, Crypto::Hash& transactionHash)
+bool addBlock8(Core& core, const uint64_t timestamp, Crypto::Hash& transactionHash)
 {
   AccountPublicAddress accountPublicAddress;
   KeyPair viewKeyPair = generateKeyPair();
@@ -563,7 +563,7 @@ bool addBlock8(core& core, const uint64_t timestamp, Crypto::Hash& transactionHa
 }
 
 // Adds a new alternative or orphaned block to the blockchain
-bool addOrphanBlock(core& core, Crypto::Hash& blockHash, const Crypto::Hash& prevBlockHash, const uint32_t blockHeight)
+bool addOrphanBlock(Core& core, Crypto::Hash& blockHash, const Crypto::Hash& prevBlockHash, const uint32_t blockHeight)
 {
   // create block
   Block block;
@@ -626,7 +626,7 @@ bool addOrphanBlock(core& core, Crypto::Hash& blockHash, const Crypto::Hash& pre
 }
 
 // creates a transaction and adds it to the mempool
-bool createTransaction(core& core, const AccountKeys& senderAccountKeys,
+bool createTransaction(Core& core, const AccountKeys& senderAccountKeys,
                 const AccountPublicAddress& receiverAccountPublicAddress,
                               Crypto::PublicKey inputTransactionPublicKey,
                                         Crypto::Hash inputTransactionHash)
@@ -729,7 +729,7 @@ bool createTransaction(core& core, const AccountKeys& senderAccountKeys,
 
 // creates a transaction and adds it to the mempool
 // returns hash of transaction created
-bool createTransaction2(core& core, const AccountKeys& senderAccountKeys,
+bool createTransaction2(Core& core, const AccountKeys& senderAccountKeys,
                 const AccountPublicAddress& receiverAccountPublicAddress,
                               Crypto::PublicKey inputTransactionPublicKey,
         Crypto::Hash inputTransactionHash, Crypto::Hash& transactionHash)
@@ -832,7 +832,7 @@ bool createTransaction2(core& core, const AccountKeys& senderAccountKeys,
 
 // creates a transaction and adds it to the mempool
 // returns hash of transaction created
-bool createTransaction3(core& core, const AccountKeys& senderAccountKeys,
+bool createTransaction3(Core& core, const AccountKeys& senderAccountKeys,
                 const AccountPublicAddress& receiverAccountPublicAddress,
                               Crypto::PublicKey inputTransactionPublicKey,
         Crypto::Hash inputTransactionHash, Crypto::Hash& transactionHash,
@@ -954,7 +954,7 @@ TEST(Core, 1)
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
 
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
 }
 
 // on_idle()
@@ -964,7 +964,7 @@ TEST(Core, 2)
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
 
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
 
   ASSERT_TRUE(core.on_idle());
 }
@@ -975,7 +975,7 @@ TEST(Core, 3)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -988,7 +988,7 @@ TEST(Core, 4)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1007,7 +1007,7 @@ TEST(Core, 5)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1031,7 +1031,7 @@ TEST(Core, 5a)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1055,7 +1055,7 @@ TEST(Core, 6)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
 
   core.get_protocol();
 }
@@ -1066,7 +1066,7 @@ TEST(Core, 7)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
 
   Currency currency2 = core.currency();
 }
@@ -1077,7 +1077,7 @@ TEST(Core, 8)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
 
   AccountPublicAddress accountPublicAddress;
   KeyPair viewKeyPair = generateKeyPair();
@@ -1100,7 +1100,7 @@ TEST(Core, 9)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1117,7 +1117,7 @@ TEST(Core, 10)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
 
   CoreObserver coreObserver;
 
@@ -1130,7 +1130,7 @@ TEST(Core, 11)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
 
   CoreObserver coreObserver;
 
@@ -1145,7 +1145,7 @@ TEST(Core, 12)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
 
   // statement below does not work because miner class implicitly deletes the operator= function
   // miner = core.get_miner();
@@ -1157,7 +1157,7 @@ TEST(Core, 13)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
 
   boost::program_options::options_description description;
 
@@ -1170,7 +1170,7 @@ TEST(Core, 14)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1186,7 +1186,7 @@ TEST(Core, 15)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1208,7 +1208,7 @@ TEST(Core, 15b)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1247,7 +1247,7 @@ TEST(Core, 16)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1304,7 +1304,7 @@ TEST(Core, 17)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1330,7 +1330,7 @@ TEST(Core, 18)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1364,7 +1364,7 @@ TEST(Core, 19)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1404,7 +1404,7 @@ TEST(Core, 20)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1444,7 +1444,7 @@ TEST(Core, 21)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1494,7 +1494,7 @@ TEST(Core, 22)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1524,7 +1524,7 @@ TEST(Core, 23)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1549,7 +1549,7 @@ TEST(Core, 24)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1567,7 +1567,7 @@ TEST(Core, 25)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1588,7 +1588,7 @@ TEST(Core, 26)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1616,7 +1616,7 @@ TEST(Core, 27)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1662,7 +1662,7 @@ TEST(Core, 28)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1683,7 +1683,7 @@ TEST(Core, 29)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1718,7 +1718,7 @@ TEST(Core, 30)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1765,7 +1765,7 @@ TEST(Core, 31)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1815,7 +1815,7 @@ TEST(Core, 32)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1867,7 +1867,7 @@ TEST(Core, 33)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -1888,7 +1888,7 @@ TEST(Core, 34)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -2069,7 +2069,7 @@ TEST(Core, 35)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -2144,7 +2144,7 @@ TEST(Core, 36)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -2215,7 +2215,7 @@ TEST(Core, 37)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -2352,7 +2352,7 @@ TEST(Core, 38)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -2377,7 +2377,7 @@ TEST(Core, 39)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -2414,7 +2414,7 @@ TEST(Core, 40)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -2502,7 +2502,7 @@ TEST(Core, 41)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -2580,7 +2580,7 @@ TEST(Core, 42)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -2659,7 +2659,7 @@ TEST(Core, 43)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -2738,7 +2738,7 @@ TEST(Core, 44)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -2796,7 +2796,7 @@ TEST(Core, 45)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -2827,7 +2827,7 @@ TEST(Core, 46)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -2915,7 +2915,7 @@ TEST(Core, 47)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -2935,7 +2935,7 @@ TEST(Core, 48)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -2950,7 +2950,7 @@ TEST(Core, 49)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -2965,7 +2965,7 @@ TEST(Core, 50)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -3098,7 +3098,7 @@ TEST(Core, 51)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -3196,7 +3196,7 @@ TEST(Core, 52)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -3307,7 +3307,7 @@ TEST(Core, 54)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -3324,7 +3324,7 @@ TEST(Core, 55)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -3341,7 +3341,7 @@ TEST(Core, 56)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -3454,7 +3454,7 @@ TEST(Core, 57)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -3567,7 +3567,7 @@ TEST(Core, 58)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -3582,7 +3582,7 @@ TEST(Core, 59)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -3633,7 +3633,7 @@ TEST(Core, 60)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -3682,7 +3682,7 @@ TEST(Core, 61)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -3702,7 +3702,7 @@ TEST(Core, 62)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;
@@ -3753,7 +3753,7 @@ TEST(Core, 63)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CoreConfig coreConfig;
   MinerConfig minerConfig;
   bool loadExisting = false;

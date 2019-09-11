@@ -43,7 +43,7 @@ bool gen_double_spend_in_different_chains::generate(std::vector<test_event_entry
   return true;
 }
 
-bool gen_double_spend_in_different_chains::check_double_spend(CryptoNote::core& c, size_t /*ev_index*/, const std::vector<test_event_entry>& events)
+bool gen_double_spend_in_different_chains::check_double_spend(CryptoNote::Core& c, size_t /*ev_index*/, const std::vector<test_event_entry>& events)
 {
   DEFINE_TESTS_ERROR_CONTEXT("gen_double_spend_in_different_chains::check_double_spend");
 
@@ -105,25 +105,25 @@ bool DoubleSpendBase::check_block_verification_context(const CryptoNote::block_v
     return !bvc.m_verification_failed;
 }
 
-bool DoubleSpendBase::mark_last_valid_block(CryptoNote::core& c, size_t /*ev_index*/, const std::vector<test_event_entry>& /*events*/)
+bool DoubleSpendBase::mark_last_valid_block(CryptoNote::Core& c, size_t /*ev_index*/, const std::vector<test_event_entry>& /*events*/)
 {
   m_last_valid_block = c.get_tail_id();
   return true;
 }
 
-bool DoubleSpendBase::mark_invalid_tx(CryptoNote::core& /*c*/, size_t ev_index, const std::vector<test_event_entry>& /*events*/)
+bool DoubleSpendBase::mark_invalid_tx(CryptoNote::Core& /*c*/, size_t ev_index, const std::vector<test_event_entry>& /*events*/)
 {
   m_invalid_tx_index = ev_index + 1;
   return true;
 }
 
-bool DoubleSpendBase::mark_invalid_block(CryptoNote::core& /*c*/, size_t ev_index, const std::vector<test_event_entry>& /*events*/)
+bool DoubleSpendBase::mark_invalid_block(CryptoNote::Core& /*c*/, size_t ev_index, const std::vector<test_event_entry>& /*events*/)
 {
   m_invalid_block_index = ev_index + 1;
   return true;
 }
 
-bool DoubleSpendBase::check_double_spend(CryptoNote::core& c, size_t /*ev_index*/, const std::vector<test_event_entry>& events)
+bool DoubleSpendBase::check_double_spend(CryptoNote::Core& c, size_t /*ev_index*/, const std::vector<test_event_entry>& events)
 {
   DEFINE_TESTS_ERROR_CONTEXT("DoubleSpendBase::check_double_spend");
   CHECK_EQ(m_last_valid_block, c.get_tail_id());

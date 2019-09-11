@@ -27,7 +27,7 @@ bool one_block::generate(std::vector<test_event_entry> &events)
     return true;
 }
 
-bool one_block::verify_1(CryptoNote::core& c, size_t ev_index, const std::vector<test_event_entry> &events)
+bool one_block::verify_1(CryptoNote::Core& c, size_t ev_index, const std::vector<test_event_entry> &events)
 {
     DEFINE_TESTS_ERROR_CONTEXT("one_block::verify_1");
 
@@ -112,12 +112,12 @@ bool gen_simple_chain_001::generate(std::vector<test_event_entry> &events)
     return true;
 }
 
-bool gen_simple_chain_001::verify_callback_1(CryptoNote::core& c, size_t ev_index, const std::vector<test_event_entry> &events)
+bool gen_simple_chain_001::verify_callback_1(CryptoNote::Core& c, size_t ev_index, const std::vector<test_event_entry> &events)
 {
   return true;
 }
 
-bool gen_simple_chain_001::verify_callback_2(CryptoNote::core& c, size_t ev_index, const std::vector<test_event_entry> &events)
+bool gen_simple_chain_001::verify_callback_2(CryptoNote::Core& c, size_t ev_index, const std::vector<test_event_entry> &events)
 {
   return true;
 }

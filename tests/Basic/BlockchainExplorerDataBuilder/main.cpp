@@ -34,7 +34,7 @@ public
 
 
 // Adds a new block to the blockchain
-bool addBlock1(core& core)
+bool addBlock1(Core& core)
 {
   AccountPublicAddress accountPublicAddress;
   KeyPair viewKeyPair = generateKeyPair();
@@ -65,7 +65,7 @@ bool addBlock1(core& core)
 
 // Adds an empty block to the blockchain
 // returns transaction public key of the coinbase transaction
-bool addBlock5(core& core, const AccountPublicAddress& minerPublicAddress, Crypto::PublicKey& transactionPublicKey, Crypto::Hash& transactionHash)
+bool addBlock5(Core& core, const AccountPublicAddress& minerPublicAddress, Crypto::PublicKey& transactionPublicKey, Crypto::Hash& transactionHash)
 {
   BinaryArray extraNonce;
 
@@ -94,7 +94,7 @@ bool addBlock5(core& core, const AccountPublicAddress& minerPublicAddress, Crypt
 
 // Adds an empty block to the blockchain
 // return block that was added
-bool addBlock8(core& core, Block& block)
+bool addBlock8(Core& core, Block& block)
 {
   AccountPublicAddress accountPublicAddress;
   KeyPair viewKeyPair = generateKeyPair();
@@ -129,7 +129,7 @@ bool addBlock8(core& core, Block& block)
 
 // creates a transaction and adds it to the mempool
 // returns transaction created
-bool createTransaction4(core& core, const AccountKeys& senderAccountKeys, const AccountPublicAddress& receiverAccountPublicAddress, Crypto::PublicKey inputTransactionPublicKey, Crypto::Hash inputTransactionHash, Transaction& transaction)
+bool createTransaction4(Core& core, const AccountKeys& senderAccountKeys, const AccountPublicAddress& receiverAccountPublicAddress, Crypto::PublicKey inputTransactionPublicKey, Crypto::Hash inputTransactionHash, Transaction& transaction)
 {
   // create transaction
   transaction.version = CURRENT_TRANSACTION_VERSION;
@@ -256,7 +256,7 @@ TEST(BlockchainExplorerDataBuilder, 1)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CryptoNoteProtocolQuery protocol;
   BlockchainExplorerDataBuilder(core, protocol);
 }
@@ -268,7 +268,7 @@ TEST(BlockchainExplorerDataBuilder, 2)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
 
   // initialize core object
   CoreConfig coreConfig;
@@ -299,7 +299,7 @@ TEST(BlockchainExplorerDataBuilder, 3)
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
   
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
 
   // initialize core object
   CoreConfig coreConfig;
@@ -360,7 +360,7 @@ TEST(BlockchainExplorerDataBuilder, 4)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   CryptoNoteProtocolQuery protocol;
   BlockchainExplorerDataBuilder blockchainExplorerDataBuilder(core, protocol);
 

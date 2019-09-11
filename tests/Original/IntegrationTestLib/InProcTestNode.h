@@ -16,7 +16,7 @@
 
 
 namespace CryptoNote {
-class core;
+class Core;
 class CryptoNoteProtocolHandler;
 class NodeServer;
 class Currency;
@@ -42,7 +42,7 @@ private:
 
   void workerThread(std::promise<std::string>& initPromise);
 
-  std::unique_ptr<CryptoNote::core> core;
+  std::unique_ptr<CryptoNote::Core> core;
   std::unique_ptr<CryptoNote::CryptoNoteProtocolHandler> protocol;
   std::unique_ptr<CryptoNote::NodeServer> p2pNode;
 

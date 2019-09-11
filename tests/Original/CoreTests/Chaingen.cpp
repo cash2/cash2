@@ -387,7 +387,7 @@ void test_chain_unit_base::register_callback(const std::string& cb_name, verify_
   m_callbacks[cb_name] = cb;
 }
 
-bool test_chain_unit_base::verify(const std::string& cb_name, CryptoNote::core& c, size_t ev_index, const std::vector<test_event_entry> &events)
+bool test_chain_unit_base::verify(const std::string& cb_name, CryptoNote::Core& c, size_t ev_index, const std::vector<test_event_entry> &events)
 {
   auto cb_it = m_callbacks.find(cb_name);
   if(cb_it == m_callbacks.end())

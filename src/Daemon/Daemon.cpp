@@ -222,7 +222,7 @@ int main(int argc, char* argv[])
     }
 
     CryptoNote::Currency currency = currencyBuilder.currency();
-    CryptoNote::core core(currency, nullptr, logManager);
+    CryptoNote::Core core(currency, nullptr, logManager);
 
     CryptoNote::Checkpoints checkpoints(logManager);
     for (const CryptoNote::CheckpointData& checkpointData : CryptoNote::CHECKPOINTS) {

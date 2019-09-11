@@ -54,7 +54,7 @@ TEST(NetNode, 1)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   System::Dispatcher dispatcher;
   p2p_endpoint_stub p2pEndpoint;
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
@@ -83,7 +83,7 @@ TEST(NetNode, 3)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   System::Dispatcher dispatcher;
   p2p_endpoint_stub p2pEndpoint;
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
@@ -107,7 +107,7 @@ TEST(NetNode, 4)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   System::Dispatcher dispatcher;
   p2p_endpoint_stub p2pEndpoint;
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
@@ -132,7 +132,7 @@ TEST(NetNode, 5)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   System::Dispatcher dispatcher;
   p2p_endpoint_stub p2pEndpoint;
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
@@ -157,7 +157,7 @@ TEST(NetNode, 6)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   System::Dispatcher dispatcher;
   p2p_endpoint_stub p2pEndpoint;
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
@@ -181,7 +181,7 @@ TEST(NetNode, 7)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   System::Dispatcher dispatcher;
   p2p_endpoint_stub p2pEndpoint;
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
@@ -207,7 +207,7 @@ TEST(NetNode, 8)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   System::Dispatcher dispatcher;
   p2p_endpoint_stub p2pEndpoint;
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
@@ -232,7 +232,7 @@ TEST(NetNode, 9)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   System::Dispatcher dispatcher;
   p2p_endpoint_stub p2pEndpoint;
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
@@ -257,7 +257,7 @@ TEST(NetNode, 10)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   System::Dispatcher dispatcher;
   p2p_endpoint_stub p2pEndpoint;
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
@@ -282,7 +282,7 @@ TEST(NetNode, 11)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   System::Dispatcher dispatcher;
   p2p_endpoint_stub p2pEndpoint;
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
@@ -308,7 +308,7 @@ TEST(NetNode, 12)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   System::Dispatcher dispatcher;
   p2p_endpoint_stub p2pEndpoint;
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
@@ -334,7 +334,7 @@ TEST(NetNode, 13)
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
   CryptonoteProtocol crpytonoteProtocol;
-  core core(currency, &crpytonoteProtocol, logger);
+  Core core(currency, &crpytonoteProtocol, logger);
   System::Dispatcher dispatcher;
   p2p_endpoint_stub p2pEndpoint;
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);

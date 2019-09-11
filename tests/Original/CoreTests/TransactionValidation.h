@@ -32,13 +32,13 @@ struct get_tx_validation_base : public test_chain_unit_base
       return !bvc.m_verification_failed;
   }
 
-  bool mark_invalid_block(CryptoNote::core& /*c*/, size_t ev_index, const std::vector<test_event_entry>& /*events*/)
+  bool mark_invalid_block(CryptoNote::Core& /*c*/, size_t ev_index, const std::vector<test_event_entry>& /*events*/)
   {
     m_invalid_block_index = ev_index + 1;
     return true;
   }
 
-  bool mark_invalid_tx(CryptoNote::core& /*c*/, size_t ev_index, const std::vector<test_event_entry>& /*events*/)
+  bool mark_invalid_tx(CryptoNote::Core& /*c*/, size_t ev_index, const std::vector<test_event_entry>& /*events*/)
   {
     m_invalid_tx_index = ev_index + 1;
     return true;

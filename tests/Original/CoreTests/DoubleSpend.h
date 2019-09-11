@@ -21,10 +21,10 @@ public:
   bool check_tx_verification_context(const CryptoNote::tx_verification_context& tvc, bool tx_added, size_t event_idx, const CryptoNote::Transaction& tx);
   bool check_block_verification_context(const CryptoNote::block_verification_context& bvc, size_t event_idx, const CryptoNote::Block& block);
 
-  bool mark_last_valid_block(CryptoNote::core& c, size_t ev_index, const std::vector<test_event_entry>& events);
-  bool mark_invalid_tx(CryptoNote::core& c, size_t ev_index, const std::vector<test_event_entry>& events);
-  bool mark_invalid_block(CryptoNote::core& c, size_t ev_index, const std::vector<test_event_entry>& events);
-  bool check_double_spend(CryptoNote::core& c, size_t ev_index, const std::vector<test_event_entry>& events);
+  bool mark_last_valid_block(CryptoNote::Core& c, size_t ev_index, const std::vector<test_event_entry>& events);
+  bool mark_invalid_tx(CryptoNote::Core& c, size_t ev_index, const std::vector<test_event_entry>& events);
+  bool mark_invalid_block(CryptoNote::Core& c, size_t ev_index, const std::vector<test_event_entry>& events);
+  bool check_double_spend(CryptoNote::Core& c, size_t ev_index, const std::vector<test_event_entry>& events);
 
 private:
   CryptoNote::Block m_last_valid_block;
@@ -116,7 +116,7 @@ public:
 
   bool generate(std::vector<test_event_entry>& events) const;
 
-  bool check_double_spend(CryptoNote::core& c, size_t ev_index, const std::vector<test_event_entry>& events);
+  bool check_double_spend(CryptoNote::Core& c, size_t ev_index, const std::vector<test_event_entry>& events);
 };
 
 
@@ -135,10 +135,10 @@ public:
   bool check_tx_verification_context(const CryptoNote::tx_verification_context& tvc, bool tx_added, size_t event_idx, const CryptoNote::Transaction& tx);
   bool check_block_verification_context(const CryptoNote::block_verification_context& bvc, size_t event_idx, const CryptoNote::Block& block);
 
-  bool mark_last_valid_block(CryptoNote::core& c, size_t ev_index, const std::vector<test_event_entry>& events);
-  bool mark_invalid_tx(CryptoNote::core& c, size_t ev_index, const std::vector<test_event_entry>& events);
-  bool mark_invalid_block(CryptoNote::core& c, size_t ev_index, const std::vector<test_event_entry>& events);
-  bool check_double_spend(CryptoNote::core& c, size_t ev_index, const std::vector<test_event_entry>& events);
+  bool mark_last_valid_block(CryptoNote::Core& c, size_t ev_index, const std::vector<test_event_entry>& events);
+  bool mark_invalid_tx(CryptoNote::Core& c, size_t ev_index, const std::vector<test_event_entry>& events);
+  bool mark_invalid_block(CryptoNote::Core& c, size_t ev_index, const std::vector<test_event_entry>& events);
+  bool check_double_spend(CryptoNote::Core& c, size_t ev_index, const std::vector<test_event_entry>& events);
 
   TestGenerator prepare(std::vector<test_event_entry>& events) const;
   TransactionBuilder createBobToAliceTx() const;
