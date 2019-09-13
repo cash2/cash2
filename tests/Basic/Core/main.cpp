@@ -112,17 +112,12 @@ public
 
 private
   add_new_tx()
-  load_state_data()
   parse_tx_from_blob()
   handle_incoming_block()
   check_tx_syntax()
   check_tx_semantic()
-  is_key_image_spent()
-  check_tx_ring_signature()
-  is_tx_spendtime_unlocked()
   update_miner_block_template()
   handle_command_line()
-  on_update_blocktemplate_interval()
   check_tx_inputs_keyimages_diff()
   blockchainUpdated()
   txDeletedFromPool()

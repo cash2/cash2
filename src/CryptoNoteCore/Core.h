@@ -138,11 +138,8 @@ private:
   bool check_tx_inputs_keyimages_diff(const Transaction& tx);
   bool check_tx_inputs_keyimages_domain(const Transaction& tx) const;
   bool check_tx_mixin(const Transaction& tx);
-  bool check_tx_ring_signature(const KeyInput& tx, const Crypto::Hash& tx_prefix_hash, const std::vector<Crypto::Signature>& sig); // no definition
   bool check_tx_semantic(const Transaction& tx, bool kept_by_block, uint32_t blockHeight);
   bool check_tx_syntax(const Transaction& tx);
-  bool is_key_image_spent(const Crypto::KeyImage& key_im); // no definition
-  bool is_tx_spendtime_unlocked(uint64_t unlock_time); // no definition
   bool parse_tx_from_blob(Transaction& tx, Crypto::Hash& tx_hash, Crypto::Hash& tx_prefix_hash, const BinaryArray& blob);
 
   // Private observer functions
@@ -156,7 +153,6 @@ private:
   // Other private functions
   bool handle_command_line(const boost::program_options::variables_map& vm);
   bool load_state_data(); // no definition
-  bool on_update_blocktemplate_interval(); // no definition
     
   const Currency& m_currency;
   Logging::LoggerRef logger;

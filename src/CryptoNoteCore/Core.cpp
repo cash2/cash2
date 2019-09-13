@@ -814,7 +814,7 @@ bool Core::init(const CoreConfig& config, const MinerConfig& minerConfig, bool l
     r = m_miner->init(minerConfig);
   if (!(r)) { logger(ERROR, BRIGHT_RED) << "Failed to initialize blockchain storage"; return false; }
 
-  return load_state_data();
+  return true;
 }
 
 void Core::init_options(boost::program_options::options_description& desc) {
@@ -1152,11 +1152,6 @@ bool Core::update_miner_block_template() {
 
 bool Core::handle_command_line(const boost::program_options::variables_map& vm) {
   m_config_folder = command_line::get_arg(vm, command_line::arg_data_dir);
-  return true;
-}
-
-bool Core::load_state_data() {
-  // may be some code later
   return true;
 }
 
