@@ -80,6 +80,7 @@ private:
   std::error_code handleReset(const Reset::Request& request, Reset::Response& response);
   std::error_code handleSendDelayedTransaction(const SendDelayedTransaction::Request& request, SendDelayedTransaction::Response& response);
   std::error_code handleSendTransaction(const SendTransaction::Request& request, SendTransaction::Response& response);
+  std::error_code handleValidateAddress(const ValidateAddress::Request& request, ValidateAddress::Response& response);
 
 };
 

@@ -62,6 +62,20 @@ struct GetStatus {
   };
 };
 
+struct ValidateAddress {
+	struct Request {
+		std::string address;
+
+		void serialize(CryptoNote::ISerializer& serializer);
+	};
+
+	struct Response {
+		bool address_valid;
+
+		void serialize(CryptoNote::ISerializer& serializer);
+	};
+};
+
 struct GetAddresses {
   struct Request {
     void serialize(CryptoNote::ISerializer& serializer);

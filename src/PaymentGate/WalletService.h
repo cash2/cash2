@@ -43,7 +43,6 @@ public:
   void init();
   void saveWallet();
 
-
   std::error_code createAddress(const std::string& spendSecretKeyText, std::string& address);
   std::error_code createAddress(std::string& address);
   std::error_code createDelayedTransaction(const CreateDelayedTransaction::Request& request, std::string& transactionHash);
@@ -70,6 +69,7 @@ public:
   std::error_code resetWallet();
   std::error_code sendDelayedTransaction(const std::string& transactionHash);
   std::error_code sendTransaction(const SendTransaction::Request& request, std::string& transactionHash, std::string& transactionSecretKey);
+  std::error_code validateAddress(const std::string& address, bool& addressValid);
 private:
   void refresh();
   void reset();
