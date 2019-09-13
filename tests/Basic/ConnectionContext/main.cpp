@@ -12,7 +12,7 @@ TEST(ConnectionContext, 1)
 {
   CryptoNoteConnectionContext context;
   std::string stateStr = get_protocol_state_string(context.m_state);
-  ASSERT_EQ("state_befor_handshake", stateStr);
+  ASSERT_EQ("state_before_handshake", stateStr);
 
   context.m_state = CryptoNoteConnectionContext::state_synchronizing;
   ASSERT_EQ("state_synchronizing", get_protocol_state_string(context.m_state));

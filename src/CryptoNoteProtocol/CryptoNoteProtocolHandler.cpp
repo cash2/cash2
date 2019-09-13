@@ -83,7 +83,7 @@ void CryptoNoteProtocolHandler::onConnectionClosed(CryptoNoteConnectionContext& 
     m_observerManager.notify(&ICryptoNoteProtocolObserver::lastKnownBlockHeightUpdated, m_observedHeight);
   }
 
-  if (context.m_state != CryptoNoteConnectionContext::state_befor_handshake) {
+  if (context.m_state != CryptoNoteConnectionContext::state_before_handshake) {
     m_peersCount--;
     m_observerManager.notify(&ICryptoNoteProtocolObserver::peerCountUpdated, m_peersCount.load());
   }
@@ -256,7 +256,7 @@ uint32_t CryptoNoteProtocolHandler::get_current_blockchain_height() {
 }
 
 bool CryptoNoteProtocolHandler::process_payload_sync_data(const CORE_SYNC_DATA& hshd, CryptoNoteConnectionContext& context, bool is_inital) {
-  if (context.m_state == CryptoNoteConnectionContext::state_befor_handshake && !is_inital)
+  if (context.m_state == CryptoNoteConnectionContext::state_before_handshake && !is_inital)
     return true;
 
   if (context.m_state == CryptoNoteConnectionContext::state_synchronizing) {

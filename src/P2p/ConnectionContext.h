@@ -24,7 +24,7 @@ struct CryptoNoteConnectionContext {
   time_t m_started = 0;
 
   enum state {
-    state_befor_handshake = 0, //default state
+    state_before_handshake = 0, //default state
     state_synchronizing,
     state_idle,
     state_normal,
@@ -33,7 +33,7 @@ struct CryptoNoteConnectionContext {
     state_shutdown
   };
 
-  state m_state = state_befor_handshake;
+  state m_state = state_before_handshake;
   std::list<Crypto::Hash> m_needed_objects;
   std::unordered_set<Crypto::Hash> m_requested_objects;
   uint32_t m_remote_blockchain_height = 0;
@@ -42,8 +42,8 @@ struct CryptoNoteConnectionContext {
 
 inline std::string get_protocol_state_string(CryptoNoteConnectionContext::state s) {
   switch (s)  {
-  case CryptoNoteConnectionContext::state_befor_handshake:
-    return "state_befor_handshake";
+  case CryptoNoteConnectionContext::state_before_handshake:
+    return "state_before_handshake";
   case CryptoNoteConnectionContext::state_synchronizing:
     return "state_synchronizing";
   case CryptoNoteConnectionContext::state_idle:
