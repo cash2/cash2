@@ -570,7 +570,7 @@ namespace CryptoNote
       return false;
     }
 
-    context.version = rsp.node_data.version;
+    context.m_version = rsp.node_data.version;
 
     if (rsp.node_data.network_id != m_network_id) {
       logger(Logging::ERROR) << context << "COMMAND_HANDSHAKE Failed, wrong network!  (" << rsp.node_data.network_id << "), closing connection.";
@@ -1130,7 +1130,7 @@ namespace CryptoNote
   
   int NodeServer::handle_handshake(int command, COMMAND_HANDSHAKE::request& arg, COMMAND_HANDSHAKE::response& rsp, P2pConnectionContext& context)
   {
-    context.version = arg.node_data.version;
+    context.m_version = arg.node_data.version;
 
     if (arg.node_data.network_id != m_network_id) {
       logger(Logging::INFO) << context << "WRONG NETWORK AGENT CONNECTED! id=" << arg.node_data.network_id;

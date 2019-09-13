@@ -16,7 +16,7 @@
 namespace CryptoNote {
 
 struct CryptoNoteConnectionContext {
-  uint8_t version;
+  uint8_t m_version;
   boost::uuids::uuid m_connection_id;
   uint32_t m_remote_ip = 0;
   uint32_t m_remote_port = 0;
@@ -61,7 +61,7 @@ inline std::string get_protocol_state_string(CryptoNoteConnectionContext::state 
   }
 }
 
-}
+} // end namespace CryptoNote
 
 namespace std {
 inline std::ostream& operator << (std::ostream& s, const CryptoNote::CryptoNoteConnectionContext& context) {
