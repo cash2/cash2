@@ -212,16 +212,25 @@ std::vector<CryptoNote::TransactionsInBlockInfo> filterTransactions(
   std::vector<CryptoNote::TransactionsInBlockInfo> result;
 
   for (const auto& block: blocks) {
+    bool transactionFound = false;
     CryptoNote::TransactionsInBlockInfo item;
     item.blockHash = block.blockHash;
 
     for (const auto& transaction: block.transactions) {
       if (transaction.transaction.state != CryptoNote::WalletTransactionState::DELETED && filter.checkTransaction(transaction)) {
         item.transactions.push_back(transaction);
+
+        if (transactionFound == false)
+        {
+          transactionFound = true;
+        }
       }
     }
 
-    result.push_back(std::move(item));
+    if (transactionFound == true)
+    {
+      result.push_back(std::move(item));
+    }
   }
 
   return result;

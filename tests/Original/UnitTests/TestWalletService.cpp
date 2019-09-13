@@ -558,8 +558,7 @@ TEST_F(WalletServiceTest_getTransactions, addressesFilter_nonExistentReturnsNoTr
 
   ASSERT_FALSE(ec);
 
-  ASSERT_EQ(1, transactions.size());
-  ASSERT_TRUE(transactions[0].transactions.empty());
+  ASSERT_EQ(0, transactions.size());
 }
 
 TEST_F(WalletServiceTest_getTransactions, addressesFilter_existentAndNonExistentReturnsTransaction) {
@@ -604,8 +603,7 @@ TEST_F(WalletServiceTest_getTransactions, paymentIdFilter_nonExistentReturnsNoTr
 
   ASSERT_FALSE(ec);
 
-  ASSERT_EQ(1, transactions.size());
-  ASSERT_TRUE(transactions[0].transactions.empty());
+  ASSERT_EQ(0, transactions.size());
 }
 
 TEST_F(WalletServiceTest_getTransactions, invalidAddress) {
