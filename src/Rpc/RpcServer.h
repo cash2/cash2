@@ -90,6 +90,7 @@ private:
   bool on_get_mempool(const COMMAND_RPC_GET_MEMPOOL::request& req, COMMAND_RPC_GET_MEMPOOL::response& res);
   bool on_get_transaction(const COMMAND_RPC_GET_TRANSACTION::request& req, COMMAND_RPC_GET_TRANSACTION::response& res);
   bool on_submit_block(const COMMAND_RPC_SUBMIT_BLOCK::request& req, COMMAND_RPC_SUBMIT_BLOCK::response& res);
+  bool on_validate_address(const COMMAND_RPC_VALIDATE_ADDRESS::request& req, COMMAND_RPC_VALIDATE_ADDRESS::response& res);
 
   bool getRingSignatureSize(const Transaction& transaction, uint64_t& ringSignatureSize);
 
