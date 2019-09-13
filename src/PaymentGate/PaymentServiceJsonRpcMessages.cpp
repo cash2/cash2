@@ -31,6 +31,7 @@ void GetStatus::Response::serialize(CryptoNote::ISerializer& serializer) {
   serializer(known_block_count, "known_block_count");
   serializer(last_block_hash, "last_block_hash");
   serializer(peer_count, "peer_count");
+  serializer(cash2_software_version, "cash2_software_version");
 }
 
 void ValidateAddress::Request::serialize(CryptoNote::ISerializer& serializer) {

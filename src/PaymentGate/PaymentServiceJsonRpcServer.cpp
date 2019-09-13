@@ -14,6 +14,7 @@
 
 #include "Serialization/JsonInputValueSerializer.h"
 #include "Serialization/JsonOutputStreamSerializer.h"
+#include "version.h"
 
 namespace PaymentService {
 
@@ -219,6 +220,7 @@ std::error_code PaymentServiceJsonRpcServer::handleGetViewKey(const GetViewKey::
 }
 
 std::error_code PaymentServiceJsonRpcServer::handleGetStatus(const GetStatus::Request& request, GetStatus::Response& response) {
+  response.cash2_software_version = PROJECT_VERSION_LONG;
   return service.getStatus(response.block_count, response.known_block_count, response.last_block_hash, response.peer_count, response.minimal_fee);
 }
 

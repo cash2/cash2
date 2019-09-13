@@ -57,6 +57,7 @@ struct GetStatus {
     std::string last_block_hash;
     uint32_t peer_count;
     uint64_t minimal_fee;
+    std::string cash2_software_version;
 
     void serialize(CryptoNote::ISerializer& serializer);
   };
