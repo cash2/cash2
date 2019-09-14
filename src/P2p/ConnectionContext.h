@@ -16,13 +16,6 @@
 namespace CryptoNote {
 
 struct CryptoNoteConnectionContext {
-  uint8_t m_version;
-  boost::uuids::uuid m_connection_id;
-  uint32_t m_remote_ip = 0;
-  uint32_t m_remote_port = 0;
-  bool m_is_income = false;
-  time_t m_started = 0;
-
   enum state {
     state_before_handshake = 0, //default state
     state_synchronizing,
@@ -33,11 +26,17 @@ struct CryptoNoteConnectionContext {
     state_shutdown
   };
 
-  state m_state = state_before_handshake;
-  std::list<Crypto::Hash> m_needed_objects;
-  std::unordered_set<Crypto::Hash> m_requested_objects;
-  uint32_t m_remote_blockchain_height = 0;
+  boost::uuids::uuid m_connection_id;
+  bool m_is_income = false;
   uint32_t m_last_response_height = 0;
+  std::list<Crypto::Hash> m_needed_objects;
+  uint32_t m_remote_blockchain_height = 0;
+  uint32_t m_remote_ip = 0;
+  uint32_t m_remote_port = 0;
+  std::unordered_set<Crypto::Hash> m_requested_objects;
+  time_t m_started = 0;
+  state m_state = state_before_handshake;
+  uint8_t m_version;
 };
 
 inline std::string get_protocol_state_string(CryptoNoteConnectionContext::state s) {
