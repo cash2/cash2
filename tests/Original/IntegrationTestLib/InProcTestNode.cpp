@@ -67,7 +67,7 @@ void InProcTestNode::workerThread(std::promise<std::string>& initPromise) {
     protocol->set_p2p_endpoint(p2pNode.get());
     core->set_cryptonote_protocol(protocol.get());
 
-    CryptoNote::NetNodeConfig p2pConfig;
+    CryptoNote::NodeServerConfig p2pConfig;
 
     p2pConfig.setBindIp("127.0.0.1");
     p2pConfig.setBindPort(m_cfg.p2pPort);

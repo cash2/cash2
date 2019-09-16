@@ -87,7 +87,7 @@ CryptoNote::CryptoNoteProtocolHandler& NodeServer::get_payload_object()
   return m_payload_handler;
 }
 
-bool NodeServer::init(const NetNodeConfig& config)
+bool NodeServer::init(const NodeServerConfig& config)
 {
   if (!config.getTestnet()) {
     for (const char* seedAddress : CryptoNote::SEED_NODES) {
@@ -707,7 +707,7 @@ int NodeServer::handleCommand(const LevinProtocol::Command& cmd, BinaryArray& ou
 
 #undef INVOKE_HANDLER
 
-bool NodeServer::handleConfig(const NetNodeConfig& config)
+bool NodeServer::handleConfig(const NodeServerConfig& config)
 {
   m_bind_ip = config.getBindIp();
   m_port = std::to_string(config.getBindPort());

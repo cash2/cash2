@@ -5,7 +5,7 @@
 #include "gtest/gtest.h"
 #include "helperFunctions.h"
 #include "P2p/P2pNode.h"
-#include "P2p/NetNodeConfig.h"
+#include "P2p/NodeServerConfig.h"
 #include "System/Dispatcher.h"
 #include "Logging/ConsoleLogger.h"
 

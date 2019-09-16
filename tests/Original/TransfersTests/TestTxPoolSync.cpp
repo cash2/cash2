@@ -10,7 +10,7 @@
 #include "CryptoNoteCore/Core.h"
 #include "CryptoNoteCore/Currency.h"
 #include "Logging/LoggerManager.h"
-#include "P2p/NetNodeConfig.h"
+#include "P2p/NodeServerConfig.h"
 #include "System/Dispatcher.h"
 #include "System/InterruptedException.h"
 #include "WalletLegacy/WalletLegacy.h"

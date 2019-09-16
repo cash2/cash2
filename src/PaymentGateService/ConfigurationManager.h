@@ -7,7 +7,7 @@
 
 #include "CryptoNoteCore/CoreConfig.h"
 #include "PaymentServiceConfiguration.h"
-#include "P2p/NetNodeConfig.h"
+#include "P2p/NodeServerConfig.h"
 #include "RpcNodeConfiguration.h"
 
 namespace PaymentService {
@@ -19,7 +19,7 @@ public:
 
   bool startInprocess;
   Configuration gateConfiguration;
-  CryptoNote::NetNodeConfig netNodeConfig;
+  CryptoNote::NodeServerConfig nodeServerConfig;
   CryptoNote::CoreConfig coreConfig;
   RpcNodeConfiguration remoteNodeConfig;
 };

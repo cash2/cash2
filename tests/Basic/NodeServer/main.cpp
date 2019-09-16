@@ -89,15 +89,15 @@ TEST(NodeServer, 3)
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
   NodeServer nodeServer(dispatcher, handler, logger);
 
-  CryptoNote::NetNodeConfig netNodeConfig;
-  netNodeConfig.setBindIp("127.0.0.1");
-  netNodeConfig.setBindPort(6666);
-  netNodeConfig.setExternalPort(0);
-  netNodeConfig.setAllowLocalIp(false);
-  netNodeConfig.setHideMyPort(false);
-  netNodeConfig.setConfigFolder("cash2");
+  CryptoNote::NodeServerConfig nodeServerConfig;
+  nodeServerConfig.setBindIp("127.0.0.1");
+  nodeServerConfig.setBindPort(6666);
+  nodeServerConfig.setExternalPort(0);
+  nodeServerConfig.setAllowLocalIp(false);
+  nodeServerConfig.setHideMyPort(false);
+  nodeServerConfig.setConfigFolder("cash2");
 
-  ASSERT_TRUE(nodeServer.init(netNodeConfig));
+  ASSERT_TRUE(nodeServer.init(nodeServerConfig));
 }
 
 // run()
@@ -113,15 +113,15 @@ TEST(NodeServer, 4)
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
   NodeServer nodeServer(dispatcher, handler, logger);
 
-  CryptoNote::NetNodeConfig netNodeConfig;
-  netNodeConfig.setBindIp("127.0.0.1");
-  netNodeConfig.setBindPort(6666);
-  netNodeConfig.setExternalPort(0);
-  netNodeConfig.setAllowLocalIp(false);
-  netNodeConfig.setHideMyPort(false);
-  netNodeConfig.setConfigFolder("cash2");
+  CryptoNote::NodeServerConfig nodeServerConfig;
+  nodeServerConfig.setBindIp("127.0.0.1");
+  nodeServerConfig.setBindPort(6666);
+  nodeServerConfig.setExternalPort(0);
+  nodeServerConfig.setAllowLocalIp(false);
+  nodeServerConfig.setHideMyPort(false);
+  nodeServerConfig.setConfigFolder("cash2");
 
-  ASSERT_TRUE(nodeServer.init(netNodeConfig));
+  ASSERT_TRUE(nodeServer.init(nodeServerConfig));
   // ASSERT_TRUE(nodeServer.run());
 }
 
@@ -138,15 +138,15 @@ TEST(NodeServer, 5)
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
   NodeServer nodeServer(dispatcher, handler, logger);
 
-  CryptoNote::NetNodeConfig netNodeConfig;
-  netNodeConfig.setBindIp("127.0.0.1");
-  netNodeConfig.setBindPort(6666);
-  netNodeConfig.setExternalPort(0);
-  netNodeConfig.setAllowLocalIp(false);
-  netNodeConfig.setHideMyPort(false);
-  netNodeConfig.setConfigFolder("cash2");
+  CryptoNote::NodeServerConfig nodeServerConfig;
+  nodeServerConfig.setBindIp("127.0.0.1");
+  nodeServerConfig.setBindPort(6666);
+  nodeServerConfig.setExternalPort(0);
+  nodeServerConfig.setAllowLocalIp(false);
+  nodeServerConfig.setHideMyPort(false);
+  nodeServerConfig.setConfigFolder("cash2");
 
-  ASSERT_TRUE(nodeServer.init(netNodeConfig));
+  ASSERT_TRUE(nodeServer.init(nodeServerConfig));
   // ASSERT_TRUE(nodeServer.run());
   // ASSERT_TRUE(nodeServer.deinit());
 }
@@ -163,15 +163,15 @@ TEST(NodeServer, 6)
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
   NodeServer nodeServer(dispatcher, handler, logger);
 
-  CryptoNote::NetNodeConfig netNodeConfig;
-  netNodeConfig.setBindIp("127.0.0.1");
-  netNodeConfig.setBindPort(6666);
-  netNodeConfig.setExternalPort(0);
-  netNodeConfig.setAllowLocalIp(false);
-  netNodeConfig.setHideMyPort(false);
-  netNodeConfig.setConfigFolder("cash2");
+  CryptoNote::NodeServerConfig nodeServerConfig;
+  nodeServerConfig.setBindIp("127.0.0.1");
+  nodeServerConfig.setBindPort(6666);
+  nodeServerConfig.setExternalPort(0);
+  nodeServerConfig.setAllowLocalIp(false);
+  nodeServerConfig.setHideMyPort(false);
+  nodeServerConfig.setConfigFolder("cash2");
 
-  ASSERT_TRUE(nodeServer.init(netNodeConfig));
+  ASSERT_TRUE(nodeServer.init(nodeServerConfig));
   ASSERT_TRUE(nodeServer.sendStopSignal());
 }
 
@@ -187,15 +187,15 @@ TEST(NodeServer, 7)
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
   NodeServer nodeServer(dispatcher, handler, logger);
 
-  CryptoNote::NetNodeConfig netNodeConfig;
-  netNodeConfig.setBindIp("127.0.0.1");
-  netNodeConfig.setBindPort(6666);
-  netNodeConfig.setExternalPort(0);
-  netNodeConfig.setAllowLocalIp(false);
-  netNodeConfig.setHideMyPort(false);
-  netNodeConfig.setConfigFolder("cash2");
+  CryptoNote::NodeServerConfig nodeServerConfig;
+  nodeServerConfig.setBindIp("127.0.0.1");
+  nodeServerConfig.setBindPort(6666);
+  nodeServerConfig.setExternalPort(0);
+  nodeServerConfig.setAllowLocalIp(false);
+  nodeServerConfig.setHideMyPort(false);
+  nodeServerConfig.setConfigFolder("cash2");
 
-  ASSERT_TRUE(nodeServer.init(netNodeConfig));
+  ASSERT_TRUE(nodeServer.init(nodeServerConfig));
 
   uint32_t peerPort = nodeServer.get_this_peer_port();
   ASSERT_EQ(6666, peerPort);
@@ -213,15 +213,15 @@ TEST(NodeServer, 8)
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
   NodeServer nodeServer(dispatcher, handler, logger);
 
-  CryptoNote::NetNodeConfig netNodeConfig;
-  netNodeConfig.setBindIp("127.0.0.1");
-  netNodeConfig.setBindPort(6666);
-  netNodeConfig.setExternalPort(0);
-  netNodeConfig.setAllowLocalIp(false);
-  netNodeConfig.setHideMyPort(false);
-  netNodeConfig.setConfigFolder("cash2");
+  CryptoNote::NodeServerConfig nodeServerConfig;
+  nodeServerConfig.setBindIp("127.0.0.1");
+  nodeServerConfig.setBindPort(6666);
+  nodeServerConfig.setExternalPort(0);
+  nodeServerConfig.setAllowLocalIp(false);
+  nodeServerConfig.setHideMyPort(false);
+  nodeServerConfig.setConfigFolder("cash2");
 
-  ASSERT_TRUE(nodeServer.init(netNodeConfig));
+  ASSERT_TRUE(nodeServer.init(nodeServerConfig));
 
   nodeServer.get_payload_object().log_connections();
 }
@@ -238,15 +238,15 @@ TEST(NodeServer, 9)
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
   NodeServer nodeServer(dispatcher, handler, logger);
 
-  CryptoNote::NetNodeConfig netNodeConfig;
-  netNodeConfig.setBindIp("127.0.0.1");
-  netNodeConfig.setBindPort(6666);
-  netNodeConfig.setExternalPort(0);
-  netNodeConfig.setAllowLocalIp(false);
-  netNodeConfig.setHideMyPort(false);
-  netNodeConfig.setConfigFolder("cash2");
+  CryptoNote::NodeServerConfig nodeServerConfig;
+  nodeServerConfig.setBindIp("127.0.0.1");
+  nodeServerConfig.setBindPort(6666);
+  nodeServerConfig.setExternalPort(0);
+  nodeServerConfig.setAllowLocalIp(false);
+  nodeServerConfig.setHideMyPort(false);
+  nodeServerConfig.setConfigFolder("cash2");
 
-  ASSERT_TRUE(nodeServer.init(netNodeConfig));
+  ASSERT_TRUE(nodeServer.init(nodeServerConfig));
 
   ASSERT_TRUE(nodeServer.log_peerlist());
 }
@@ -263,15 +263,15 @@ TEST(NodeServer, 10)
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
   NodeServer nodeServer(dispatcher, handler, logger);
 
-  CryptoNote::NetNodeConfig netNodeConfig;
-  netNodeConfig.setBindIp("127.0.0.1");
-  netNodeConfig.setBindPort(6666);
-  netNodeConfig.setExternalPort(0);
-  netNodeConfig.setAllowLocalIp(false);
-  netNodeConfig.setHideMyPort(false);
-  netNodeConfig.setConfigFolder("cash2");
+  CryptoNote::NodeServerConfig nodeServerConfig;
+  nodeServerConfig.setBindIp("127.0.0.1");
+  nodeServerConfig.setBindPort(6666);
+  nodeServerConfig.setExternalPort(0);
+  nodeServerConfig.setAllowLocalIp(false);
+  nodeServerConfig.setHideMyPort(false);
+  nodeServerConfig.setConfigFolder("cash2");
 
-  ASSERT_TRUE(nodeServer.init(netNodeConfig));
+  ASSERT_TRUE(nodeServer.init(nodeServerConfig));
 
   ASSERT_TRUE(nodeServer.log_connections());
 }
@@ -288,15 +288,15 @@ TEST(NodeServer, 11)
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
   NodeServer nodeServer(dispatcher, handler, logger);
 
-  CryptoNote::NetNodeConfig netNodeConfig;
-  netNodeConfig.setBindIp("127.0.0.1");
-  netNodeConfig.setBindPort(6666);
-  netNodeConfig.setExternalPort(0);
-  netNodeConfig.setAllowLocalIp(false);
-  netNodeConfig.setHideMyPort(false);
-  netNodeConfig.setConfigFolder("cash2");
+  CryptoNote::NodeServerConfig nodeServerConfig;
+  nodeServerConfig.setBindIp("127.0.0.1");
+  nodeServerConfig.setBindPort(6666);
+  nodeServerConfig.setExternalPort(0);
+  nodeServerConfig.setAllowLocalIp(false);
+  nodeServerConfig.setHideMyPort(false);
+  nodeServerConfig.setConfigFolder("cash2");
 
-  ASSERT_TRUE(nodeServer.init(netNodeConfig));
+  ASSERT_TRUE(nodeServer.init(nodeServerConfig));
 
   uint32_t connectionCount = nodeServer.get_connections_count();
   ASSERT_EQ(0, connectionCount);
@@ -314,15 +314,15 @@ TEST(NodeServer, 12)
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
   NodeServer nodeServer(dispatcher, handler, logger);
 
-  CryptoNote::NetNodeConfig netNodeConfig;
-  netNodeConfig.setBindIp("127.0.0.1");
-  netNodeConfig.setBindPort(6666);
-  netNodeConfig.setExternalPort(0);
-  netNodeConfig.setAllowLocalIp(false);
-  netNodeConfig.setHideMyPort(false);
-  netNodeConfig.setConfigFolder("cash2");
+  CryptoNote::NodeServerConfig nodeServerConfig;
+  nodeServerConfig.setBindIp("127.0.0.1");
+  nodeServerConfig.setBindPort(6666);
+  nodeServerConfig.setExternalPort(0);
+  nodeServerConfig.setAllowLocalIp(false);
+  nodeServerConfig.setHideMyPort(false);
+  nodeServerConfig.setConfigFolder("cash2");
 
-  ASSERT_TRUE(nodeServer.init(netNodeConfig));
+  ASSERT_TRUE(nodeServer.init(nodeServerConfig));
 
   size_t connectionCount = nodeServer.get_outgoing_connections_count();
   ASSERT_EQ(0, connectionCount);
@@ -340,15 +340,15 @@ TEST(NodeServer, 13)
   CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpoint, logger);
   NodeServer nodeServer(dispatcher, handler, logger);
 
-  CryptoNote::NetNodeConfig netNodeConfig;
-  netNodeConfig.setBindIp("127.0.0.1");
-  netNodeConfig.setBindPort(6666);
-  netNodeConfig.setExternalPort(0);
-  netNodeConfig.setAllowLocalIp(false);
-  netNodeConfig.setHideMyPort(false);
-  netNodeConfig.setConfigFolder("cash2");
+  CryptoNote::NodeServerConfig nodeServerConfig;
+  nodeServerConfig.setBindIp("127.0.0.1");
+  nodeServerConfig.setBindPort(6666);
+  nodeServerConfig.setExternalPort(0);
+  nodeServerConfig.setAllowLocalIp(false);
+  nodeServerConfig.setHideMyPort(false);
+  nodeServerConfig.setConfigFolder("cash2");
 
-  ASSERT_TRUE(nodeServer.init(netNodeConfig));
+  ASSERT_TRUE(nodeServer.init(nodeServerConfig));
 
   ASSERT_NO_THROW(nodeServer.getPeerlistManager());
 }

@@ -42,7 +42,7 @@ bool ConfigurationManager::init(int argc, char** argv) {
   Configuration::initOptions(confGeneralOptions);
 
   po::options_description netNodeOptions("Local Node Options");
-  CryptoNote::NetNodeConfig::initOptions(netNodeOptions);
+  CryptoNote::NodeServerConfig::initOptions(netNodeOptions);
   CryptoNote::CoreConfig::initOptions(netNodeOptions);
 
   po::options_description remoteNodeOptions("Remote Node Options");
@@ -74,22 +74,22 @@ bool ConfigurationManager::init(int argc, char** argv) {
     po::notify(confOptions);
 
     gateConfiguration.init(confOptions);
-    netNodeConfig.init(confOptions);
+    nodeServerConfig.init(confOptions);
     coreConfig.init(confOptions);
     remoteNodeConfig.init(confOptions);
 
-    netNodeConfig.setTestnet(confOptions["testnet"].as<bool>());
+    nodeServerConfig.setTestnet(confOptions["testnet"].as<bool>());
     startInprocess = confOptions["local"].as<bool>();
   }
 
   //command line options should override options from config file
   gateConfiguration.init(cmdOptions);
-  netNodeConfig.init(cmdOptions);
+  nodeServerConfig.init(cmdOptions);
   coreConfig.init(cmdOptions);
   remoteNodeConfig.init(cmdOptions);
 
   if (cmdOptions["testnet"].as<bool>()) {
-    netNodeConfig.setTestnet(true);
+    nodeServerConfig.setTestnet(true);
   }
 
   if (cmdOptions["local"].as<bool>()) {

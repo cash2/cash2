@@ -3,7 +3,7 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "NetNodeConfig.h"
+#include "NodeServerConfig.h"
 
 #include <boost/utility/value_init.hpp>
 
@@ -48,7 +48,7 @@ bool parsePeersAndAddToContainer(const boost::program_options::variables_map& vm
 
 } // end anonymous namespace
 
-void NetNodeConfig::initOptions(boost::program_options::options_description& desc) {
+void NodeServerConfig::initOptions(boost::program_options::options_description& desc) {
   command_line::add_arg(desc, arg_p2p_add_exclusive_node);
   command_line::add_arg(desc, arg_p2p_add_peer);
   command_line::add_arg(desc, arg_p2p_add_priority_node);
@@ -60,7 +60,7 @@ void NetNodeConfig::initOptions(boost::program_options::options_description& des
   command_line::add_arg(desc, arg_p2p_seed_node);
 }
 
-NetNodeConfig::NetNodeConfig() {
+NodeServerConfig::NodeServerConfig() {
   bindIp = "";
   bindPort = 0;
   externalPort = 0;
@@ -70,7 +70,7 @@ NetNodeConfig::NetNodeConfig() {
   testnet = false;
 }
 
-bool NetNodeConfig::init(const boost::program_options::variables_map& vm)
+bool NodeServerConfig::init(const boost::program_options::variables_map& vm)
 {
   if (vm.count(arg_p2p_bind_ip.name) != 0 && (!vm[arg_p2p_bind_ip.name].defaulted() || bindIp.empty())) {
     bindIp = command_line::get_arg(vm, arg_p2p_bind_ip);
@@ -129,11 +129,11 @@ bool NetNodeConfig::init(const boost::program_options::variables_map& vm)
   return true;
 }
 
-void NetNodeConfig::setTestnet(bool isTestnet) {
+void NodeServerConfig::setTestnet(bool isTestnet) {
   testnet = isTestnet;
 }
 
-std::string NetNodeConfig::getP2pStateFilename() const {
+std::string NodeServerConfig::getP2pStateFilename() const {
   if (testnet) {
     return "testnet_" + p2pStateFilename;
   }
@@ -141,91 +141,91 @@ std::string NetNodeConfig::getP2pStateFilename() const {
   return p2pStateFilename;
 }
 
-bool NetNodeConfig::getTestnet() const {
+bool NodeServerConfig::getTestnet() const {
   return testnet;
 }
 
-std::string NetNodeConfig::getBindIp() const {
+std::string NodeServerConfig::getBindIp() const {
   return bindIp;
 }
 
-uint16_t NetNodeConfig::getBindPort() const {
+uint16_t NodeServerConfig::getBindPort() const {
   return bindPort;
 }
 
-uint16_t NetNodeConfig::getExternalPort() const {
+uint16_t NodeServerConfig::getExternalPort() const {
   return externalPort;
 }
 
-bool NetNodeConfig::getAllowLocalIp() const {
+bool NodeServerConfig::getAllowLocalIp() const {
   return allowLocalIp;
 }
 
-std::vector<PeerlistEntry> NetNodeConfig::getPeers() const {
+std::vector<PeerlistEntry> NodeServerConfig::getPeers() const {
   return peers;
 }
 
-std::vector<NetworkAddress> NetNodeConfig::getPriorityNodes() const {
+std::vector<NetworkAddress> NodeServerConfig::getPriorityNodes() const {
   return priorityNodes;
 }
 
-std::vector<NetworkAddress> NetNodeConfig::getExclusiveNodes() const {
+std::vector<NetworkAddress> NodeServerConfig::getExclusiveNodes() const {
   return exclusiveNodes;
 }
 
-std::vector<NetworkAddress> NetNodeConfig::getSeedNodes() const {
+std::vector<NetworkAddress> NodeServerConfig::getSeedNodes() const {
   return seedNodes;
 }
 
-bool NetNodeConfig::getHideMyPort() const {
+bool NodeServerConfig::getHideMyPort() const {
   return hideMyPort;
 }
 
-std::string NetNodeConfig::getConfigFolder() const {
+std::string NodeServerConfig::getConfigFolder() const {
   return configFolder;
 }
 
-void NetNodeConfig::setP2pStateFilename(const std::string& filename) {
+void NodeServerConfig::setP2pStateFilename(const std::string& filename) {
   p2pStateFilename = filename;
 }
 
-void NetNodeConfig::setBindIp(const std::string& ip) {
+void NodeServerConfig::setBindIp(const std::string& ip) {
   bindIp = ip;
 }
 
-void NetNodeConfig::setBindPort(uint16_t port) {
+void NodeServerConfig::setBindPort(uint16_t port) {
   bindPort = port;
 }
 
-void NetNodeConfig::setExternalPort(uint16_t port) {
+void NodeServerConfig::setExternalPort(uint16_t port) {
   externalPort = port;
 }
 
-void NetNodeConfig::setAllowLocalIp(bool allow) {
+void NodeServerConfig::setAllowLocalIp(bool allow) {
   allowLocalIp = allow;
 }
 
-void NetNodeConfig::setPeers(const std::vector<PeerlistEntry>& peerList) {
+void NodeServerConfig::setPeers(const std::vector<PeerlistEntry>& peerList) {
   peers = peerList;
 }
 
-void NetNodeConfig::setPriorityNodes(const std::vector<NetworkAddress>& addresses) {
+void NodeServerConfig::setPriorityNodes(const std::vector<NetworkAddress>& addresses) {
   priorityNodes = addresses;
 }
 
-void NetNodeConfig::setExclusiveNodes(const std::vector<NetworkAddress>& addresses) {
+void NodeServerConfig::setExclusiveNodes(const std::vector<NetworkAddress>& addresses) {
   exclusiveNodes = addresses;
 }
 
-void NetNodeConfig::setSeedNodes(const std::vector<NetworkAddress>& addresses) {
+void NodeServerConfig::setSeedNodes(const std::vector<NetworkAddress>& addresses) {
   seedNodes = addresses;
 }
 
-void NetNodeConfig::setHideMyPort(bool hide) {
+void NodeServerConfig::setHideMyPort(bool hide) {
   hideMyPort = hide;
 }
 
-void NetNodeConfig::setConfigFolder(const std::string& folder) {
+void NodeServerConfig::setConfigFolder(const std::string& folder) {
   configFolder = folder;
 }
 

@@ -3,15 +3,15 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "gtest/gtest.h"
-#include "P2p/NetNodeConfig.h"
+#include "P2p/NodeServerConfig.h"
 
 /*
 
 My Notes
 
-class NetNodeConfig
+class NodeServerConfig
 public
-  *NetNodeConfig()
+  *NodeServerConfig()
   *initOptions()
   init()
   *getP2pStateFilename()
@@ -44,13 +44,13 @@ public
 using namespace CryptoNote;
 
 // constructor
-TEST(NetNodeConfig, 1)
+TEST(NodeServerConfig, 1)
 {
-  NetNodeConfig();
+  NodeServerConfig();
 }
 
 // init_options()
-TEST(NetNodeConfig, 2)
+TEST(NodeServerConfig, 2)
 {
   boost::program_options::options_description desc("Allowed options");
   desc.add_options()
@@ -62,96 +62,96 @@ TEST(NetNodeConfig, 2)
     ("input-file", "input file")
   ;
 
-  NetNodeConfig::initOptions(desc);
+  NodeServerConfig::initOptions(desc);
 }
 
 // init()
 // cannot initialize the variables map
-TEST(NetNodeConfig, 3)
+TEST(NodeServerConfig, 3)
 {
-  // NetNodeConfig netNodeConfig;
+  // NodeServerConfig nodeServerConfig;
   // boost::program_options::variables_map vm;
-  // ASSERT_TRUE(netNodeConfig.init(vm));
+  // ASSERT_TRUE(nodeServerConfig.init(vm));
 }
 
 // setP2pStateFilename() and getP2pStateFilename()
-TEST(NetNodeConfig, 4)
+TEST(NodeServerConfig, 4)
 {
-  NetNodeConfig netNodeConfig;
+  NodeServerConfig nodeServerConfig;
 
   std::string filename = "Hello World";
-  ASSERT_NO_THROW(netNodeConfig.setP2pStateFilename(filename));
+  ASSERT_NO_THROW(nodeServerConfig.setP2pStateFilename(filename));
 
-  std::string filenameRet = netNodeConfig.getP2pStateFilename();
+  std::string filenameRet = nodeServerConfig.getP2pStateFilename();
 
   ASSERT_EQ(filename, filenameRet);
 }
 
 // setTestnet() and getTestnet()
-TEST(NetNodeConfig, 5)
+TEST(NodeServerConfig, 5)
 {
-  NetNodeConfig netNodeConfig;
+  NodeServerConfig nodeServerConfig;
 
-  ASSERT_NO_THROW(netNodeConfig.setTestnet(true));
-  ASSERT_TRUE(netNodeConfig.getTestnet());
+  ASSERT_NO_THROW(nodeServerConfig.setTestnet(true));
+  ASSERT_TRUE(nodeServerConfig.getTestnet());
 
-  ASSERT_NO_THROW(netNodeConfig.setTestnet(false));
-  ASSERT_FALSE(netNodeConfig.getTestnet());
+  ASSERT_NO_THROW(nodeServerConfig.setTestnet(false));
+  ASSERT_FALSE(nodeServerConfig.getTestnet());
 }
 
 // setBindIp() and getBindIp()
-TEST(NetNodeConfig, 6)
+TEST(NodeServerConfig, 6)
 {
-  NetNodeConfig netNodeConfig;
+  NodeServerConfig nodeServerConfig;
 
   std::string ip = "123.123.123.123";
-  ASSERT_NO_THROW(netNodeConfig.setBindIp(ip));
+  ASSERT_NO_THROW(nodeServerConfig.setBindIp(ip));
 
-  std::string ipRet = netNodeConfig.getBindIp();
+  std::string ipRet = nodeServerConfig.getBindIp();
 
   ASSERT_EQ(ip, ipRet);
 }
 
 // setBindPort() and getBindPort()
-TEST(NetNodeConfig, 7)
+TEST(NodeServerConfig, 7)
 {
-  NetNodeConfig netNodeConfig;
+  NodeServerConfig nodeServerConfig;
 
   uint16_t port = 100;
-  ASSERT_NO_THROW(netNodeConfig.setBindPort(port));
+  ASSERT_NO_THROW(nodeServerConfig.setBindPort(port));
 
-  uint16_t portRet = netNodeConfig.getBindPort();
+  uint16_t portRet = nodeServerConfig.getBindPort();
 
   ASSERT_EQ(port, portRet);
 }
 
 // setExternalPort() and getExternalPort()
-TEST(NetNodeConfig, 8)
+TEST(NodeServerConfig, 8)
 {
-  NetNodeConfig netNodeConfig;
+  NodeServerConfig nodeServerConfig;
 
   uint16_t port = 100;
-  ASSERT_NO_THROW(netNodeConfig.setExternalPort(port));
+  ASSERT_NO_THROW(nodeServerConfig.setExternalPort(port));
 
-  uint16_t portRet = netNodeConfig.getExternalPort();
+  uint16_t portRet = nodeServerConfig.getExternalPort();
 
   ASSERT_EQ(port, portRet);
 }
 
 // setAllowLocalIp() and getAllowLocalIp()
-TEST(NetNodeConfig, 9)
+TEST(NodeServerConfig, 9)
 {
-  NetNodeConfig netNodeConfig;
+  NodeServerConfig nodeServerConfig;
 
-  ASSERT_NO_THROW(netNodeConfig.setAllowLocalIp(true));
-  ASSERT_TRUE(netNodeConfig.getAllowLocalIp());
+  ASSERT_NO_THROW(nodeServerConfig.setAllowLocalIp(true));
+  ASSERT_TRUE(nodeServerConfig.getAllowLocalIp());
 
-  ASSERT_NO_THROW(netNodeConfig.setAllowLocalIp(false));
-  ASSERT_FALSE(netNodeConfig.getAllowLocalIp());
+  ASSERT_NO_THROW(nodeServerConfig.setAllowLocalIp(false));
+  ASSERT_FALSE(nodeServerConfig.getAllowLocalIp());
 }
 
 // setPeers() and getPeers()
-TEST(NetNodeConfig, 10)
+TEST(NodeServerConfig, 10)
 {
   NetworkAddress networkAddress;
   networkAddress.ip = 1000;
@@ -167,10 +167,10 @@ TEST(NetNodeConfig, 10)
   std::vector<PeerlistEntry> peerList;
   peerList.push_back(peerlistEntry);
   
-  NetNodeConfig netNodeConfig;
-  ASSERT_NO_THROW(netNodeConfig.setPeers(peerList));
+  NodeServerConfig nodeServerConfig;
+  ASSERT_NO_THROW(nodeServerConfig.setPeers(peerList));
 
-  std::vector<PeerlistEntry> peerListRet = netNodeConfig.getPeers();
+  std::vector<PeerlistEntry> peerListRet = nodeServerConfig.getPeers();
 
   ASSERT_EQ(1, peerListRet.size());
   ASSERT_EQ(1000, peerListRet[0].adr.ip);
@@ -180,7 +180,7 @@ TEST(NetNodeConfig, 10)
 }
 
 // setPriorityNodes() and getPriorityNodes()
-TEST(NetNodeConfig, 11)
+TEST(NodeServerConfig, 11)
 {
   NetworkAddress networkAddress;
   networkAddress.ip = 1000;
@@ -189,10 +189,10 @@ TEST(NetNodeConfig, 11)
   std::vector<NetworkAddress> networkAddresses;
   networkAddresses.push_back(networkAddress);
   
-  NetNodeConfig netNodeConfig;
-  ASSERT_NO_THROW(netNodeConfig.setPriorityNodes(networkAddresses));
+  NodeServerConfig nodeServerConfig;
+  ASSERT_NO_THROW(nodeServerConfig.setPriorityNodes(networkAddresses));
 
-  std::vector<NetworkAddress> networkAddressesRet = netNodeConfig.getPriorityNodes();
+  std::vector<NetworkAddress> networkAddressesRet = nodeServerConfig.getPriorityNodes();
 
   ASSERT_EQ(1, networkAddressesRet.size());
   ASSERT_EQ(1000, networkAddressesRet[0].ip);
@@ -200,7 +200,7 @@ TEST(NetNodeConfig, 11)
 }
 
 // setExclusiveNodes() and getExclusiveNodes()
-TEST(NetNodeConfig, 12)
+TEST(NodeServerConfig, 12)
 {
   NetworkAddress networkAddress;
   networkAddress.ip = 1000;
@@ -209,10 +209,10 @@ TEST(NetNodeConfig, 12)
   std::vector<NetworkAddress> networkAddresses;
   networkAddresses.push_back(networkAddress);
   
-  NetNodeConfig netNodeConfig;
-  ASSERT_NO_THROW(netNodeConfig.setExclusiveNodes(networkAddresses));
+  NodeServerConfig nodeServerConfig;
+  ASSERT_NO_THROW(nodeServerConfig.setExclusiveNodes(networkAddresses));
 
-  std::vector<NetworkAddress> networkAddressesRet = netNodeConfig.getExclusiveNodes();
+  std::vector<NetworkAddress> networkAddressesRet = nodeServerConfig.getExclusiveNodes();
 
   ASSERT_EQ(1, networkAddressesRet.size());
   ASSERT_EQ(1000, networkAddressesRet[0].ip);
@@ -220,7 +220,7 @@ TEST(NetNodeConfig, 12)
 }
 
 // setSeedNodes() and getSeedNodes()
-TEST(NetNodeConfig, 13)
+TEST(NodeServerConfig, 13)
 {
   NetworkAddress networkAddress;
   networkAddress.ip = 1000;
@@ -229,10 +229,10 @@ TEST(NetNodeConfig, 13)
   std::vector<NetworkAddress> networkAddresses;
   networkAddresses.push_back(networkAddress);
   
-  NetNodeConfig netNodeConfig;
-  ASSERT_NO_THROW(netNodeConfig.setSeedNodes(networkAddresses));
+  NodeServerConfig nodeServerConfig;
+  ASSERT_NO_THROW(nodeServerConfig.setSeedNodes(networkAddresses));
 
-  std::vector<NetworkAddress> networkAddressesRet = netNodeConfig.getSeedNodes();
+  std::vector<NetworkAddress> networkAddressesRet = nodeServerConfig.getSeedNodes();
 
   ASSERT_EQ(1, networkAddressesRet.size());
   ASSERT_EQ(1000, networkAddressesRet[0].ip);
@@ -240,26 +240,26 @@ TEST(NetNodeConfig, 13)
 }
 
 // setHideMyPort() and getHideMyPort()
-TEST(NetNodeConfig, 14)
+TEST(NodeServerConfig, 14)
 {
-  NetNodeConfig netNodeConfig;
+  NodeServerConfig nodeServerConfig;
 
-  ASSERT_NO_THROW(netNodeConfig.setHideMyPort(true));
-  ASSERT_TRUE(netNodeConfig.getHideMyPort());
+  ASSERT_NO_THROW(nodeServerConfig.setHideMyPort(true));
+  ASSERT_TRUE(nodeServerConfig.getHideMyPort());
 
-  ASSERT_NO_THROW(netNodeConfig.setHideMyPort(false));
-  ASSERT_FALSE(netNodeConfig.getHideMyPort());
+  ASSERT_NO_THROW(nodeServerConfig.setHideMyPort(false));
+  ASSERT_FALSE(nodeServerConfig.getHideMyPort());
 }
 
 // setConfigFolder() and getConfigFolder()
-TEST(NetNodeConfig, 15)
+TEST(NodeServerConfig, 15)
 {
-  NetNodeConfig netNodeConfig;
+  NodeServerConfig nodeServerConfig;
 
   std::string folder = "Hello World";
-  ASSERT_NO_THROW(netNodeConfig.setConfigFolder(folder));
+  ASSERT_NO_THROW(nodeServerConfig.setConfigFolder(folder));
 
-  std::string folderRet = netNodeConfig.getConfigFolder();
+  std::string folderRet = nodeServerConfig.getConfigFolder();
 
   ASSERT_EQ(folder, folderRet);
 }

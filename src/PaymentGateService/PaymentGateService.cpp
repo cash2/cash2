@@ -146,7 +146,7 @@ void PaymentGateService::runInProcess(Logging::LoggerRef& log) {
   core.set_cryptonote_protocol(&protocol);
 
   log(Logging::INFO) << "initializing p2pNode";
-  if (!p2pNode.init(config.netNodeConfig)) {
+  if (!p2pNode.init(config.nodeServerConfig)) {
     throw std::runtime_error("Failed to init p2pNode");
   }
 

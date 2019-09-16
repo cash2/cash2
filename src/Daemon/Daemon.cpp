@@ -21,7 +21,7 @@
 #include "CryptoNoteCore/MinerConfig.h"
 #include "CryptoNoteProtocol/CryptoNoteProtocolHandler.h"
 #include "P2p/NodeServer.h"
-#include "P2p/NetNodeConfig.h"
+#include "P2p/NodeServerConfig.h"
 #include "Rpc/RpcServer.h"
 #include "Rpc/RpcServerConfig.h"
 #include "version.h"
@@ -138,7 +138,7 @@ int main(int argc, char* argv[])
 
     RpcServerConfig::initOptions(desc_daemon_rpc);
     CoreConfig::initOptions(desc_core); // There are currently no core configuration options
-    NetNodeConfig::initOptions(desc_network);
+    NodeServerConfig::initOptions(desc_network);
     MinerConfig::initOptions(desc_mining);
 
     po::options_description desc_options("Command Line Options");
@@ -235,9 +235,9 @@ int main(int argc, char* argv[])
 
     CoreConfig coreConfig;
     coreConfig.init(vm);
-    NetNodeConfig netNodeConfig;
-    netNodeConfig.init(vm);
-    netNodeConfig.setTestnet(testnet_mode);
+    NodeServerConfig nodeServerConfig;
+    nodeServerConfig.init(vm);
+    nodeServerConfig.setTestnet(testnet_mode);
     MinerConfig minerConfig;
     minerConfig.init(vm);
     RpcServerConfig rpcConfig;
@@ -265,7 +265,7 @@ int main(int argc, char* argv[])
 
     // initialize objects
     logger(INFO) << "Initializing p2p server...";
-    if (!nodeServer.init(netNodeConfig)) {
+    if (!nodeServer.init(nodeServerConfig)) {
       logger(ERROR, BRIGHT_RED) << "Failed to initialize p2p server.";
       return 1;
     }

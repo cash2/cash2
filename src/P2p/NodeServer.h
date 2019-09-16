@@ -23,7 +23,7 @@
 #include "P2pConnectionContext.h"
 #include "LevinProtocol.h"
 #include "NodeServerCommon.h"
-#include "NetNodeConfig.h"
+#include "NodeServerConfig.h"
 #include "P2pProtocolDefinitions.h"
 #include "P2pNetworks.h"
 #include "PeerListManager.h"
@@ -42,7 +42,7 @@ public:
   size_t get_outgoing_connections_count();
   CryptoNote::CryptoNoteProtocolHandler& get_payload_object();
   uint32_t get_this_peer_port(){return m_listeningPort;}
-  bool init(const NetNodeConfig& config);
+  bool init(const NodeServerConfig& config);
   static void init_options(boost::program_options::options_description& desc);
   bool log_connections();
   bool log_grey_peerlist();
@@ -69,7 +69,7 @@ private:
   bool get_local_node_data(basic_node_data& node_data);
   size_t get_random_index_with_fixed_probability(size_t max_index);
   int handleCommand(const LevinProtocol::Command& cmd, BinaryArray& buff_out, P2pConnectionContext& context, bool& handled);
-  bool handleConfig(const NetNodeConfig& config);
+  bool handleConfig(const NodeServerConfig& config);
   bool handleTimedSyncResponse(const BinaryArray& buffer, P2pConnectionContext& context);
   bool handle_command_line(const boost::program_options::variables_map& vm);
 #ifdef ALLOW_DEBUG_COMMANDS
