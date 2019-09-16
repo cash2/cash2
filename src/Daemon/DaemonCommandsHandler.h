@@ -6,19 +6,15 @@
 #pragma once
 
 #include "Common/ConsoleHandler.h"
-
-#include <Logging/LoggerRef.h>
-#include <Logging/LoggerManager.h>
-
-namespace CryptoNote {
-class Core;
-class NodeServer;
-}
+#include "CryptoNoteCore/Core.h"
+#include "P2p/NodeServer.h"
+#include "Logging/LoggerRef.h"
+#include "Logging/LoggerManager.h"
 
 class DaemonCommandsHandler
 {
 public:
-  DaemonCommandsHandler(CryptoNote::Core& core, CryptoNote::NodeServer& srv, Logging::LoggerManager& log);
+  DaemonCommandsHandler(CryptoNote::Core& core, CryptoNote::NodeServer& nodeServer, Logging::LoggerManager& log);
 
   bool start_handling() {
     m_consoleHandler.start();
@@ -30,26 +26,17 @@ public:
   }
 
 private:
-
-  Common::ConsoleHandler m_consoleHandler;
-  CryptoNote::Core& m_core;
-  CryptoNote::NodeServer& m_nodeServer;
-  Logging::LoggerRef m_logger;
-  Logging::LoggerManager& m_logManager;
-
-  std::string get_commands_str();
-  bool print_block_by_hash(const std::string& arg);
-  bool print_block_by_index(uint32_t index);
-  bool print_block_helper(uint32_t index);
-
-
   bool exit(const std::vector<std::string>& args);
+  std::string get_commands_str();
   bool help(const std::vector<std::string>& args);
   bool hide_hr(const std::vector<std::string>& args);
   bool print_bc(const std::vector<std::string>& args);
   bool print_bc_outs(const std::vector<std::string>& args);
   bool print_bci(const std::vector<std::string>& args);
   bool print_block(const std::vector<std::string>& args);
+  bool print_block_by_hash(const std::string& arg);
+  bool print_block_by_index(uint32_t index);
+  bool print_block_helper(uint32_t index);
   bool print_blockchain_height(const std::vector<std::string>& args);
   bool print_circulating_supply(const std::vector<std::string>& args);
   bool print_cn(const std::vector<std::string>& args);
@@ -74,4 +61,10 @@ private:
   bool show_hr(const std::vector<std::string>& args);
   bool start_mining(const std::vector<std::string>& args);
   bool stop_mining(const std::vector<std::string>& args);
+
+  Common::ConsoleHandler m_consoleHandler;
+  CryptoNote::Core& m_core;
+  CryptoNote::NodeServer& m_nodeServer;
+  Logging::LoggerRef m_logger;
+  Logging::LoggerManager& m_logManager;
 };

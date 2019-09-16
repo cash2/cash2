@@ -12,8 +12,12 @@
 #include "Serialization/SerializationTools.h"
 #include "version.h"
 
-DaemonCommandsHandler::DaemonCommandsHandler(CryptoNote::Core& core, CryptoNote::NodeServer& srv, Logging::LoggerManager& log) :
-  m_core(core), m_nodeServer(srv), m_logger(log, "daemon"), m_logManager(log) {
+
+// Public functions
+
+
+DaemonCommandsHandler::DaemonCommandsHandler(CryptoNote::Core& core, CryptoNote::NodeServer& nodeServer, Logging::LoggerManager& log) :
+  m_core(core), m_nodeServer(nodeServer), m_logger(log, "daemon"), m_logManager(log) {
 
   m_consoleHandler.setHandler("exit", boost::bind(&DaemonCommandsHandler::exit, this, _1), "Shutdown the daemon");
   m_consoleHandler.setHandler("help", boost::bind(&DaemonCommandsHandler::help, this, _1), "Show this help");
@@ -44,7 +48,17 @@ DaemonCommandsHandler::DaemonCommandsHandler(CryptoNote::Core& core, CryptoNote:
   m_consoleHandler.setHandler("show_hr", boost::bind(&DaemonCommandsHandler::show_hr, this, _1), "Start showing hash rate");
   m_consoleHandler.setHandler("start_mining", boost::bind(&DaemonCommandsHandler::start_mining, this, _1), "Start mining for specified address\n * start_mining <addr> [threads=1]");
   m_consoleHandler.setHandler("stop_mining", boost::bind(&DaemonCommandsHandler::stop_mining, this, _1), "Stop mining");
+}
 
+
+// Private functions
+
+
+bool DaemonCommandsHandler::exit(const std::vector<std::string>& args)
+{
+  m_consoleHandler.requestStop();
+  m_nodeServer.sendStopSignal();
+  return true;
 }
 
 std::string DaemonCommandsHandler::get_commands_str()
@@ -52,6 +66,150 @@ std::string DaemonCommandsHandler::get_commands_str()
   std::stringstream ss;
   ss << "Daemon Commands" << ENDL << ENDL << m_consoleHandler.getUsage() << ENDL;
   return ss.str();
+}
+
+bool DaemonCommandsHandler::help(const std::vector<std::string>& args)
+{
+  m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Help" << '\n' << '\n' << get_commands_str() << std::endl;
+  return true;
+}
+
+bool DaemonCommandsHandler::hide_hr(const std::vector<std::string>& args)
+{
+  m_core.get_miner().do_print_hashrate(false);
+  return true;
+}
+
+bool DaemonCommandsHandler::print_bc(const std::vector<std::string> &args)
+{
+  if (!args.size()) {
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Need start height parameter" << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
+    return false;
+  }
+
+  uint32_t startHeight = 1;
+  uint32_t endHeight = 1;
+  uint32_t blockchainHeight = m_core.get_current_blockchain_height();
+  if (!Common::fromString(args[0], startHeight)) {
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wrong start height value" << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
+    return false;
+  }
+
+  if (args.size() > 1 && !Common::fromString(args[1], endHeight)) {
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wrong end height value" << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
+    return false;
+  }
+
+  if (startHeight == 0) {
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Start height should be greater than 0" << ENDL;
+    return false;
+  }
+
+  if (endHeight == 0) {
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "End height should be greater than 0" << ENDL;
+    return false;
+  }
+
+  if (startHeight > blockchainHeight) {
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Start height should not be greater than " << blockchainHeight << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
+    return false;
+  }
+
+  if (endHeight > blockchainHeight) {
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "End height should not be greater than " << blockchainHeight << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
+    return false;
+  }
+
+  if (endHeight == 1) {
+    endHeight = startHeight + 1;
+  }
+
+  if (endHeight <= startHeight) {
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "End height should be greater than start height" << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
+    return false;
+  }
+
+  m_core.print_blockchain(startHeight - 1, endHeight - 1);
+  return true;
+}
+
+bool DaemonCommandsHandler::print_bc_outs(const std::vector<std::string>& args)
+{
+  if (args.size() != 1)
+  {
+    std::cout << "need file path as parameter" << ENDL;
+    return true;
+  }
+  m_core.print_blockchain_outs(args[0]);
+  return true;
+}
+
+bool DaemonCommandsHandler::print_bci(const std::vector<std::string>& args)
+{
+  m_core.print_blockchain_index();
+  return true;
+}
+
+bool DaemonCommandsHandler::print_block(const std::vector<std::string> &args)
+{
+  if (args.empty()) {
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Expected print_block <block_hash> or print_block <block_height>" << std::endl;
+    return true;
+  }
+
+  const std::string &arg = args.front();
+  try {
+    uint32_t height = boost::lexical_cast<uint32_t>(arg);
+
+    if (height == 0) {
+      m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Start height should be greater than 0" << ENDL;
+      return false;
+    }
+
+    uint32_t blockchainHeight = m_core.get_current_blockchain_height();
+
+    if (height > blockchainHeight) {
+      m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Start height should not be greater than " << blockchainHeight << ENDL;
+      return false;
+    }
+
+    print_block_by_index(height - 1);
+  } catch (boost::bad_lexical_cast &) {
+    print_block_by_hash(arg);
+  }
+
+  return true;
+}
+
+bool DaemonCommandsHandler::print_block_by_hash(const std::string& arg)
+{
+  Crypto::Hash blockHash;
+  if (!parse_hash256(arg, blockHash)) {
+    return false;
+  }
+
+  uint32_t blockIndex;
+  if(!m_core.getBlockHeight(blockHash, blockIndex))
+  {
+    std::cout << "Block with hash " << arg << " was not found." << std::endl;
+    return false;
+  }
+
+  return print_block_by_index(blockIndex);
+}
+
+bool DaemonCommandsHandler::print_block_by_index(uint32_t blockIndex)
+{
+  if (!print_block_helper(blockIndex))
+  {
+    uint32_t topBlockIndex;
+    Crypto::Hash topBlockHashIgnore;
+    m_core.get_blockchain_top(topBlockIndex, topBlockHashIgnore);
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Block wasn't found. Current block chain height: " << topBlockIndex + 1 << ", requested: " << blockIndex + 1 << std::endl;
+    return false;
+  }
+
+  return true;
 }
 
 bool DaemonCommandsHandler::print_block_helper(uint32_t blockIndex)
@@ -206,157 +364,6 @@ bool DaemonCommandsHandler::print_block_helper(uint32_t blockIndex)
   }
 
   return false;
-}
-
-bool DaemonCommandsHandler::print_block_by_index(uint32_t blockIndex)
-{
-  if (!print_block_helper(blockIndex))
-  {
-    uint32_t topBlockIndex;
-    Crypto::Hash topBlockHashIgnore;
-    m_core.get_blockchain_top(topBlockIndex, topBlockHashIgnore);
-    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Block wasn't found. Current block chain height: " << topBlockIndex + 1 << ", requested: " << blockIndex + 1 << std::endl;
-    return false;
-  }
-
-  return true;
-}
-
-bool DaemonCommandsHandler::print_block_by_hash(const std::string& arg)
-{
-  Crypto::Hash blockHash;
-  if (!parse_hash256(arg, blockHash)) {
-    return false;
-  }
-
-  uint32_t blockIndex;
-  if(!m_core.getBlockHeight(blockHash, blockIndex))
-  {
-    std::cout << "Block with hash " << arg << " was not found." << std::endl;
-    return false;
-  }
-
-  return print_block_by_index(blockIndex);
-}
-
-bool DaemonCommandsHandler::exit(const std::vector<std::string>& args)
-{
-  m_consoleHandler.requestStop();
-  m_nodeServer.sendStopSignal();
-  return true;
-}
-
-bool DaemonCommandsHandler::help(const std::vector<std::string>& args)
-{
-  m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Help" << '\n' << '\n' << get_commands_str() << std::endl;
-  return true;
-}
-
-bool DaemonCommandsHandler::hide_hr(const std::vector<std::string>& args)
-{
-  m_core.get_miner().do_print_hashrate(false);
-  return true;
-}
-
-bool DaemonCommandsHandler::print_bc(const std::vector<std::string> &args)
-{
-  if (!args.size()) {
-    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Need start height parameter" << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
-    return false;
-  }
-
-  uint32_t startHeight = 1;
-  uint32_t endHeight = 1;
-  uint32_t blockchainHeight = m_core.get_current_blockchain_height();
-  if (!Common::fromString(args[0], startHeight)) {
-    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wrong start height value" << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
-    return false;
-  }
-
-  if (args.size() > 1 && !Common::fromString(args[1], endHeight)) {
-    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wrong end height value" << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
-    return false;
-  }
-
-  if (startHeight == 0) {
-    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Start height should be greater than 0" << ENDL;
-    return false;
-  }
-
-  if (endHeight == 0) {
-    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "End height should be greater than 0" << ENDL;
-    return false;
-  }
-
-  if (startHeight > blockchainHeight) {
-    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Start height should not be greater than " << blockchainHeight << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
-    return false;
-  }
-
-  if (endHeight > blockchainHeight) {
-    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "End height should not be greater than " << blockchainHeight << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
-    return false;
-  }
-
-  if (endHeight == 1) {
-    endHeight = startHeight + 1;
-  }
-
-  if (endHeight <= startHeight) {
-    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "End height should be greater than start height" << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
-    return false;
-  }
-
-  m_core.print_blockchain(startHeight - 1, endHeight - 1);
-  return true;
-}
-
-bool DaemonCommandsHandler::print_bc_outs(const std::vector<std::string>& args)
-{
-  if (args.size() != 1)
-  {
-    std::cout << "need file path as parameter" << ENDL;
-    return true;
-  }
-  m_core.print_blockchain_outs(args[0]);
-  return true;
-}
-
-bool DaemonCommandsHandler::print_bci(const std::vector<std::string>& args)
-{
-  m_core.print_blockchain_index();
-  return true;
-}
-
-bool DaemonCommandsHandler::print_block(const std::vector<std::string> &args)
-{
-  if (args.empty()) {
-    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Expected print_block <block_hash> or print_block <block_height>" << std::endl;
-    return true;
-  }
-
-  const std::string &arg = args.front();
-  try {
-    uint32_t height = boost::lexical_cast<uint32_t>(arg);
-
-    if (height == 0) {
-      m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Start height should be greater than 0" << ENDL;
-      return false;
-    }
-
-    uint32_t blockchainHeight = m_core.get_current_blockchain_height();
-
-    if (height > blockchainHeight) {
-      m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Start height should not be greater than " << blockchainHeight << ENDL;
-      return false;
-    }
-
-    print_block_by_index(height - 1);
-  } catch (boost::bad_lexical_cast &) {
-    print_block_by_hash(arg);
-  }
-
-  return true;
 }
 
 bool DaemonCommandsHandler::print_blockchain_height(const std::vector<std::string>& args)
