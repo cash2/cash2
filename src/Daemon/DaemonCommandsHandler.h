@@ -33,8 +33,8 @@ private:
 
   Common::ConsoleHandler m_consoleHandler;
   CryptoNote::Core& m_core;
-  CryptoNote::NodeServer& m_srv;
-  Logging::LoggerRef logger;
+  CryptoNote::NodeServer& m_nodeServer;
+  Logging::LoggerRef m_logger;
   Logging::LoggerManager& m_logManager;
 
   std::string get_commands_str();

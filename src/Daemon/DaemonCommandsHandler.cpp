@@ -4,7 +4,6 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "DaemonCommandsHandler.h"
-
 #include "P2p/NodeServer.h"
 #include "CryptoNoteCore/Miner.h"
 #include "CryptoNoteCore/Core.h"
@@ -14,7 +13,7 @@
 #include "version.h"
 
 DaemonCommandsHandler::DaemonCommandsHandler(CryptoNote::Core& core, CryptoNote::NodeServer& srv, Logging::LoggerManager& log) :
-  m_core(core), m_srv(srv), logger(log, "daemon"), m_logManager(log) {
+  m_core(core), m_nodeServer(srv), m_logger(log, "daemon"), m_logManager(log) {
 
   m_consoleHandler.setHandler("exit", boost::bind(&DaemonCommandsHandler::exit, this, _1), "Shutdown the daemon");
   m_consoleHandler.setHandler("help", boost::bind(&DaemonCommandsHandler::help, this, _1), "Show this help");
@@ -176,7 +175,7 @@ bool DaemonCommandsHandler::print_block_helper(uint32_t blockIndex)
       return false;
     }
 
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << '\n' << '\n' <<
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << '\n' << '\n' <<
       "- Block cumulative difficulty : " << blockCumulativeDifficulty << '\n' <<
       "- Block difficulty : " << blockDifficulty << '\n' <<
       "- Block hash : " << blockHash << '\n' <<
@@ -216,7 +215,7 @@ bool DaemonCommandsHandler::print_block_by_index(uint32_t blockIndex)
     uint32_t topBlockIndex;
     Crypto::Hash topBlockHashIgnore;
     m_core.get_blockchain_top(topBlockIndex, topBlockHashIgnore);
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Block wasn't found. Current block chain height: " << topBlockIndex + 1 << ", requested: " << blockIndex + 1 << std::endl;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Block wasn't found. Current block chain height: " << topBlockIndex + 1 << ", requested: " << blockIndex + 1 << std::endl;
     return false;
   }
 
@@ -243,13 +242,13 @@ bool DaemonCommandsHandler::print_block_by_hash(const std::string& arg)
 bool DaemonCommandsHandler::exit(const std::vector<std::string>& args)
 {
   m_consoleHandler.requestStop();
-  m_srv.sendStopSignal();
+  m_nodeServer.sendStopSignal();
   return true;
 }
 
 bool DaemonCommandsHandler::help(const std::vector<std::string>& args)
 {
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Help" << '\n' << '\n' << get_commands_str() << std::endl;
+  m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Help" << '\n' << '\n' << get_commands_str() << std::endl;
   return true;
 }
 
@@ -262,7 +261,7 @@ bool DaemonCommandsHandler::hide_hr(const std::vector<std::string>& args)
 bool DaemonCommandsHandler::print_bc(const std::vector<std::string> &args)
 {
   if (!args.size()) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Need start height parameter" << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Need start height parameter" << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
     return false;
   }
 
@@ -270,32 +269,32 @@ bool DaemonCommandsHandler::print_bc(const std::vector<std::string> &args)
   uint32_t endHeight = 1;
   uint32_t blockchainHeight = m_core.get_current_blockchain_height();
   if (!Common::fromString(args[0], startHeight)) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wrong start height value" << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wrong start height value" << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
     return false;
   }
 
   if (args.size() > 1 && !Common::fromString(args[1], endHeight)) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wrong end height value" << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wrong end height value" << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
     return false;
   }
 
   if (startHeight == 0) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Start height should be greater than 0" << ENDL;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Start height should be greater than 0" << ENDL;
     return false;
   }
 
   if (endHeight == 0) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "End height should be greater than 0" << ENDL;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "End height should be greater than 0" << ENDL;
     return false;
   }
 
   if (startHeight > blockchainHeight) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Start height should not be greater than " << blockchainHeight << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Start height should not be greater than " << blockchainHeight << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
     return false;
   }
 
   if (endHeight > blockchainHeight) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "End height should not be greater than " << blockchainHeight << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "End height should not be greater than " << blockchainHeight << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
     return false;
   }
 
@@ -304,7 +303,7 @@ bool DaemonCommandsHandler::print_bc(const std::vector<std::string> &args)
   }
 
   if (endHeight <= startHeight) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "End height should be greater than start height" << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "End height should be greater than start height" << '\n' << '\n' << "print_bc <start_height> [<end_height>]" << ENDL;
     return false;
   }
 
@@ -332,7 +331,7 @@ bool DaemonCommandsHandler::print_bci(const std::vector<std::string>& args)
 bool DaemonCommandsHandler::print_block(const std::vector<std::string> &args)
 {
   if (args.empty()) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Expected print_block <block_hash> or print_block <block_height>" << std::endl;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Expected print_block <block_hash> or print_block <block_height>" << std::endl;
     return true;
   }
 
@@ -341,14 +340,14 @@ bool DaemonCommandsHandler::print_block(const std::vector<std::string> &args)
     uint32_t height = boost::lexical_cast<uint32_t>(arg);
 
     if (height == 0) {
-      logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Start height should be greater than 0" << ENDL;
+      m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Start height should be greater than 0" << ENDL;
       return false;
     }
 
     uint32_t blockchainHeight = m_core.get_current_blockchain_height();
 
     if (height > blockchainHeight) {
-      logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Start height should not be greater than " << blockchainHeight << ENDL;
+      m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Start height should not be greater than " << blockchainHeight << ENDL;
       return false;
     }
 
@@ -362,87 +361,87 @@ bool DaemonCommandsHandler::print_block(const std::vector<std::string> &args)
 
 bool DaemonCommandsHandler::print_blockchain_height(const std::vector<std::string>& args)
 {
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Blockchain height : " << m_core.get_current_blockchain_height() << std::endl;
+  m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Blockchain height : " << m_core.get_current_blockchain_height() << std::endl;
   return true;
 }
 
 bool DaemonCommandsHandler::print_circulating_supply(const std::vector<std::string>& args)
 {
   std::string circulatingSupply = m_core.currency().formatAmount(m_core.getTotalGeneratedAmount());
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Circulating supply : " << circulatingSupply << " CASH2" << std::endl;
+  m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Circulating supply : " << circulatingSupply << " CASH2" << std::endl;
   return true;
 }
 
 bool DaemonCommandsHandler::print_cn(const std::vector<std::string>& args)
 {
-  m_srv.get_payload_object().log_connections();
+  m_nodeServer.get_payload_object().log_connections();
   return true;
 }
 
 bool DaemonCommandsHandler::print_cn_count(const std::vector<std::string>& args)
 {
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Number of connections : " << m_srv.get_connections_count() << std::endl;
+  m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Number of connections : " << m_nodeServer.get_connections_count() << std::endl;
   return true;
 }
 
 bool DaemonCommandsHandler::print_difficulty(const std::vector<std::string>& args)
 {
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Network difficulty : " << m_core.getNextBlockDifficulty() << std::endl;
+  m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Network difficulty : " << m_core.getNextBlockDifficulty() << std::endl;
   return true;
 }
 
 bool DaemonCommandsHandler::print_grey_pl(const std::vector<std::string>& args)
 {
-  m_srv.log_grey_peerlist();
+  m_nodeServer.log_grey_peerlist();
   return true;
 }
 
 bool DaemonCommandsHandler::print_grey_pl_count(const std::vector<std::string>& args)
 {
-  uint64_t greyPeerlistCount = m_srv.getPeerlistManager().get_gray_peers_count();
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Grey peerlist count : " << greyPeerlistCount << std::endl;
+  uint64_t greyPeerlistCount = m_nodeServer.getPeerlistManager().get_gray_peers_count();
+  m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Grey peerlist count : " << greyPeerlistCount << std::endl;
   return true;
 }
 
 bool DaemonCommandsHandler::print_incoming_cn(const std::vector<std::string>& args)
 {
-  m_srv.get_payload_object().log_incoming_connections();
+  m_nodeServer.get_payload_object().log_incoming_connections();
   return true;
 }
 
 bool DaemonCommandsHandler::print_incoming_cn_count(const std::vector<std::string>& args)
 {
-  uint64_t totalConnections = m_srv.get_connections_count();
-  size_t outgoingConnectionsCount = m_srv.get_outgoing_connections_count();
+  uint64_t totalConnections = m_nodeServer.get_connections_count();
+  size_t outgoingConnectionsCount = m_nodeServer.get_outgoing_connections_count();
   size_t incoming_connections_count = totalConnections - outgoingConnectionsCount;
 
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Incoming connections count : " << incoming_connections_count << std::endl;
+  m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Incoming connections count : " << incoming_connections_count << std::endl;
   return true;
 }
 
 bool DaemonCommandsHandler::print_network_height(const std::vector<std::string>& args)
 {
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Network blockchain height : " << m_srv.get_payload_object().getObservedHeight();
+  m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Network blockchain height : " << m_nodeServer.get_payload_object().getObservedHeight();
   return true;
 }
 
 bool DaemonCommandsHandler::print_outgoing_cn(const std::vector<std::string>& args)
 {
-  m_srv.get_payload_object().log_outgoing_connections();
+  m_nodeServer.get_payload_object().log_outgoing_connections();
   return true;
 }
 
 bool DaemonCommandsHandler::print_outgoing_cn_count(const std::vector<std::string>& args)
 {
-  size_t outgoingConnectionsCount = m_srv.get_outgoing_connections_count();
+  size_t outgoingConnectionsCount = m_nodeServer.get_outgoing_connections_count();
 
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Outgoing connections count : " << outgoingConnectionsCount << std::endl;
+  m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Outgoing connections count : " << outgoingConnectionsCount << std::endl;
   return true;
 }
 
 bool DaemonCommandsHandler::print_pl(const std::vector<std::string>& args)
 {
-  m_srv.log_peerlist();
+  m_nodeServer.log_peerlist();
   return true;
 }
 
@@ -452,11 +451,11 @@ bool DaemonCommandsHandler::print_pool(const std::vector<std::string>& args)
 
   if (mempool == "")
   {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "\n\nMempool : No tansactions in the mempool" << ENDL;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "\n\nMempool : No tansactions in the mempool" << ENDL;
   }
   else
   {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "\n\nMempool : \n\n" << mempool << ENDL;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "\n\nMempool : \n\n" << mempool << ENDL;
   }
 
   return true;
@@ -468,11 +467,11 @@ bool DaemonCommandsHandler::print_pool_sh(const std::vector<std::string>& args)
 
   if (mempool == "")
   {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "\n\nMempool : No tansactions in the mempool" << ENDL;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "\n\nMempool : No tansactions in the mempool" << ENDL;
   }
   else
   {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "\n\nMempool : \n\n" << mempool << ENDL;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "\n\nMempool : \n\n" << mempool << ENDL;
   }
 
   return true;
@@ -482,28 +481,28 @@ bool DaemonCommandsHandler::print_total_transactions_count(const std::vector<std
 {
   uint32_t numCoinbaseTransactions = m_core.get_current_blockchain_height();
   size_t totalTransactionsCount = m_core.get_blockchain_total_transactions() - numCoinbaseTransactions;
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Total transactions count : " << totalTransactionsCount << std::endl;
+  m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Total transactions count : " << totalTransactionsCount << std::endl;
   return true;
 }
 
 bool DaemonCommandsHandler::print_transaction_fee(const std::vector<std::string>& args)
 {
   std::string transactionFee = m_core.currency().formatAmount(m_core.getMinimalFee());
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Transaction fee : " << transactionFee << " CASH2"  << std::endl;
+  m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Transaction fee : " << transactionFee << " CASH2"  << std::endl;
   return true;
 }
 
 bool DaemonCommandsHandler::print_tx(const std::vector<std::string>& args)
 {
   if (args.empty()) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Expected : print_tx <transaction hash>" << std::endl;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Expected : print_tx <transaction hash>" << std::endl;
     return true;
   }
 
   const std::string &str_hash = args.front();
   Crypto::Hash tx_hash;
   if (!parse_hash256(str_hash, tx_hash)) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Transaction hash is invalid, transaction hash should be 64 characters long" << std::endl;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Transaction hash is invalid, transaction hash should be 64 characters long" << std::endl;
     return true;
   }
 
@@ -514,9 +513,9 @@ bool DaemonCommandsHandler::print_tx(const std::vector<std::string>& args)
   m_core.getTransactions(tx_ids, txs, missed_ids, true);
 
   if (1 == txs.size()) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << CryptoNote::storeToJson(txs.front()) << std::endl;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << CryptoNote::storeToJson(txs.front()) << std::endl;
   } else {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Transaction was not found : " << str_hash << std::endl;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Transaction was not found : " << str_hash << std::endl;
   }
 
   return true;
@@ -524,34 +523,34 @@ bool DaemonCommandsHandler::print_tx(const std::vector<std::string>& args)
 
 bool DaemonCommandsHandler::print_white_pl(const std::vector<std::string>& args)
 {
-  m_srv.log_white_peerlist();
+  m_nodeServer.log_white_peerlist();
   return true;
 }
 
 bool DaemonCommandsHandler::print_white_pl_count(const std::vector<std::string>& args)
 {
-  uint64_t whitePeerlistCount = m_srv.getPeerlistManager().get_white_peers_count();
-  logger(Logging::INFO, Logging::BRIGHT_CYAN) << "White peerlist count : " << whitePeerlistCount << std::endl;
+  uint64_t whitePeerlistCount = m_nodeServer.getPeerlistManager().get_white_peers_count();
+  m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "White peerlist count : " << whitePeerlistCount << std::endl;
   return true;
 }
 
 bool DaemonCommandsHandler::set_log(const std::vector<std::string>& args)
 {
   if (args.size() != 1) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Expected : set_log <log_level_number_0-4>" << ENDL;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Expected : set_log <log_level_number_0-4>" << ENDL;
     return true;
   }
 
   uint16_t l = 0;
   if (!Common::fromString(args[0], l)) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wrong number format, set_log <log_level_number_0-4>" << ENDL;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wrong number format, set_log <log_level_number_0-4>" << ENDL;
     return true;
   }
 
   ++l;
 
   if (l > Logging::TRACE) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wrong number range, set_log <log_level_number_0-4>" << ENDL;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wrong number range, set_log <log_level_number_0-4>" << ENDL;
     return true;
   }
 
@@ -563,7 +562,7 @@ bool DaemonCommandsHandler::show_hr(const std::vector<std::string>& args)
 {
   if (!m_core.get_miner().is_mining())
   {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Mining is not started, you need to start mining before you can see the hash rate." << ENDL;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Mining is not started, you need to start mining before you can see the hash rate." << ENDL;
   } else
   {
     m_core.get_miner().do_print_hashrate(true);
@@ -574,13 +573,13 @@ bool DaemonCommandsHandler::show_hr(const std::vector<std::string>& args)
 bool DaemonCommandsHandler::start_mining(const std::vector<std::string> &args)
 {
   if (!args.size()) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wallet address missiing, start_mining <addr> [threads=1]" << std::endl;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Wallet address missiing, start_mining <addr> [threads=1]" << std::endl;
     return true;
   }
 
   CryptoNote::AccountPublicAddress adr;
   if (!m_core.currency().parseAccountAddressString(args.front(), adr)) {
-    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Invalid Cash2 address" << std::endl;
+    m_logger(Logging::INFO, Logging::BRIGHT_CYAN) << "Invalid Cash2 address" << std::endl;
     return true;
   }
 
