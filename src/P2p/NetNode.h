@@ -83,7 +83,6 @@ private:
   int handle_timed_sync(int command, const COMMAND_TIMED_SYNC::request& request, COMMAND_TIMED_SYNC::response& response, P2pConnectionContext& context);
   bool handshake(CryptoNote::LevinProtocol& proto, P2pConnectionContext& context, bool just_take_peerlist = false);
   bool idle_worker();
-  void initUpnp(); // no definition
   bool init_config();
   virtual bool invoke_notify_to_peer(int command, const BinaryArray& req_buff, const CryptoNoteConnectionContext& context) override;
   bool is_addr_connected(const NetworkAddress& peer);  
@@ -92,7 +91,6 @@ private:
   bool make_default_config();
   bool make_expected_connections_count(bool white_list, size_t expected_connections);
   bool make_new_connection_from_peerlist(bool use_white_list);
-  bool merge_peerlist_with_local(const std::list<PeerlistEntry>& bs); // no definition
   void onIdle();
   void on_connection_close(P2pConnectionContext& context);
   void on_connection_new(P2pConnectionContext& context);
