@@ -261,6 +261,50 @@ bool NodeServer::log_incoming_connections()
   return true;
 }
 
+bool NodeServer::log_outgoing_connections()
+{
+  std::stringstream ss;
+
+  ss << '\n' << '\n' << "Outgoing connections" << '\n' << '\n' << 
+    std::setw(20) << std::left << "IP Address" <<
+    std::setw(10) << std::left << "Port" <<
+    std::setw(20) << std::left << "Peer ID" <<
+    std::setw(15) << std::left << "Time (secs)" <<
+    std::setw(20) << std::left << "State" <<
+    '\n';
+
+  bool outgoingConnectionFound = false;
+
+  for (const auto& connection : m_connections) {
+    if (connection.second.m_is_income == false)
+    {
+      ss <<
+        std::setw(20) << std::left << Common::ipAddressToString(connection.second.m_remote_ip) <<
+        std::setw(10) << std::left << std::to_string(connection.second.m_remote_port) <<
+        std::setw(20) << std::left << std::hex << connection.second.peerId <<
+        std::setw(15) << std::left << std::to_string(time(NULL) - connection.second.m_started) <<
+        std::setw(20) << std::left << get_protocol_state_string(connection.second.m_state) <<
+        '\n';
+
+      if (outgoingConnectionFound == false)
+      {
+        outgoingConnectionFound = true;
+      }
+    }
+  };
+
+  if (outgoingConnectionFound == true)
+  {
+    logger(INFO, BRIGHT_CYAN) << ss.str();
+  }
+  else
+  {
+    logger(INFO, BRIGHT_CYAN) << "\n\nOutgoing connections : None";
+  }
+
+  return true;
+}
+
 bool NodeServer::log_peerlist()
 {
   std::list<PeerlistEntry> whitePeerlist;

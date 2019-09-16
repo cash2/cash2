@@ -47,6 +47,7 @@ public:
   bool log_connections();
   bool log_grey_peerlist();
   bool log_incoming_connections();
+  bool log_outgoing_connections();
   bool log_peerlist();
   bool log_white_peerlist();
   bool run();
