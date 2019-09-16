@@ -412,7 +412,7 @@ bool DaemonCommandsHandler::print_grey_pl_count(const std::vector<std::string>& 
 
 bool DaemonCommandsHandler::print_incoming_cn(const std::vector<std::string>& args)
 {
-  m_nodeServer.get_payload_object().log_incoming_connections();
+  m_nodeServer.log_incoming_connections();
   return true;
 }
 

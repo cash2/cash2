@@ -46,6 +46,7 @@ public:
   static void init_options(boost::program_options::options_description& desc);
   bool log_connections();
   bool log_grey_peerlist();
+  bool log_incoming_connections();
   bool log_peerlist();
   bool log_white_peerlist();
   bool run();
