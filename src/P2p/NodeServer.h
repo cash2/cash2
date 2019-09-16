@@ -22,7 +22,7 @@
 #include "ConnectionContext.h"
 #include "P2pConnectionContext.h"
 #include "LevinProtocol.h"
-#include "NetNodeCommon.h"
+#include "NodeServerCommon.h"
 #include "NetNodeConfig.h"
 #include "P2pProtocolDefinitions.h"
 #include "P2pNetworks.h"
