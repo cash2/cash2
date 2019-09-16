@@ -381,7 +381,7 @@ bool DaemonCommandsHandler::print_circulating_supply(const std::vector<std::stri
 
 bool DaemonCommandsHandler::print_cn(const std::vector<std::string>& args)
 {
-  m_nodeServer.get_payload_object().log_connections();
+  m_nodeServer.log_connections();
   return true;
 }
 

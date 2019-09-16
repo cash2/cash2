@@ -96,7 +96,6 @@ private:
   void on_connection_new(P2pConnectionContext& context);
   bool parse_peer_from_string(NetworkAddress& address, const std::string& addressString);
   bool parse_peers_and_add_to_container(const boost::program_options::variables_map& vm, const command_line::arg_descriptor<std::vector<std::string>>& arg, std::vector<NetworkAddress>& addresses);
-  std::string print_connections_container();
   std::string print_peerlist_to_string(const std::list<PeerlistEntry>& peerList);
   virtual void relay_notify_to_all(int command, const BinaryArray& data_buff, const net_connection_id* excludeConnection) override;
   bool store_config();

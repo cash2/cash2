@@ -171,7 +171,30 @@ void NodeServer::init_options(boost::program_options::options_description& desc)
 
 bool NodeServer::log_connections()
 {
-  logger(INFO) << "Connections: \r\n" << print_connections_container() ;
+  std::stringstream ss;
+
+  ss << '\n' << '\n' << "Connections" << '\n' << '\n' <<
+    std::setw(10) << std::left << "In/Out" <<
+    std::setw(20) << std::left << "IP Address" <<
+    std::setw(10) << std::left << "Port" <<
+    std::setw(20) << std::left << "Peer ID" <<
+    std::setw(15) << std::left << "Time (secs)" <<
+    std::setw(20) << std::left << "State" <<
+    std::endl;
+
+  for (const auto& connection : m_connections) {
+    ss <<
+      std::setw(10) << std::left << std::string(connection.second.m_is_income ? "In" : "Out") <<
+      std::setw(20) << std::left << Common::ipAddressToString(connection.second.m_remote_ip) <<
+      std::setw(10) << std::left << std::to_string(connection.second.m_remote_port) <<
+      std::setw(20) << std::left << std::hex << connection.second.peerId <<
+      std::setw(15) << std::left << std::to_string(time(NULL) - connection.second.m_started) <<
+      std::setw(20) << std::left << get_protocol_state_string(connection.second.m_state) <<
+      std::endl;
+  };
+
+  logger(INFO, BRIGHT_CYAN) << ss.str();
+
   return true;
 }
 
@@ -1227,20 +1250,6 @@ bool NodeServer::parse_peers_and_add_to_container(const boost::program_options::
   }
 
   return true;
-}
-
-std::string NodeServer::print_connections_container()
-{
-  std::stringstream ss;
-
-  for (const auto& connection : m_connections) {
-    ss << Common::ipAddressToString(connection.second.m_remote_ip) << ":" << connection.second.m_remote_port
-      << " \t\tpeer_id " << connection.second.peerId
-      << " \t\tconn_id " << connection.second.m_connection_id << (connection.second.m_is_income ? " INC" : " OUT")
-      << std::endl;
-  }
-
-  return ss.str();
 }
 
 std::string NodeServer::print_peerlist_to_string(const std::list<PeerlistEntry>& peerList)

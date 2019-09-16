@@ -30,7 +30,6 @@ public
   removeObserver()
   set_p2p_endpoint()
   isSynchronized()
-  log_connections()
   stop()
   start_sync()
   on_idle()
@@ -210,20 +209,6 @@ TEST(CryptoNoteProtocolHandler, 5)
   // ASSERT_TRUE(handler.start_sync(context));
 
   // ASSERT_TRUE(handler.isSynchronized());
-}
-
-// log_connections()
-TEST(CryptoNoteProtocolHandler, 6)
-{
-  Logging::ConsoleLogger logger;
-  Currency currency = CurrencyBuilder(logger).currency();
-  CryptonoteProtocol crpytonoteProtocol;
-  Core core(currency, &crpytonoteProtocol, logger);
-  System::Dispatcher dispatcher;
-  p2p_endpoint_stub p2pEndpointStub;
-  CryptoNoteProtocolHandler handler(currency, dispatcher, core, &p2pEndpointStub, logger);
-
-  handler.log_connections();
 }
 
 // stop()
