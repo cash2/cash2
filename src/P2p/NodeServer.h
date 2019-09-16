@@ -44,12 +44,12 @@ public:
   uint32_t get_this_peer_port(){return m_listeningPort;}
   bool init(const NodeServerConfig& config);
   static void init_options(boost::program_options::options_description& desc);
-  bool log_connections();
-  bool log_grey_peerlist();
-  bool log_incoming_connections();
-  bool log_outgoing_connections();
-  bool log_peerlist();
-  bool log_white_peerlist();
+  void log_connections();
+  void log_grey_peerlist();
+  void log_incoming_connections();
+  void log_outgoing_connections();
+  void log_peerlist();
+  void log_white_peerlist();
   bool run();
   bool sendStopSignal();
   void serialize(ISerializer& s);

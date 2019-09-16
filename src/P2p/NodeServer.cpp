@@ -169,7 +169,7 @@ void NodeServer::init_options(boost::program_options::options_description& desc)
   command_line::add_arg(desc, arg_p2p_seed_node);
 }
 
-bool NodeServer::log_connections()
+void NodeServer::log_connections()
 {
   std::stringstream ss;
 
@@ -194,11 +194,9 @@ bool NodeServer::log_connections()
   };
 
   logger(INFO, BRIGHT_CYAN) << ss.str();
-
-  return true;
 }
 
-bool NodeServer::log_grey_peerlist()
+void NodeServer::log_grey_peerlist()
 {
   std::list<PeerlistEntry> whitePeerlistIgnore;
   std::list<PeerlistEntry> greyPeerlist;
@@ -214,10 +212,9 @@ bool NodeServer::log_grey_peerlist()
     print_peerlist_to_string(greyPeerlist) ;
 
   logger(INFO, BRIGHT_CYAN) << ss.str();
-  return true;
 }
 
-bool NodeServer::log_incoming_connections()
+void NodeServer::log_incoming_connections()
 {
   std::stringstream ss;
 
@@ -257,11 +254,9 @@ bool NodeServer::log_incoming_connections()
   {
     logger(INFO, BRIGHT_CYAN) << "\n\nIncoming connections : None";
   }
-
-  return true;
 }
 
-bool NodeServer::log_outgoing_connections()
+void NodeServer::log_outgoing_connections()
 {
   std::stringstream ss;
 
@@ -301,11 +296,9 @@ bool NodeServer::log_outgoing_connections()
   {
     logger(INFO, BRIGHT_CYAN) << "\n\nOutgoing connections : None";
   }
-
-  return true;
 }
 
-bool NodeServer::log_peerlist()
+void NodeServer::log_peerlist()
 {
   std::list<PeerlistEntry> whitePeerlist;
   std::list<PeerlistEntry> greyPeerlist;
@@ -327,10 +320,9 @@ bool NodeServer::log_peerlist()
     std::setw(20) << std::left << "Last Seen" << '\n' <<
     print_peerlist_to_string(greyPeerlist) ;
   logger(INFO, BRIGHT_CYAN) << ss.str();
-  return true;
 }
 
-bool NodeServer::log_white_peerlist()
+void NodeServer::log_white_peerlist()
 {
   std::list<PeerlistEntry> whitePeerlist;
   std::list<PeerlistEntry> greyPeerlistIgnore;
@@ -346,7 +338,6 @@ bool NodeServer::log_white_peerlist()
     print_peerlist_to_string(whitePeerlist) ;
 
   logger(INFO, BRIGHT_CYAN) << ss.str();
-  return true;
 }
 
 bool NodeServer::run()

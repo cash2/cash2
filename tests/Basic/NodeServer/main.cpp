@@ -248,7 +248,7 @@ TEST(NodeServer, 9)
 
   ASSERT_TRUE(nodeServer.init(nodeServerConfig));
 
-  ASSERT_TRUE(nodeServer.log_peerlist());
+  nodeServer.log_peerlist();
 }
 
 // log_connections()
@@ -273,7 +273,7 @@ TEST(NodeServer, 10)
 
   ASSERT_TRUE(nodeServer.init(nodeServerConfig));
 
-  ASSERT_TRUE(nodeServer.log_connections());
+  nodeServer.log_connections();
 }
 
 // get_connections_count()
