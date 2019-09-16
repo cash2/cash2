@@ -21,7 +21,7 @@
 
 #include "CryptoNoteProtocol/ICryptoNoteProtocolQuery.h"
 
-#include "P2p/NetNode.h"
+#include "P2p/NodeServer.h"
 
 #include "CoreRpcServerErrorCodes.h"
 #include "JsonRpc.h"

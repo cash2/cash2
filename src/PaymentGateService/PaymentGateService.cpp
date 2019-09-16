@@ -16,7 +16,7 @@
 #include "CryptoNoteCore/CoreConfig.h"
 #include "CryptoNoteCore/Core.h"
 #include "CryptoNoteProtocol/CryptoNoteProtocolHandler.h"
-#include "P2p/NetNode.h"
+#include "P2p/NodeServer.h"
 #include "PaymentGate/WalletFactory.h"
 #include <System/Context.h>
 

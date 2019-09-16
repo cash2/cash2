@@ -3,7 +3,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "gtest/gtest.h"
-#include "P2p/NetNode.h"
+#include "P2p/NodeServer.h"
 #include "CryptoNoteCore/Core.h"
 #include "Logging/ConsoleLogger.h"
 #include "CryptoNoteCore/Currency.h"
@@ -49,7 +49,7 @@ public:
 };
 
 // constructor
-TEST(NetNode, 1)
+TEST(NodeServer, 1)
 {
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
@@ -62,7 +62,7 @@ TEST(NetNode, 1)
 }
 
 // init_options()
-TEST(NetNode, 2)
+TEST(NodeServer, 2)
 {
   boost::program_options::options_description desc("Allowed options");
   desc.add_options()
@@ -78,7 +78,7 @@ TEST(NetNode, 2)
 }
 
 // init()
-TEST(NetNode, 3)
+TEST(NodeServer, 3)
 {
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
@@ -102,7 +102,7 @@ TEST(NetNode, 3)
 
 // run()
 // Assertion fails and aborts
-TEST(NetNode, 4)
+TEST(NodeServer, 4)
 {
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
@@ -127,7 +127,7 @@ TEST(NetNode, 4)
 
 // deinit()
 // Assertion fails and aborts
-TEST(NetNode, 5)
+TEST(NodeServer, 5)
 {
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
@@ -152,7 +152,7 @@ TEST(NetNode, 5)
 }
 
 // sendStopSignal()
-TEST(NetNode, 6)
+TEST(NodeServer, 6)
 {
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
@@ -176,7 +176,7 @@ TEST(NetNode, 6)
 }
 
 // get_this_peer_port()
-TEST(NetNode, 7)
+TEST(NodeServer, 7)
 {
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
@@ -202,7 +202,7 @@ TEST(NetNode, 7)
 }
 
 // get_payload_object()
-TEST(NetNode, 8)
+TEST(NodeServer, 8)
 {
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
@@ -227,7 +227,7 @@ TEST(NetNode, 8)
 }
 
 // log_peerlist()
-TEST(NetNode, 9)
+TEST(NodeServer, 9)
 {
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
@@ -252,7 +252,7 @@ TEST(NetNode, 9)
 }
 
 // log_connections()
-TEST(NetNode, 10)
+TEST(NodeServer, 10)
 {
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
@@ -277,7 +277,7 @@ TEST(NetNode, 10)
 }
 
 // get_connections_count()
-TEST(NetNode, 11)
+TEST(NodeServer, 11)
 {
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
@@ -303,7 +303,7 @@ TEST(NetNode, 11)
 }
 
 // get_outgoing_connections_count()
-TEST(NetNode, 12)
+TEST(NodeServer, 12)
 {
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();
@@ -329,7 +329,7 @@ TEST(NetNode, 12)
 }
 
 // getPeerlistManager()
-TEST(NetNode, 13)
+TEST(NodeServer, 13)
 {
   Logging::ConsoleLogger logger;
   Currency currency = CurrencyBuilder(logger).currency();

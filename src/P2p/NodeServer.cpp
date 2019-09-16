@@ -12,7 +12,7 @@
 #include <boost/utility/value_init.hpp>
 #include <miniupnpc/miniupnpc.h>
 #include <miniupnpc/upnpcommands.h>
-#include "NetNode.h"
+#include "NodeServer.h"
 #include "System/Context.h"
 #include "System/ContextGroupTimeout.h"
 #include "System/EventLock.h"

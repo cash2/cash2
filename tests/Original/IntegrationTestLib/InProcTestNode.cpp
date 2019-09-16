@@ -14,7 +14,7 @@
 #include "CryptoNoteCore/CoreConfig.h"
 #include "CryptoNoteCore/Miner.h"
 #include "CryptoNoteProtocol/CryptoNoteProtocolHandler.h"
-#include "P2p/NetNode.h"
+#include "P2p/NodeServer.h"
 #include "InProcessNode/InProcessNode.h"
 
 using namespace CryptoNote;
