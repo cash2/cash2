@@ -956,6 +956,9 @@ int NodeServer::handle_get_stat_info(int command, const COMMAND_REQUEST_STAT_INF
 
 int NodeServer::handle_handshake(int command, const COMMAND_HANDSHAKE::request& request, COMMAND_HANDSHAKE::response& response, P2pConnectionContext& context)
 {
+
+  // a peer node is requesting to handshake with our node
+
   context.m_version = request.node_data.version;
 
   if (request.node_data.network_id != m_network_id) {
