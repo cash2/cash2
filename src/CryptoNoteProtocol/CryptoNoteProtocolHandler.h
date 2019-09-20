@@ -16,6 +16,7 @@
 #include "P2p/P2pProtocolDefinitions.h"
 #include "P2p/NodeServerCommon.h"
 #include "P2p/ConnectionContext.h"
+#include "P2p/LevinProtocol.h"
 #include "Logging/LoggerRef.h"
 
 namespace CryptoNote
