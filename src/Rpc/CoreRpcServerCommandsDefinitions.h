@@ -17,6 +17,8 @@ namespace CryptoNote {
 //-----------------------------------------------
 #define CORE_RPC_STATUS_OK "OK"
 #define CORE_RPC_STATUS_BUSY "BUSY"
+#define CORE_RPC_STATUS_FAILED "FAILED"
+#define CORE_RPC_STATUS_FAILED_RESTRICTED "FAILED RESTRICTED"
 
 struct EMPTY_STRUCT {
   void serialize(ISerializer &s) {}
