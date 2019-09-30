@@ -17,7 +17,7 @@
 #include "CryptoNoteCore/TransactionExtra.h"
 #include "CryptoNoteProtocol/ICryptoNoteProtocolQuery.h"
 #include "P2p/NodeServer.h"
-#include "Rpc/CoreRpcServerErrorCodes.h"
+#include "Rpc/CoreRpcErrors.h"
 #include "Rpc/JsonRpc.h"
 
 #undef ERROR
