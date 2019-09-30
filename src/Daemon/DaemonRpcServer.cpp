@@ -7,7 +7,7 @@
 
 #include <future>
 #include <unordered_map>
-#include "RpcServer.h"
+#include "DaemonRpcServer.h"
 #include "Common/StringTools.h"
 #include "Common/Math.h"
 #include "CryptoNoteCore/CryptoNoteTools.h"

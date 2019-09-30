@@ -22,8 +22,8 @@
 #include "CryptoNoteProtocol/CryptoNoteProtocolHandler.h"
 #include "P2p/NodeServer.h"
 #include "P2p/NodeServerConfig.h"
-#include "Rpc/RpcServer.h"
-#include "Rpc/RpcServerConfig.h"
+#include "DaemonRpcServer.h"
+#include "DaemonRpcServerConfig.h"
 #include "version.h"
 
 #include "Logging/ConsoleLogger.h"
