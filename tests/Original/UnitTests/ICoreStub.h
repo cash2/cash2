@@ -12,7 +12,7 @@
 #include "CryptoNoteCore/ICore.h"
 #include "CryptoNoteCore/ICoreObserver.h"
 #include "CryptoNoteProtocol/CryptoNoteProtocolDefinitions.h"
-#include "Rpc/CoreRpcServerCommandsDefinitions.h"
+#include "Rpc/CoreRpcCommands.h"
 
 class ICoreStub: public CryptoNote::ICore {
 public:

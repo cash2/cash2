@@ -8,7 +8,7 @@
 #include "CryptoNoteProtocol/CryptoNoteProtocolDefinitions.h"
 #include "CryptoNoteCore/CryptoNoteBasic.h"
 #include "crypto/hash.h"
-#include "Rpc/CoreRpcServerCommandsDefinitions.h"
+#include "Rpc/CoreRpcCommands.h"
 #include "WalletRpcServerErrorCodes.h"
 
 namespace Tools

@@ -13,7 +13,7 @@
 #include "CryptoNoteProtocol/ICryptoNoteProtocolQuery.h"
 #include "Rpc/HttpServer.h"
 #include "Logging/LoggerRef.h"
-#include "Rpc/CoreRpcServerCommandsDefinitions.h"
+#include "Rpc/CoreRpcCommands.h"
 
 namespace CryptoNote {
 

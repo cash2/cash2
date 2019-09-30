@@ -22,7 +22,7 @@
 #include "CryptoNoteCore/MinerConfig.h"
 #include "CryptoNoteCore/IBlock.h"
 #include "CryptoNoteProtocol/CryptoNoteProtocolDefinitions.h"
-#include "Rpc/CoreRpcServerCommandsDefinitions.h"
+#include "Rpc/CoreRpcCommands.h"
 #include "CryptoNoteCore/CryptoNoteStatInfo.h"
 #include <random>
 #include <iostream>

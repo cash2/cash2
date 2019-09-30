@@ -14,7 +14,7 @@
 #include "Common/ShuffleGenerator.h"
 #include "Common/StdInputStream.h"
 #include "Common/StdOutputStream.h"
-#include "Rpc/CoreRpcServerCommandsDefinitions.h"
+#include "Rpc/CoreRpcCommands.h"
 #include "Serialization/BinarySerializationTools.h"
 #include "CryptoNoteTools.h"
 

@@ -22,7 +22,7 @@
 #include "crypto/crypto.h"
 #include "P2p/P2pProtocolDefinitions.h"
 #include "P2p/LevinProtocol.h"
-#include "Rpc/CoreRpcServerCommandsDefinitions.h"
+#include "Rpc/CoreRpcCommands.h"
 #include "Rpc/HttpClient.h"
 #include "Serialization/SerializationTools.h"
 #include "version.h"

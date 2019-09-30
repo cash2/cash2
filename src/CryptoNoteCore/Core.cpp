@@ -17,7 +17,7 @@
 #include "../crypto/crypto.h"
 #include "../CryptoNoteProtocol/CryptoNoteProtocolDefinitions.h"
 #include "../Logging/LoggerRef.h"
-#include "../Rpc/CoreRpcServerCommandsDefinitions.h"
+#include "../Rpc/CoreRpcCommands.h"
 #include "CryptoNoteFormatUtils.h"
 #include "CryptoNoteTools.h"
 #include "CryptoNoteStatInfo.h"

@@ -11,7 +11,7 @@
 #include <System/Timer.h>
 #include <System/InterruptedException.h>
 
-#include "Rpc/CoreRpcServerCommandsDefinitions.h"
+#include "Rpc/CoreRpcCommands.h"
 #include "Rpc/JsonRpc.h"
 #include "Rpc/HttpClient.h"
 

@@ -5,7 +5,7 @@
 
 #include "RandomOuts.h"
 #include "TestGenerator.h"
-#include "Rpc/CoreRpcServerCommandsDefinitions.h"
+#include "Rpc/CoreRpcCommands.h"
 
 GetRandomOutputs::GetRandomOutputs() {
   REGISTER_CALLBACK_METHOD(GetRandomOutputs, checkHalfUnlocked);

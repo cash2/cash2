@@ -10,7 +10,7 @@
 #include <boost/foreach.hpp>
 #include <functional>
 
-#include "CoreRpcServerCommandsDefinitions.h"
+#include "CoreRpcCommands.h"
 #include <Common/JsonValue.h>
 #include "Serialization/ISerializer.h"
 #include "Serialization/SerializationTools.h"
