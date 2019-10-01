@@ -9,10 +9,10 @@
 
 namespace CryptoNote {
 
-class RpcServerConfig {
+class DaemonRpcServerConfig {
 public:
 
-  RpcServerConfig();
+  DaemonRpcServerConfig();
 
   static void initOptions(boost::program_options::options_description& desc);
   void init(const boost::program_options::variables_map& options);

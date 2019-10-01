@@ -19,19 +19,19 @@ namespace CryptoNote {
   }
 
 
-  RpcServerConfig::RpcServerConfig() : bindIp(DEFAULT_RPC_IP), bindPort(DEFAULT_RPC_PORT) {
+  DaemonRpcServerConfig::DaemonRpcServerConfig() : bindIp(DEFAULT_RPC_IP), bindPort(DEFAULT_RPC_PORT) {
   }
 
-  std::string RpcServerConfig::getBindAddress() const {
+  std::string DaemonRpcServerConfig::getBindAddress() const {
     return bindIp + ":" + std::to_string(bindPort);
   }
   
-  void RpcServerConfig::initOptions(boost::program_options::options_description& desc) {
+  void DaemonRpcServerConfig::initOptions(boost::program_options::options_description& desc) {
     command_line::add_arg(desc, arg_rpc_bind_ip);
     command_line::add_arg(desc, arg_rpc_bind_port);
   }
 
-  void RpcServerConfig::init(const boost::program_options::variables_map& vm)  {
+  void DaemonRpcServerConfig::init(const boost::program_options::variables_map& vm)  {
     bindIp = command_line::get_arg(vm, arg_rpc_bind_ip);
     bindPort = command_line::get_arg(vm, arg_rpc_bind_port);
   }

@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
     command_line::add_arg(desc_daemon, arg_testnet_on);
     command_line::add_arg(desc_daemon, command_line::arg_version);
 
-    RpcServerConfig::initOptions(desc_daemon_rpc);
+    DaemonRpcServerConfig::initOptions(desc_daemon_rpc);
     CoreConfig::initOptions(desc_core); // There are currently no core configuration options
     NodeServerConfig::initOptions(desc_network);
     MinerConfig::initOptions(desc_mining);
@@ -240,8 +240,8 @@ int main(int argc, char* argv[])
     nodeServerConfig.setTestnet(testnet_mode);
     MinerConfig minerConfig;
     minerConfig.init(vm);
-    RpcServerConfig rpcConfig;
-    rpcConfig.init(vm);
+    DaemonRpcServerConfig daemonRpcServerConfig;
+    daemonRpcServerConfig.init(vm);
 
     if (!coreConfig.configFolderDefaulted) {
       if (!Tools::directoryExists(coreConfig.configFolder)) {
@@ -257,19 +257,19 @@ int main(int argc, char* argv[])
 
     CryptoNote::CryptoNoteProtocolHandler cryptoNoteProtocolHandler(currency, dispatcher, core, nullptr, logManager);
     CryptoNote::NodeServer nodeServer(dispatcher, cryptoNoteProtocolHandler, logManager);
-    CryptoNote::RpcServer rpcServer(dispatcher, logManager, core, nodeServer, cryptoNoteProtocolHandler);
+    CryptoNote::DaemonRpcServer daemonRpcServer(dispatcher, logManager, core, nodeServer, cryptoNoteProtocolHandler, daemonRpcServerConfig);
 
     cryptoNoteProtocolHandler.set_p2p_endpoint(&nodeServer);
     core.set_cryptonote_protocol(&cryptoNoteProtocolHandler);
     DaemonCommandsHandler daemonCommandsHandler(core, nodeServer, logManager);
 
     // initialize objects
-    logger(INFO) << "Initializing p2p server...";
+    logger(INFO) << "Initializing node server...";
     if (!nodeServer.init(nodeServerConfig)) {
-      logger(ERROR, BRIGHT_RED) << "Failed to initialize p2p server.";
+      logger(ERROR, BRIGHT_RED) << "Failed to initialize node server.";
       return 1;
     }
-    logger(INFO) << "P2p server initialized OK";
+    logger(INFO) << "Node server initialized OK";
 
     // initialize core here
     logger(INFO) << "Initializing core...";
@@ -284,10 +284,10 @@ int main(int argc, char* argv[])
       daemonCommandsHandler.start_handling();
     }
 
-    logger(INFO) << "Starting core rpc server on address " << rpcConfig.getBindAddress();
-    rpcServer.start(rpcConfig.bindIp, rpcConfig.bindPort);
-    rpcServer.setRestrictedRpc(command_line::get_arg(vm, arg_restricted_rpc));
-    rpcServer.enableCors(command_line::get_arg(vm, arg_enable_cors));
+    logger(INFO) << "Starting core rpc server on address " << daemonRpcServerConfig.getBindAddress();
+    daemonRpcServer.start();
+    daemonRpcServer.setRestrictedRpc(command_line::get_arg(vm, arg_restricted_rpc));
+    daemonRpcServer.enableCors(command_line::get_arg(vm, arg_enable_cors));
     logger(INFO) << "Core rpc server started ok";
 
     Tools::SignalHandler::install([&daemonCommandsHandler, &nodeServer] {
@@ -295,20 +295,20 @@ int main(int argc, char* argv[])
       nodeServer.sendStopSignal();
     });
 
-    logger(INFO) << "Starting p2p net loop...";
+    logger(INFO) << "Starting node server net loop...";
     nodeServer.run();
-    logger(INFO) << "p2p net loop stopped";
+    logger(INFO) << "node server net loop stopped";
 
     daemonCommandsHandler.stop_handling();
 
     //stop components
-    logger(INFO) << "Stopping core rpc server...";
-    rpcServer.stop();
+    logger(INFO) << "Stopping daemon RPC server...";
+    daemonRpcServer.stop();
 
     //deinitialize components
     logger(INFO) << "Deinitializing core...";
     core.deinit();
-    logger(INFO) << "Deinitializing p2p...";
+    logger(INFO) << "Deinitializing node server...";
     nodeServer.deinit();
 
     core.set_cryptonote_protocol(NULL);
