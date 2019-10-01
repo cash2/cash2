@@ -3,7 +3,7 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "DaemonRpcServerConfig.h"
+#include "DaemonRpcServerConfigurationOptions.h"
 #include "Common/CommandLine.h"
 #include "CryptoNoteConfig.h"
 
@@ -20,19 +20,19 @@ const command_line::arg_descriptor<uint16_t>    arg_rpc_bind_port = {"rpc-bind-p
 }
 
 
-DaemonRpcServerConfig::DaemonRpcServerConfig() : bindIp(DEFAULT_RPC_IP), bindPort(DEFAULT_RPC_PORT) {
+DaemonRpcServerConfigurationOptions::DaemonRpcServerConfigurationOptions() : bindIp(DEFAULT_RPC_IP), bindPort(DEFAULT_RPC_PORT) {
 }
 
-std::string DaemonRpcServerConfig::getBindAddress() const {
+std::string DaemonRpcServerConfigurationOptions::getBindAddress() const {
   return bindIp + ":" + std::to_string(bindPort);
 }
 
-void DaemonRpcServerConfig::initOptions(boost::program_options::options_description& desc) {
+void DaemonRpcServerConfigurationOptions::initOptions(boost::program_options::options_description& desc) {
   command_line::add_arg(desc, arg_rpc_bind_ip);
   command_line::add_arg(desc, arg_rpc_bind_port);
 }
 
-void DaemonRpcServerConfig::init(const boost::program_options::variables_map& vm) {
+void DaemonRpcServerConfigurationOptions::init(const boost::program_options::variables_map& vm) {
   bindIp = command_line::get_arg(vm, arg_rpc_bind_ip);
   bindPort = command_line::get_arg(vm, arg_rpc_bind_port);
 }

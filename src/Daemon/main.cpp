@@ -18,7 +18,7 @@
 #include "DaemonCommandsHandler.h"
 #include "DaemonConfigurationOptions.h"
 #include "DaemonRpcServer.h"
-#include "DaemonRpcServerConfig.h"
+#include "DaemonRpcServerConfigurationOptions.h"
 #include "Logging/ConsoleLogger.h"
 #include "Logging/LoggerManager.h"
 #include "P2p/NodeServer.h"
@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
     CryptoNote::DaemonConfigurationOptions::initOptions(daemonConfigurationOptionsDescription);
 
     boost::program_options::options_description daemonRpcServerConfigurationOptionsDescription("Daemon RPC Server Configuration Options");
-    CryptoNote::DaemonRpcServerConfig::initOptions(daemonRpcServerConfigurationOptionsDescription);
+    CryptoNote::DaemonRpcServerConfigurationOptions::initOptions(daemonRpcServerConfigurationOptionsDescription);
 
     boost::program_options::options_description coreConfigurationOptionsDescription("Core Configuration Options");
     CryptoNote::CoreConfig::initOptions(coreConfigurationOptionsDescription);
@@ -196,9 +196,9 @@ int main(int argc, char* argv[])
     CryptoNote::CryptoNoteProtocolHandler cryptoNoteProtocolHandler(currency, dispatcher, core, nullptr, logManager);
     CryptoNote::NodeServer nodeServer(dispatcher, cryptoNoteProtocolHandler, logManager);
 
-    CryptoNote::DaemonRpcServerConfig daemonRpcServerConfig;
-    daemonRpcServerConfig.init(vm);
-    CryptoNote::DaemonRpcServer daemonRpcServer(dispatcher, logManager, core, nodeServer, cryptoNoteProtocolHandler, daemonRpcServerConfig);
+    CryptoNote::DaemonRpcServerConfigurationOptions daemonRpcServerConfigurationOptions;
+    daemonRpcServerConfigurationOptions.init(vm);
+    CryptoNote::DaemonRpcServer daemonRpcServer(dispatcher, logManager, core, nodeServer, cryptoNoteProtocolHandler, daemonRpcServerConfigurationOptions);
 
     cryptoNoteProtocolHandler.set_p2p_endpoint(&nodeServer);
     core.set_cryptonote_protocol(&cryptoNoteProtocolHandler);
@@ -232,7 +232,7 @@ int main(int argc, char* argv[])
       daemonCommandsHandler.start_handling();
     }
 
-    logger(Logging::INFO) << "Starting Daemon RPC Server on network address " << daemonRpcServerConfig.getBindAddress() << " ...";
+    logger(Logging::INFO) << "Starting Daemon RPC Server on network address " << daemonRpcServerConfigurationOptions.getBindAddress() << " ...";
     daemonRpcServer.start();
     daemonRpcServer.setRestrictedRpc(daemonConfigurationOptions.restrictedRpc);
     daemonRpcServer.enableCors(daemonConfigurationOptions.enableCors);

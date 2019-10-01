@@ -13,13 +13,13 @@
 #include "Logging/LoggerRef.h"
 #include "Rpc/CoreRpcCommands.h"
 #include "DaemonRpcCommands.h"
-#include "DaemonRpcServerConfig.h"
+#include "DaemonRpcServerConfigurationOptions.h"
 
 namespace CryptoNote {
 
 class DaemonRpcServer : public HttpServer {
 public:
-  DaemonRpcServer(System::Dispatcher& dispatcher, Logging::ILogger& log, Core& core, NodeServer& nodeServer, const ICryptoNoteProtocolQuery& cryptoNoteProtocolQuery, const DaemonRpcServerConfig& daemonRpcServerConfig);
+  DaemonRpcServer(System::Dispatcher& dispatcher, Logging::ILogger& log, Core& core, NodeServer& nodeServer, const ICryptoNoteProtocolQuery& cryptoNoteProtocolQuery, const DaemonRpcServerConfigurationOptions& daemonRpcServerConfig);
   void enableCors(const std::string domain);
   std::string getCorsDomain();
   void setRestrictedRpc(const bool is_resctricted);
@@ -30,7 +30,7 @@ private:
   virtual void processRequest(const HttpRequest& request, HttpResponse& response) override;
 
   DaemonRpcCommands m_daemonRpcCommands;
-  const DaemonRpcServerConfig& m_daemonRpcServerConfig;
+  const DaemonRpcServerConfigurationOptions& m_daemonRpcServerConfigurationOptions;
   Core& m_core;
   NodeServer& m_nodeServer;
   bool m_restricted_rpc;

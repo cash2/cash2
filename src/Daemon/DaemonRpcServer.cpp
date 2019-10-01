@@ -68,10 +68,10 @@ namespace CryptoNote {
 // Public functions
 
 
-DaemonRpcServer::DaemonRpcServer(System::Dispatcher& dispatcher, Logging::ILogger& log, Core& core, NodeServer& nodeServer, const ICryptoNoteProtocolQuery& cryptoNoteProtocolQuery, const DaemonRpcServerConfig& daemonRpcServerConfig) :
+DaemonRpcServer::DaemonRpcServer(System::Dispatcher& dispatcher, Logging::ILogger& log, Core& core, NodeServer& nodeServer, const ICryptoNoteProtocolQuery& cryptoNoteProtocolQuery, const DaemonRpcServerConfigurationOptions& daemonRpcServerConfigurationOptions) :
   HttpServer(dispatcher, log),
   m_daemonRpcCommands(log, core, nodeServer, cryptoNoteProtocolQuery),
-  m_daemonRpcServerConfig(daemonRpcServerConfig),
+  m_daemonRpcServerConfigurationOptions(daemonRpcServerConfigurationOptions),
   m_core(core),
   m_nodeServer(nodeServer) {
 }
@@ -89,7 +89,7 @@ void DaemonRpcServer::setRestrictedRpc(const bool is_restricted) {
 }
 
 void DaemonRpcServer::start() {
-  HttpServer::start(m_daemonRpcServerConfig.bindIp, m_daemonRpcServerConfig.bindPort);
+  HttpServer::start(m_daemonRpcServerConfigurationOptions.bindIp, m_daemonRpcServerConfigurationOptions.bindPort);
 }
 
 
