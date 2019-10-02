@@ -15,6 +15,7 @@
 #include "CryptoNoteCore/CryptoNoteFormatUtils.h"
 #include "CryptoNoteCore/TransactionExtra.h"
 #include "Rpc/HttpClient.h"
+#include "Rpc/CoreRpcStatuses.h"
 #include "Rpc/CoreRpcCommands.h"
 #include "Rpc/JsonRpc.h"
 

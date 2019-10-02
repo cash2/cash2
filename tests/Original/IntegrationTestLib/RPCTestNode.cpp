@@ -13,6 +13,7 @@
 #include "CryptoNoteCore/CryptoNoteTools.h"
 #include "NodeRpcProxy/NodeRpcProxy.h"
 #include "Rpc/CoreRpcCommands.h"
+#include "Rpc/CoreRpcStatuses.h"
 #include "Rpc/HttpClient.h"
 #include "Rpc/JsonRpc.h"
 

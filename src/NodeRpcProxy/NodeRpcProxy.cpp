@@ -24,6 +24,7 @@
 #include "CryptoNoteCore/CryptoNoteBasicImpl.h"
 #include "CryptoNoteCore/CryptoNoteTools.h"
 #include "Rpc/CoreRpcCommands.h"
+#include "Rpc/CoreRpcStatuses.h"
 #include "Rpc/HttpClient.h"
 #include "Rpc/JsonRpc.h"
 

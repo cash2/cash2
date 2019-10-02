@@ -11,7 +11,6 @@
 #include "CryptoNoteProtocol/ICryptoNoteProtocolQuery.h"
 #include "Rpc/HttpServer.h"
 #include "Logging/LoggerRef.h"
-#include "Rpc/CoreRpcCommands.h"
 #include "DaemonRpcCommands.h"
 #include "DaemonRpcServerConfigurationOptions.h"
 

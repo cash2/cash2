@@ -32,6 +32,7 @@
 #include "CryptoNoteProtocol/CryptoNoteProtocolHandler.h"
 #include "NodeRpcProxy/NodeRpcProxy.h"
 #include "Rpc/CoreRpcCommands.h"
+#include "Rpc/CoreRpcStatuses.h"
 #include "Rpc/HttpClient.h"
 
 #include "Wallet/WalletRpcServer.h"
