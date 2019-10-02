@@ -20,14 +20,12 @@ public:
 
   std::string configFile;
   std::string dataDirectory;
-  std::string enableCors; // should be DaemonRpcConfig parameter instead
   bool help;
   std::string logFile;
   uint32_t logLevel;
-  bool console;
+  bool noConsole;
   bool osVersion;
   bool printGenesisTransaction;
-  bool restrictedRpc; // should be DaemonRpcConfig parameter instead
   bool testnet;
 };
 

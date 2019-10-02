@@ -228,14 +228,14 @@ int main(int argc, char* argv[])
     logger(Logging::INFO) << "Core initialized OK";
 
     // start components
-    if (!daemonConfigurationOptions.console) {
+    if (!daemonConfigurationOptions.noConsole) {
       daemonCommandsHandler.start_handling();
     }
 
     logger(Logging::INFO) << "Starting Daemon RPC Server on network address " << daemonRpcServerConfigurationOptions.getBindAddress() << " ...";
     daemonRpcServer.start();
-    daemonRpcServer.setRestrictedRpc(daemonConfigurationOptions.restrictedRpc);
-    daemonRpcServer.enableCors(daemonConfigurationOptions.enableCors);
+    daemonRpcServer.setRestrictedRpc(daemonRpcServerConfigurationOptions.restrictedRpc);
+    daemonRpcServer.enableCors(daemonRpcServerConfigurationOptions.enableCors);
     logger(Logging::INFO) << "Daemon RPC Server started OK";
 
     Tools::SignalHandler::install([&daemonCommandsHandler, &nodeServer] {
