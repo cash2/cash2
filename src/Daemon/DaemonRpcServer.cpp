@@ -103,6 +103,11 @@ bool DaemonRpcServer::isCoreReady() {
 void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpResponse& httpResponse) {
   std::string url = httpRequest.getUrl();
 
+  httpResponse.addHeader("Content-Type", "application/json");
+  if (!m_cors_domain.empty()) {
+    httpResponse.addHeader("Access-Control-Allow-Origin", m_cors_domain);
+  }
+
   if (url == "/get_blocks.bin")
   {
     if (!isCoreReady())
@@ -138,7 +143,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.query_blocks(request, response);
+    m_daemonRpcCommands.query_blocks(request, response);
     httpResponse.setBody(storeToBinaryKeyValue(response));
   }
   else if (url == "/query_blocks_lite.bin")
@@ -157,7 +162,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.query_blocks_lite(request, response);
+    m_daemonRpcCommands.query_blocks_lite(request, response);
     httpResponse.setBody(storeToBinaryKeyValue(response));
   }
   else if (url == "/get_o_indexes.bin")
@@ -176,7 +181,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_indexes(request, response);
+    m_daemonRpcCommands.get_indexes(request, response);
     httpResponse.setBody(storeToBinaryKeyValue(response));
   }
   else if (url == "/get_random_outs.bin")
@@ -195,7 +200,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_random_outs(request, response);
+    m_daemonRpcCommands.get_random_outs(request, response);
     httpResponse.setBody(storeToBinaryKeyValue(response));
   }
   else if (url == "/get_pool_changes.bin")
@@ -214,7 +219,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_pool_changes(request, response);
+    m_daemonRpcCommands.get_pool_changes(request, response);
     httpResponse.setBody(storeToBinaryKeyValue(response));
   }
   else if (url == "/get_pool_changes_lite.bin")
@@ -245,7 +250,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_circulating_supply(request, response);
+    m_daemonRpcCommands.get_circulating_supply(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/get_connections")
@@ -257,7 +262,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_connections(request, response);
+    m_daemonRpcCommands.get_connections(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/get_connections_count")
@@ -269,7 +274,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_connections_count(request, response);
+    m_daemonRpcCommands.get_connections_count(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/get_difficulty")
@@ -281,7 +286,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_difficulty(request, response);
+    m_daemonRpcCommands.get_difficulty(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/get_grey_peerlist")
@@ -293,7 +298,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_grey_peerlist(request, response);
+    m_daemonRpcCommands.get_grey_peerlist(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/get_grey_peerlist_size")
@@ -305,7 +310,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_grey_peerlist_size(request, response);
+    m_daemonRpcCommands.get_grey_peerlist_size(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/get_height")
@@ -317,7 +322,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_height(request, response);
+    m_daemonRpcCommands.get_height(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/get_incoming_connections")
@@ -329,7 +334,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_incoming_connections(request, response);
+    m_daemonRpcCommands.get_incoming_connections(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/get_incoming_connections_count")
@@ -341,7 +346,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_incoming_connections_count(request, response);
+    m_daemonRpcCommands.get_incoming_connections_count(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/get_info")
@@ -353,7 +358,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_info(request, response);
+    m_daemonRpcCommands.get_info(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/get_mempool_transactions_count")
@@ -365,7 +370,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_mempool_transactions_count(request, response);
+    m_daemonRpcCommands.get_mempool_transactions_count(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/get_orphan_blocks_count")
@@ -377,7 +382,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_orphan_blocks_count(request, response);
+    m_daemonRpcCommands.get_orphan_blocks_count(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/get_outgoing_connections")
@@ -389,7 +394,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_outgoing_connections(request, response);
+    m_daemonRpcCommands.get_outgoing_connections(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/get_outgoing_connections_count")
@@ -401,7 +406,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_outgoing_connections_count(request, response);
+    m_daemonRpcCommands.get_outgoing_connections_count(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/get_total_transactions_count")
@@ -420,7 +425,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_total_transactions_count(request, response);
+    m_daemonRpcCommands.get_total_transactions_count(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/get_transactions")
@@ -439,7 +444,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_transactions(request, response);
+    m_daemonRpcCommands.get_transactions(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/get_transaction_fee")
@@ -458,7 +463,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_transaction_fee(request, response);
+    m_daemonRpcCommands.get_transaction_fee(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/get_white_peerlist")
@@ -470,7 +475,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_white_peerlist(request, response);
+    m_daemonRpcCommands.get_white_peerlist(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/get_white_peerlist_size")
@@ -482,7 +487,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.get_white_peerlist_size(request, response);
+    m_daemonRpcCommands.get_white_peerlist_size(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/json_rpc")
@@ -504,7 +509,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
         }
 
-         m_daemonRpcCommands.check_payment(request, response);
+        m_daemonRpcCommands.check_payment(request, response);
 
         jsonResponse.setResult(response);
       }
@@ -517,7 +522,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
         }
 
-         m_daemonRpcCommands.get_block(request, response);
+        m_daemonRpcCommands.get_block(request, response);
 
         jsonResponse.setResult(response);
       }
@@ -530,7 +535,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
         }
 
-         m_daemonRpcCommands.get_block_count(request, response);
+        m_daemonRpcCommands.get_block_count(request, response);
 
         jsonResponse.setResult(response);
       }
@@ -543,7 +548,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
         }
 
-         m_daemonRpcCommands.get_block_hash(request, response);
+        m_daemonRpcCommands.get_block_hash(request, response);
 
         jsonResponse.setResult(response);
       }      
@@ -556,7 +561,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
         }
 
-         m_daemonRpcCommands.get_block_header_by_hash(request, response);
+        m_daemonRpcCommands.get_block_header_by_hash(request, response);
 
         jsonResponse.setResult(response);
       }
@@ -569,7 +574,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
         }
 
-         m_daemonRpcCommands.get_block_header_by_height(request, response);
+        m_daemonRpcCommands.get_block_header_by_height(request, response);
 
         jsonResponse.setResult(response);
       }
@@ -582,7 +587,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
         }
 
-         m_daemonRpcCommands.get_block_template(request, response);
+        m_daemonRpcCommands.get_block_template(request, response);
 
         jsonResponse.setResult(response);
       }
@@ -595,7 +600,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
         }
 
-         m_daemonRpcCommands.get_blocks_json(request, response);
+        m_daemonRpcCommands.get_blocks_json(request, response);
 
         jsonResponse.setResult(response);
       }
@@ -604,7 +609,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
         COMMAND_RPC_GET_CURRENCY_ID::request request;
         COMMAND_RPC_GET_CURRENCY_ID::response response;
 
-         m_daemonRpcCommands.get_currency_id(request, response);
+        m_daemonRpcCommands.get_currency_id(request, response);
 
         jsonResponse.setResult(response);
       }
@@ -613,7 +618,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
         COMMAND_RPC_GET_LAST_BLOCK_HEADER::request request;
         COMMAND_RPC_GET_LAST_BLOCK_HEADER::response response;
 
-         m_daemonRpcCommands.get_last_block_header(request, response);
+        m_daemonRpcCommands.get_last_block_header(request, response);
 
         jsonResponse.setResult(response);
       }
@@ -622,7 +627,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
         COMMAND_RPC_GET_MEMPOOL::request request;
         COMMAND_RPC_GET_MEMPOOL::response response;
 
-         m_daemonRpcCommands.get_mempool(request, response);
+        m_daemonRpcCommands.get_mempool(request, response);
 
         jsonResponse.setResult(response);
       }
@@ -635,7 +640,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
         }
 
-         m_daemonRpcCommands.get_transaction(request, response);
+        m_daemonRpcCommands.get_transaction(request, response);
 
         jsonResponse.setResult(response);
       }
@@ -648,7 +653,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
         }
 
-         m_daemonRpcCommands.submit_block(request, response);
+        m_daemonRpcCommands.submit_block(request, response);
 
         jsonResponse.setResult(response);
       }
@@ -661,7 +666,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
         }
 
-         m_daemonRpcCommands.validate_address(request, response);
+        m_daemonRpcCommands.validate_address(request, response);
 
         jsonResponse.setResult(response);
       }
@@ -694,7 +699,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.send_raw_transaction(request, response);
+    m_daemonRpcCommands.send_raw_transaction(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/start_mining")
@@ -704,6 +709,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
 
     if (m_restricted_rpc) {
       response.status = CORE_RPC_STATUS_FAILED_RESTRICTED;
+      httpResponse.setBody(storeToJson(response));
       return;
     }
 
@@ -718,7 +724,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.start_mining(request, response);
+    m_daemonRpcCommands.start_mining(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/stop_mining")
@@ -728,6 +734,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
 
     if (m_restricted_rpc) {
       response.status = CORE_RPC_STATUS_FAILED_RESTRICTED;
+      httpResponse.setBody(storeToJson(response));
       return;
     }
 
@@ -742,7 +749,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.stop_mining(request, response);
+    m_daemonRpcCommands.stop_mining(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else if (url == "/stop_daemon")
@@ -752,6 +759,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
 
     if (m_restricted_rpc) {
       response.status = CORE_RPC_STATUS_FAILED_RESTRICTED;
+      httpResponse.setBody(storeToJson(response));
       return;
     }
 
@@ -759,7 +767,7 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-     m_daemonRpcCommands.stop_daemon(request, response);
+    m_daemonRpcCommands.stop_daemon(request, response);
     httpResponse.setBody(storeToJson(response));
   }
   else
@@ -767,12 +775,6 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
     httpResponse.setStatus(HttpResponse::STATUS_404);
     return;
   }
-
-  httpResponse.addHeader("Content-Type", "application/json");
-  if (!m_cors_domain.empty()) {
-    httpResponse.addHeader("Access-Control-Allow-Origin", m_cors_domain);
-  }
-
 }
 
 } // end namespace CryptoNote

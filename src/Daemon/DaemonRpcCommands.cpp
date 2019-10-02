@@ -947,11 +947,6 @@ bool DaemonRpcCommands::send_raw_transaction(const COMMAND_RPC_SEND_RAW_TX::requ
 }
 
 bool DaemonRpcCommands::start_mining(const COMMAND_RPC_START_MINING::request& request, COMMAND_RPC_START_MINING::response& response) {
-  // if (m_restricted_rpc) {
-    // response.status = CORE_RPC_STATUS_FAILED_RESTRICTED;
-    // return false;
-  // }
-
   AccountPublicAddress address;
   if (!m_core.currency().parseAccountAddressString(request.miner_address, address)) {
     response.status = "Failed, wrong address";
@@ -968,11 +963,6 @@ bool DaemonRpcCommands::start_mining(const COMMAND_RPC_START_MINING::request& re
 }
 
 bool DaemonRpcCommands::stop_daemon(const COMMAND_RPC_STOP_DAEMON::request& request, COMMAND_RPC_STOP_DAEMON::response& response) {
-  // if (m_restricted_rpc) {
-    // response.status = CORE_RPC_STATUS_FAILED_RESTRICTED;
-    // return false;
-  // }
-
   // Can only be called for testnet?
   if (m_core.currency().isTestnet()) {
     m_nodeServer.sendStopSignal();
@@ -986,11 +976,6 @@ bool DaemonRpcCommands::stop_daemon(const COMMAND_RPC_STOP_DAEMON::request& requ
 }
 
 bool DaemonRpcCommands::stop_mining(const COMMAND_RPC_STOP_MINING::request& request, COMMAND_RPC_STOP_MINING::response& response) {
-  // if (m_restricted_rpc) {
-    // response.status = CORE_RPC_STATUS_FAILED_RESTRICTED;
-    // return false;
-  // }
-
   if (!m_core.get_miner().stop()) {
     response.status = CORE_RPC_STATUS_FAILED;
     return true;
