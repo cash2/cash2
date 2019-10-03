@@ -2833,10 +2833,10 @@ TEST(Core, 46)
     ASSERT_TRUE(addBlock1(core));
   }
 
-  CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request request;
+  CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request request;
   request.amounts.push_back(800000000); // this is equal to 0.8 cash2s
   request.outs_count = 5;
-  CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response response = boost::value_initialized<CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response>();
+  CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response response = boost::value_initialized<CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response>();
   ASSERT_TRUE(core.get_random_outs_for_amounts(request, response));
 
   // response =

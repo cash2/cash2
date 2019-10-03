@@ -57,8 +57,8 @@ std::vector<Crypto::Hash> ICoreStub::findBlockchainSupplement(const std::vector<
   return result;
 }
 
-bool ICoreStub::get_random_outs_for_amounts(const CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request& req,
-    CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response& res) {
+bool ICoreStub::get_random_outs_for_amounts(const CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request& req,
+    CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response& res) {
   res = randomOuts;
   return randomOutsResult;
 }
@@ -87,7 +87,7 @@ void ICoreStub::set_outputs_gindexes(const std::vector<uint32_t>& indexes, bool 
   globalIndexesResult = result;
 }
 
-void ICoreStub::set_random_outs(const CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response& resp, bool result) {
+void ICoreStub::set_random_outs(const CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response& resp, bool result) {
   randomOuts = resp;
   randomOutsResult = result;
 }

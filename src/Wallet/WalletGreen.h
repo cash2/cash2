@@ -196,10 +196,10 @@ protected:
 
   void requestMixinOuts(const std::vector<OutputToTransfer>& selectedTransfers,
     uint64_t mixIn,
-    std::vector<CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& mixinResult);
+    std::vector<CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& mixinResult);
 
   void prepareInputs(const std::vector<OutputToTransfer>& selectedTransfers,
-    std::vector<CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& mixinResult,
+    std::vector<CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& mixinResult,
     uint64_t mixIn,
     std::vector<InputInfo>& keysInfo);
 

@@ -3422,8 +3422,8 @@ TEST(Blockchain, 35)
   std::string config_folder = Tools::getDefaultDataDirectory();
   ASSERT_TRUE(blockchain.init(config_folder, false));
 
-  // COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::request req;
-  // COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::response res;
+  // CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::request req;
+  // CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::response res;
   // ASSERT_TRUE(blockchain.getRandomOutsByAmount(req, res));
 }
 

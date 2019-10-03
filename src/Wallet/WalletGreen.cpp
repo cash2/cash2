@@ -100,9 +100,9 @@ uint64_t countNeededMoney(const std::vector<CryptoNote::WalletTransfer>& destina
   return neededMoney;
 }
 
-void checkIfEnoughMixins(std::vector<CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& mixinResult, uint64_t mixIn) {
+void checkIfEnoughMixins(std::vector<CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& mixinResult, uint64_t mixIn) {
   auto notEnoughIt = std::find_if(mixinResult.begin(), mixinResult.end(),
-    [mixIn] (const CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount& ofa) { return ofa.outs.size() < mixIn; } );
+    [mixIn] (const CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount& ofa) { return ofa.outs.size() < mixIn; } );
 
   if (mixIn == 0 && mixinResult.empty()) {
     throw std::system_error(make_error_code(CryptoNote::error::MIXIN_COUNT_TOO_BIG));
@@ -761,7 +761,7 @@ void WalletGreen::prepareTransaction(std::vector<WalletOuts>&& wallets,
     throw std::system_error(make_error_code(error::WRONG_AMOUNT), "Not enough money");
   }
 
-  typedef CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount outs_for_amount;
+  typedef CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount outs_for_amount;
   std::vector<outs_for_amount> mixinResult;
 
   if (mixIn != 0) {
@@ -1393,7 +1393,7 @@ AccountKeys WalletGreen::makeAccountKeys(const WalletRecord& wallet) const {
 void WalletGreen::requestMixinOuts(
   const std::vector<OutputToTransfer>& selectedTransfers,
   uint64_t mixIn,
-  std::vector<CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& mixinResult) {
+  std::vector<CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& mixinResult) {
 
   std::vector<uint64_t> amounts;
   for (const auto& out: selectedTransfers) {
@@ -1551,11 +1551,11 @@ CryptoNote::WalletGreen::ReceiverAmounts WalletGreen::splitAmount(
 
 void WalletGreen::prepareInputs(
   const std::vector<OutputToTransfer>& selectedTransfers,
-  std::vector<CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& mixinResult,
+  std::vector<CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& mixinResult,
   uint64_t mixIn,
   std::vector<InputInfo>& keysInfo) {
 
-  typedef CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::out_entry out_entry;
+  typedef CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::out_entry out_entry;
 
   size_t i = 0;
   for (const auto& input: selectedTransfers) {
@@ -2141,7 +2141,7 @@ size_t WalletGreen::createFusionTransaction(uint64_t threshold, uint64_t mixin) 
     return WALLET_INVALID_TRANSACTION_ID;
   }
 
-  typedef CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount outs_for_amount;
+  typedef CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount outs_for_amount;
   std::vector<outs_for_amount> mixinResult;
   if (mixin != 0) {
     requestMixinOuts(fusionInputs, mixin, mixinResult);

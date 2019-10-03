@@ -183,8 +183,8 @@ bool handle_get_daemon_info(po::variables_map& vm) {
     System::Dispatcher dispatcher;
     HttpClient httpClient(dispatcher, command_line::get_arg(vm, arg_ip), command_line::get_arg(vm, arg_rpc_port));
 
-    CryptoNote::COMMAND_RPC_GET_INFO::request req;
-    CryptoNote::COMMAND_RPC_GET_INFO::response res;
+    CryptoNote::CORE_RPC_COMMAND_GET_INFO::request req;
+    CryptoNote::CORE_RPC_COMMAND_GET_INFO::response res;
 
     invokeJsonCommand(httpClient, "/get_info", req, res); // TODO: timeout
 

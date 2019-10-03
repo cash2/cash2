@@ -1261,7 +1261,7 @@ uint32_t Blockchain::getAlternativeBlocksCount() {
   return static_cast<uint32_t>(m_alternative_chains.size());
 }
 
-bool Blockchain::add_out_to_get_random_outs(std::vector<std::pair<TransactionIndex, uint16_t>>& amount_outs, COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount& result_outs, uint64_t amount, size_t i) {
+bool Blockchain::add_out_to_get_random_outs(std::vector<std::pair<TransactionIndex, uint16_t>>& amount_outs, CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount& result_outs, uint64_t amount, size_t i) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   const Transaction& tx = transactionByIndex(amount_outs[i].first).tx;
   if (!(tx.outputs.size() > amount_outs[i].second)) {
@@ -1274,7 +1274,7 @@ bool Blockchain::add_out_to_get_random_outs(std::vector<std::pair<TransactionInd
   if (!is_tx_spendtime_unlocked(tx.unlockTime))
     return false;
 
-  COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::out_entry& oen = *result_outs.outs.insert(result_outs.outs.end(), COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::out_entry());
+  CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::out_entry& oen = *result_outs.outs.insert(result_outs.outs.end(), CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::out_entry());
   oen.global_amount_index = static_cast<uint32_t>(i);
   oen.out_key = boost::get<KeyOutput>(tx.outputs[amount_outs[i].second].target).key;
   return true;
@@ -1300,16 +1300,16 @@ size_t Blockchain::find_end_of_allowed_index(const std::vector<std::pair<Transac
   return 0;
 }
 
-bool Blockchain::getRandomOutsByAmount(const COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::request& req, COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::response& res) {
+bool Blockchain::getRandomOutsByAmount(const CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::request& req, CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::response& res) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
 
   for (uint64_t amount : req.amounts) {
-    COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount& result_outs = *res.outs.insert(res.outs.end(), COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount());
+    CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount& result_outs = *res.outs.insert(res.outs.end(), CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount());
     result_outs.amount = amount;
     auto it = m_outputs.find(amount);
     if (it == m_outputs.end()) {
       logger(ERROR, BRIGHT_RED) <<
-        "COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS: no outs for amount " << amount;
+        "CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS: no outs for amount " << amount;
       continue;//actually this is strange situation, wallet should use some real outs when it lookup for some mix, so, at least one out for this amount should exist
     }
 

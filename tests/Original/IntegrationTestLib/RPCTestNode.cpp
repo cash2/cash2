@@ -33,8 +33,8 @@ bool RPCTestNode::startMining(size_t threadsCount, const std::string& address) {
   LOG_DEBUG("startMining()");
 
   try {
-    COMMAND_RPC_START_MINING::request req;
-    COMMAND_RPC_START_MINING::response resp;
+    CORE_RPC_COMMAND_START_MINING::request req;
+    CORE_RPC_COMMAND_START_MINING::response resp;
     req.miner_address = address;
     req.threads_count = threadsCount;
 
@@ -54,8 +54,8 @@ bool RPCTestNode::getBlockTemplate(const std::string& minerAddress, CryptoNote::
   LOG_DEBUG("getBlockTemplate()");
 
   try {
-    COMMAND_RPC_GET_BLOCK_TEMPLATE::request req;
-    COMMAND_RPC_GET_BLOCK_TEMPLATE::response rsp;
+    CORE_RPC_COMMAND_GET_BLOCK_TEMPLATE::request req;
+    CORE_RPC_COMMAND_GET_BLOCK_TEMPLATE::response rsp;
     req.wallet_address = minerAddress;
     req.reserve_size = 0;
 
@@ -80,8 +80,8 @@ bool RPCTestNode::submitBlock(const std::string& block) {
   LOG_DEBUG("submitBlock()");
 
   try {
-    COMMAND_RPC_SUBMIT_BLOCK::request req;
-    COMMAND_RPC_SUBMIT_BLOCK::response res;
+    CORE_RPC_COMMAND_SUBMIT_BLOCK::request req;
+    CORE_RPC_COMMAND_SUBMIT_BLOCK::response res;
     req.push_back(block);
     JsonRpc::invokeJsonRpcCommand(m_httpClient, "submit_block", req, res);
     if (res.status != CORE_RPC_STATUS_OK) {
@@ -99,8 +99,8 @@ bool RPCTestNode::stopMining() {
   LOG_DEBUG("stopMining()");
 
   try {
-    COMMAND_RPC_STOP_MINING::request req;
-    COMMAND_RPC_STOP_MINING::response resp;
+    CORE_RPC_COMMAND_STOP_MINING::request req;
+    CORE_RPC_COMMAND_STOP_MINING::response resp;
     invokeJsonCommand(m_httpClient, "/stop_mining", req, resp);
     if (resp.status != CORE_RPC_STATUS_OK) {
       throw std::runtime_error(resp.status);
@@ -117,8 +117,8 @@ bool RPCTestNode::getTailBlockId(Crypto::Hash& tailBlockId) {
   LOG_DEBUG("getTailBlockId()");
 
   try {
-    COMMAND_RPC_GET_LAST_BLOCK_HEADER::request req;
-    COMMAND_RPC_GET_LAST_BLOCK_HEADER::response rsp;
+    CORE_RPC_COMMAND_GET_LAST_BLOCK_HEADER::request req;
+    CORE_RPC_COMMAND_GET_LAST_BLOCK_HEADER::response rsp;
     JsonRpc::invokeJsonRpcCommand(m_httpClient, "get_last_block_header", req, rsp);
     if (rsp.status != CORE_RPC_STATUS_OK) {
       throw std::runtime_error(rsp.status);
@@ -152,8 +152,8 @@ bool RPCTestNode::makeINode(std::unique_ptr<CryptoNote::INode>& node) {
 bool RPCTestNode::stopDaemon() {
   try {
     LOG_DEBUG("stopDaemon()");
-    COMMAND_RPC_STOP_DAEMON::request req;
-    COMMAND_RPC_STOP_DAEMON::response resp;
+    CORE_RPC_COMMAND_STOP_DAEMON::request req;
+    CORE_RPC_COMMAND_STOP_DAEMON::response resp;
     invokeJsonCommand(m_httpClient, "/stop_daemon", req, resp);
     if (resp.status != CORE_RPC_STATUS_OK) {
       throw std::runtime_error(resp.status);
@@ -168,8 +168,8 @@ bool RPCTestNode::stopDaemon() {
 
 uint64_t RPCTestNode::getLocalHeight() {
   try {
-    CryptoNote::COMMAND_RPC_GET_INFO::request req;
-    CryptoNote::COMMAND_RPC_GET_INFO::response rsp;
+    CryptoNote::CORE_RPC_COMMAND_GET_INFO::request req;
+    CryptoNote::CORE_RPC_COMMAND_GET_INFO::response rsp;
     invokeJsonCommand(m_httpClient, "/getinfo", req, rsp);
     if (rsp.status == CORE_RPC_STATUS_OK) {
       return rsp.height;

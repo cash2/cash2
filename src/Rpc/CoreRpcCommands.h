@@ -27,7 +27,7 @@ struct STATUS_STRUCT {
   }
 };
 
-struct COMMAND_RPC_GET_HEIGHT {
+struct CORE_RPC_COMMAND_GET_HEIGHT {
   typedef EMPTY_STRUCT request;
 
   struct response {
@@ -41,7 +41,7 @@ struct COMMAND_RPC_GET_HEIGHT {
   };
 };
 
-struct COMMAND_RPC_GET_BLOCKS_FAST {
+struct CORE_RPC_COMMAND_GET_BLOCKS_FAST {
 
   struct request {
     std::vector<Crypto::Hash> block_ids; //*first 10 blocks id goes sequential, next goes in pow(2,n) offset, like 2, 4, 8, 16, 32, 64 and so on, and the last one is always genesis block */
@@ -66,7 +66,7 @@ struct COMMAND_RPC_GET_BLOCKS_FAST {
   };
 };
 //-----------------------------------------------
-struct COMMAND_RPC_GET_TRANSACTIONS {
+struct CORE_RPC_COMMAND_GET_TRANSACTIONS {
   struct request {
     std::vector<std::string> txs_hashes;
 
@@ -88,7 +88,7 @@ struct COMMAND_RPC_GET_TRANSACTIONS {
   };
 };
 //-----------------------------------------------
-struct COMMAND_RPC_GET_POOL_CHANGES {
+struct CORE_RPC_COMMAND_GET_POOL_CHANGES {
   struct request {
     Crypto::Hash tail_block_id;
     std::vector<Crypto::Hash> known_txs_ids;
@@ -114,7 +114,7 @@ struct COMMAND_RPC_GET_POOL_CHANGES {
   };
 };
 
-struct COMMAND_RPC_GET_POOL_CHANGES_LITE {
+struct CORE_RPC_COMMAND_GET_POOL_CHANGES_LITE {
   struct request {
     Crypto::Hash tail_block_id;
     std::vector<Crypto::Hash> known_txs_ids;
@@ -141,7 +141,7 @@ struct COMMAND_RPC_GET_POOL_CHANGES_LITE {
 };
 
 //-----------------------------------------------
-struct COMMAND_RPC_GET_TX_GLOBAL_OUTPUTS_INDEXES {
+struct CORE_RPC_COMMAND_GET_TX_GLOBAL_OUTPUTS_INDEXES {
   
   struct request {
     Crypto::Hash transaction_id;
@@ -162,7 +162,7 @@ struct COMMAND_RPC_GET_TX_GLOBAL_OUTPUTS_INDEXES {
   };
 };
 //-----------------------------------------------
-struct COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request {
+struct CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request {
   std::vector<uint64_t> amounts;
   uint64_t outs_count;
 
@@ -173,15 +173,15 @@ struct COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request {
 };
 
 #pragma pack(push, 1)
-struct COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_out_entry {
+struct CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_out_entry {
   uint64_t global_amount_index;
   Crypto::PublicKey out_key;
 };
 #pragma pack(pop)
 
-struct COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_outs_for_amount {
+struct CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_outs_for_amount {
   uint64_t amount;
-  std::vector<COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_out_entry> outs;
+  std::vector<CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_out_entry> outs;
 
   void serialize(ISerializer &s) {
     KV_MEMBER(amount)
@@ -189,8 +189,8 @@ struct COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_outs_for_amount {
   }
 };
 
-struct COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response {
-  std::vector<COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_outs_for_amount> outs;
+struct CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response {
+  std::vector<CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_outs_for_amount> outs;
   std::string status;
 
   void serialize(ISerializer &s) {
@@ -199,16 +199,16 @@ struct COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response {
   }
 };
 
-struct COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS {
-  typedef COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request request;
-  typedef COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response response;
+struct CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS {
+  typedef CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request request;
+  typedef CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response response;
 
-  typedef COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_out_entry out_entry;
-  typedef COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_outs_for_amount outs_for_amount;
+  typedef CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_out_entry out_entry;
+  typedef CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_outs_for_amount outs_for_amount;
 };
 
 //-----------------------------------------------
-struct COMMAND_RPC_SEND_RAW_TX {
+struct CORE_RPC_COMMAND_SEND_RAW_TX {
   struct request {
     std::string tx_as_hex;
 
@@ -229,7 +229,7 @@ struct COMMAND_RPC_SEND_RAW_TX {
   };
 };
 //-----------------------------------------------
-struct COMMAND_RPC_START_MINING {
+struct CORE_RPC_COMMAND_START_MINING {
   struct request {
     std::string miner_address;
     uint64_t threads_count;
@@ -249,7 +249,7 @@ struct COMMAND_RPC_START_MINING {
   };
 };
 //-----------------------------------------------
-struct COMMAND_RPC_GET_INFO {
+struct CORE_RPC_COMMAND_GET_INFO {
   typedef EMPTY_STRUCT request;
 
   struct response {
@@ -287,7 +287,7 @@ struct COMMAND_RPC_GET_INFO {
   };
 };
 
-struct COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT {
+struct CORE_RPC_COMMAND_GET_ORPHAN_BLOCKS_COUNT {
   typedef EMPTY_STRUCT request;
 
   struct response {
@@ -301,7 +301,7 @@ struct COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT {
   };
 };
 
-struct COMMAND_RPC_GET_CIRCULATING_SUPPLY {
+struct CORE_RPC_COMMAND_GET_CIRCULATING_SUPPLY {
   typedef EMPTY_STRUCT request;
 
   struct response {
@@ -315,7 +315,7 @@ struct COMMAND_RPC_GET_CIRCULATING_SUPPLY {
   };
 };
 
-struct COMMAND_RPC_GET_DIFFICULTY {
+struct CORE_RPC_COMMAND_GET_DIFFICULTY {
   typedef EMPTY_STRUCT request;
 
   struct response {
@@ -329,7 +329,7 @@ struct COMMAND_RPC_GET_DIFFICULTY {
   };
 };
 
-struct COMMAND_RPC_GET_GREY_PEERLIST {
+struct CORE_RPC_COMMAND_GET_GREY_PEERLIST {
   typedef EMPTY_STRUCT request;
 
   struct response {
@@ -343,7 +343,7 @@ struct COMMAND_RPC_GET_GREY_PEERLIST {
   };
 };
 
-struct COMMAND_RPC_GET_GREY_PEERLIST_SIZE {
+struct CORE_RPC_COMMAND_GET_GREY_PEERLIST_SIZE {
   typedef EMPTY_STRUCT request;
 
   struct response {
@@ -357,7 +357,7 @@ struct COMMAND_RPC_GET_GREY_PEERLIST_SIZE {
   };
 };
 
-struct COMMAND_RPC_GET_INCOMING_CONNECTIONS_COUNT {
+struct CORE_RPC_COMMAND_GET_INCOMING_CONNECTIONS_COUNT {
   typedef EMPTY_STRUCT request;
 
   struct response {
@@ -371,7 +371,7 @@ struct COMMAND_RPC_GET_INCOMING_CONNECTIONS_COUNT {
   };
 };
 
-struct COMMAND_RPC_GET_MEMPOOL_TRANSACTIONS_COUNT {
+struct CORE_RPC_COMMAND_GET_MEMPOOL_TRANSACTIONS_COUNT {
   typedef EMPTY_STRUCT request;
 
   struct response {
@@ -385,7 +385,7 @@ struct COMMAND_RPC_GET_MEMPOOL_TRANSACTIONS_COUNT {
   };
 };
 
-struct COMMAND_RPC_GET_TRANSACTION_FEE {
+struct CORE_RPC_COMMAND_GET_TRANSACTION_FEE {
   typedef EMPTY_STRUCT request;
 
   struct response {
@@ -399,7 +399,7 @@ struct COMMAND_RPC_GET_TRANSACTION_FEE {
   };
 };
 
-struct COMMAND_RPC_GET_OUTGOING_CONNECTIONS_COUNT {
+struct CORE_RPC_COMMAND_GET_OUTGOING_CONNECTIONS_COUNT {
   typedef EMPTY_STRUCT request;
 
   struct response {
@@ -413,7 +413,7 @@ struct COMMAND_RPC_GET_OUTGOING_CONNECTIONS_COUNT {
   };
 };
 
-struct COMMAND_RPC_GET_TOTAL_TRANSACTIONS_COUNT {
+struct CORE_RPC_COMMAND_GET_TOTAL_TRANSACTIONS_COUNT {
   typedef EMPTY_STRUCT request;
 
   struct response {
@@ -427,7 +427,7 @@ struct COMMAND_RPC_GET_TOTAL_TRANSACTIONS_COUNT {
   };
 };
 
-struct COMMAND_RPC_GET_WHITE_PEERLIST_SIZE {
+struct CORE_RPC_COMMAND_GET_WHITE_PEERLIST_SIZE {
   typedef EMPTY_STRUCT request;
 
   struct response {
@@ -441,7 +441,7 @@ struct COMMAND_RPC_GET_WHITE_PEERLIST_SIZE {
   };
 };
 
-struct COMMAND_RPC_GET_CONNECTIONS {
+struct CORE_RPC_COMMAND_GET_CONNECTIONS {
   typedef EMPTY_STRUCT request;
 
   struct response {
@@ -455,7 +455,7 @@ struct COMMAND_RPC_GET_CONNECTIONS {
   };
 };
 
-struct COMMAND_RPC_GET_INCOMING_CONNECTIONS {
+struct CORE_RPC_COMMAND_GET_INCOMING_CONNECTIONS {
   typedef EMPTY_STRUCT request;
 
   struct response {
@@ -469,7 +469,7 @@ struct COMMAND_RPC_GET_INCOMING_CONNECTIONS {
   };
 };
 
-struct COMMAND_RPC_GET_OUTGOING_CONNECTIONS {
+struct CORE_RPC_COMMAND_GET_OUTGOING_CONNECTIONS {
   typedef EMPTY_STRUCT request;
 
   struct response {
@@ -483,7 +483,7 @@ struct COMMAND_RPC_GET_OUTGOING_CONNECTIONS {
   };
 };
 
-struct COMMAND_RPC_GET_CONNECTIONS_COUNT {
+struct CORE_RPC_COMMAND_GET_CONNECTIONS_COUNT {
   typedef EMPTY_STRUCT request;
 
   struct response {
@@ -497,7 +497,7 @@ struct COMMAND_RPC_GET_CONNECTIONS_COUNT {
   };
 };
 
-struct COMMAND_RPC_GET_WHITE_PEERLIST {
+struct CORE_RPC_COMMAND_GET_WHITE_PEERLIST {
   typedef EMPTY_STRUCT request;
 
   struct response {
@@ -512,19 +512,19 @@ struct COMMAND_RPC_GET_WHITE_PEERLIST {
 };
 
 //-----------------------------------------------
-struct COMMAND_RPC_STOP_MINING {
+struct CORE_RPC_COMMAND_STOP_MINING {
   typedef EMPTY_STRUCT request;
   typedef STATUS_STRUCT response;
 };
 
 //-----------------------------------------------
-struct COMMAND_RPC_STOP_DAEMON {
+struct CORE_RPC_COMMAND_STOP_DAEMON {
   typedef EMPTY_STRUCT request;
   typedef STATUS_STRUCT response;
 };
 
 //
-struct COMMAND_RPC_GET_BLOCK_COUNT {
+struct CORE_RPC_COMMAND_GET_BLOCK_COUNT {
   typedef std::vector<std::string> request;
 
   struct response {
@@ -538,12 +538,12 @@ struct COMMAND_RPC_GET_BLOCK_COUNT {
   };
 };
 
-struct COMMAND_RPC_GET_BLOCK_HASH {
+struct CORE_RPC_COMMAND_GET_BLOCK_HASH {
   typedef std::vector<uint64_t> request;
   typedef std::string response;
 };
 
-struct COMMAND_RPC_GET_BLOCK_TEMPLATE {
+struct CORE_RPC_COMMAND_GET_BLOCK_TEMPLATE {
   struct request {
     uint64_t reserve_size; //max 255 bytes
     std::string wallet_address;
@@ -575,7 +575,7 @@ struct COMMAND_RPC_GET_BLOCK_TEMPLATE {
   };
 };
 
-struct COMMAND_RPC_GET_CURRENCY_ID {
+struct CORE_RPC_COMMAND_GET_CURRENCY_ID {
   typedef EMPTY_STRUCT request;
 
   struct response {
@@ -587,7 +587,7 @@ struct COMMAND_RPC_GET_CURRENCY_ID {
   };
 };
 
-struct COMMAND_RPC_SUBMIT_BLOCK {
+struct CORE_RPC_COMMAND_SUBMIT_BLOCK {
   typedef std::vector<std::string> request;
   typedef STATUS_STRUCT response;
 };
@@ -629,12 +629,12 @@ struct BLOCK_HEADER_RESPONSE {
 };
 
 
-struct COMMAND_RPC_GET_LAST_BLOCK_HEADER {
+struct CORE_RPC_COMMAND_GET_LAST_BLOCK_HEADER {
   typedef EMPTY_STRUCT request;
   typedef BLOCK_HEADER_RESPONSE response;
 };
 
-struct COMMAND_RPC_GET_BLOCK_HEADER_BY_HASH {
+struct CORE_RPC_COMMAND_GET_BLOCK_HEADER_BY_HASH {
   struct request {
     std::string hash;
 
@@ -646,7 +646,7 @@ struct COMMAND_RPC_GET_BLOCK_HEADER_BY_HASH {
   typedef BLOCK_HEADER_RESPONSE response;
 };
 
-struct COMMAND_RPC_GET_BLOCK_HEADER_BY_HEIGHT {
+struct CORE_RPC_COMMAND_GET_BLOCK_HEADER_BY_HEIGHT {
   struct request {
     uint64_t height;
 
@@ -658,7 +658,7 @@ struct COMMAND_RPC_GET_BLOCK_HEADER_BY_HEIGHT {
   typedef BLOCK_HEADER_RESPONSE response;
 };
 
-struct COMMAND_RPC_QUERY_BLOCKS {
+struct CORE_RPC_COMMAND_QUERY_BLOCKS {
   struct request {
     std::vector<Crypto::Hash> block_ids; //*first 10 blocks id goes sequential, next goes in pow(2,n) offset, like 2, 4, 8, 16, 32, 64 and so on, and the last one is always genesis block */
     uint64_t timestamp;
@@ -686,7 +686,7 @@ struct COMMAND_RPC_QUERY_BLOCKS {
   };
 };
 
-struct COMMAND_RPC_QUERY_BLOCKS_LITE {
+struct CORE_RPC_COMMAND_QUERY_BLOCKS_LITE {
   struct request {
     std::vector<Crypto::Hash> block_ids;
     uint64_t timestamp;
@@ -788,7 +788,7 @@ struct block_long_response {
   }
 };
 
-struct COMMAND_RPC_GET_BLOCKS_JSON {
+struct CORE_RPC_COMMAND_GET_BLOCKS_JSON {
   struct request {
     uint64_t height;
 
@@ -808,7 +808,7 @@ struct COMMAND_RPC_GET_BLOCKS_JSON {
   };
 };
 
-struct COMMAND_RPC_GET_BLOCK {
+struct CORE_RPC_COMMAND_GET_BLOCK {
   struct request {
     std::string hash;
 
@@ -846,7 +846,7 @@ struct transaction_long_response {
   }
 };
 
-struct COMMAND_RPC_GET_TRANSACTION {
+struct CORE_RPC_COMMAND_GET_TRANSACTION {
   struct request {
     std::string hash;
 
@@ -886,7 +886,7 @@ struct mempool_transaction_response {
   }
 };
 
-struct COMMAND_RPC_GET_MEMPOOL {
+struct CORE_RPC_COMMAND_GET_MEMPOOL {
   typedef EMPTY_STRUCT request;
 
   struct response {
@@ -900,7 +900,7 @@ struct COMMAND_RPC_GET_MEMPOOL {
   };
 };
 
-struct COMMAND_RPC_CHECK_PAYMENT {
+struct CORE_RPC_COMMAND_CHECK_PAYMENT {
 	struct request {
 		std::string transaction_id;
 		std::string transaction_private_key;
@@ -926,7 +926,7 @@ struct COMMAND_RPC_CHECK_PAYMENT {
 	};
 };
 
-struct COMMAND_RPC_VALIDATE_ADDRESS {
+struct CORE_RPC_COMMAND_VALIDATE_ADDRESS {
 	struct request {
 		std::string address;
 

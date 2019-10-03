@@ -154,14 +154,14 @@ TEST_F(InProcessNodeTests, getRandomOutsByAmountsSuccess) {
   Crypto::SecretKey ignoredSectetKey;
   Crypto::generate_keys(ignoredPublicKey, ignoredSectetKey);
 
-  CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response expectedResp;
-  CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_outs_for_amount out;
+  CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response expectedResp;
+  CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_outs_for_amount out;
   out.amount = 10;
   out.outs.push_back({ 11, ignoredPublicKey });
   expectedResp.outs.push_back(out);
   coreStub.set_random_outs(expectedResp, true);
 
-  std::vector<CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_outs_for_amount> outs;
+  std::vector<CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_outs_for_amount> outs;
 
   CallbackStatus status;
   node.getRandomOutsByAmounts({1,2,3}, 1, outs, [&status] (std::error_code ec) { status.setStatus(ec); });
@@ -174,10 +174,10 @@ TEST_F(InProcessNodeTests, getRandomOutsByAmountsSuccess) {
 }
 
 TEST_F(InProcessNodeTests, getRandomOutsByAmountsFailure) {
-  CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response expectedResp;
+  CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response expectedResp;
   coreStub.set_random_outs(expectedResp, false);
 
-  std::vector<CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_outs_for_amount> outs;
+  std::vector<CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_outs_for_amount> outs;
 
   CallbackStatus status;
   node.getRandomOutsByAmounts({1,2,3}, 1, outs, [&status] (std::error_code ec) { status.setStatus(ec); });
@@ -224,7 +224,7 @@ TEST_F(InProcessNodeTests, getTransactionOutsGlobalIndexesUninitialized) {
 
 TEST_F(InProcessNodeTests, getRandomOutsByAmountsUninitialized) {
   CryptoNote::InProcessNode newNode(coreStub, protocolQueryStub);
-  std::vector<CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_outs_for_amount> outs;
+  std::vector<CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_outs_for_amount> outs;
 
   CallbackStatus status;
   newNode.getRandomOutsByAmounts({1,2,3}, 1, outs, [&] (std::error_code ec) { status.setStatus(ec); });

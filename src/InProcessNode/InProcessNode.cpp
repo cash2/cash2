@@ -144,7 +144,7 @@ std::error_code InProcessNode::doGetNewBlocks(std::vector<Crypto::Hash>&& knownB
     }
 
     uint32_t totalBlockCount;
-    std::vector<Crypto::Hash> supplement = core.findBlockchainSupplement(knownBlockIds, CryptoNote::COMMAND_RPC_GET_BLOCKS_FAST_MAX_COUNT, totalBlockCount, startHeight);
+    std::vector<Crypto::Hash> supplement = core.findBlockchainSupplement(knownBlockIds, CryptoNote::CORE_RPC_COMMAND_GET_BLOCKS_FAST_MAX_COUNT, totalBlockCount, startHeight);
 
     for (const auto& blockId : supplement) {
       assert(core.have_block(blockId));
@@ -221,7 +221,7 @@ std::error_code InProcessNode::doGetTransactionOutsGlobalIndexes(const Crypto::H
 }
 
 void InProcessNode::getRandomOutsByAmounts(std::vector<uint64_t>&& amounts, uint64_t outsCount,
-    std::vector<CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& result, const Callback& callback)
+    std::vector<CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& result, const Callback& callback)
 {
   std::unique_lock<std::mutex> lock(mutex);
   if (state != INITIALIZED) {
@@ -242,14 +242,14 @@ void InProcessNode::getRandomOutsByAmounts(std::vector<uint64_t>&& amounts, uint
 }
 
 void InProcessNode::getRandomOutsByAmountsAsync(std::vector<uint64_t>& amounts, uint64_t outsCount,
-  std::vector<CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& result, const Callback& callback)
+  std::vector<CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& result, const Callback& callback)
 {
   std::error_code ec = doGetRandomOutsByAmounts(std::move(amounts), outsCount, result);
   callback(ec);
 }
 
 //it's always protected with mutex
-std::error_code InProcessNode::doGetRandomOutsByAmounts(std::vector<uint64_t>&& amounts, uint64_t outsCount, std::vector<CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& result) {
+std::error_code InProcessNode::doGetRandomOutsByAmounts(std::vector<uint64_t>&& amounts, uint64_t outsCount, std::vector<CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& result) {
   {
     std::unique_lock<std::mutex> lock(mutex);
     if (state != INITIALIZED) {
@@ -258,8 +258,8 @@ std::error_code InProcessNode::doGetRandomOutsByAmounts(std::vector<uint64_t>&& 
   }
 
   try {
-    CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::response res;
-    CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::request req;
+    CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::response res;
+    CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::request req;
     req.amounts = amounts;
     req.outs_count = outsCount;
 

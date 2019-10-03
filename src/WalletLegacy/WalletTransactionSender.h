@@ -32,7 +32,7 @@ public:
 private:
   std::shared_ptr<WalletRequest> makeGetRandomOutsRequest(std::shared_ptr<SendTransactionContext> context);
   std::shared_ptr<WalletRequest> doSendTransaction(std::shared_ptr<SendTransactionContext> context, std::deque<std::shared_ptr<WalletLegacyEvent>>& events);
-  void prepareInputs(const std::list<TransactionOutputInformation>& selectedTransfers, std::vector<COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& outs,
+  void prepareInputs(const std::list<TransactionOutputInformation>& selectedTransfers, std::vector<CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& outs,
       std::vector<TransactionSourceEntry>& sources, uint64_t mixIn);
   void splitDestinations(TransferId firstTransferId, size_t transfersCount, const TransactionDestinationEntry& changeDts,
     const TxDustPolicy& dustPolicy, std::vector<TransactionDestinationEntry>& splittedDests);

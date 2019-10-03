@@ -68,8 +68,8 @@ Crypto::Hash BlockchainMonitor::requestLastBlockHash() {
   try {
     CryptoNote::HttpClient client(m_dispatcher, m_daemonHost, m_daemonPort);
 
-    CryptoNote::COMMAND_RPC_GET_LAST_BLOCK_HEADER::request request;
-    CryptoNote::COMMAND_RPC_GET_LAST_BLOCK_HEADER::response response;
+    CryptoNote::CORE_RPC_COMMAND_GET_LAST_BLOCK_HEADER::request request;
+    CryptoNote::CORE_RPC_COMMAND_GET_LAST_BLOCK_HEADER::response response;
 
     System::EventLock lk(m_httpEvent);
     CryptoNote::JsonRpc::invokeJsonRpcCommand(client, "get_last_block_header", request, response);

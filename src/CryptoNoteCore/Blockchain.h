@@ -34,9 +34,9 @@
 namespace CryptoNote {
   struct NOTIFY_REQUEST_GET_OBJECTS_request;
   struct NOTIFY_RESPONSE_GET_OBJECTS_request;
-  struct COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request;
-  struct COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response;
-  struct COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_outs_for_amount;
+  struct CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request;
+  struct CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response;
+  struct CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_outs_for_amount;
 
   using CryptoNote::BlockInfo;
   class Blockchain : public CryptoNote::ITransactionValidator {
@@ -90,7 +90,7 @@ namespace CryptoNote {
     std::vector<Crypto::Hash> findBlockchainSupplement(const std::vector<Crypto::Hash>& remoteBlockIds, size_t maxCount,
       uint32_t& totalBlockCount, uint32_t& startBlockIndex);
     bool handleGetObjects(NOTIFY_REQUEST_GET_OBJECTS_request& arg, NOTIFY_RESPONSE_GET_OBJECTS_request& rsp); //Deprecated. Should be removed with CryptoNoteProtocolHandler.
-    bool getRandomOutsByAmount(const COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request& req, COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response& res);
+    bool getRandomOutsByAmount(const CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request& req, CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response& res);
     bool getBackwardBlocksSize(size_t from_height, std::vector<size_t>& sz, size_t count);
     bool getTransactionOutputGlobalIndexes(const Crypto::Hash& tx_id, std::vector<uint32_t>& indexes);
     bool get_out_by_msig_gindex(uint64_t amount, uint64_t gindex, MultisignatureOutput& out);
@@ -268,7 +268,7 @@ namespace CryptoNote {
     bool validate_miner_transaction(const Block& b, uint32_t height, size_t cumulativeBlockSize, uint64_t alreadyGeneratedCoins, uint64_t fee, uint64_t& reward, int64_t& emissionChange);
     bool rollback_blockchain_switching(std::list<Block>& original_chain, size_t rollback_height);
     bool get_last_n_blocks_sizes(std::vector<size_t>& sz, size_t count);
-    bool add_out_to_get_random_outs(std::vector<std::pair<TransactionIndex, uint16_t>>& amount_outs, COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_outs_for_amount& result_outs, uint64_t amount, size_t i);
+    bool add_out_to_get_random_outs(std::vector<std::pair<TransactionIndex, uint16_t>>& amount_outs, CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_outs_for_amount& result_outs, uint64_t amount, size_t i);
     bool is_tx_spendtime_unlocked(uint64_t unlock_time);
     size_t find_end_of_allowed_index(const std::vector<std::pair<TransactionIndex, uint16_t>>& amount_outs);
     bool check_block_timestamp_main(const Block& b);

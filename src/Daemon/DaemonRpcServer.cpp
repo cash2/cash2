@@ -119,8 +119,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-    COMMAND_RPC_GET_BLOCKS_FAST::request request;
-    COMMAND_RPC_GET_BLOCKS_FAST::response response;
+    CORE_RPC_COMMAND_GET_BLOCKS_FAST::request request;
+    CORE_RPC_COMMAND_GET_BLOCKS_FAST::response response;
 
     if (!loadFromBinaryKeyValue(request, httpRequest.getBody())) {
       return;
@@ -138,8 +138,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-    COMMAND_RPC_QUERY_BLOCKS::request request;
-    COMMAND_RPC_QUERY_BLOCKS::response response;
+    CORE_RPC_COMMAND_QUERY_BLOCKS::request request;
+    CORE_RPC_COMMAND_QUERY_BLOCKS::response response;
 
     if (!loadFromBinaryKeyValue(request, httpRequest.getBody())) {
       return;
@@ -157,8 +157,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-    COMMAND_RPC_QUERY_BLOCKS_LITE::request request;
-    COMMAND_RPC_QUERY_BLOCKS_LITE::response response;
+    CORE_RPC_COMMAND_QUERY_BLOCKS_LITE::request request;
+    CORE_RPC_COMMAND_QUERY_BLOCKS_LITE::response response;
 
     if (!loadFromBinaryKeyValue(request, httpRequest.getBody())) {
       return;
@@ -176,8 +176,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-    COMMAND_RPC_GET_TX_GLOBAL_OUTPUTS_INDEXES::request request;
-    COMMAND_RPC_GET_TX_GLOBAL_OUTPUTS_INDEXES::response response;
+    CORE_RPC_COMMAND_GET_TX_GLOBAL_OUTPUTS_INDEXES::request request;
+    CORE_RPC_COMMAND_GET_TX_GLOBAL_OUTPUTS_INDEXES::response response;
 
     if (!loadFromBinaryKeyValue(request, httpRequest.getBody())) {
       return;
@@ -195,8 +195,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-    COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::request request;
-    COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::response response;
+    CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::request request;
+    CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::response response;
 
     if (!loadFromBinaryKeyValue(request, httpRequest.getBody())) {
       return;
@@ -214,8 +214,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-    COMMAND_RPC_GET_POOL_CHANGES::request request;
-    COMMAND_RPC_GET_POOL_CHANGES::response response;
+    CORE_RPC_COMMAND_GET_POOL_CHANGES::request request;
+    CORE_RPC_COMMAND_GET_POOL_CHANGES::response response;
 
     if (!loadFromBinaryKeyValue(request, httpRequest.getBody())) {
       return;
@@ -233,8 +233,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-    COMMAND_RPC_GET_POOL_CHANGES_LITE::request request;
-    COMMAND_RPC_GET_POOL_CHANGES_LITE::response response;
+    CORE_RPC_COMMAND_GET_POOL_CHANGES_LITE::request request;
+    CORE_RPC_COMMAND_GET_POOL_CHANGES_LITE::response response;
 
     if (!loadFromBinaryKeyValue(request, httpRequest.getBody())) {
       return;
@@ -245,8 +245,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
   }
   else if (url == "/get_circulating_supply")
   {
-    COMMAND_RPC_GET_CIRCULATING_SUPPLY::request request;
-    COMMAND_RPC_GET_CIRCULATING_SUPPLY::response response;
+    CORE_RPC_COMMAND_GET_CIRCULATING_SUPPLY::request request;
+    CORE_RPC_COMMAND_GET_CIRCULATING_SUPPLY::response response;
 
     if (!loadFromJson(request, httpRequest.getBody())) {
       return;
@@ -257,8 +257,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
   }
   else if (url == "/get_connections")
   {
-    COMMAND_RPC_GET_CONNECTIONS::request request;
-    COMMAND_RPC_GET_CONNECTIONS::response response;
+    CORE_RPC_COMMAND_GET_CONNECTIONS::request request;
+    CORE_RPC_COMMAND_GET_CONNECTIONS::response response;
 
     if (!loadFromJson(request, httpRequest.getBody())) {
       return;
@@ -269,8 +269,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
   }
   else if (url == "/get_connections_count")
   {
-    COMMAND_RPC_GET_CONNECTIONS_COUNT::request request;
-    COMMAND_RPC_GET_CONNECTIONS_COUNT::response response;
+    CORE_RPC_COMMAND_GET_CONNECTIONS_COUNT::request request;
+    CORE_RPC_COMMAND_GET_CONNECTIONS_COUNT::response response;
 
     if (!loadFromJson(request, httpRequest.getBody())) {
       return;
@@ -281,8 +281,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
   }
   else if (url == "/get_difficulty")
   {
-    COMMAND_RPC_GET_DIFFICULTY::request request;
-    COMMAND_RPC_GET_DIFFICULTY::response response;
+    CORE_RPC_COMMAND_GET_DIFFICULTY::request request;
+    CORE_RPC_COMMAND_GET_DIFFICULTY::response response;
 
     if (!loadFromJson(request, httpRequest.getBody())) {
       return;
@@ -293,8 +293,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
   }
   else if (url == "/get_grey_peerlist")
   {
-    COMMAND_RPC_GET_GREY_PEERLIST::request request;
-    COMMAND_RPC_GET_GREY_PEERLIST::response response;
+    CORE_RPC_COMMAND_GET_GREY_PEERLIST::request request;
+    CORE_RPC_COMMAND_GET_GREY_PEERLIST::response response;
 
     if (!loadFromJson(request, httpRequest.getBody())) {
       return;
@@ -305,8 +305,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
   }
   else if (url == "/get_grey_peerlist_size")
   {
-    COMMAND_RPC_GET_GREY_PEERLIST_SIZE::request request;
-    COMMAND_RPC_GET_GREY_PEERLIST_SIZE::response response;
+    CORE_RPC_COMMAND_GET_GREY_PEERLIST_SIZE::request request;
+    CORE_RPC_COMMAND_GET_GREY_PEERLIST_SIZE::response response;
 
     if (!loadFromJson(request, httpRequest.getBody())) {
       return;
@@ -317,8 +317,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
   }
   else if (url == "/get_height")
   {
-    COMMAND_RPC_GET_HEIGHT::request request;
-    COMMAND_RPC_GET_HEIGHT::response response;
+    CORE_RPC_COMMAND_GET_HEIGHT::request request;
+    CORE_RPC_COMMAND_GET_HEIGHT::response response;
 
     if (!loadFromJson(request, httpRequest.getBody())) {
       return;
@@ -329,8 +329,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
   }
   else if (url == "/get_incoming_connections")
   {
-    COMMAND_RPC_GET_INCOMING_CONNECTIONS::request request;
-    COMMAND_RPC_GET_INCOMING_CONNECTIONS::response response;
+    CORE_RPC_COMMAND_GET_INCOMING_CONNECTIONS::request request;
+    CORE_RPC_COMMAND_GET_INCOMING_CONNECTIONS::response response;
 
     if (!loadFromJson(request, httpRequest.getBody())) {
       return;
@@ -341,8 +341,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
   }
   else if (url == "/get_incoming_connections_count")
   {
-    COMMAND_RPC_GET_INCOMING_CONNECTIONS_COUNT::request request;
-    COMMAND_RPC_GET_INCOMING_CONNECTIONS_COUNT::response response;
+    CORE_RPC_COMMAND_GET_INCOMING_CONNECTIONS_COUNT::request request;
+    CORE_RPC_COMMAND_GET_INCOMING_CONNECTIONS_COUNT::response response;
 
     if (!loadFromJson(request, httpRequest.getBody())) {
       return;
@@ -353,8 +353,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
   }
   else if (url == "/get_info")
   {
-    COMMAND_RPC_GET_INFO::request request;
-    COMMAND_RPC_GET_INFO::response response;
+    CORE_RPC_COMMAND_GET_INFO::request request;
+    CORE_RPC_COMMAND_GET_INFO::response response;
 
     if (!loadFromJson(request, httpRequest.getBody())) {
       return;
@@ -365,8 +365,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
   }
   else if (url == "/get_mempool_transactions_count")
   {
-    COMMAND_RPC_GET_MEMPOOL_TRANSACTIONS_COUNT::request request;
-    COMMAND_RPC_GET_MEMPOOL_TRANSACTIONS_COUNT::response response;
+    CORE_RPC_COMMAND_GET_MEMPOOL_TRANSACTIONS_COUNT::request request;
+    CORE_RPC_COMMAND_GET_MEMPOOL_TRANSACTIONS_COUNT::response response;
 
     if (!loadFromJson(request, httpRequest.getBody())) {
       return;
@@ -377,8 +377,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
   }
   else if (url == "/get_orphan_blocks_count")
   {
-    COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT::request request;
-    COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT::response response;
+    CORE_RPC_COMMAND_GET_ORPHAN_BLOCKS_COUNT::request request;
+    CORE_RPC_COMMAND_GET_ORPHAN_BLOCKS_COUNT::response response;
 
     if (!loadFromJson(request, httpRequest.getBody())) {
       return;
@@ -389,8 +389,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
   }
   else if (url == "/get_outgoing_connections")
   {
-    COMMAND_RPC_GET_OUTGOING_CONNECTIONS::request request;
-    COMMAND_RPC_GET_OUTGOING_CONNECTIONS::response response;
+    CORE_RPC_COMMAND_GET_OUTGOING_CONNECTIONS::request request;
+    CORE_RPC_COMMAND_GET_OUTGOING_CONNECTIONS::response response;
 
     if (!loadFromJson(request, httpRequest.getBody())) {
       return;
@@ -401,8 +401,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
   }
   else if (url == "/get_outgoing_connections_count")
   {
-    COMMAND_RPC_GET_OUTGOING_CONNECTIONS_COUNT::request request;
-    COMMAND_RPC_GET_OUTGOING_CONNECTIONS_COUNT::response response;
+    CORE_RPC_COMMAND_GET_OUTGOING_CONNECTIONS_COUNT::request request;
+    CORE_RPC_COMMAND_GET_OUTGOING_CONNECTIONS_COUNT::response response;
 
     if (!loadFromJson(request, httpRequest.getBody())) {
       return;
@@ -420,8 +420,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-    COMMAND_RPC_GET_TOTAL_TRANSACTIONS_COUNT::request request;
-    COMMAND_RPC_GET_TOTAL_TRANSACTIONS_COUNT::response response;
+    CORE_RPC_COMMAND_GET_TOTAL_TRANSACTIONS_COUNT::request request;
+    CORE_RPC_COMMAND_GET_TOTAL_TRANSACTIONS_COUNT::response response;
 
     if (!loadFromJson(request, httpRequest.getBody())) {
       return;
@@ -439,8 +439,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-    COMMAND_RPC_GET_TRANSACTIONS::request request;
-    COMMAND_RPC_GET_TRANSACTIONS::response response;
+    CORE_RPC_COMMAND_GET_TRANSACTIONS::request request;
+    CORE_RPC_COMMAND_GET_TRANSACTIONS::response response;
 
     if (!loadFromJson(request, httpRequest.getBody())) {
       return;
@@ -458,8 +458,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-    COMMAND_RPC_GET_TRANSACTION_FEE::request request;
-    COMMAND_RPC_GET_TRANSACTION_FEE::response response;
+    CORE_RPC_COMMAND_GET_TRANSACTION_FEE::request request;
+    CORE_RPC_COMMAND_GET_TRANSACTION_FEE::response response;
 
     if (!loadFromJson(request, httpRequest.getBody())) {
       return;
@@ -470,8 +470,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
   }
   else if (url == "/get_white_peerlist")
   {
-    COMMAND_RPC_GET_WHITE_PEERLIST::request request;
-    COMMAND_RPC_GET_WHITE_PEERLIST::response response;
+    CORE_RPC_COMMAND_GET_WHITE_PEERLIST::request request;
+    CORE_RPC_COMMAND_GET_WHITE_PEERLIST::response response;
 
     if (!loadFromJson(request, httpRequest.getBody())) {
       return;
@@ -482,8 +482,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
   }
   else if (url == "/get_white_peerlist_size")
   {
-    COMMAND_RPC_GET_WHITE_PEERLIST_SIZE::request request;
-    COMMAND_RPC_GET_WHITE_PEERLIST_SIZE::response response;
+    CORE_RPC_COMMAND_GET_WHITE_PEERLIST_SIZE::request request;
+    CORE_RPC_COMMAND_GET_WHITE_PEERLIST_SIZE::response response;
 
     if (!loadFromJson(request, httpRequest.getBody())) {
       return;
@@ -504,8 +504,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
 
       if (jsonRequest.getMethod() == "check_payment")
       {
-        COMMAND_RPC_CHECK_PAYMENT::request request;
-        COMMAND_RPC_CHECK_PAYMENT::response response;
+        CORE_RPC_COMMAND_CHECK_PAYMENT::request request;
+        CORE_RPC_COMMAND_CHECK_PAYMENT::response response;
 
         if (!jsonRequest.loadParams(request)) {
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
@@ -517,8 +517,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       }
       else if (jsonRequest.getMethod() == "get_block")
       {
-        COMMAND_RPC_GET_BLOCK::request request;
-        COMMAND_RPC_GET_BLOCK::response response;
+        CORE_RPC_COMMAND_GET_BLOCK::request request;
+        CORE_RPC_COMMAND_GET_BLOCK::response response;
 
         if (!jsonRequest.loadParams(request)) {
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
@@ -530,8 +530,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       }
       else if (jsonRequest.getMethod() == "get_block_count")
       {
-        COMMAND_RPC_GET_BLOCK_COUNT::request request;
-        COMMAND_RPC_GET_BLOCK_COUNT::response response;
+        CORE_RPC_COMMAND_GET_BLOCK_COUNT::request request;
+        CORE_RPC_COMMAND_GET_BLOCK_COUNT::response response;
 
         if (!jsonRequest.loadParams(request)) {
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
@@ -543,8 +543,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       }
       else if (jsonRequest.getMethod() == "get_block_hash")
       {
-        COMMAND_RPC_GET_BLOCK_HASH::request request;
-        COMMAND_RPC_GET_BLOCK_HASH::response response;
+        CORE_RPC_COMMAND_GET_BLOCK_HASH::request request;
+        CORE_RPC_COMMAND_GET_BLOCK_HASH::response response;
 
         if (!jsonRequest.loadParams(request)) {
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
@@ -556,8 +556,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       }      
       else if (jsonRequest.getMethod() == "get_block_header_by_hash")
       {
-        COMMAND_RPC_GET_BLOCK_HEADER_BY_HASH::request request;
-        COMMAND_RPC_GET_BLOCK_HEADER_BY_HASH::response response;
+        CORE_RPC_COMMAND_GET_BLOCK_HEADER_BY_HASH::request request;
+        CORE_RPC_COMMAND_GET_BLOCK_HEADER_BY_HASH::response response;
 
         if (!jsonRequest.loadParams(request)) {
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
@@ -569,8 +569,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       }
       else if (jsonRequest.getMethod() == "get_block_header_by_height")
       {
-        COMMAND_RPC_GET_BLOCK_HEADER_BY_HEIGHT::request request;
-        COMMAND_RPC_GET_BLOCK_HEADER_BY_HEIGHT::response response;
+        CORE_RPC_COMMAND_GET_BLOCK_HEADER_BY_HEIGHT::request request;
+        CORE_RPC_COMMAND_GET_BLOCK_HEADER_BY_HEIGHT::response response;
 
         if (!jsonRequest.loadParams(request)) {
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
@@ -582,8 +582,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       }
       else if (jsonRequest.getMethod() == "get_block_template")
       {
-        COMMAND_RPC_GET_BLOCK_TEMPLATE::request request;
-        COMMAND_RPC_GET_BLOCK_TEMPLATE::response response;
+        CORE_RPC_COMMAND_GET_BLOCK_TEMPLATE::request request;
+        CORE_RPC_COMMAND_GET_BLOCK_TEMPLATE::response response;
 
         if (!jsonRequest.loadParams(request)) {
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
@@ -595,8 +595,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       }
       else if (jsonRequest.getMethod() == "get_blocks")
       {
-        COMMAND_RPC_GET_BLOCKS_JSON::request request;
-        COMMAND_RPC_GET_BLOCKS_JSON::response response;
+        CORE_RPC_COMMAND_GET_BLOCKS_JSON::request request;
+        CORE_RPC_COMMAND_GET_BLOCKS_JSON::response response;
 
         if (!jsonRequest.loadParams(request)) {
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
@@ -608,8 +608,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       }
       else if (jsonRequest.getMethod() == "get_currency_id")
       {
-        COMMAND_RPC_GET_CURRENCY_ID::request request;
-        COMMAND_RPC_GET_CURRENCY_ID::response response;
+        CORE_RPC_COMMAND_GET_CURRENCY_ID::request request;
+        CORE_RPC_COMMAND_GET_CURRENCY_ID::response response;
 
         m_daemonRpcCommands.get_currency_id(request, response);
 
@@ -617,8 +617,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       }
       else if (jsonRequest.getMethod() == "get_last_block_header")
       {
-        COMMAND_RPC_GET_LAST_BLOCK_HEADER::request request;
-        COMMAND_RPC_GET_LAST_BLOCK_HEADER::response response;
+        CORE_RPC_COMMAND_GET_LAST_BLOCK_HEADER::request request;
+        CORE_RPC_COMMAND_GET_LAST_BLOCK_HEADER::response response;
 
         m_daemonRpcCommands.get_last_block_header(request, response);
 
@@ -626,8 +626,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       }
       else if (jsonRequest.getMethod() == "get_mempool")
       {
-        COMMAND_RPC_GET_MEMPOOL::request request;
-        COMMAND_RPC_GET_MEMPOOL::response response;
+        CORE_RPC_COMMAND_GET_MEMPOOL::request request;
+        CORE_RPC_COMMAND_GET_MEMPOOL::response response;
 
         m_daemonRpcCommands.get_mempool(request, response);
 
@@ -635,8 +635,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       }
       else if (jsonRequest.getMethod() == "get_transaction")
       {
-        COMMAND_RPC_GET_TRANSACTION::request request;
-        COMMAND_RPC_GET_TRANSACTION::response response;
+        CORE_RPC_COMMAND_GET_TRANSACTION::request request;
+        CORE_RPC_COMMAND_GET_TRANSACTION::response response;
 
         if (!jsonRequest.loadParams(request)) {
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
@@ -648,8 +648,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       }
       else if (jsonRequest.getMethod() == "submit_block")
       {
-        COMMAND_RPC_SUBMIT_BLOCK::request request;
-        COMMAND_RPC_SUBMIT_BLOCK::response response;
+        CORE_RPC_COMMAND_SUBMIT_BLOCK::request request;
+        CORE_RPC_COMMAND_SUBMIT_BLOCK::response response;
 
         if (!jsonRequest.loadParams(request)) {
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
@@ -661,8 +661,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       }
       else if (jsonRequest.getMethod() == "validate_address")
       {
-        COMMAND_RPC_VALIDATE_ADDRESS::request request;
-        COMMAND_RPC_VALIDATE_ADDRESS::response response;
+        CORE_RPC_COMMAND_VALIDATE_ADDRESS::request request;
+        CORE_RPC_COMMAND_VALIDATE_ADDRESS::response response;
 
         if (!jsonRequest.loadParams(request)) {
           throw JsonRpc::JsonRpcError(JsonRpc::errInvalidParams);
@@ -694,8 +694,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
       return;
     }
 
-    COMMAND_RPC_SEND_RAW_TX::request request;
-    COMMAND_RPC_SEND_RAW_TX::response response;
+    CORE_RPC_COMMAND_SEND_RAW_TX::request request;
+    CORE_RPC_COMMAND_SEND_RAW_TX::response response;
 
     if (!loadFromJson(request, httpRequest.getBody())) {
       return;
@@ -706,8 +706,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
   }
   else if (url == "/start_mining")
   {
-    COMMAND_RPC_START_MINING::request request;
-    COMMAND_RPC_START_MINING::response response;
+    CORE_RPC_COMMAND_START_MINING::request request;
+    CORE_RPC_COMMAND_START_MINING::response response;
 
     if (m_restricted_rpc) {
       response.status = CORE_RPC_STATUS_FAILED_RESTRICTED;
@@ -731,8 +731,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
   }
   else if (url == "/stop_mining")
   {
-    COMMAND_RPC_STOP_MINING::request request;
-    COMMAND_RPC_STOP_MINING::response response;
+    CORE_RPC_COMMAND_STOP_MINING::request request;
+    CORE_RPC_COMMAND_STOP_MINING::response response;
 
     if (m_restricted_rpc) {
       response.status = CORE_RPC_STATUS_FAILED_RESTRICTED;
@@ -756,8 +756,8 @@ void DaemonRpcServer::processRequest(const HttpRequest& httpRequest, HttpRespons
   }
   else if (url == "/stop_daemon")
   {
-    COMMAND_RPC_STOP_DAEMON::request request;
-    COMMAND_RPC_STOP_DAEMON::response response;
+    CORE_RPC_COMMAND_STOP_DAEMON::request request;
+    CORE_RPC_COMMAND_STOP_DAEMON::response response;
 
     if (m_restricted_rpc) {
       response.status = CORE_RPC_STATUS_FAILED_RESTRICTED;

@@ -42,13 +42,13 @@ bool GetRandomOutputs::generate(std::vector<test_event_entry>& events) const {
   return true;
 }
 
-bool GetRandomOutputs::request(CryptoNote::Core& c, uint64_t amount, size_t mixin, CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response& resp) {
-  CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request req;
+bool GetRandomOutputs::request(CryptoNote::Core& c, uint64_t amount, size_t mixin, CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response& resp) {
+  CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request req;
 
   req.amounts.push_back(amount);
   req.outs_count = mixin;
 
-  resp = boost::value_initialized<CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response>();
+  resp = boost::value_initialized<CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response>();
 
   return c.get_random_outs_for_amounts(req, resp);
 }
@@ -56,7 +56,7 @@ bool GetRandomOutputs::request(CryptoNote::Core& c, uint64_t amount, size_t mixi
 #define CHECK(cond) if((cond) == false) { LOG_ERROR("Condition "#cond" failed"); return false; }
 
 bool GetRandomOutputs::checkHalfUnlocked(CryptoNote::Core& c, size_t ev_index, const std::vector<test_event_entry>& events) {
-  CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response resp;
+  CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response resp;
 
   auto amount = MK_COINS(1);
   auto unlocked = m_currency.minedMoneyUnlockWindow() / 2 + 1;
@@ -80,7 +80,7 @@ bool GetRandomOutputs::checkHalfUnlocked(CryptoNote::Core& c, size_t ev_index, c
 }
 
 bool GetRandomOutputs::checkFullyUnlocked(CryptoNote::Core& c, size_t ev_index, const std::vector<test_event_entry>& events) {
-  CryptoNote::COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response resp;
+  CryptoNote::CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response resp;
 
   auto amount = MK_COINS(1);
   auto unlocked = m_currency.minedMoneyUnlockWindow() + 1;

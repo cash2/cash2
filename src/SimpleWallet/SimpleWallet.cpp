@@ -1281,7 +1281,7 @@ bool simple_wallet::reset(const std::vector<std::string> &args) {
 }
 
 bool simple_wallet::start_mining(const std::vector<std::string>& args) {
-  COMMAND_RPC_START_MINING::request req;
+  CORE_RPC_COMMAND_START_MINING::request req;
   req.miner_address = m_wallet->getAddress();
 
   bool ok = true;
@@ -1304,7 +1304,7 @@ bool simple_wallet::start_mining(const std::vector<std::string>& args) {
   }
 
 
-  COMMAND_RPC_START_MINING::response res;
+  CORE_RPC_COMMAND_START_MINING::response res;
 
   try {
     HttpClient httpClient(m_dispatcher, m_daemon_host, m_daemon_port);
@@ -1328,8 +1328,8 @@ bool simple_wallet::start_mining(const std::vector<std::string>& args) {
 //----------------------------------------------------------------------------------------------------
 bool simple_wallet::stop_mining(const std::vector<std::string>& args)
 {
-  COMMAND_RPC_STOP_MINING::request req;
-  COMMAND_RPC_STOP_MINING::response res;
+  CORE_RPC_COMMAND_STOP_MINING::request req;
+  CORE_RPC_COMMAND_STOP_MINING::response res;
 
   try {
     HttpClient httpClient(m_dispatcher, m_daemon_host, m_daemon_port);

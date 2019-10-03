@@ -19,8 +19,8 @@
 
 namespace CryptoNote {
 
-struct COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request;
-struct COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response;
+struct CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request;
+struct CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response;
 struct NOTIFY_REQUEST_GET_OBJECTS_request;
 struct NOTIFY_RESPONSE_GET_OBJECTS_request;
 
@@ -78,7 +78,7 @@ public:
   virtual void get_blockchain_top(uint32_t& height, Crypto::Hash& top_id) = 0;
   virtual uint32_t get_current_blockchain_height() = 0;
   virtual i_cryptonote_protocol* get_protocol() = 0;
-  virtual bool get_random_outs_for_amounts(const COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request& req, COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response& res) = 0;
+  virtual bool get_random_outs_for_amounts(const CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request& req, CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response& res) = 0;
   virtual bool get_stat_info(core_stat_info& st_inf) = 0;
   virtual bool get_tx_outputs_gindexes(const Crypto::Hash& tx_id, std::vector<uint32_t>& indexes) = 0;
   virtual bool handleIncomingTransaction(const Transaction& tx, const Crypto::Hash& txHash, size_t blobSize, tx_verification_context& tvc, bool keptByBlock, uint32_t blockHeight) = 0;

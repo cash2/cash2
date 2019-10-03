@@ -59,7 +59,7 @@ public:
   virtual bool getTransactionsByPaymentId(const Crypto::Hash& paymentId, std::vector<Transaction>& transactions) override;
   virtual void get_blockchain_top(uint32_t& height, Crypto::Hash& top_id) override;
   virtual uint32_t get_current_blockchain_height() override;
-  virtual bool get_random_outs_for_amounts(const COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request& req, COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response& res) override;
+  virtual bool get_random_outs_for_amounts(const CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request& req, CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response& res) override;
   virtual bool get_tx_outputs_gindexes(const Crypto::Hash& tx_id, std::vector<uint32_t>& indexes) override;
   virtual bool handle_block_found(Block& b) override;
   virtual bool handle_get_objects(NOTIFY_REQUEST_GET_OBJECTS_request& arg, NOTIFY_RESPONSE_GET_OBJECTS_request& rsp) override; //Deprecated. Should be removed with CryptoNoteProtocolHandler.

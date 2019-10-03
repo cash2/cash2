@@ -285,7 +285,7 @@ uint32_t Core::get_current_blockchain_height() {
   return m_blockchain.getCurrentBlockchainHeight();
 }
 
-bool Core::get_random_outs_for_amounts(const COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request& req, COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response& res) {
+bool Core::get_random_outs_for_amounts(const CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_request& req, CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS_response& res) {
   return m_blockchain.getRandomOutsByAmount(req, res);
 }
 

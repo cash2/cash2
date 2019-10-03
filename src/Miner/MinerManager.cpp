@@ -183,10 +183,10 @@ bool MinerManager::submitBlock(const Block& minedBlock, const std::string& daemo
   try {
     HttpClient client(m_dispatcher, daemonHost, daemonPort);
 
-    COMMAND_RPC_SUBMIT_BLOCK::request request;
+    CORE_RPC_COMMAND_SUBMIT_BLOCK::request request;
     request.emplace_back(Common::toHex(toBinaryArray(minedBlock)));
 
-    COMMAND_RPC_SUBMIT_BLOCK::response response;
+    CORE_RPC_COMMAND_SUBMIT_BLOCK::response response;
 
     System::EventLock lk(m_httpEvent);
     JsonRpc::invokeJsonRpcCommand(client, "submit_block", request, response);
@@ -203,11 +203,11 @@ BlockMiningParameters MinerManager::requestMiningParameters(System::Dispatcher& 
   try {
     HttpClient client(dispatcher, daemonHost, daemonPort);
 
-    COMMAND_RPC_GET_BLOCK_TEMPLATE::request request;
+    CORE_RPC_COMMAND_GET_BLOCK_TEMPLATE::request request;
     request.wallet_address = miningAddress;
     request.reserve_size = 0;
 
-    COMMAND_RPC_GET_BLOCK_TEMPLATE::response response;
+    CORE_RPC_COMMAND_GET_BLOCK_TEMPLATE::response response;
 
     System::EventLock lk(m_httpEvent);
     JsonRpc::invokeJsonRpcCommand(client, "get_block_template", request, response);

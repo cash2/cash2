@@ -145,7 +145,7 @@ void WalletTransactionSender::sendTransactionRandomOutsByAmount(std::shared_ptr<
   }
 
   auto scanty_it = std::find_if(context->outs.begin(), context->outs.end(), 
-    [&] (COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount& out) {return out.outs.size() < context->mixIn;});
+    [&] (CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount& out) {return out.outs.size() < context->mixIn;});
 
   if (scanty_it != context->outs.end()) {
     events.push_back(makeCompleteEvent(m_transactionsCache, context->transactionId, make_error_code(error::MIXIN_COUNT_TOO_BIG)));
@@ -250,7 +250,7 @@ void WalletTransactionSender::digitSplitStrategy(TransferId firstTransferId, siz
 
 void WalletTransactionSender::prepareInputs(
   const std::list<TransactionOutputInformation>& selectedTransfers,
-  std::vector<COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& outs,
+  std::vector<CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& outs,
   std::vector<TransactionSourceEntry>& sources, uint64_t mixIn) {
 
   size_t i = 0;
@@ -264,7 +264,7 @@ void WalletTransactionSender::prepareInputs(
     //paste mixin transaction
     if(outs.size()) {
       std::sort(outs[i].outs.begin(), outs[i].outs.end(),
-        [](const COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::out_entry& a, const COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::out_entry& b){return a.global_amount_index < b.global_amount_index;});
+        [](const CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::out_entry& a, const CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::out_entry& b){return a.global_amount_index < b.global_amount_index;});
       for (auto& daemon_oe: outs[i].outs) {
         if(td.globalOutputIndex == daemon_oe.global_amount_index)
           continue;

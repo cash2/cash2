@@ -30,7 +30,7 @@ DaemonRpcCommands::DaemonRpcCommands(Logging::ILogger& log, Core& core, NodeServ
   m_cryptoNoteProtocolQuery(cryptoNoteProtocolQuery) {
 }
 
-bool DaemonRpcCommands::check_payment(const COMMAND_RPC_CHECK_PAYMENT::request& request, COMMAND_RPC_CHECK_PAYMENT::response& response) {
+bool DaemonRpcCommands::check_payment(const CORE_RPC_COMMAND_CHECK_PAYMENT::request& request, CORE_RPC_COMMAND_CHECK_PAYMENT::response& response) {
 	// parse transaction hash
 	Crypto::Hash transactionHash;
 	if (!parse_hash256(request.transaction_id, transactionHash)) {
@@ -145,7 +145,7 @@ bool DaemonRpcCommands::getRingSignatureSize(const Transaction& transaction, uin
   return true;
 }
 
-bool DaemonRpcCommands::get_block(const COMMAND_RPC_GET_BLOCK::request& request, COMMAND_RPC_GET_BLOCK::response& response) {
+bool DaemonRpcCommands::get_block(const CORE_RPC_COMMAND_GET_BLOCK::request& request, CORE_RPC_COMMAND_GET_BLOCK::response& response) {
 
   // Get the block hash
   // User can provide a block height or a block hash in the request
@@ -273,13 +273,13 @@ bool DaemonRpcCommands::get_block(const COMMAND_RPC_GET_BLOCK::request& request,
   return true;
 }
 
-bool DaemonRpcCommands::get_block_count(const COMMAND_RPC_GET_BLOCK_COUNT::request& request, COMMAND_RPC_GET_BLOCK_COUNT::response& response) {
+bool DaemonRpcCommands::get_block_count(const CORE_RPC_COMMAND_GET_BLOCK_COUNT::request& request, CORE_RPC_COMMAND_GET_BLOCK_COUNT::response& response) {
   response.count = m_core.get_current_blockchain_height();
   response.status = CORE_RPC_STATUS_OK;
   return true;
 }
 
-bool DaemonRpcCommands::get_block_hash(const COMMAND_RPC_GET_BLOCK_HASH::request& request, COMMAND_RPC_GET_BLOCK_HASH::response& response) {
+bool DaemonRpcCommands::get_block_hash(const CORE_RPC_COMMAND_GET_BLOCK_HASH::request& request, CORE_RPC_COMMAND_GET_BLOCK_HASH::response& response) {
   if (request.size() != 1) {
     throw JsonRpc::JsonRpcError{ CORE_RPC_ERROR_CODE_WRONG_PARAM, "Wrong parameters, expected height" };
   }
@@ -295,7 +295,7 @@ bool DaemonRpcCommands::get_block_hash(const COMMAND_RPC_GET_BLOCK_HASH::request
   return true;
 }
 
-bool DaemonRpcCommands::get_block_header_by_hash(const COMMAND_RPC_GET_BLOCK_HEADER_BY_HASH::request& request, COMMAND_RPC_GET_BLOCK_HEADER_BY_HASH::response& response) {
+bool DaemonRpcCommands::get_block_header_by_hash(const CORE_RPC_COMMAND_GET_BLOCK_HEADER_BY_HASH::request& request, CORE_RPC_COMMAND_GET_BLOCK_HEADER_BY_HASH::response& response) {
   Crypto::Hash blockHash;
 
   if (!parse_hash256(request.hash, blockHash)) {
@@ -323,7 +323,7 @@ bool DaemonRpcCommands::get_block_header_by_hash(const COMMAND_RPC_GET_BLOCK_HEA
   return true;
 }
 
-bool DaemonRpcCommands::get_block_header_by_height(const COMMAND_RPC_GET_BLOCK_HEADER_BY_HEIGHT::request& request, COMMAND_RPC_GET_BLOCK_HEADER_BY_HEIGHT::response& response) {
+bool DaemonRpcCommands::get_block_header_by_height(const CORE_RPC_COMMAND_GET_BLOCK_HEADER_BY_HEIGHT::request& request, CORE_RPC_COMMAND_GET_BLOCK_HEADER_BY_HEIGHT::response& response) {
 
   if (request.height == 0) {
     throw JsonRpc::JsonRpcError{ CORE_RPC_ERROR_CODE_TOO_SMALL_HEIGHT, std::string("Height must be greater than 0") };
@@ -374,7 +374,7 @@ uint64_t slow_memmem(void* start_buff, size_t buflen, void* pat, size_t patlen)
 
 }
 
-bool DaemonRpcCommands::get_block_template(const COMMAND_RPC_GET_BLOCK_TEMPLATE::request& request, COMMAND_RPC_GET_BLOCK_TEMPLATE::response& response) {
+bool DaemonRpcCommands::get_block_template(const CORE_RPC_COMMAND_GET_BLOCK_TEMPLATE::request& request, CORE_RPC_COMMAND_GET_BLOCK_TEMPLATE::response& response) {
   if (request.reserve_size > TX_EXTRA_NONCE_MAX_COUNT) {
     throw JsonRpc::JsonRpcError{ CORE_RPC_ERROR_CODE_TOO_BIG_RESERVE_SIZE, "Reserved size is too big, maximum 60" };
   }
@@ -440,7 +440,7 @@ bool DaemonRpcCommands::get_block_template(const COMMAND_RPC_GET_BLOCK_TEMPLATE:
   return true;
 }
 
-bool DaemonRpcCommands::get_blocks(const COMMAND_RPC_GET_BLOCKS_FAST::request& request, COMMAND_RPC_GET_BLOCKS_FAST::response& response) {
+bool DaemonRpcCommands::get_blocks(const CORE_RPC_COMMAND_GET_BLOCKS_FAST::request& request, CORE_RPC_COMMAND_GET_BLOCKS_FAST::response& response) {
   // TODO code duplication see InProcessNode::doGetNewBlocks()
   if (request.block_ids.empty()) {
     response.status = CORE_RPC_STATUS_FAILED;
@@ -454,7 +454,7 @@ bool DaemonRpcCommands::get_blocks(const COMMAND_RPC_GET_BLOCKS_FAST::request& r
 
   uint32_t totalBlockCount;
   uint32_t startBlockIndex;
-  std::vector<Crypto::Hash> supplement = m_core.findBlockchainSupplement(request.block_ids, COMMAND_RPC_GET_BLOCKS_FAST_MAX_COUNT, totalBlockCount, startBlockIndex);
+  std::vector<Crypto::Hash> supplement = m_core.findBlockchainSupplement(request.block_ids, CORE_RPC_COMMAND_GET_BLOCKS_FAST_MAX_COUNT, totalBlockCount, startBlockIndex);
 
   response.current_height = totalBlockCount;
   response.start_height = startBlockIndex;
@@ -477,7 +477,7 @@ bool DaemonRpcCommands::get_blocks(const COMMAND_RPC_GET_BLOCKS_FAST::request& r
   return true;
 }
 
-bool DaemonRpcCommands::get_blocks_json(const COMMAND_RPC_GET_BLOCKS_JSON::request& request, COMMAND_RPC_GET_BLOCKS_JSON::response& response) {
+bool DaemonRpcCommands::get_blocks_json(const CORE_RPC_COMMAND_GET_BLOCKS_JSON::request& request, CORE_RPC_COMMAND_GET_BLOCKS_JSON::response& response) {
   if (request.height == 0) {
     throw JsonRpc::JsonRpcError{ CORE_RPC_ERROR_CODE_TOO_SMALL_HEIGHT, std::string("Height must be greater than 0") };
   }
@@ -531,37 +531,37 @@ bool DaemonRpcCommands::get_blocks_json(const COMMAND_RPC_GET_BLOCKS_JSON::reque
   return true;
 }
 
-bool DaemonRpcCommands::get_circulating_supply(const COMMAND_RPC_GET_CIRCULATING_SUPPLY::request& request, COMMAND_RPC_GET_CIRCULATING_SUPPLY::response& response) {
+bool DaemonRpcCommands::get_circulating_supply(const CORE_RPC_COMMAND_GET_CIRCULATING_SUPPLY::request& request, CORE_RPC_COMMAND_GET_CIRCULATING_SUPPLY::response& response) {
   response.circulating_supply = m_core.currency().formatAmount(m_core.getTotalGeneratedAmount());
   response.status = CORE_RPC_STATUS_OK;
   return true;
 }
 
-bool DaemonRpcCommands::get_connections(const COMMAND_RPC_GET_CONNECTIONS::request& request, COMMAND_RPC_GET_CONNECTIONS::response& response) {
+bool DaemonRpcCommands::get_connections(const CORE_RPC_COMMAND_GET_CONNECTIONS::request& request, CORE_RPC_COMMAND_GET_CONNECTIONS::response& response) {
   m_nodeServer.get_payload_object().get_all_connections_addresses(response.connections);
   response.status = CORE_RPC_STATUS_OK;
   return true;
 }
 
-bool DaemonRpcCommands::get_connections_count(const COMMAND_RPC_GET_CONNECTIONS_COUNT::request& request, COMMAND_RPC_GET_CONNECTIONS_COUNT::response& response) {
+bool DaemonRpcCommands::get_connections_count(const CORE_RPC_COMMAND_GET_CONNECTIONS_COUNT::request& request, CORE_RPC_COMMAND_GET_CONNECTIONS_COUNT::response& response) {
   response.connections_count = m_nodeServer.get_connections_count();
   response.status = CORE_RPC_STATUS_OK;
   return true;
 }
 
-bool DaemonRpcCommands::get_currency_id(const COMMAND_RPC_GET_CURRENCY_ID::request& request, COMMAND_RPC_GET_CURRENCY_ID::response& response) {
+bool DaemonRpcCommands::get_currency_id(const CORE_RPC_COMMAND_GET_CURRENCY_ID::request& request, CORE_RPC_COMMAND_GET_CURRENCY_ID::response& response) {
   Crypto::Hash genesisBlockHash = m_core.currency().genesisBlockHash();
   response.currency_id_blob = Common::podToHex(genesisBlockHash);
   return true;
 }
 
-bool DaemonRpcCommands::get_difficulty(const COMMAND_RPC_GET_DIFFICULTY::request& request, COMMAND_RPC_GET_DIFFICULTY::response& response) {
+bool DaemonRpcCommands::get_difficulty(const CORE_RPC_COMMAND_GET_DIFFICULTY::request& request, CORE_RPC_COMMAND_GET_DIFFICULTY::response& response) {
   response.difficulty = m_core.getNextBlockDifficulty();
   response.status = CORE_RPC_STATUS_OK;
   return true;
 }
 
-bool DaemonRpcCommands::get_grey_peerlist(const COMMAND_RPC_GET_GREY_PEERLIST::request& request, COMMAND_RPC_GET_GREY_PEERLIST::response& response) {
+bool DaemonRpcCommands::get_grey_peerlist(const CORE_RPC_COMMAND_GET_GREY_PEERLIST::request& request, CORE_RPC_COMMAND_GET_GREY_PEERLIST::response& response) {
   std::list<PeerlistEntry> greyPeerlist;
   std::list<PeerlistEntry> whitePeerlistIgnore;
 
@@ -576,25 +576,25 @@ bool DaemonRpcCommands::get_grey_peerlist(const COMMAND_RPC_GET_GREY_PEERLIST::r
   return true;
 }
 
-bool DaemonRpcCommands::get_grey_peerlist_size(const COMMAND_RPC_GET_GREY_PEERLIST_SIZE::request& request, COMMAND_RPC_GET_GREY_PEERLIST_SIZE::response& response) {
+bool DaemonRpcCommands::get_grey_peerlist_size(const CORE_RPC_COMMAND_GET_GREY_PEERLIST_SIZE::request& request, CORE_RPC_COMMAND_GET_GREY_PEERLIST_SIZE::response& response) {
   response.grey_peerlist_size = m_nodeServer.getPeerlistManager().get_gray_peers_count();
   response.status = CORE_RPC_STATUS_OK;
   return true;
 }
 
-bool DaemonRpcCommands::get_height(const COMMAND_RPC_GET_HEIGHT::request& request, COMMAND_RPC_GET_HEIGHT::response& response) {
+bool DaemonRpcCommands::get_height(const CORE_RPC_COMMAND_GET_HEIGHT::request& request, CORE_RPC_COMMAND_GET_HEIGHT::response& response) {
   response.height = m_core.get_current_blockchain_height();
   response.status = CORE_RPC_STATUS_OK;
   return true;
 }
 
-bool DaemonRpcCommands::get_incoming_connections(const COMMAND_RPC_GET_INCOMING_CONNECTIONS::request& request, COMMAND_RPC_GET_INCOMING_CONNECTIONS::response& response) {
+bool DaemonRpcCommands::get_incoming_connections(const CORE_RPC_COMMAND_GET_INCOMING_CONNECTIONS::request& request, CORE_RPC_COMMAND_GET_INCOMING_CONNECTIONS::response& response) {
   m_nodeServer.get_payload_object().get_incoming_connections_addresses(response.incoming_connections);
   response.status = CORE_RPC_STATUS_OK;
   return true;
 }
 
-bool DaemonRpcCommands::get_incoming_connections_count(const COMMAND_RPC_GET_INCOMING_CONNECTIONS_COUNT::request& request, COMMAND_RPC_GET_INCOMING_CONNECTIONS_COUNT::response& response) {
+bool DaemonRpcCommands::get_incoming_connections_count(const CORE_RPC_COMMAND_GET_INCOMING_CONNECTIONS_COUNT::request& request, CORE_RPC_COMMAND_GET_INCOMING_CONNECTIONS_COUNT::response& response) {
   uint64_t totalConnections = m_nodeServer.get_connections_count();
   size_t outgoingConnectionsCount = m_nodeServer.get_outgoing_connections_count();
   response.incoming_connections_count = totalConnections - outgoingConnectionsCount;
@@ -602,7 +602,7 @@ bool DaemonRpcCommands::get_incoming_connections_count(const COMMAND_RPC_GET_INC
   return true;
 }
 
-bool DaemonRpcCommands::get_indexes(const COMMAND_RPC_GET_TX_GLOBAL_OUTPUTS_INDEXES::request& request, COMMAND_RPC_GET_TX_GLOBAL_OUTPUTS_INDEXES::response& response) {
+bool DaemonRpcCommands::get_indexes(const CORE_RPC_COMMAND_GET_TX_GLOBAL_OUTPUTS_INDEXES::request& request, CORE_RPC_COMMAND_GET_TX_GLOBAL_OUTPUTS_INDEXES::response& response) {
   std::vector<uint32_t> outputIndexes;
   if (!m_core.get_tx_outputs_gindexes(request.transaction_id, outputIndexes)) {
     response.status = CORE_RPC_STATUS_FAILED;
@@ -614,7 +614,7 @@ bool DaemonRpcCommands::get_indexes(const COMMAND_RPC_GET_TX_GLOBAL_OUTPUTS_INDE
   return true;
 }
 
-bool DaemonRpcCommands::get_info(const COMMAND_RPC_GET_INFO::request& request, COMMAND_RPC_GET_INFO::response& response) {
+bool DaemonRpcCommands::get_info(const CORE_RPC_COMMAND_GET_INFO::request& request, CORE_RPC_COMMAND_GET_INFO::response& response) {
   response.height = m_core.get_current_blockchain_height();
   response.difficulty = m_core.getNextBlockDifficulty();
   response.total_transactions_count = m_core.get_blockchain_total_transactions() - response.height; //without coinbase
@@ -635,7 +635,7 @@ bool DaemonRpcCommands::get_info(const COMMAND_RPC_GET_INFO::request& request, C
   return true;
 }
 
-bool DaemonRpcCommands::get_last_block_header(const COMMAND_RPC_GET_LAST_BLOCK_HEADER::request& request, COMMAND_RPC_GET_LAST_BLOCK_HEADER::response& response) {
+bool DaemonRpcCommands::get_last_block_header(const CORE_RPC_COMMAND_GET_LAST_BLOCK_HEADER::request& request, CORE_RPC_COMMAND_GET_LAST_BLOCK_HEADER::response& response) {
   uint32_t topBlockIndex;
   Crypto::Hash topBlockHash;
   
@@ -651,7 +651,7 @@ bool DaemonRpcCommands::get_last_block_header(const COMMAND_RPC_GET_LAST_BLOCK_H
   return true;
 }
 
-bool DaemonRpcCommands::get_mempool(const COMMAND_RPC_GET_MEMPOOL::request& request, COMMAND_RPC_GET_MEMPOOL::response& response) {
+bool DaemonRpcCommands::get_mempool(const CORE_RPC_COMMAND_GET_MEMPOOL::request& request, CORE_RPC_COMMAND_GET_MEMPOOL::response& response) {
   auto pool = m_core.getMemoryPool();
   for (const auto& transactionDetail : pool) {
     mempool_transaction_response mempool_transaction;
@@ -669,31 +669,31 @@ bool DaemonRpcCommands::get_mempool(const COMMAND_RPC_GET_MEMPOOL::request& requ
   return true;
 }
 
-bool DaemonRpcCommands::get_mempool_transactions_count(const COMMAND_RPC_GET_MEMPOOL_TRANSACTIONS_COUNT::request& request, COMMAND_RPC_GET_MEMPOOL_TRANSACTIONS_COUNT::response& response) {
+bool DaemonRpcCommands::get_mempool_transactions_count(const CORE_RPC_COMMAND_GET_MEMPOOL_TRANSACTIONS_COUNT::request& request, CORE_RPC_COMMAND_GET_MEMPOOL_TRANSACTIONS_COUNT::response& response) {
   response.mempool_transactions_count = m_core.get_pool_transactions_count();
   response.status = CORE_RPC_STATUS_OK;
   return true;
 }
 
-bool DaemonRpcCommands::get_orphan_blocks_count(const COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT::request& request, COMMAND_RPC_GET_ORPHAN_BLOCKS_COUNT::response& response) {
+bool DaemonRpcCommands::get_orphan_blocks_count(const CORE_RPC_COMMAND_GET_ORPHAN_BLOCKS_COUNT::request& request, CORE_RPC_COMMAND_GET_ORPHAN_BLOCKS_COUNT::response& response) {
   response.orphan_blocks_count = m_core.get_alternative_blocks_count();
   response.status = CORE_RPC_STATUS_OK;
   return true;
 }
 
-bool DaemonRpcCommands::get_outgoing_connections(const COMMAND_RPC_GET_OUTGOING_CONNECTIONS::request& request, COMMAND_RPC_GET_OUTGOING_CONNECTIONS::response& response) {
+bool DaemonRpcCommands::get_outgoing_connections(const CORE_RPC_COMMAND_GET_OUTGOING_CONNECTIONS::request& request, CORE_RPC_COMMAND_GET_OUTGOING_CONNECTIONS::response& response) {
   m_nodeServer.get_payload_object().get_outgoing_connections_addresses(response.outgoing_connections);
   response.status = CORE_RPC_STATUS_OK;
   return true;
 }
 
-bool DaemonRpcCommands::get_outgoing_connections_count(const COMMAND_RPC_GET_OUTGOING_CONNECTIONS_COUNT::request& request, COMMAND_RPC_GET_OUTGOING_CONNECTIONS_COUNT::response& response) {
+bool DaemonRpcCommands::get_outgoing_connections_count(const CORE_RPC_COMMAND_GET_OUTGOING_CONNECTIONS_COUNT::request& request, CORE_RPC_COMMAND_GET_OUTGOING_CONNECTIONS_COUNT::response& response) {
   response.outgoing_connections_count = m_nodeServer.get_outgoing_connections_count();
   response.status = CORE_RPC_STATUS_OK;
   return true;
 }
 
-bool DaemonRpcCommands::get_pool_changes(const COMMAND_RPC_GET_POOL_CHANGES::request& request, COMMAND_RPC_GET_POOL_CHANGES::response& response) {
+bool DaemonRpcCommands::get_pool_changes(const CORE_RPC_COMMAND_GET_POOL_CHANGES::request& request, CORE_RPC_COMMAND_GET_POOL_CHANGES::response& response) {
   response.status = CORE_RPC_STATUS_OK;
   std::vector<Transaction> addedTransactions;
   response.is_tail_block_actual = m_core.getPoolChanges(request.tail_block_id, request.known_txs_ids, addedTransactions, response.deleted_txs_ids);
@@ -711,13 +711,13 @@ bool DaemonRpcCommands::get_pool_changes(const COMMAND_RPC_GET_POOL_CHANGES::req
   return true;
 }
 
-bool DaemonRpcCommands::get_pool_changes_lite(const COMMAND_RPC_GET_POOL_CHANGES_LITE::request& request, COMMAND_RPC_GET_POOL_CHANGES_LITE::response& response) {
+bool DaemonRpcCommands::get_pool_changes_lite(const CORE_RPC_COMMAND_GET_POOL_CHANGES_LITE::request& request, CORE_RPC_COMMAND_GET_POOL_CHANGES_LITE::response& response) {
   response.status = CORE_RPC_STATUS_OK;
   response.is_tail_block_actual = m_core.getPoolChangesLite(request.tail_block_id, request.known_txs_ids, response.added_txs, response.deleted_txs_ids);
   return true;
 }
 
-bool DaemonRpcCommands::get_random_outs(const COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::request& request, COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::response& response) {
+bool DaemonRpcCommands::get_random_outs(const CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::request& request, CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::response& response) {
   response.status = CORE_RPC_STATUS_FAILED;
 
   if (!m_core.get_random_outs_for_amounts(request, response)) {
@@ -729,14 +729,14 @@ bool DaemonRpcCommands::get_random_outs(const COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR
   return true;
 }
 
-bool DaemonRpcCommands::get_total_transactions_count(const COMMAND_RPC_GET_TOTAL_TRANSACTIONS_COUNT::request& request, COMMAND_RPC_GET_TOTAL_TRANSACTIONS_COUNT::response& response) {
+bool DaemonRpcCommands::get_total_transactions_count(const CORE_RPC_COMMAND_GET_TOTAL_TRANSACTIONS_COUNT::request& request, CORE_RPC_COMMAND_GET_TOTAL_TRANSACTIONS_COUNT::response& response) {
   uint32_t numCoinbaseTransactions = m_core.get_current_blockchain_height();
   response.total_transactions_count = m_core.get_blockchain_total_transactions() - numCoinbaseTransactions;
   response.status = CORE_RPC_STATUS_OK;
   return true;
 }
 
-bool DaemonRpcCommands::get_transaction(const COMMAND_RPC_GET_TRANSACTION::request& request, COMMAND_RPC_GET_TRANSACTION::response& response) {
+bool DaemonRpcCommands::get_transaction(const CORE_RPC_COMMAND_GET_TRANSACTION::request& request, CORE_RPC_COMMAND_GET_TRANSACTION::response& response) {
   Crypto::Hash transactionHash;
 
   if (!parse_hash256(request.hash, transactionHash)) {
@@ -809,13 +809,13 @@ bool DaemonRpcCommands::get_transaction(const COMMAND_RPC_GET_TRANSACTION::reque
   return true;
 }
 
-bool DaemonRpcCommands::get_transaction_fee(const COMMAND_RPC_GET_TRANSACTION_FEE::request& request, COMMAND_RPC_GET_TRANSACTION_FEE::response& response) {
+bool DaemonRpcCommands::get_transaction_fee(const CORE_RPC_COMMAND_GET_TRANSACTION_FEE::request& request, CORE_RPC_COMMAND_GET_TRANSACTION_FEE::response& response) {
   response.transaction_fee = m_core.getMinimalFee();
   response.status = CORE_RPC_STATUS_OK;
   return true;
 }
 
-bool DaemonRpcCommands::get_transactions(const COMMAND_RPC_GET_TRANSACTIONS::request& request, COMMAND_RPC_GET_TRANSACTIONS::response& response) {
+bool DaemonRpcCommands::get_transactions(const CORE_RPC_COMMAND_GET_TRANSACTIONS::request& request, CORE_RPC_COMMAND_GET_TRANSACTIONS::response& response) {
   std::vector<Crypto::Hash> transactionHashes;
   for (const std::string& transactionHexString : request.txs_hashes) {
     BinaryArray transactionHexBlob;
@@ -851,7 +851,7 @@ bool DaemonRpcCommands::get_transactions(const COMMAND_RPC_GET_TRANSACTIONS::req
   return true;
 }
 
-bool DaemonRpcCommands::get_white_peerlist(const COMMAND_RPC_GET_WHITE_PEERLIST::request& request, COMMAND_RPC_GET_WHITE_PEERLIST::response& response) {
+bool DaemonRpcCommands::get_white_peerlist(const CORE_RPC_COMMAND_GET_WHITE_PEERLIST::request& request, CORE_RPC_COMMAND_GET_WHITE_PEERLIST::response& response) {
   std::list<PeerlistEntry> greyPeerlistIgnore;
   std::list<PeerlistEntry> whitePeerlist;
 
@@ -866,13 +866,13 @@ bool DaemonRpcCommands::get_white_peerlist(const COMMAND_RPC_GET_WHITE_PEERLIST:
   return true;
 }
 
-bool DaemonRpcCommands::get_white_peerlist_size(const COMMAND_RPC_GET_WHITE_PEERLIST_SIZE::request& request, COMMAND_RPC_GET_WHITE_PEERLIST_SIZE::response& response) {
+bool DaemonRpcCommands::get_white_peerlist_size(const CORE_RPC_COMMAND_GET_WHITE_PEERLIST_SIZE::request& request, CORE_RPC_COMMAND_GET_WHITE_PEERLIST_SIZE::response& response) {
   response.white_peerlist_size = m_nodeServer.getPeerlistManager().get_white_peers_count();
   response.status = CORE_RPC_STATUS_OK;
   return true;
 }
 
-bool DaemonRpcCommands::query_blocks(const COMMAND_RPC_QUERY_BLOCKS::request& request, COMMAND_RPC_QUERY_BLOCKS::response& response) {
+bool DaemonRpcCommands::query_blocks(const CORE_RPC_COMMAND_QUERY_BLOCKS::request& request, CORE_RPC_COMMAND_QUERY_BLOCKS::response& response) {
   uint32_t startHeight;
   uint32_t currentHeight;
   uint32_t fullOffset;
@@ -889,7 +889,7 @@ bool DaemonRpcCommands::query_blocks(const COMMAND_RPC_QUERY_BLOCKS::request& re
   return true;
 }
 
-bool DaemonRpcCommands::query_blocks_lite(const COMMAND_RPC_QUERY_BLOCKS_LITE::request& request, COMMAND_RPC_QUERY_BLOCKS_LITE::response& response) {
+bool DaemonRpcCommands::query_blocks_lite(const CORE_RPC_COMMAND_QUERY_BLOCKS_LITE::request& request, CORE_RPC_COMMAND_QUERY_BLOCKS_LITE::response& response) {
   uint32_t startHeight;
   uint32_t currentHeight;
   uint32_t fullOffset;
@@ -906,7 +906,7 @@ bool DaemonRpcCommands::query_blocks_lite(const COMMAND_RPC_QUERY_BLOCKS_LITE::r
   return true;
 }
 
-bool DaemonRpcCommands::send_raw_transaction(const COMMAND_RPC_SEND_RAW_TX::request& request, COMMAND_RPC_SEND_RAW_TX::response& response) {
+bool DaemonRpcCommands::send_raw_transaction(const CORE_RPC_COMMAND_SEND_RAW_TX::request& request, CORE_RPC_COMMAND_SEND_RAW_TX::response& response) {
   BinaryArray transactionBlob;
   if (!Common::fromHex(request.tx_as_hex, transactionBlob))
   {
@@ -947,7 +947,7 @@ bool DaemonRpcCommands::send_raw_transaction(const COMMAND_RPC_SEND_RAW_TX::requ
   return true;
 }
 
-bool DaemonRpcCommands::start_mining(const COMMAND_RPC_START_MINING::request& request, COMMAND_RPC_START_MINING::response& response) {
+bool DaemonRpcCommands::start_mining(const CORE_RPC_COMMAND_START_MINING::request& request, CORE_RPC_COMMAND_START_MINING::response& response) {
   AccountPublicAddress address;
   if (!m_core.currency().parseAccountAddressString(request.miner_address, address)) {
     response.status = "Failed, wrong address";
@@ -963,7 +963,7 @@ bool DaemonRpcCommands::start_mining(const COMMAND_RPC_START_MINING::request& re
   return true;
 }
 
-bool DaemonRpcCommands::stop_daemon(const COMMAND_RPC_STOP_DAEMON::request& request, COMMAND_RPC_STOP_DAEMON::response& response) {
+bool DaemonRpcCommands::stop_daemon(const CORE_RPC_COMMAND_STOP_DAEMON::request& request, CORE_RPC_COMMAND_STOP_DAEMON::response& response) {
   // Can only be called for testnet?
   if (m_core.currency().isTestnet()) {
     m_nodeServer.sendStopSignal();
@@ -976,7 +976,7 @@ bool DaemonRpcCommands::stop_daemon(const COMMAND_RPC_STOP_DAEMON::request& requ
   return true;
 }
 
-bool DaemonRpcCommands::stop_mining(const COMMAND_RPC_STOP_MINING::request& request, COMMAND_RPC_STOP_MINING::response& response) {
+bool DaemonRpcCommands::stop_mining(const CORE_RPC_COMMAND_STOP_MINING::request& request, CORE_RPC_COMMAND_STOP_MINING::response& response) {
   if (!m_core.get_miner().stop()) {
     response.status = CORE_RPC_STATUS_FAILED;
     return true;
@@ -986,7 +986,7 @@ bool DaemonRpcCommands::stop_mining(const COMMAND_RPC_STOP_MINING::request& requ
   return true;
 }
 
-bool DaemonRpcCommands::submit_block(const COMMAND_RPC_SUBMIT_BLOCK::request& request, COMMAND_RPC_SUBMIT_BLOCK::response& response) {
+bool DaemonRpcCommands::submit_block(const CORE_RPC_COMMAND_SUBMIT_BLOCK::request& request, CORE_RPC_COMMAND_SUBMIT_BLOCK::response& response) {
   if (request.size() != 1) {
     throw JsonRpc::JsonRpcError{ CORE_RPC_ERROR_CODE_WRONG_PARAM, "Wrong param" };
   }
@@ -1008,7 +1008,7 @@ bool DaemonRpcCommands::submit_block(const COMMAND_RPC_SUBMIT_BLOCK::request& re
   return true;
 }
 
-bool DaemonRpcCommands::validate_address(const COMMAND_RPC_VALIDATE_ADDRESS::request& request, COMMAND_RPC_VALIDATE_ADDRESS::response& response) {
+bool DaemonRpcCommands::validate_address(const CORE_RPC_COMMAND_VALIDATE_ADDRESS::request& request, CORE_RPC_COMMAND_VALIDATE_ADDRESS::response& response) {
 
 	try {
     CryptoNote::AccountPublicAddress publicKeysIgnore;
