@@ -23,8 +23,6 @@
 #include <boost/filesystem.hpp>
 #include <boost/optional/optional_io.hpp>
 
-#include "Common/CommandLine.h"
-#include "Common/SignalHandler.h"
 #include "Common/StringTools.h"
 #include "Common/PathTools.h"
 #include "Common/Util.h"
@@ -39,7 +37,6 @@
 #include "WalletLegacy/WalletLegacy.h"
 #include "Wallet/LegacyKeysImporter.h"
 #include "WalletLegacy/WalletHelper.h"
-
 #include "version.h"
 
 #include <Logging/LoggerManager.h>
@@ -59,15 +56,15 @@ namespace po = boost::program_options;
 
 namespace {
 
-const command_line::arg_descriptor<std::string> arg_wallet_file = { "wallet-file", "Use wallet <arg>", "" };
-const command_line::arg_descriptor<std::string> arg_generate_new_wallet = { "generate-new-wallet", "Generate new wallet and save it to <arg>", "" };
-const command_line::arg_descriptor<std::string> arg_daemon_address = { "daemon-address", "Use daemon instance at <host>:<port>", "" };
-const command_line::arg_descriptor<std::string> arg_daemon_host = { "daemon-host", "Use daemon instance at host <arg> instead of localhost", "" };
-const command_line::arg_descriptor<std::string> arg_password = { "password", "Wallet password", "", true };
-const command_line::arg_descriptor<uint16_t> arg_daemon_port = { "daemon-port", "Use daemon instance at port <arg> instead of 8081", 0 };
-const command_line::arg_descriptor<uint32_t> arg_log_level = { "set-log", "", INFO, true };
-const command_line::arg_descriptor<bool> arg_testnet = { "testnet", "Used to deploy test nets. The daemon must be launched with --testnet flag", false };
-const command_line::arg_descriptor< std::vector<std::string> > arg_command = { "command", "" };
+// const command_line::arg_descriptor<std::string> arg_wallet_file =             { "wallet-file", "Use wallet <arg>", "" };
+// const command_line::arg_descriptor<std::string> arg_generate_new_wallet =     { "generate-new-wallet", "Generate new wallet and save it to <arg>", "" };
+// const command_line::arg_descriptor<std::string> arg_daemon_address =          { "daemon-address", "Use daemon instance at <host>:<port>", "" };
+// const command_line::arg_descriptor<std::string> arg_daemon_host =             { "daemon-host", "Use daemon instance at host <arg> instead of localhost", "" };
+// const command_line::arg_descriptor<std::string> arg_password =                { "password", "Wallet password", "", true };
+// const command_line::arg_descriptor<uint16_t> arg_daemon_port =                { "daemon-port", "Use daemon instance at port <arg> instead of 8081", 0 };
+// const command_line::arg_descriptor<uint32_t> arg_log_level =                  { "set-log", "", INFO, true };
+// const command_line::arg_descriptor<bool> arg_testnet =                        { "testnet", "Used to deploy test nets. The daemon must be launched with --testnet flag", false };
+// const command_line::arg_descriptor< std::vector<std::string> > arg_command =  { "command", "" };
 
 
 bool parseUrlAddress(const std::string& url, std::string& address, uint16_t& port) {
@@ -242,25 +239,6 @@ struct TransferCommand {
     return true;
   }
 };
-
-JsonValue buildLoggerConfiguration(Level level, const std::string& logfile) {
-  JsonValue loggerConfiguration(JsonValue::OBJECT);
-  loggerConfiguration.insert("globalLevel", static_cast<int64_t>(level));
-
-  JsonValue& cfgLoggers = loggerConfiguration.insert("loggers", JsonValue::ARRAY);
-
-  JsonValue& consoleLogger = cfgLoggers.pushBack(JsonValue::OBJECT);
-  consoleLogger.insert("type", "console");
-  consoleLogger.insert("level", static_cast<int64_t>(TRACE));
-  consoleLogger.insert("pattern", "");
-
-  JsonValue& fileLogger = cfgLoggers.pushBack(JsonValue::OBJECT);
-  fileLogger.insert("type", "file");
-  fileLogger.insert("filename", logfile);
-  fileLogger.insert("level", static_cast<int64_t>(TRACE));
-
-  return loggerConfiguration;
-}
 
 std::error_code initAndLoadWallet(IWalletLegacy& wallet, std::istream& walletFile, const std::string& password) {
   WalletHelper::InitWalletResultObserver initObserver;
@@ -562,23 +540,24 @@ bool writeAddressFile(const std::string& addressFilename, const std::string& add
 
 }
 
-std::string simple_wallet::get_commands_str() {
+std::string SimpleWallet::get_commands_str() {
   std::stringstream ss;
   ss << ENDL << "SimpleWallet Commands" << ENDL << ENDL << m_consoleHandler.getUsage() << ENDL;
   return ss.str();
 }
 
-bool simple_wallet::help(const std::vector<std::string> &args/* = std::vector<std::string>()*/) {
+bool SimpleWallet::help(const std::vector<std::string> &args/* = std::vector<std::string>()*/) {
   std::cout << get_commands_str();
   return true;
 }
 
-bool simple_wallet::exit(const std::vector<std::string> &args) {
+bool SimpleWallet::exit(const std::vector<std::string> &args) {
   m_consoleHandler.requestStop();
   return true;
 }
 
-simple_wallet::simple_wallet(System::Dispatcher& dispatcher, const CryptoNote::Currency& currency, Logging::LoggerManager& log) :
+SimpleWallet::SimpleWallet(System::Dispatcher& dispatcher, const CryptoNote::Currency& currency, Logging::LoggerManager& log, SimpleWalletConfigurationOptions& simpleWalletConfigurationOptions) :
+  m_simpleWalletConfigurationOptions(simpleWalletConfigurationOptions),
   m_dispatcher(dispatcher),
   m_daemon_port(0), 
   m_currency(currency), 
@@ -587,27 +566,27 @@ simple_wallet::simple_wallet(System::Dispatcher& dispatcher, const CryptoNote::C
   m_refresh_progress_reporter(*this), 
   m_initResultPromise(nullptr),
   m_walletSynchronized(false) {
-  m_consoleHandler.setHandler("address", boost::bind(&simple_wallet::print_address, this, _1), "Show wallet address");
-  m_consoleHandler.setHandler("all_transactions", boost::bind(&simple_wallet::list_transactions, this, _1), "Show all transactions");
-  m_consoleHandler.setHandler("balance", boost::bind(&simple_wallet::show_balance, this, _1), "Show wallet balance");
-  m_consoleHandler.setHandler("exit", boost::bind(&simple_wallet::exit, this, _1), "Close wallet");
-  m_consoleHandler.setHandler("get_transaction_private_key", boost::bind(&simple_wallet::get_tx_key, this, _1), "Get the transaction private key of a transaction\n * get_transaction_private_key <transaction_hash>");
-  m_consoleHandler.setHandler("height", boost::bind(&simple_wallet::show_blockchain_height, this, _1), "Show blockchain height");
-  m_consoleHandler.setHandler("help", boost::bind(&simple_wallet::help, this, _1), "Show this help");
-  m_consoleHandler.setHandler("incoming_transactions", boost::bind(&simple_wallet::show_incoming_transactions, this, _1), "Show incoming transaction");
-  m_consoleHandler.setHandler("outgoing_transactions", boost::bind(&simple_wallet::show_outgoing_transactions, this, _1), "Show outgoing transactions");
-  m_consoleHandler.setHandler("payments", boost::bind(&simple_wallet::show_payments, this, _1), "Shows a tranaction given the transaction's payment ID\n * payments <payment_id_1> [<payment_id_2> ... <payment_id_N>]");
-  m_consoleHandler.setHandler("reset", boost::bind(&simple_wallet::reset, this, _1), "Discard cache data and start synchronizing from the start");
-  m_consoleHandler.setHandler("save", boost::bind(&simple_wallet::save, this, _1), "Save wallet synchronized data");
-  m_consoleHandler.setHandler("set_log", boost::bind(&simple_wallet::set_log, this, _1), "Change log level\n * set_log <level>\n * <level> is a number 0-4");
-  m_consoleHandler.setHandler("spend_private_key", boost::bind(&simple_wallet::print_spend_secret_key, this, _1), "Show wallet spend private key");
-  m_consoleHandler.setHandler("start_mining", boost::bind(&simple_wallet::start_mining, this, _1), "Start mining\n * start_mining [<number_of_threads>]");
-  m_consoleHandler.setHandler("stop_mining", boost::bind(&simple_wallet::stop_mining, this, _1), "Stop mining");
-  m_consoleHandler.setHandler("transfer", boost::bind(&simple_wallet::transfer, this, _1), "Transfer amount to address with privicy level\n * transfer <privacy_level> <adreess> <amount> [-p payment_id] [-f fee]\n * <privacy_level> can be 0, 1, 2, or 3 with 3 being the most private");
-  m_consoleHandler.setHandler("view_private_key", boost::bind(&simple_wallet::print_view_secret_key, this, _1), "Show wallet view private key");
+  m_consoleHandler.setHandler("address", boost::bind(&SimpleWallet::print_address, this, _1), "Show wallet address");
+  m_consoleHandler.setHandler("all_transactions", boost::bind(&SimpleWallet::list_transactions, this, _1), "Show all transactions");
+  m_consoleHandler.setHandler("balance", boost::bind(&SimpleWallet::show_balance, this, _1), "Show wallet balance");
+  m_consoleHandler.setHandler("exit", boost::bind(&SimpleWallet::exit, this, _1), "Close wallet");
+  m_consoleHandler.setHandler("get_transaction_private_key", boost::bind(&SimpleWallet::get_tx_key, this, _1), "Get the transaction private key of a transaction\n * get_transaction_private_key <transaction_hash>");
+  m_consoleHandler.setHandler("height", boost::bind(&SimpleWallet::show_blockchain_height, this, _1), "Show blockchain height");
+  m_consoleHandler.setHandler("help", boost::bind(&SimpleWallet::help, this, _1), "Show this help");
+  m_consoleHandler.setHandler("incoming_transactions", boost::bind(&SimpleWallet::show_incoming_transactions, this, _1), "Show incoming transaction");
+  m_consoleHandler.setHandler("outgoing_transactions", boost::bind(&SimpleWallet::show_outgoing_transactions, this, _1), "Show outgoing transactions");
+  m_consoleHandler.setHandler("payments", boost::bind(&SimpleWallet::show_payments, this, _1), "Shows a tranaction given the transaction's payment ID\n * payments <payment_id_1> [<payment_id_2> ... <payment_id_N>]");
+  m_consoleHandler.setHandler("reset", boost::bind(&SimpleWallet::reset, this, _1), "Discard cache data and start synchronizing from the start");
+  m_consoleHandler.setHandler("save", boost::bind(&SimpleWallet::save, this, _1), "Save wallet synchronized data");
+  m_consoleHandler.setHandler("set_log", boost::bind(&SimpleWallet::set_log, this, _1), "Change log level\n * set_log <level>\n * <level> is a number 0-4");
+  m_consoleHandler.setHandler("spend_private_key", boost::bind(&SimpleWallet::print_spend_secret_key, this, _1), "Show wallet spend private key");
+  m_consoleHandler.setHandler("start_mining", boost::bind(&SimpleWallet::start_mining, this, _1), "Start mining\n * start_mining [<number_of_threads>]");
+  m_consoleHandler.setHandler("stop_mining", boost::bind(&SimpleWallet::stop_mining, this, _1), "Stop mining");
+  m_consoleHandler.setHandler("transfer", boost::bind(&SimpleWallet::transfer, this, _1), "Transfer amount to address with privicy level\n * transfer <privacy_level> <adreess> <amount> [-p payment_id] [-f fee]\n * <privacy_level> can be 0, 1, 2, or 3 with 3 being the most private");
+  m_consoleHandler.setHandler("view_private_key", boost::bind(&SimpleWallet::print_view_secret_key, this, _1), "Show wallet view private key");
 }
 //----------------------------------------------------------------------------------------------------
-bool simple_wallet::set_log(const std::vector<std::string> &args) {
+bool SimpleWallet::set_log(const std::vector<std::string> &args) {
   if (args.size() != 1) {
     fail_msg_writer() << "use: set_log <log_level_number_0-4>";
     return true;
@@ -629,7 +608,7 @@ bool simple_wallet::set_log(const std::vector<std::string> &args) {
 }
 //----------------------------------------------------------------------------------------------------
 
-bool simple_wallet::get_tx_key(const std::vector<std::string> &args) {
+bool SimpleWallet::get_tx_key(const std::vector<std::string> &args) {
 	if (args.size() != 1)
 	{
 		fail_msg_writer() << "use: get_tx_key <txid>";
@@ -653,8 +632,8 @@ bool simple_wallet::get_tx_key(const std::vector<std::string> &args) {
 	}
 }
 
-bool simple_wallet::init(const boost::program_options::variables_map& vm) {
-  handle_command_line(vm);
+bool SimpleWallet::init() {
+  handle_command_line();
 
   // Check daemon connection first
   if (!m_daemon_address.empty() && (!m_daemon_host.empty() || 0 != m_daemon_port)) {
@@ -681,7 +660,7 @@ bool simple_wallet::init(const boost::program_options::variables_map& vm) {
   char c;
 
   Common::Console::setTextColor(Common::Console::Color::BrightRed);
-  std::cout << "\nCash2 SimpleWallet 5.1.1\n";
+  std::cout << "\nCash2 SimpleWallet " << PROJECT_VERSION << '.' << PROJECT_VERSION_BUILD_NO << std::endl;
   Common::Console::setTextColor(Common::Console::Color::Default);
 
   std::cout << "\nWhat would you like to do?\n\n [";
@@ -781,15 +760,9 @@ bool simple_wallet::init(const boost::program_options::variables_map& vm) {
       Tools::PasswordContainer pwd_container;
       if (!passwordCorrect)
       {
-        if (command_line::has_arg(vm, arg_password)) {
-          pwd_container.password(command_line::get_arg(vm, arg_password));
-        }
-        else
+        while (!pwd_container.read_password())
         {
-          while (!pwd_container.read_password())
-          {
-            fail_msg_writer() << "Sorry could not read password, please try again";
-          }
+          fail_msg_writer() << "Sorry could not read password, please try again";
         }
       }
 
@@ -1086,7 +1059,7 @@ bool simple_wallet::init(const boost::program_options::variables_map& vm) {
   return true;
 }
 //----------------------------------------------------------------------------------------------------
-bool simple_wallet::deinit() {
+bool SimpleWallet::deinit() {
   m_wallet->removeObserver(this);
   m_node->removeObserver(static_cast<INodeObserver*>(this));
   m_node->removeObserver(static_cast<INodeRpcProxyObserver*>(this));
@@ -1097,15 +1070,13 @@ bool simple_wallet::deinit() {
   return close_wallet();
 }
 //----------------------------------------------------------------------------------------------------
-void simple_wallet::handle_command_line(const boost::program_options::variables_map& vm) {
-  m_wallet_file_arg = command_line::get_arg(vm, arg_wallet_file);
-  m_generate_new = command_line::get_arg(vm, arg_generate_new_wallet);
-  m_daemon_address = command_line::get_arg(vm, arg_daemon_address);
-  m_daemon_host = command_line::get_arg(vm, arg_daemon_host);
-  m_daemon_port = command_line::get_arg(vm, arg_daemon_port);
+void SimpleWallet::handle_command_line() {
+  m_daemon_address = m_simpleWalletConfigurationOptions.daemonAddress;
+  m_daemon_host = m_simpleWalletConfigurationOptions.daemonHost;
+  m_daemon_port = m_simpleWalletConfigurationOptions.daemonPort;
 }
 //----------------------------------------------------------------------------------------------------
-bool simple_wallet::new_wallet(const std::string &wallet_file, const std::string& password) {
+bool SimpleWallet::new_wallet(const std::string &wallet_file, const std::string& password) {
   m_wallet_file = wallet_file;
 
   m_wallet.reset(new WalletLegacy(m_currency, *m_node.get()));
@@ -1149,7 +1120,7 @@ bool simple_wallet::new_wallet(const std::string &wallet_file, const std::string
   return true;
 }
 //----------------------------------------------------------------------------------------------------
-bool simple_wallet::restore_wallet_from_private_keys(const std::string &wallet_file, const std::string& password) {
+bool SimpleWallet::restore_wallet_from_private_keys(const std::string &wallet_file, const std::string& password) {
   m_wallet_file = wallet_file;
 
   m_wallet.reset(new WalletLegacy(m_currency, *m_node.get()));
@@ -1233,7 +1204,7 @@ bool simple_wallet::restore_wallet_from_private_keys(const std::string &wallet_f
 }
 //----------------------------------------------------------------------------------------------------
 
-bool simple_wallet::close_wallet()
+bool SimpleWallet::close_wallet()
 {
   try {
     CryptoNote::WalletHelper::storeWallet(*m_wallet, m_wallet_file);
@@ -1249,7 +1220,7 @@ bool simple_wallet::close_wallet()
 }
 
 //----------------------------------------------------------------------------------------------------
-bool simple_wallet::save(const std::vector<std::string> &args)
+bool SimpleWallet::save(const std::vector<std::string> &args)
 {
   try {
     CryptoNote::WalletHelper::storeWallet(*m_wallet, m_wallet_file);
@@ -1261,7 +1232,7 @@ bool simple_wallet::save(const std::vector<std::string> &args)
   return true;
 }
 
-bool simple_wallet::reset(const std::vector<std::string> &args) {
+bool SimpleWallet::reset(const std::vector<std::string> &args) {
   {
     std::unique_lock<std::mutex> lock(m_walletSynchronizedMutex);
     m_walletSynchronized = false;
@@ -1280,7 +1251,7 @@ bool simple_wallet::reset(const std::vector<std::string> &args) {
   return true;
 }
 
-bool simple_wallet::start_mining(const std::vector<std::string>& args) {
+bool SimpleWallet::start_mining(const std::vector<std::string>& args) {
   CORE_RPC_COMMAND_START_MINING::request req;
   req.miner_address = m_wallet->getAddress();
 
@@ -1326,7 +1297,7 @@ bool simple_wallet::start_mining(const std::vector<std::string>& args) {
   return true;
 }
 //----------------------------------------------------------------------------------------------------
-bool simple_wallet::stop_mining(const std::vector<std::string>& args)
+bool SimpleWallet::stop_mining(const std::vector<std::string>& args)
 {
   CORE_RPC_COMMAND_STOP_MINING::request req;
   CORE_RPC_COMMAND_STOP_MINING::response res;
@@ -1349,13 +1320,13 @@ bool simple_wallet::stop_mining(const std::vector<std::string>& args)
   return true;
 }
 //----------------------------------------------------------------------------------------------------
-void simple_wallet::initCompleted(std::error_code result) {
+void SimpleWallet::initCompleted(std::error_code result) {
   if (m_initResultPromise.get() != nullptr) {
     m_initResultPromise->set_value(result);
   }
 }
 //----------------------------------------------------------------------------------------------------
-void simple_wallet::connectionStatusUpdated(bool connected) {
+void SimpleWallet::connectionStatusUpdated(bool connected) {
   if (connected) {
     logger(INFO, GREEN) << "Wallet connected to daemon.";
   } else {
@@ -1363,7 +1334,7 @@ void simple_wallet::connectionStatusUpdated(bool connected) {
   }
 }
 //----------------------------------------------------------------------------------------------------
-void simple_wallet::externalTransactionCreated(CryptoNote::TransactionId transactionId)  {
+void SimpleWallet::externalTransactionCreated(CryptoNote::TransactionId transactionId)  {
   WalletLegacyTransaction txInfo;
   m_wallet->getTransaction(transactionId, txInfo);
   
@@ -1391,27 +1362,27 @@ void simple_wallet::externalTransactionCreated(CryptoNote::TransactionId transac
   }
 }
 //----------------------------------------------------------------------------------------------------
-void simple_wallet::synchronizationCompleted(std::error_code result) {
+void SimpleWallet::synchronizationCompleted(std::error_code result) {
   std::unique_lock<std::mutex> lock(m_walletSynchronizedMutex);
   m_walletSynchronized = true;
   m_walletSynchronizedCV.notify_one();
 }
 
-void simple_wallet::synchronizationProgressUpdated(uint32_t current, uint32_t total) {
+void SimpleWallet::synchronizationProgressUpdated(uint32_t current, uint32_t total) {
   std::unique_lock<std::mutex> lock(m_walletSynchronizedMutex);
   if (!m_walletSynchronized) {
     m_refresh_progress_reporter.update(current, false);
   }
 }
 
-bool simple_wallet::show_balance(const std::vector<std::string>& args/* = std::vector<std::string>()*/) {
+bool SimpleWallet::show_balance(const std::vector<std::string>& args/* = std::vector<std::string>()*/) {
   success_msg_writer() << "available balance: " << m_currency.formatAmount(m_wallet->actualBalance()) <<
     ", locked amount: " << m_currency.formatAmount(m_wallet->pendingBalance());
 
   return true;
 }
 //----------------------------------------------------------------------------------------------------
-bool simple_wallet::show_incoming_transactions(const std::vector<std::string>& args) {
+bool SimpleWallet::show_incoming_transactions(const std::vector<std::string>& args) {
   bool hasTransfers = false;
   size_t transactionsCount = m_wallet->getTransactionCount();
   for (size_t trantransactionNumber = 0; trantransactionNumber < transactionsCount; ++trantransactionNumber) {
@@ -1428,7 +1399,7 @@ bool simple_wallet::show_incoming_transactions(const std::vector<std::string>& a
   return true;
 }
 
-bool simple_wallet::show_outgoing_transactions(const std::vector<std::string>& args) {
+bool SimpleWallet::show_outgoing_transactions(const std::vector<std::string>& args) {
   bool hasTransfers = false;
   size_t transactionsCount = m_wallet->getTransactionCount();
   for (size_t trantransactionNumber = 0; trantransactionNumber < transactionsCount; ++trantransactionNumber) {
@@ -1443,7 +1414,7 @@ bool simple_wallet::show_outgoing_transactions(const std::vector<std::string>& a
   return true;
 }
 
-bool simple_wallet::list_transactions(const std::vector<std::string>& args) {
+bool SimpleWallet::list_transactions(const std::vector<std::string>& args) {
   bool haveTransfers = false;
 
   size_t transactionsCount = m_wallet->getTransactionCount();
@@ -1468,7 +1439,7 @@ bool simple_wallet::list_transactions(const std::vector<std::string>& args) {
   return true;
 }
 
-bool simple_wallet::show_payments(const std::vector<std::string> &args) {
+bool SimpleWallet::show_payments(const std::vector<std::string> &args) {
   if (args.empty()) {
     fail_msg_writer() << "expected at least one payment ID";
     return true;
@@ -1526,7 +1497,7 @@ bool simple_wallet::show_payments(const std::vector<std::string> &args) {
   return true;
 }
 //----------------------------------------------------------------------------------------------------
-bool simple_wallet::show_blockchain_height(const std::vector<std::string>& args) {
+bool SimpleWallet::show_blockchain_height(const std::vector<std::string>& args) {
   try {
     uint64_t bc_height = m_node->getLastLocalBlockHeight() + 1;
     success_msg_writer() << bc_height;
@@ -1537,7 +1508,7 @@ bool simple_wallet::show_blockchain_height(const std::vector<std::string>& args)
   return true;
 }
 //----------------------------------------------------------------------------------------------------
-uint64_t simple_wallet::getMinimalFee() {
+uint64_t SimpleWallet::getMinimalFee() {
   if ((m_node->getLastLocalBlockHeight() + 1) < CryptoNote::parameters::SOFT_FORK_HEIGHT_1)
   {
     return CryptoNote::parameters::MINIMUM_FEE_1;
@@ -1546,7 +1517,7 @@ uint64_t simple_wallet::getMinimalFee() {
   return CryptoNote::parameters::MINIMUM_FEE_2;
 }
 //----------------------------------------------------------------------------------------------------
-bool simple_wallet::transfer(const std::vector<std::string> &args) {
+bool SimpleWallet::transfer(const std::vector<std::string> &args) {
   try {
     TransferCommand cmd(m_currency, *m_node);
 
@@ -1594,7 +1565,7 @@ bool simple_wallet::transfer(const std::vector<std::string> &args) {
   return true;
 }
 //----------------------------------------------------------------------------------------------------
-bool simple_wallet::run() {
+bool SimpleWallet::run() {
   {
     std::unique_lock<std::mutex> lock(m_walletSynchronizedMutex);
     while (!m_walletSynchronized) {
@@ -1609,16 +1580,16 @@ bool simple_wallet::run() {
   return true;
 }
 //----------------------------------------------------------------------------------------------------
-void simple_wallet::stop() {
+void SimpleWallet::stop() {
   m_consoleHandler.requestStop();
 }
 //----------------------------------------------------------------------------------------------------
-bool simple_wallet::print_address(const std::vector<std::string> &args/* = std::vector<std::string>()*/) {
+bool SimpleWallet::print_address(const std::vector<std::string> &args/* = std::vector<std::string>()*/) {
   success_msg_writer() << m_wallet->getAddress();
   return true;
 }
 //----------------------------------------------------------------------------------------------------
-bool simple_wallet::print_view_secret_key(const std::vector<std::string> &args) {
+bool SimpleWallet::print_view_secret_key(const std::vector<std::string> &args) {
   CryptoNote::AccountKeys accountKeys;
   m_wallet->getAccountKeys(accountKeys);
   Crypto::SecretKey viewSecretKey = accountKeys.viewSecretKey;
@@ -1626,7 +1597,7 @@ bool simple_wallet::print_view_secret_key(const std::vector<std::string> &args) 
   return true;
 }
 //----------------------------------------------------------------------------------------------------
-bool simple_wallet::print_spend_secret_key(const std::vector<std::string> &args) {
+bool SimpleWallet::print_spend_secret_key(const std::vector<std::string> &args) {
   CryptoNote::AccountKeys accountKeys;
   m_wallet->getAccountKeys(accountKeys);
   Crypto::SecretKey spendSecretKey = accountKeys.spendSecretKey;
@@ -1634,108 +1605,12 @@ bool simple_wallet::print_spend_secret_key(const std::vector<std::string> &args)
   return true;
 }
 //----------------------------------------------------------------------------------------------------
-bool simple_wallet::process_command(const std::vector<std::string> &args) {
+bool SimpleWallet::process_command(const std::vector<std::string> &args) {
   return m_consoleHandler.runCommand(args);
 }
 
-void simple_wallet::printConnectionError() const {
+void SimpleWallet::printConnectionError() const {
   logger(ERROR, RED) << "SimpleWallet failed to connect to the daemon";
 }
 
 
-int main(int argc, char* argv[]) {
-#ifdef WIN32
-  _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-#endif
-
-  po::options_description desc_general("General options");
-  command_line::add_arg(desc_general, command_line::arg_help);
-  command_line::add_arg(desc_general, command_line::arg_version);
-
-  po::options_description desc_params("Wallet options");
-  command_line::add_arg(desc_params, arg_wallet_file);
-  command_line::add_arg(desc_params, arg_generate_new_wallet);
-  command_line::add_arg(desc_params, arg_password);
-  command_line::add_arg(desc_params, arg_daemon_address);
-  command_line::add_arg(desc_params, arg_daemon_host);
-  command_line::add_arg(desc_params, arg_daemon_port);
-  command_line::add_arg(desc_params, arg_command);
-  command_line::add_arg(desc_params, arg_log_level);
-  command_line::add_arg(desc_params, arg_testnet);
-
-  po::positional_options_description positional_options;
-  positional_options.add(arg_command.name, -1);
-
-  po::options_description desc_all;
-  desc_all.add(desc_general).add(desc_params);
-
-  Logging::LoggerManager logManager;
-  Logging::LoggerRef logger(logManager, "simplewallet");
-  System::Dispatcher dispatcher;
-
-  po::variables_map vm;
-
-  bool r = command_line::handle_error_helper(desc_all, [&]() {
-    po::store(command_line::parse_command_line(argc, argv, desc_general, true), vm);
-
-    if (command_line::get_arg(vm, command_line::arg_help)) {
-      CryptoNote::Currency tmp_currency = CryptoNote::CurrencyBuilder(logManager).currency();
-      CryptoNote::simple_wallet tmp_wallet(dispatcher, tmp_currency, logManager);
-
-      std::cout << CRYPTONOTE_NAME << " wallet v" << PROJECT_VERSION_LONG << std::endl  << std::endl;
-      std::cout << "Usage:" << std::endl << "simplewallet [--wallet-file=<file>|--generate-new-wallet=<file>] [--daemon-address=<host>:<port>] [<COMMAND>]"  << std::endl;
-      std::cout << desc_all;
-      return false;
-    } else if (command_line::get_arg(vm, command_line::arg_version))  {
-      std::cout << CRYPTONOTE_NAME << " wallet v" << PROJECT_VERSION_LONG;
-      return false;
-    }
-
-    auto parser = po::command_line_parser(argc, argv).options(desc_params).positional(positional_options);
-    po::store(parser.run(), vm);
-    po::notify(vm);
-    return true;
-  });
-
-  if (!r)
-    return 1;
-
-  //set up logging options
-  Level logLevel = DEBUGGING;
-
-  if (command_line::has_arg(vm, arg_log_level)) {
-    logLevel = static_cast<Level>(command_line::get_arg(vm, arg_log_level));
-  }
-
-  logManager.configure(buildLoggerConfiguration(logLevel, Common::ReplaceExtenstion(argv[0], ".log")));
-
-  CryptoNote::Currency currency = CryptoNote::CurrencyBuilder(logManager).
-    testnet(command_line::get_arg(vm, arg_testnet)).currency();
-
-  //runs wallet with console interface
-  CryptoNote::simple_wallet wal(dispatcher, currency, logManager);
-  
-  if (!wal.init(vm)) {
-    logger(ERROR, DEFAULT) << "\nExiting SimpleWallet"; 
-    return 1; 
-  }
-
-  std::vector<std::string> command = command_line::get_arg(vm, arg_command);
-  if (!command.empty())
-    wal.process_command(command);
-
-  Tools::SignalHandler::install([&wal] {
-    wal.stop();
-  });
-  
-  wal.run();
-
-  if (!wal.deinit()) {
-    logger(ERROR, BRIGHT_RED) << "Failed to close wallet";
-  } else {
-    logger(INFO) << "Wallet closed";
-  }
-
-  return 1;
-  //CATCH_ENTRY_L0("main", 1);
-}
