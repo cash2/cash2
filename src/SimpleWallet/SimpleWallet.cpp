@@ -33,7 +33,6 @@
 #include "Rpc/CoreRpcStatuses.h"
 #include "Rpc/HttpClient.h"
 
-#include "Wallet/WalletRpcServer.h"
 #include "WalletLegacy/WalletLegacy.h"
 #include "Wallet/LegacyKeysImporter.h"
 #include "WalletLegacy/WalletHelper.h"
