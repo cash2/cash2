@@ -13,168 +13,90 @@
 
 #include <boost/program_options/variables_map.hpp>
 
-#include "IWalletLegacy.h"
-#include "PasswordContainer.h"
-
 #include "Common/ConsoleHandler.h"
 #include "CryptoNoteCore/CryptoNoteBasicImpl.h"
 #include "CryptoNoteCore/Currency.h"
+#include "IWalletLegacy.h"
+#include "Logging/LoggerManager.h"
+#include "Logging/LoggerRef.h"
 #include "NodeRpcProxy/NodeRpcProxy.h"
-#include "WalletLegacy/WalletHelper.h"
+#include "PasswordContainer.h"
 #include "SimpleWalletConfigurationOptions.h"
-
-#include <Logging/LoggerRef.h>
-#include <Logging/LoggerManager.h>
-
-#include <System/Dispatcher.h>
-#include <System/Ipv4Address.h>
+#include "System/Dispatcher.h"
+#include "System/Ipv4Address.h"
+#include "WalletLegacy/WalletHelper.h"
 
 namespace CryptoNote
 {
 
-class SimpleWallet : public CryptoNote::INodeObserver, public CryptoNote::IWalletLegacyObserver, public CryptoNote::INodeRpcProxyObserver {
+class SimpleWalletCommandsHandler : public IWalletLegacyObserver, public INodeRpcProxyObserver {
 public:
-  SimpleWallet(System::Dispatcher& dispatcher, const CryptoNote::Currency& currency, Logging::LoggerManager& log, SimpleWalletConfigurationOptions& simpleWalletConfigurationOptions);
-
-  bool init();
+  SimpleWalletCommandsHandler(System::Dispatcher& dispatcher, const Currency& currency, Logging::LoggerManager& log, SimpleWalletConfigurationOptions& simpleWalletConfigurationOptions);
   bool deinit();
-  bool run();
-  void stop();
-
-  bool process_command(const std::vector<std::string> &args);
-  std::string get_commands_str();
-
-  const CryptoNote::Currency& currency() const { return m_currency; }
+  bool init();
+  bool start_handling();
+  void stop_handling();
 
 private:
-
-  Logging::LoggerMessage success_msg_writer(bool color = false) {
-    return logger(Logging::INFO, color ? Logging::GREEN : Logging::DEFAULT);
-  }
-
-  Logging::LoggerMessage fail_msg_writer() const {
-    auto msg = logger(Logging::ERROR, Logging::BRIGHT_RED);
-    msg << "Error: ";
-    return msg;
-  }
-
-  void handle_command_line();
-
-  bool run_console_handler();
-
-  bool new_wallet(const std::string &wallet_file, const std::string& password);
-  bool restore_wallet_from_private_keys(const std::string &wallet_file, const std::string& password);
-  bool open_wallet(const std::string &wallet_file, const std::string& password);
-  bool close_wallet();
-
-  bool help(const std::vector<std::string> &args = std::vector<std::string>());
+  std::string addCommasToBlockHeight(const uint32_t& height);
+  bool address(const std::vector<std::string> &args = std::vector<std::string>());
+  bool all_transactions(const std::vector<std::string> &args);
+  bool balance(const std::vector<std::string> &args = std::vector<std::string>());
+  virtual void connectionStatusUpdated(bool connected) override; // INodeRpcProxyObserver
   bool exit(const std::vector<std::string> &args);
+  virtual void externalTransactionCreated(TransactionId transactionId) override; // IWalletLegacyObserver
+  uint64_t getMinimalFee();
+  bool height(const std::vector<std::string> &args);
+  bool help(const std::vector<std::string> &args = std::vector<std::string>());
+  bool incoming_transactions(const std::vector<std::string> &args);
+  std::error_code initAndLoadWallet(IWalletLegacy& walletLegacy, std::istream& walletFile, const std::string& password);
+  virtual void initCompleted(std::error_code result) override; // IWalletLegacyObserver
+  bool new_wallet(const std::string &walletFilenameWithExtension, const std::string& password);
+  bool outgoing_transactions(const std::vector<std::string> &args);
+  bool parseUrlAddress(const std::string& url, std::string& address, uint16_t& port);
+  bool payments(const std::vector<std::string> &args);
+  void printIncomingTransaction(const WalletLegacyTransaction& transaction);
+  void printOutgoingTransaction(const WalletLegacyTransaction& transaction);
+  void printTransaction(const WalletLegacyTransaction& transaction);
+  bool reset(const std::vector<std::string> &args);
+  bool restore_wallet_from_private_keys(const std::string &walletFilenameWithExtension, const std::string& password);
+  bool save(const std::vector<std::string> &args);
+  bool saveAndCloseWallet();
+  bool send(const std::vector<std::string> &args);
+  bool set_log(const std::vector<std::string> &args);
+  bool spend_private_key(const std::vector<std::string> &args);
   bool start_mining(const std::vector<std::string> &args);
   bool stop_mining(const std::vector<std::string> &args);
-  bool show_balance(const std::vector<std::string> &args = std::vector<std::string>());
-  bool show_incoming_transactions(const std::vector<std::string> &args);
-  bool show_outgoing_transactions(const std::vector<std::string> &args);
-  bool show_payments(const std::vector<std::string> &args);
-  bool show_blockchain_height(const std::vector<std::string> &args);
-  bool list_transactions(const std::vector<std::string> &args);
-  bool transfer(const std::vector<std::string> &args);
-  bool print_address(const std::vector<std::string> &args = std::vector<std::string>());
-  bool print_view_secret_key(const std::vector<std::string> &args);
-  bool print_spend_secret_key(const std::vector<std::string> &args);
-  bool save(const std::vector<std::string> &args);
-  bool reset(const std::vector<std::string> &args);
-  bool set_log(const std::vector<std::string> &args);
-  bool get_tx_key(const std::vector<std::string> &args);
-
-  bool ask_wallet_create_if_needed();
-
-  void printConnectionError() const;
-  uint64_t getMinimalFee();
-
-  //---------------- IWalletLegacyObserver -------------------------
-  virtual void initCompleted(std::error_code result) override;
-  virtual void externalTransactionCreated(CryptoNote::TransactionId transactionId) override;
-  virtual void synchronizationCompleted(std::error_code result) override;
-  virtual void synchronizationProgressUpdated(uint32_t current, uint32_t total) override;
-  //----------------------------------------------------------
-
-  //----------------- INodeRpcProxyObserver --------------------------
-  virtual void connectionStatusUpdated(bool connected) override;
-  //----------------------------------------------------------
-
-  friend class refresh_progress_reporter_t;
-
-  class refresh_progress_reporter_t
-  {
-  public:
-    refresh_progress_reporter_t(CryptoNote::SimpleWallet& simpleWallet)
-      : m_simpleWallet(simpleWallet)
-      , m_blockchain_height(0)
-      , m_blockchain_height_update_time()
-      , m_print_time()
-    {
-    }
-
-    void update(uint64_t height, bool force = false)
-    {
-      auto current_time = std::chrono::system_clock::now();
-      if (std::chrono::seconds(m_simpleWallet.currency().difficultyTarget() / 2) < current_time - m_blockchain_height_update_time ||
-          m_blockchain_height <= height) {
-        update_blockchain_height();
-        m_blockchain_height = (std::max)(m_blockchain_height, height);
-      }
-
-      if (std::chrono::milliseconds(1) < current_time - m_print_time || force) {
-        std::cout << "Height " << height << " of " << m_blockchain_height << '\r';
-        m_print_time = current_time;
-      }
-    }
-
-  private:
-    void update_blockchain_height()
-    {
-      uint64_t blockchain_height = m_simpleWallet.m_node->getLastLocalBlockHeight() + 1;
-      m_blockchain_height = blockchain_height;
-      m_blockchain_height_update_time = std::chrono::system_clock::now();
-    }
-
-  private:
-    CryptoNote::SimpleWallet& m_simpleWallet;
-    uint64_t m_blockchain_height;
-    std::chrono::system_clock::time_point m_blockchain_height_update_time;
-    std::chrono::system_clock::time_point m_print_time;
-  };
-
-private:
-  std::string m_wallet_file_arg;
-  std::string m_generate_new;
-  std::string m_spend_secret_key;
-  std::string m_view_secret_key;
-  std::string m_import_path;
-
-  std::string m_daemon_address;
-  std::string m_daemon_host;
-  uint16_t m_daemon_port;
-
-  std::string m_wallet_file;
-
-  std::unique_ptr<std::promise<std::error_code>> m_initResultPromise;
-
+  virtual void synchronizationCompleted(std::error_code result) override; // IWalletLegacyObserver
+  virtual void synchronizationProgressUpdated(uint32_t current, uint32_t total) override; // IWalletLegacyObserver
+  bool transaction_private_key(const std::vector<std::string> &args);
+  std::string tryToOpenWalletOrLoadKeysOrThrow(const std::string& walletFile, const std::string& password);
+  void updateBlockchainHeight(uint64_t height, bool force = false);
+  bool view_private_key(const std::vector<std::string> &args);
+  
+  uint64_t m_blockchainHeight;
   Common::ConsoleHandler m_consoleHandler;
-  const CryptoNote::Currency& m_currency;
-  Logging::LoggerManager& logManager;
+  const Currency& m_currency;
+  std::string m_daemonAddress;
+  std::string m_daemonHost;
+  uint16_t m_daemonPort;
   System::Dispatcher& m_dispatcher;
-  Logging::LoggerRef logger;
-
-  std::unique_ptr<CryptoNote::NodeRpcProxy> m_node;
-  std::unique_ptr<CryptoNote::IWalletLegacy> m_wallet;
-  refresh_progress_reporter_t m_refresh_progress_reporter;
-
-  bool m_walletSynchronized;
-  std::mutex m_walletSynchronizedMutex;
-  std::condition_variable m_walletSynchronizedCV;
-
+  std::string m_generateNew;
+  std::chrono::system_clock::time_point m_lastBlockchainHeightPrintTime;
+  std::chrono::system_clock::time_point m_lastBlockchainHeightUpdateTime;
+  Logging::LoggerRef m_logger;
+  Logging::LoggerManager& m_loggerManager;
+  std::unique_ptr<NodeRpcProxy> m_nodeRpcProxyPtr;
   SimpleWalletConfigurationOptions& m_simpleWalletConfigurationOptions;
+  std::string m_spendPrivateKey;
+  std::string m_viewPrivateKey;
+  std::string m_walletFilenameWithExtension;
+  std::string m_walletFileArg;
+  std::unique_ptr<std::promise<std::error_code>> m_walletLegacyInitErrorPromisePtr;
+  std::unique_ptr<IWalletLegacy> m_walletLegacyPtr;
+  bool m_walletLegacySynchronized;
+  std::condition_variable m_walletLegacySynchronizedCV;
+  std::mutex m_walletLegacySynchronizedMutex;
 };
 
 } // end namespace CryptoNote

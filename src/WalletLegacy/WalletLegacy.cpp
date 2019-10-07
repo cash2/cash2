@@ -290,7 +290,7 @@ void WalletLegacy::reset() {
     std::stringstream ss;
     {
       SaveWaiter saveWaiter;
-      WalletHelper::IWalletRemoveObserverGuard saveGuarantee(*this, saveWaiter);
+      WalletHelper::WalletLegacySmartObserver saveGuarantee(*this, saveWaiter);
       save(ss, false, false);
       saveError = saveWaiter.waitSave();
     }
@@ -298,7 +298,7 @@ void WalletLegacy::reset() {
     if (!saveError) {
       shutdown();
       InitWaiter initWaiter;
-      WalletHelper::IWalletRemoveObserverGuard initGuarantee(*this, initWaiter);
+      WalletHelper::WalletLegacySmartObserver initGuarantee(*this, initWaiter);
       initAndLoad(ss, m_password);
       initWaiter.waitInit();
     }

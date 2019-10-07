@@ -14,32 +14,6 @@
 #include "SimpleWalletConfigurationOptions.h"
 #include "version.h"
 
-namespace {
-
-using Common::JsonValue;
-using namespace Logging;
-
-JsonValue buildLoggerConfiguration(Level level, const std::string& logfile) {
-  JsonValue loggerConfiguration(JsonValue::OBJECT);
-  loggerConfiguration.insert("globalLevel", static_cast<int64_t>(level));
-
-  JsonValue& cfgLoggers = loggerConfiguration.insert("loggers", JsonValue::ARRAY);
-
-  JsonValue& consoleLogger = cfgLoggers.pushBack(JsonValue::OBJECT);
-  consoleLogger.insert("type", "console");
-  consoleLogger.insert("level", static_cast<int64_t>(TRACE));
-  consoleLogger.insert("pattern", "");
-
-  JsonValue& fileLogger = cfgLoggers.pushBack(JsonValue::OBJECT);
-  fileLogger.insert("type", "file");
-  fileLogger.insert("filename", logfile);
-  fileLogger.insert("level", static_cast<int64_t>(TRACE));
-
-  return loggerConfiguration;
-}
-
-}
-
 int main(int argc, char* argv[]) {
 #ifdef WIN32
   _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -72,31 +46,46 @@ int main(int argc, char* argv[]) {
       return 0;
     }
 
-    //set up logging options
+    // set up logging options
     Logging::Level logLevel = static_cast<Logging::Level>(simpleWalletConfigurationOptions.logLevel);
 
-    logManager.configure(buildLoggerConfiguration(logLevel, Common::ReplaceExtenstion(argv[0], ".log")));
+    Common::JsonValue loggerConfiguration(Common::JsonValue::OBJECT);
+    loggerConfiguration.insert("globalLevel", static_cast<int64_t>(logLevel));
+
+    Common::JsonValue& cfgLoggers = loggerConfiguration.insert("loggers", Common::JsonValue::ARRAY);
+
+    Common::JsonValue& consoleLogger = cfgLoggers.pushBack(Common::JsonValue::OBJECT);
+    consoleLogger.insert("type", "console");
+    consoleLogger.insert("level", static_cast<int64_t>(Logging::TRACE));
+    consoleLogger.insert("pattern", "");
+
+    Common::JsonValue& fileLogger = cfgLoggers.pushBack(Common::JsonValue::OBJECT);
+    fileLogger.insert("type", "file");
+    fileLogger.insert("filename", Common::ReplaceExtenstion(argv[0], ".log"));
+    fileLogger.insert("level", static_cast<int64_t>(Logging::TRACE));
+
+    logManager.configure(loggerConfiguration);
+    // end set up logging options
 
     CryptoNote::Currency currency = CryptoNote::CurrencyBuilder(logManager).testnet(simpleWalletConfigurationOptions.testnet).currency();
 
-    //runs wallet with console interface
-    CryptoNote::SimpleWallet simpleWallet(dispatcher, currency, logManager, simpleWalletConfigurationOptions);
+    CryptoNote::SimpleWalletCommandsHandler simpleWalletCommandsHandler(dispatcher, currency, logManager, simpleWalletConfigurationOptions);
     
-    if (!simpleWallet.init()) {
-      logger(Logging::ERROR, Logging::DEFAULT) << "\nExiting SimpleWallet"; 
+    if (!simpleWalletCommandsHandler.init()) {
+      logger(Logging::ERROR) << "\nExiting SimpleWallet ..."; 
       return 1; 
     }
 
-    Tools::SignalHandler::install([&simpleWallet] {
-      simpleWallet.stop();
+    Tools::SignalHandler::install([&simpleWalletCommandsHandler] {
+      simpleWalletCommandsHandler.stop_handling();
     });
     
-    simpleWallet.run();
+    simpleWalletCommandsHandler.start_handling();
 
-    if (!simpleWallet.deinit()) {
-      logger(Logging::ERROR, Logging::BRIGHT_RED) << "Failed to close wallet";
+    if (!simpleWalletCommandsHandler.deinit()) {
+      logger(Logging::ERROR, Logging::BRIGHT_RED) << "Failed to close SimpleWallet";
     } else {
-      logger(Logging::INFO) << "Wallet closed";
+      logger(Logging::INFO) << "\nSimpleWallet closed";
     }
   } catch (const std::exception& e) {
     logger(Logging::ERROR, Logging::BRIGHT_RED) << "Exception : " << e.what();

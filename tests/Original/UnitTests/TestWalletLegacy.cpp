@@ -1446,7 +1446,7 @@ TEST_F(WalletLegacyApi, shutdownDoesNotRemoveObservers) {
   ASSERT_NO_FATAL_FAILURE(WaitWalletSync(aliceWalletObserver.get()));
 
   WalletSynchronizationProgressUpdatedObserver observer;
-  CryptoNote::WalletHelper::IWalletRemoveObserverGuard observerGuard(*alice, observer);
+  CryptoNote::WalletHelper::WalletLegacySmartObserver observerGuard(*alice, observer);
 
   alice->shutdown();
   observer.m_current = 0;
@@ -1495,7 +1495,7 @@ TEST_F(WalletLegacyApi, afterShutdownAndInitWalletDoesNotSendNotificationsRelate
   ASSERT_NO_FATAL_FAILURE(WaitWalletSync(aliceWalletObserver.get()));
 
   WalletTransactionEventCounter observer;
-  CryptoNote::WalletHelper::IWalletRemoveObserverGuard observerGuard(*alice, observer);
+  CryptoNote::WalletHelper::WalletLegacySmartObserver observerGuard(*alice, observer);
 
   prepareBobWallet();
   bob->initAndGenerate("pass");
@@ -1561,7 +1561,7 @@ TEST_F(WalletLegacyApi, resetDoesNotRemoveObservers) {
   ASSERT_NO_FATAL_FAILURE(WaitWalletSync(aliceWalletObserver.get()));
 
   WalletSynchronizationProgressUpdatedObserver observer;
-  CryptoNote::WalletHelper::IWalletRemoveObserverGuard observerGuard(*alice, observer);
+  CryptoNote::WalletHelper::WalletLegacySmartObserver observerGuard(*alice, observer);
 
   alice->reset();
   observer.m_current = 0;

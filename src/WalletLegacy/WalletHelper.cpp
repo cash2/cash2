@@ -13,42 +13,32 @@ using namespace CryptoNote;
 
 namespace {
 
-void openOutputFileStream(const std::string& filename, std::ofstream& file) {
-  file.open(filename, std::ios_base::binary | std::ios_base::out | std::ios::trunc);
-  if (file.fail()) {
-    throw std::runtime_error("error opening file: " + filename);
-  }
-}
+std::error_code walletSaveWrapper(CryptoNote::IWalletLegacy& wallet, std::ofstream& file, bool saveDetails, bool saveCache) {
+  CryptoNote::WalletHelper::SaveWalletResultObserver saveWalletResultObserver;
 
-std::error_code walletSaveWrapper(CryptoNote::IWalletLegacy& wallet, std::ofstream& file, bool saveDetailes, bool saveCache) {
-  CryptoNote::WalletHelper::SaveWalletResultObserver o;
-
-  std::error_code e;
+  std::error_code errorCode;
   try {
-    std::future<std::error_code> f = o.saveResult.get_future();
-    wallet.addObserver(&o);
-    wallet.save(file, saveDetailes, saveCache);
-    e = f.get();
+    std::future<std::error_code> saveWalletErrorFuture = saveWalletResultObserver.saveResultPromise.get_future();
+    wallet.addObserver(&saveWalletResultObserver);
+    wallet.save(file, saveDetails, saveCache);
+    errorCode = saveWalletErrorFuture.get();
   } catch (std::exception&) {
-    wallet.removeObserver(&o);
+    wallet.removeObserver(&saveWalletResultObserver);
     return make_error_code(std::errc::invalid_argument);
   }
 
-  wallet.removeObserver(&o);
-  return e;
+  wallet.removeObserver(&saveWalletResultObserver);
+  return errorCode;
 }
 
 }
 
-void WalletHelper::prepareFileNames(const std::string& file_path, std::string& keys_file, std::string& wallet_file) {
+void WalletHelper::prepareFileNames(const std::string& file_path, std::string& wallet_file) {
   if (Common::GetExtension(file_path) == ".wallet") {
-    keys_file = Common::RemoveExtension(file_path) + ".keys";
     wallet_file = file_path;
-  } else if (Common::GetExtension(file_path) == ".keys") {
-    keys_file = file_path;
-    wallet_file = Common::RemoveExtension(file_path) + ".wallet";
-  } else {
-    keys_file = file_path + ".keys";
+  }
+  else
+  {
     wallet_file = file_path + ".wallet";
   }
 }
@@ -75,51 +65,82 @@ std::error_code WalletHelper::SendCompleteResultObserver::wait(CryptoNote::Trans
   return m_result;
 }
 
-WalletHelper::IWalletRemoveObserverGuard::IWalletRemoveObserverGuard(CryptoNote::IWalletLegacy& wallet, CryptoNote::IWalletLegacyObserver& observer) :
+WalletHelper::WalletLegacySmartObserver::WalletLegacySmartObserver(CryptoNote::IWalletLegacy& wallet, CryptoNote::IWalletLegacyObserver& observer) :
   m_wallet(wallet),
   m_observer(observer),
   m_removed(false) {
-  m_wallet.addObserver(&m_observer);
+    m_wallet.addObserver(&m_observer);
 }
 
-WalletHelper::IWalletRemoveObserverGuard::~IWalletRemoveObserverGuard() {
+WalletHelper::WalletLegacySmartObserver::~WalletLegacySmartObserver() {
   if (!m_removed) {
     m_wallet.removeObserver(&m_observer);
   }
 }
 
-void WalletHelper::IWalletRemoveObserverGuard::removeObserver() {
+void WalletHelper::WalletLegacySmartObserver::removeObserver() {
   m_wallet.removeObserver(&m_observer);
   m_removed = true;
 }
 
-void WalletHelper::storeWallet(CryptoNote::IWalletLegacy& wallet, const std::string& walletFilename) {
-  boost::filesystem::path tempFile = boost::filesystem::unique_path(walletFilename + ".tmp.%%%%-%%%%");
+void WalletHelper::saveWallet(CryptoNote::IWalletLegacy& wallet, const std::string& walletFilename) {
+  boost::filesystem::path tempWalletFile = boost::filesystem::unique_path(walletFilename + ".tmp.%%%%-%%%%");
 
   if (boost::filesystem::exists(walletFilename)) {
-    boost::filesystem::rename(walletFilename, tempFile);
+    // rename walletFilename to tempWalletFile to save it
+    boost::filesystem::rename(walletFilename, tempWalletFile);
   }
 
   std::ofstream file;
-  try {
-    openOutputFileStream(walletFilename, file);
-  } catch (std::exception&) {
-    if (boost::filesystem::exists(tempFile)) {
-      boost::filesystem::rename(tempFile, walletFilename);
+  try
+  {
+    // create a new wallet file called walletFilename
+    file.open(walletFilename, std::ios_base::binary | std::ios_base::out | std::ios::trunc);
+
+    if (file.fail()) {
+      // error creating new wallet file
+      throw std::runtime_error("Error opening wallet file : " + walletFilename);
+    }
+  }
+  catch (std::exception&)
+  {
+    if (boost::filesystem::exists(tempWalletFile))
+    {
+      // rename tempWalletFile back to walletFilename
+      boost::filesystem::rename(tempWalletFile, walletFilename);
     }
     throw;
   }
 
-  std::error_code saveError = walletSaveWrapper(wallet, file, true, true);
-  if (saveError) {
+  std::error_code saveWalletErrorCode;
+
+  CryptoNote::WalletHelper::SaveWalletResultObserver saveWalletResultObserver;
+
+  try
+  {
+    std::future<std::error_code> saveWalletErrorFuture = saveWalletResultObserver.saveResultPromise.get_future();
+    wallet.addObserver(&saveWalletResultObserver);
+    wallet.save(file, true, true);
+    saveWalletErrorCode = saveWalletErrorFuture.get();
+  }
+  catch (std::exception&)
+  {
+    wallet.removeObserver(&saveWalletResultObserver);
+    saveWalletErrorCode = make_error_code(std::errc::invalid_argument);
+  }
+
+  wallet.removeObserver(&saveWalletResultObserver);
+
+  if (saveWalletErrorCode) {
     file.close();
     boost::filesystem::remove(walletFilename);
-    boost::filesystem::rename(tempFile, walletFilename);
-    throw std::system_error(saveError);
+    // rename tempWalletFile back to walletFilename
+    boost::filesystem::rename(tempWalletFile, walletFilename);
+    throw std::system_error(saveWalletErrorCode);
   }
 
   file.close();
 
   boost::system::error_code ignore;
-  boost::filesystem::remove(tempFile, ignore);
+  boost::filesystem::remove(tempWalletFile, ignore);
 }

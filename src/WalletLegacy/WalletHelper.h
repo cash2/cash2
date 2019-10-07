@@ -17,14 +17,14 @@ namespace WalletHelper {
 
 class SaveWalletResultObserver : public CryptoNote::IWalletLegacyObserver {
 public:
-  std::promise<std::error_code> saveResult;
-  virtual void saveCompleted(std::error_code result) override { saveResult.set_value(result); }
+  std::promise<std::error_code> saveResultPromise;
+  virtual void saveCompleted(std::error_code result) override { saveResultPromise.set_value(result); }
 };
 
-class InitWalletResultObserver : public CryptoNote::IWalletLegacyObserver {
+class WalletLegacyInitErrorObserver : public CryptoNote::IWalletLegacyObserver {
 public:
-  std::promise<std::error_code> initResult;
-  virtual void initCompleted(std::error_code result) override { initResult.set_value(result); }
+  std::promise<std::error_code> initErrorCodePromise;
+  virtual void initCompleted(std::error_code errorCode) override { initErrorCodePromise.set_value(errorCode); }
 };
 
 class SendCompleteResultObserver : public CryptoNote::IWalletLegacyObserver {
@@ -39,10 +39,10 @@ private:
   std::error_code m_result;
 };
 
-class IWalletRemoveObserverGuard {
+class WalletLegacySmartObserver {
 public:
-  IWalletRemoveObserverGuard(CryptoNote::IWalletLegacy& wallet, CryptoNote::IWalletLegacyObserver& observer);
-  ~IWalletRemoveObserverGuard();
+  WalletLegacySmartObserver(CryptoNote::IWalletLegacy& wallet, CryptoNote::IWalletLegacyObserver& observer);
+  ~WalletLegacySmartObserver();
 
   void removeObserver();
 
@@ -52,8 +52,8 @@ private:
   bool m_removed;
 };
 
-void prepareFileNames(const std::string& file_path, std::string& keys_file, std::string& wallet_file);
-void storeWallet(CryptoNote::IWalletLegacy& wallet, const std::string& walletFilename);
+void prepareFileNames(const std::string& file_path, std::string& wallet_file);
+void saveWallet(CryptoNote::IWalletLegacy& wallet, const std::string& walletFilename);
 
 }
 }
