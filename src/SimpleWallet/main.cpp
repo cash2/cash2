@@ -10,7 +10,7 @@
 #include "Common/CommandLine.h"
 #include "Common/PathTools.h"
 #include "Common/SignalHandler.h"
-#include "SimpleWallet.h"
+#include "SimpleWalletCommandsHandler.h"
 #include "SimpleWalletConfigurationOptions.h"
 #include "version.h"
 
