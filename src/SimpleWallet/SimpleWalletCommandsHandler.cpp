@@ -707,7 +707,7 @@ std::error_code SimpleWalletCommandsHandler::initAndLoadWallet(IWalletLegacy& wa
   // Check if initializing the wallet legacy object produces an error
 
   WalletHelper::WalletLegacyInitErrorObserver walletLegacyInitErrorObserver;
-  std::future<std::error_code> walletLegacyInitErrorFuture = walletLegacyInitErrorObserver.initErrorCodePromise.get_future();
+  std::future<std::error_code> walletLegacyInitErrorFuture = walletLegacyInitErrorObserver.initErrorPromise.get_future();
 
   // Adds walletLegacyInitErrorObserver as an observer of walletLegacy
   WalletHelper::WalletLegacySmartObserver walletLegacySmartObserver(walletLegacy, walletLegacyInitErrorObserver);
@@ -1287,8 +1287,8 @@ bool SimpleWalletCommandsHandler::send(const std::vector<std::string> &args)
       }
     }
 
-    WalletHelper::SendCompleteResultObserver sent;
-    WalletHelper::WalletLegacySmartObserver walletLegacySmartObserver(*m_walletLegacyPtr, sent);
+    WalletHelper::WalletLegacySendErrorObserver walletLegacySendErrorObserver;
+    WalletHelper::WalletLegacySmartObserver walletLegacySmartObserver(*m_walletLegacyPtr, walletLegacySendErrorObserver);
 
     std::vector<WalletLegacyTransfer> destinations = {destination};
     uint64_t fee = getMinimalFee();
@@ -1303,7 +1303,7 @@ bool SimpleWalletCommandsHandler::send(const std::vector<std::string> &args)
       return true;
     }
 
-    std::error_code sendError = sent.wait(transactionNumber);
+    std::error_code sendError = walletLegacySendErrorObserver.wait(transactionNumber);
     walletLegacySmartObserver.removeObserver();
 
     if (sendError) {
