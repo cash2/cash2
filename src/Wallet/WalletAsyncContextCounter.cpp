@@ -7,22 +7,27 @@
 
 namespace CryptoNote {
 
-void WalletAsyncContextCounter::addAsyncContext() {
+void WalletAsyncContextCounter::incrementAsyncContextCounter() {
   std::unique_lock<std::mutex> lock(m_mutex);
-  m_asyncContexts++;
+  m_asyncContextCounter++;
 }
 
-void WalletAsyncContextCounter::delAsyncContext() {
+void WalletAsyncContextCounter::decrementAsyncContextCounter() {
   std::unique_lock<std::mutex> lock(m_mutex);
-  m_asyncContexts--;
+  m_asyncContextCounter--;
 
-  if (!m_asyncContexts) m_cv.notify_one();
+  if (m_asyncContextCounter == 0)
+  {
+    m_cv.notify_one();
+  }
 }
 
 void WalletAsyncContextCounter::waitAsyncContextsFinish() {
   std::unique_lock<std::mutex> lock(m_mutex);
-  while (m_asyncContexts > 0)
+  while (m_asyncContextCounter > 0)
+  {
     m_cv.wait(lock);
+  }
 }
 
 } //namespace CryptoNote

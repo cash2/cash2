@@ -26,4 +26,18 @@ void KeysStorage::serialize(ISerializer& serializer, const std::string& name) {
   serializer.endObject();
 }
 
+void KeysStorage::deserialize(ISerializer& deserializer, const std::string& name) {
+  deserializer.beginObject(name);
+
+  deserializer(creationTimestamp, "creation_timestamp");
+
+  deserializer(spendPublicKey, "spend_public_key");
+  deserializer(spendSecretKey, "spend_secret_key");
+
+  deserializer(viewPublicKey, "view_public_key");
+  deserializer(viewSecretKey, "view_secret_key");
+
+  deserializer.endObject();
+}
+
 }

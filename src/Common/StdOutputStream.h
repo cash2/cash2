@@ -17,7 +17,7 @@ public:
   size_t writeSome(const void* data, size_t size) override;
 
 private:
-  std::ostream& out;
+  std::ostream& m_outputStream;
 };
 
 }

@@ -14,16 +14,16 @@ namespace CryptoNote {
 class WalletAsyncContextCounter
 {
 public:
-  WalletAsyncContextCounter() : m_asyncContexts(0) {}
+  WalletAsyncContextCounter() : m_asyncContextCounter(0) {}
 
-  void addAsyncContext();
-  void delAsyncContext();
+  void incrementAsyncContextCounter();
+  void decrementAsyncContextCounter();
 
   //returns true if contexts are finished before timeout
   void waitAsyncContextsFinish();
 
 private:
-  uint32_t m_asyncContexts;
+  uint32_t m_asyncContextCounter;
   std::condition_variable m_cv;
   std::mutex m_mutex;
 };

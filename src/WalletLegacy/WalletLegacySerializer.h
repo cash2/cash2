@@ -12,6 +12,7 @@
 
 #include "crypto/hash.h"
 #include "crypto/chacha8.h"
+#include "WalletUserTransactionsCache.h"
 
 namespace CryptoNote {
 class AccountBase;
@@ -20,25 +21,21 @@ class ISerializer;
 
 namespace CryptoNote {
 
-class WalletUserTransactionsCache;
-
 class WalletLegacySerializer {
 public:
   WalletLegacySerializer(CryptoNote::AccountBase& account, WalletUserTransactionsCache& transactionsCache);
-
-  void serialize(std::ostream& stream, const std::string& password, bool saveDetailed, const std::string& cache);
-  void deserialize(std::istream& stream, const std::string& password, std::string& cache);
+  void deserialize(std::istream& inputStream, const std::string& password, std::string& cache);
+  void serialize(std::ostream& outputStream, const std::string& password, bool saveDetailed, const std::string& cache);
 
 private:
-  void saveKeys(CryptoNote::ISerializer& serializer);
-  void loadKeys(CryptoNote::ISerializer& serializer);
+  void decrypt(const std::string& encryptedStr, std::string& decryptedStr, Crypto::chacha8_iv iv, const std::string& password);
+  Crypto::chacha8_iv encrypt(const std::string& decryptedStr, const std::string& password, std::string& encryptedStr);
+  void throwIfKeysMissmatch(const Crypto::SecretKey& privateKey, const Crypto::PublicKey& expectedPublicKey);
+  bool verifyKeys(const Crypto::SecretKey& privateKey, const Crypto::PublicKey& expectedPublicKey);
 
-  Crypto::chacha8_iv encrypt(const std::string& plain, const std::string& password, std::string& cipher);
-  void decrypt(const std::string& cipher, std::string& plain, Crypto::chacha8_iv iv, const std::string& password);
-
-  CryptoNote::AccountBase& account;
-  WalletUserTransactionsCache& transactionsCache;
-  const uint32_t walletSerializationVersion;
+  CryptoNote::AccountBase& m_account;
+  WalletUserTransactionsCache& m_walletUserTransactionsCache;
+  const uint32_t m_walletSerializationVersion;
 };
 
 extern uint32_t WALLET_LEGACY_SERIALIZATION_VERSION;

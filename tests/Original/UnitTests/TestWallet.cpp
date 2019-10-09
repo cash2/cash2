@@ -1606,7 +1606,7 @@ public:
   INodeNoRelay(TestBlockchainGenerator& generator) : INodeTrivialRefreshStub(generator) {}
 
   virtual void relayTransaction(const CryptoNote::Transaction& transaction, const Callback& callback) override {
-    m_asyncCounter.addAsyncContext();
+    m_asyncCounter.incrementAsyncContextCounter();
     std::thread task(&INodeNoRelay::doNoRelayTransaction, this, transaction, callback);
     task.detach();
   }
@@ -1614,7 +1614,7 @@ public:
   void doNoRelayTransaction(const CryptoNote::Transaction& transaction, const Callback& callback)
   {
     callback(std::error_code());
-    m_asyncCounter.delAsyncContext();
+    m_asyncCounter.decrementAsyncContextCounter();
   }
 };
 
