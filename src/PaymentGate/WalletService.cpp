@@ -32,7 +32,6 @@
 #include "WalletFactory.h"
 #include "NodeFactory.h"
 
-#include "Wallet/LegacyKeysImporter.h"
 #include "Wallet/WalletErrors.h"
 #include "Wallet/WalletUtils.h"
 #include "WalletServiceErrorCategory.h"
@@ -489,19 +488,6 @@ void generateNewWallet(const CryptoNote::Currency &currency, const WalletConfigu
     // either the spend private key was given or the view private key was given but not both
     log(Logging::ERROR, Logging::BRIGHT_RED) << "Must specify both spend private key and view private key to restore wallet";
   }
-}
-
-void importLegacyKeys(const std::string &legacyKeysFile, const WalletConfiguration &conf) {
-  std::stringstream archive;
-
-  CryptoNote::importLegacyKeys(legacyKeysFile, conf.walletPassword, archive);
-
-  std::fstream walletFile;
-  createWalletFile(walletFile, conf.walletFile);
-
-  archive.flush();
-  walletFile << archive.rdbuf();
-  walletFile.flush();
 }
 
 WalletService::WalletService(const CryptoNote::Currency& currency, System::Dispatcher& sys, CryptoNote::INode& node,

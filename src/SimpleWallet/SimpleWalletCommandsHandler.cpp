@@ -32,7 +32,6 @@
 #include "Rpc/CoreRpcStatuses.h"
 #include "Rpc/HttpClient.h"
 #include "SimpleWalletCommandsHandler.h"
-#include "Wallet/LegacyKeysImporter.h"
 #include "WalletLegacy/WalletHelper.h"
 #include "WalletLegacy/WalletLegacy.h"
 #include "version.h"
