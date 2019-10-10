@@ -24,7 +24,7 @@
 #include "WalletLegacy/WalletRequest.h"
 #include "WalletLegacy/WalletTransactionSender.h"
 #include "WalletLegacy/WalletUnconfirmedTransactions.h"
-#include "WalletLegacy/WalletUserTransactionsCache.h"
+#include "WalletLegacy/WalletLegacyCache.h"
 
 namespace CryptoNote {
 
@@ -95,7 +95,7 @@ private:
   WalletState m_walletState;
   ITransfersContainer* m_transfersContainer;
   TransfersSyncronizer m_transfersSynchronizer;
-  WalletUserTransactionsCache m_walletUserTransactionsCache;
+  WalletLegacyCache m_walletLegacyCache;
   
   class SyncStarter : public CryptoNote::IWalletLegacyObserver {
   public:

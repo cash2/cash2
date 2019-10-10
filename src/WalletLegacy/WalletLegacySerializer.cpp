@@ -15,7 +15,7 @@
 #include "Serialization/BinaryOutputStreamSerializer.h"
 #include "Wallet/WalletErrors.h"
 #include "WalletLegacy/KeysStorage.h"
-#include "WalletLegacy/WalletUserTransactionsCache.h"
+#include "WalletLegacy/WalletLegacyCache.h"
 #include "WalletLegacySerializer.h"
 
 namespace CryptoNote {
@@ -26,9 +26,9 @@ uint32_t WALLET_LEGACY_SERIALIZATION_VERSION = 2;
 // Public functions
 
 
-WalletLegacySerializer::WalletLegacySerializer(CryptoNote::AccountBase& account, WalletUserTransactionsCache& transactionsCache) :
+WalletLegacySerializer::WalletLegacySerializer(CryptoNote::AccountBase& account, WalletLegacyCache& walletLegacyCache) :
   m_account(account),
-  m_walletUserTransactionsCache(transactionsCache),
+  m_walletLegacyCache(walletLegacyCache),
   m_walletSerializationVersion(2)
 {
 }
@@ -99,8 +99,8 @@ void WalletLegacySerializer::deserialize(std::istream& inputStream, const std::s
   decryptedDataDeserializer(detailsSaved, "has_details");
 
   if (detailsSaved) {
-    // deserialize m_walletUserTransactionsCache
-    decryptedDataDeserializer(m_walletUserTransactionsCache, "details");
+    // deserialize m_walletLegacyCache
+    decryptedDataDeserializer(m_walletLegacyCache, "details");
   }
 
   // deserialize cache
@@ -130,8 +130,8 @@ void WalletLegacySerializer::serialize(std::ostream& outputStream, const std::st
   decryptedDataSerializer(saveDetailed, "has_details");
 
   if (saveDetailed) {
-    // serialize m_walletUserTransactionsCache
-    decryptedDataSerializer(m_walletUserTransactionsCache, "details");
+    // serialize m_walletLegacyCache
+    decryptedDataSerializer(m_walletLegacyCache, "details");
   }
 
   // serialize cache

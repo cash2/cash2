@@ -11,7 +11,7 @@
 
 #include "INode.h"
 #include "WalletLegacy/WalletSendTransactionContext.h"
-#include "WalletLegacy/WalletUserTransactionsCache.h"
+#include "WalletLegacy/WalletLegacyCache.h"
 #include "WalletLegacy/WalletUnconfirmedTransactions.h"
 #include "WalletLegacy/WalletRequest.h"
 
@@ -22,7 +22,7 @@ namespace CryptoNote {
 class WalletTransactionSender
 {
 public:
-  WalletTransactionSender(const Currency& currency, WalletUserTransactionsCache& transactionsCache, AccountKeys keys, ITransfersContainer& transfersContainer);
+  WalletTransactionSender(const Currency& currency, WalletLegacyCache& walletLegacyCache, AccountKeys keys, ITransfersContainer& transfersContainer);
 
   void stop();
 
@@ -52,7 +52,7 @@ private:
 
   const Currency& m_currency;
   AccountKeys m_keys;
-  WalletUserTransactionsCache& m_transactionsCache;
+  WalletLegacyCache& m_walletLegacyCache;
   uint64_t m_upperTransactionSizeLimit;
 
   bool m_isStoping;

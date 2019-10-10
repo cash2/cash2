@@ -20,7 +20,7 @@
 #include <Logging/ConsoleLogger.h>
 #include "Wallet/WalletErrors.h"
 #include "Wallet/WalletGreen.h"
-#include "WalletLegacy/WalletUserTransactionsCache.h"
+#include "WalletLegacy/WalletLegacyCache.h"
 #include "WalletLegacy/WalletLegacySerializer.h"
 #include <System/Dispatcher.h>
 #include <System/Timer.h>
@@ -1053,8 +1053,8 @@ void WalletApi::testIWalletDataCompatibility(bool details, const std::string& ca
   CryptoNote::AccountBase account;
   account.generate();
 
-  WalletUserTransactionsCache iWalletCache;
-  WalletLegacySerializer walletSerializer(account, iWalletCache);
+  WalletLegacyCache walletLegacyCache;
+  WalletLegacySerializer walletSerializer(account, walletLegacyCache);
 
   for (const auto& tx: txs) {
     std::vector<WalletLegacyTransfer> txtrs;
@@ -1063,12 +1063,12 @@ void WalletApi::testIWalletDataCompatibility(bool details, const std::string& ca
         txtrs.push_back(trs[i]);
       }
     }
-    auto txId = iWalletCache.addNewTransaction(tx.totalAmount, tx.fee, tx.extra, txtrs, tx.unlockTime);
-    iWalletCache.updateTransactionSendingState(txId, std::error_code());
+    auto txId = walletLegacyCache.addNewTransaction(tx.totalAmount, tx.fee, tx.extra, txtrs, tx.unlockTime);
+    walletLegacyCache.updateTransactionSendingState(txId, std::error_code());
   }
 
   for (const auto& item: externalTxs) {
-    iWalletCache.onTransactionUpdated(item.first, item.second);
+    walletLegacyCache.onTransactionUpdated(item.first, item.second);
   }
 
   std::stringstream stream;

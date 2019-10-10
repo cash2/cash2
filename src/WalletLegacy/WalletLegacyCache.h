@@ -15,10 +15,10 @@
 
 namespace CryptoNote {
 
-class WalletUserTransactionsCache
+class WalletLegacyCache
 {
 public:
-  explicit WalletUserTransactionsCache(uint64_t mempoolTxLiveTime = 60 * 60 * 24);
+  explicit WalletLegacyCache(uint64_t mempoolTxLiveTime = 60 * 60 * 24);
   TransactionId addNewTransaction(uint64_t amount, uint64_t fee, const std::string& extra, const std::vector<WalletLegacyTransfer>& transfers, uint64_t unlockTime);
   std::vector<TransactionId> deleteOutdatedTransactions();
   bool deserialize(CryptoNote::ISerializer& deserializer);

@@ -12,7 +12,7 @@
 
 #include "crypto/hash.h"
 #include "crypto/chacha8.h"
-#include "WalletUserTransactionsCache.h"
+#include "WalletLegacyCache.h"
 
 namespace CryptoNote {
 class AccountBase;
@@ -23,7 +23,7 @@ namespace CryptoNote {
 
 class WalletLegacySerializer {
 public:
-  WalletLegacySerializer(CryptoNote::AccountBase& account, WalletUserTransactionsCache& transactionsCache);
+  WalletLegacySerializer(CryptoNote::AccountBase& account, WalletLegacyCache& walletLegacyCache);
   void deserialize(std::istream& inputStream, const std::string& password, std::string& cache);
   void serialize(std::ostream& outputStream, const std::string& password, bool saveDetailed, const std::string& cache);
 
@@ -34,7 +34,7 @@ private:
   bool verifyKeys(const Crypto::SecretKey& privateKey, const Crypto::PublicKey& expectedPublicKey);
 
   CryptoNote::AccountBase& m_account;
-  WalletUserTransactionsCache& m_walletUserTransactionsCache;
+  WalletLegacyCache& m_walletLegacyCache;
   const uint32_t m_walletSerializationVersion;
 };
 

@@ -86,7 +86,7 @@ WalletLegacy::WalletLegacy(const CryptoNote::Currency& currency, INode& node) :
   m_blockchainSynchronizer(node, currency.genesisBlockHash()),
   m_transfersSynchronizer(currency, m_blockchainSynchronizer, node),
   m_transfersContainer(nullptr),
-  m_walletUserTransactionsCache(m_currency.mempoolTxLiveTime()),
+  m_walletLegacyCache(m_currency.mempoolTxLiveTime()),
   m_walletTransactionSenderPtr(nullptr),
   m_syncStarterPtr(new SyncStarter(m_blockchainSynchronizer))
 {
@@ -115,7 +115,7 @@ uint64_t WalletLegacy::actualBalance() {
   throwIfNotInitialised();
 
   return m_transfersContainer->balance(ITransfersContainer::IncludeKeyUnlocked) -
-    m_walletUserTransactionsCache.unconfrimedOutsAmount();
+    m_walletLegacyCache.unconfrimedOutsAmount();
 }
 
 void WalletLegacy::addObserver(IWalletLegacyObserver* observer) {
@@ -145,7 +145,7 @@ TransactionId WalletLegacy::findTransactionByTransferId(TransferId transferId) {
   std::unique_lock<std::mutex> lock(m_cacheMutex);
   throwIfNotInitialised();
 
-  return m_walletUserTransactionsCache.findTransactionByTransferId(transferId);
+  return m_walletLegacyCache.findTransactionByTransferId(transferId);
 }
 
 void WalletLegacy::getAccountKeys(AccountKeys& keys) {
@@ -167,32 +167,32 @@ bool WalletLegacy::getTransaction(TransactionId transactionId, WalletLegacyTrans
   std::unique_lock<std::mutex> lock(m_cacheMutex);
   throwIfNotInitialised();
 
-  return m_walletUserTransactionsCache.getTransaction(transactionId, transaction);
+  return m_walletLegacyCache.getTransaction(transactionId, transaction);
 }
 
 size_t WalletLegacy::getTransactionCount() {
   std::unique_lock<std::mutex> lock(m_cacheMutex);
   throwIfNotInitialised();
 
-  return m_walletUserTransactionsCache.getTransactionCount();
+  return m_walletLegacyCache.getTransactionCount();
 }
 
 bool WalletLegacy::getTransfer(TransferId transferId, WalletLegacyTransfer& transfer) {
   std::unique_lock<std::mutex> lock(m_cacheMutex);
   throwIfNotInitialised();
 
-  return m_walletUserTransactionsCache.getTransfer(transferId, transfer);
+  return m_walletLegacyCache.getTransfer(transferId, transfer);
 }
 
 size_t WalletLegacy::getTransferCount() {
   std::unique_lock<std::mutex> lock(m_cacheMutex);
   throwIfNotInitialised();
 
-  return m_walletUserTransactionsCache.getTransferCount();
+  return m_walletLegacyCache.getTransferCount();
 }
 
 Crypto::SecretKey WalletLegacy::getTxKey(const Crypto::Hash& txid) {
-  TransactionId ti = m_walletUserTransactionsCache.findTransactionByHash(txid);
+  TransactionId ti = m_walletLegacyCache.findTransactionByHash(txid);
   WalletLegacyTransaction transaction;
   getTransaction(ti, transaction);
   if (transaction.secretKey) {
@@ -256,7 +256,7 @@ uint64_t WalletLegacy::pendingBalance() {
   std::unique_lock<std::mutex> lock(m_cacheMutex);
   throwIfNotInitialised();
 
-  uint64_t change = m_walletUserTransactionsCache.unconfrimedOutsAmount() - m_walletUserTransactionsCache.unconfirmedTransactionsAmount();
+  uint64_t change = m_walletLegacyCache.unconfrimedOutsAmount() - m_walletLegacyCache.unconfirmedTransactionsAmount();
   return m_transfersContainer->balance(ITransfersContainer::IncludeKeyNotUnlocked) + change;
 }
 
@@ -372,7 +372,7 @@ void WalletLegacy::shutdown() {
     m_transfersSynchronizer.removeSubscription(accountAddress);
     m_transfersContainer = nullptr;
 
-    m_walletUserTransactionsCache.reset();
+    m_walletLegacyCache.reset();
     m_lastNotifiedActualBalance = 0;
     m_lastNotifiedPendingBalance = 0;
   }
@@ -384,7 +384,7 @@ void WalletLegacy::shutdown() {
 
 std::vector<TransactionId> WalletLegacy::deleteOutdatedUnconfirmedTransactions() {
   std::lock_guard<std::mutex> lock(m_cacheMutex);
-  return m_walletUserTransactionsCache.deleteOutdatedTransactions();
+  return m_walletLegacyCache.deleteOutdatedTransactions();
 }
 
 void WalletLegacy::doSave(std::ostream& destination, bool saveDetailed, bool saveCache) {
@@ -394,7 +394,7 @@ void WalletLegacy::doSave(std::ostream& destination, bool saveDetailed, bool sav
     m_blockchainSynchronizer.stop();
     std::unique_lock<std::mutex> lock(m_cacheMutex);
     
-    WalletLegacySerializer walletLegacySerializer(m_account, m_walletUserTransactionsCache);
+    WalletLegacySerializer walletLegacySerializer(m_account, m_walletLegacyCache);
     std::string cache;
 
     if (saveCache) {
@@ -433,7 +433,7 @@ void WalletLegacy::initSync() {
   m_transfersContainer = &subObject.getContainer();
   subObject.addObserver(this);
 
-  m_walletTransactionSenderPtr.reset(new WalletTransactionSender(m_currency, m_walletUserTransactionsCache, m_account.getAccountKeys(), *m_transfersContainer));
+  m_walletTransactionSenderPtr.reset(new WalletTransactionSender(m_currency, m_walletLegacyCache, m_account.getAccountKeys(), *m_transfersContainer));
   m_walletState = INITIALIZED;
   
   m_blockchainSynchronizer.addObserver(this);
@@ -445,7 +445,7 @@ void WalletLegacy::load(std::istream& inputStream) {
     std::unique_lock<std::mutex> lock(m_cacheMutex);
     
     std::string cache;
-    WalletLegacySerializer walletLegacySerializer(m_account, m_walletUserTransactionsCache);
+    WalletLegacySerializer walletLegacySerializer(m_account, m_walletLegacyCache);
     walletLegacySerializer.deserialize(inputStream, m_password, cache);
       
     initSync();
@@ -508,7 +508,7 @@ void WalletLegacy::onTransactionDeleted(ITransfersSubscription* object, const Cr
 
   {
     std::unique_lock<std::mutex> lock(m_cacheMutex);
-    event = m_walletUserTransactionsCache.onTransactionDeleted(transactionHash);
+    event = m_walletLegacyCache.onTransactionDeleted(transactionHash);
   }
 
   if (event.get()) {
@@ -524,7 +524,7 @@ void WalletLegacy::onTransactionUpdated(ITransfersSubscription* object, const Cr
   uint64_t amountOut;
   if (m_transfersContainer->getTransactionInformation(transactionHash, txInfo, &amountIn, &amountOut)) {
     std::unique_lock<std::mutex> lock(m_cacheMutex);
-    event = m_walletUserTransactionsCache.onTransactionUpdated(txInfo, static_cast<int64_t>(amountOut) - static_cast<int64_t>(amountIn));
+    event = m_walletLegacyCache.onTransactionUpdated(txInfo, static_cast<int64_t>(amountOut) - static_cast<int64_t>(amountIn));
   }
 
   if (event.get()) {
