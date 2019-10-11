@@ -5,21 +5,21 @@
 
 #pragma once
 
-#include "IWalletLegacy.h"
-#include "ITransfersContainer.h"
-
+#include <boost/functional/hash.hpp>
+#include <time.h>
 #include <unordered_map>
 #include <unordered_set>
-#include <time.h>
-#include <boost/functional/hash.hpp>
 
 #include "CryptoNoteCore/CryptoNoteBasic.h"
+#include "ITransfersContainer.h"
+#include "IWalletLegacy.h"
+#include "Serialization/ISerializer.h"
 #include "crypto/crypto.h"
 
 namespace CryptoNote {
-class ISerializer;
 
-typedef std::pair<Crypto::PublicKey, size_t> TransactionOutputId;
+typedef std::pair<Crypto::PublicKey, size_t> TransactionOutputId; // { transactionPublicKey, outputInTransaction }
+
 }
 
 namespace std {
@@ -39,49 +39,41 @@ namespace CryptoNote {
 struct UnconfirmedTransferDetails {
 
   UnconfirmedTransferDetails() :
-    amount(0), sentTime(0), transactionIndex(WALLET_LEGACY_INVALID_TRANSACTION_INDEX) {}
+    amount(0),
+    sentTime(0),
+    transactionIndex(WALLET_LEGACY_INVALID_TRANSACTION_INDEX) {
+  }
 
-  Transaction tx;
   uint64_t amount;
   uint64_t outsAmount;
+  Crypto::SecretKey secretKey;
   time_t sentTime;
+  Transaction transaction;
   size_t transactionIndex;
-  std::vector<TransactionOutputId> usedOutputs;
-  Crypto::SecretKey secretKey;                            
+  std::vector<TransactionOutputId> usedTransactionOutputIds;
 };
 
 class WalletUnconfirmedTransactions
 {
+
 public:
-
   explicit WalletUnconfirmedTransactions(uint64_t uncofirmedTransactionsLiveTime);
-
-  bool serialize(ISerializer& s);
-
-  bool findTransactionId(const Crypto::Hash& hash, size_t& transactionIndex);
+  void add(const Transaction& tx, size_t transactionIndex, uint64_t amount, const std::list<TransactionOutputInformation>& usedTransactionOutputs, const Crypto::SecretKey& tx_key);
   void erase(const Crypto::Hash& hash);
-  void add(const Transaction& tx, size_t transactionIndex, 
-    uint64_t amount, const std::list<TransactionOutputInformation>& usedOutputs, const Crypto::SecretKey& tx_key);
-  void updateTransactionId(const Crypto::Hash& hash, size_t transactionIndex);
-
-  uint64_t countUnconfirmedOutsAmount() const;
-  uint64_t countUnconfirmedTransactionsAmount() const;
-  bool isUsed(const TransactionOutputInformation& out) const;
+  uint64_t getTotalUnconfirmedOutsAmount() const;
+  uint64_t getTotalUnconfirmedTransactionsAmount() const;
+  bool getTransactionIndexFromHash(const Crypto::Hash& transactionHash, size_t& transactionIndex) const;
+  bool isUsed(const TransactionOutputInformation& output) const;
   void reset();
-
+  bool serialize(ISerializer& serializer);
+  void updateTransactionId(const Crypto::Hash& hash, size_t transactionIndex);
   std::vector<size_t> deleteOutdatedTransactions();
 
 private:
-
-  void collectUsedOutputs();
-  void deleteUsedOutputs(const std::vector<TransactionOutputId>& usedOutputs);
-
-  typedef std::unordered_map<Crypto::Hash, UnconfirmedTransferDetails, boost::hash<Crypto::Hash>> UnconfirmedTxsContainer;
-  typedef std::unordered_set<TransactionOutputId> UsedOutputsContainer;
-
-  UnconfirmedTxsContainer m_unconfirmedTxs;
-  UsedOutputsContainer m_usedOutputs;
   uint64_t m_uncofirmedTransactionsLiveTime;
+  std::unordered_map<Crypto::Hash, UnconfirmedTransferDetails, boost::hash<Crypto::Hash>> m_unconfirmedTransferDetailsContainer; // map key is the transaction hash
+  std::unordered_set<TransactionOutputId> m_usedTransactionOutputIdsContainer;
+
 };
 
-} // namespace CryptoNote
+} // end namespace CryptoNote

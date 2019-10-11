@@ -158,7 +158,7 @@ bool WalletLegacyCache::isUsed(const TransactionOutputInformation& out) const
 std::shared_ptr<WalletLegacyEvent> WalletLegacyCache::onTransactionDeleted(const Crypto::Hash& transactionHash)
 {
   size_t transactionIndex = WALLET_LEGACY_INVALID_TRANSACTION_INDEX;
-  if (m_unconfirmedTransactions.findTransactionId(transactionHash, transactionIndex)) {
+  if (m_unconfirmedTransactions.getTransactionIndexFromHash(transactionHash, transactionIndex)) {
     m_unconfirmedTransactions.erase(transactionHash);
     assert(false); // What does this line do? Does it just crash the SimpleWallet program?
   } else {
@@ -186,7 +186,7 @@ std::shared_ptr<WalletLegacyEvent> WalletLegacyCache::onTransactionUpdated(const
 
   size_t transactionIndex = WALLET_LEGACY_INVALID_TRANSACTION_INDEX;
 
-  if (m_unconfirmedTransactions.findTransactionId(txInfo.transactionHash, transactionIndex))
+  if (m_unconfirmedTransactions.getTransactionIndexFromHash(txInfo.transactionHash, transactionIndex))
   {
     m_unconfirmedTransactions.erase(txInfo.transactionHash);
   }
@@ -263,12 +263,12 @@ bool WalletLegacyCache::serialize(ISerializer& s)
 
 uint64_t WalletLegacyCache::unconfirmedTransactionsAmount() const
 {
-  return m_unconfirmedTransactions.countUnconfirmedTransactionsAmount();
+  return m_unconfirmedTransactions.getTotalUnconfirmedTransactionsAmount();
 }
 
 uint64_t WalletLegacyCache::unconfrimedOutsAmount() const
 {
-  return m_unconfirmedTransactions.countUnconfirmedOutsAmount();
+  return m_unconfirmedTransactions.getTotalUnconfirmedOutsAmount();
 }
 
 void WalletLegacyCache::updateTransaction(size_t transactionIndex, const Transaction& transaction, uint64_t amount, const std::list<TransactionOutputInformation>& usedOutputs, const Crypto::SecretKey& transactionPrivateKey)

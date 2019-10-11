@@ -4,143 +4,157 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "WalletUnconfirmedTransactions.h"
-#include "WalletLegacy/WalletLegacySerialization.h"
-
 #include "CryptoNoteCore/CryptoNoteTools.h"
 #include "Serialization/ISerializer.h"
 #include "Serialization/SerializationOverloads.h"
-
-using namespace Crypto;
+#include "WalletLegacy/WalletLegacySerialization.h"
+#include "WalletUnconfirmedTransactions.h"
 
 namespace CryptoNote {
 
-inline TransactionOutputId getOutputId(const TransactionOutputInformation& out) {
-  return std::make_pair(out.transactionPublicKey, out.outputInTransaction);
-}
+
+// Public functions
+
 
 WalletUnconfirmedTransactions::WalletUnconfirmedTransactions(uint64_t uncofirmedTransactionsLiveTime):
   m_uncofirmedTransactionsLiveTime(uncofirmedTransactionsLiveTime) {
 
 }
 
-bool WalletUnconfirmedTransactions::serialize(ISerializer& s) {
-  s(m_unconfirmedTxs, "transactions");
-  if (s.type() == ISerializer::INPUT) {
-    collectUsedOutputs();
+void WalletUnconfirmedTransactions::add(const Transaction& transaction, size_t transactionIndex, uint64_t amount, const std::list<TransactionOutputInformation>& usedTransactionOutputs, const Crypto::SecretKey& transactionPrivateKey) {
+
+  Crypto::Hash transactionHash = getObjectHash(transaction);
+  UnconfirmedTransferDetails& unconfirmedTransferDetailsRef = m_unconfirmedTransferDetailsContainer[transactionHash];
+
+  unconfirmedTransferDetailsRef.amount = amount;
+  unconfirmedTransferDetailsRef.sentTime = time(nullptr);
+  unconfirmedTransferDetailsRef.transaction = transaction;
+  unconfirmedTransferDetailsRef.transactionIndex = transactionIndex;
+  unconfirmedTransferDetailsRef.secretKey = transactionPrivateKey;                       
+
+  uint64_t transactionOutputsAmount = 0;
+  // process used outputs
+  unconfirmedTransferDetailsRef.usedTransactionOutputIds.reserve(usedTransactionOutputs.size());
+  for (const TransactionOutputInformation& transactionOutput : usedTransactionOutputs) {
+    TransactionOutputId transactionOutputId = std::make_pair(transactionOutput.transactionPublicKey, transactionOutput.outputInTransaction);
+    unconfirmedTransferDetailsRef.usedTransactionOutputIds.push_back(transactionOutputId);
+    m_usedTransactionOutputIdsContainer.insert(transactionOutputId);
+    transactionOutputsAmount += transactionOutput.amount;
   }
-  return true;
+
+  unconfirmedTransferDetailsRef.outsAmount = transactionOutputsAmount;
 }
 
-bool WalletUnconfirmedTransactions::findTransactionId(const Hash& hash, size_t& transactionIndex) {
-  auto it = m_unconfirmedTxs.find(hash);
-  if (it == m_unconfirmedTxs.end()) {
+void WalletUnconfirmedTransactions::erase(const Crypto::Hash& hash) {
+  auto it = m_unconfirmedTransferDetailsContainer.find(hash);
+  if (it == m_unconfirmedTransferDetailsContainer.end()) {
+    return;
+  }
+
+  for (const auto& output: it->second.usedTransactionOutputIds) {
+    m_usedTransactionOutputIdsContainer.erase(output);
+  }
+
+  m_unconfirmedTransferDetailsContainer.erase(it);
+}
+
+uint64_t WalletUnconfirmedTransactions::getTotalUnconfirmedOutsAmount() const {
+  
+  uint64_t amount = 0;
+
+  for (const auto& unconfirmedTransferDetails: m_unconfirmedTransferDetailsContainer)
+  {
+    amount += unconfirmedTransferDetails.second.outsAmount;
+  }
+
+  return amount;
+}
+
+uint64_t WalletUnconfirmedTransactions::getTotalUnconfirmedTransactionsAmount() const {
+  uint64_t amount = 0;
+
+  for (const auto& unconfirmedTransferDetails: m_unconfirmedTransferDetailsContainer)
+  {
+    amount += unconfirmedTransferDetails.second.amount;
+  }
+
+  return amount;
+}
+
+bool WalletUnconfirmedTransactions::getTransactionIndexFromHash(const Crypto::Hash& transactionHash, size_t& transactionIndex) const {
+  auto it = m_unconfirmedTransferDetailsContainer.find(transactionHash);
+
+  if (it == m_unconfirmedTransferDetailsContainer.end()) {
     return false;
   }
 
   transactionIndex = it->second.transactionIndex;
+
   return true;
 }
 
-void WalletUnconfirmedTransactions::erase(const Hash& hash) {
-  auto it = m_unconfirmedTxs.find(hash);
-  if (it == m_unconfirmedTxs.end()) {
-    return;
-  }
-
-  deleteUsedOutputs(it->second.usedOutputs);
-  m_unconfirmedTxs.erase(it);
+bool WalletUnconfirmedTransactions::isUsed(const TransactionOutputInformation& output) const {
+  TransactionOutputId transactionOutputId = std::make_pair(output.transactionPublicKey, output.outputInTransaction);
+  return m_usedTransactionOutputIdsContainer.find(transactionOutputId) != m_usedTransactionOutputIdsContainer.end();
 }
 
-void WalletUnconfirmedTransactions::add(const Transaction& tx, size_t transactionIndex, 
-  uint64_t amount, const std::list<TransactionOutputInformation>& usedOutputs, const Crypto::SecretKey& tx_key) {
-
-  UnconfirmedTransferDetails& utd = m_unconfirmedTxs[getObjectHash(tx)];
-
-  utd.amount = amount;
-  utd.sentTime = time(nullptr);
-  utd.tx = tx;
-  utd.transactionIndex = transactionIndex;
-  utd.secretKey = tx_key;                       
-
-  uint64_t outsAmount = 0;
-  // process used outputs
-  utd.usedOutputs.reserve(usedOutputs.size());
-  for (const auto& out : usedOutputs) {
-    auto id = getOutputId(out);
-    utd.usedOutputs.push_back(id);
-    m_usedOutputs.insert(id);
-    outsAmount += out.amount;
-  }
-
-  utd.outsAmount = outsAmount;
+void WalletUnconfirmedTransactions::reset() {
+  m_unconfirmedTransferDetailsContainer.clear();
+  m_usedTransactionOutputIdsContainer.clear();
 }
 
-void WalletUnconfirmedTransactions::updateTransactionId(const Hash& hash, size_t transactionIndex) {
-  auto it = m_unconfirmedTxs.find(hash);
-  if (it != m_unconfirmedTxs.end()) {
+bool WalletUnconfirmedTransactions::serialize(ISerializer& serializer) {
+
+  serializer(m_unconfirmedTransferDetailsContainer, "transactions");
+
+  if (serializer.type() == ISerializer::INPUT) {
+    // get used outputs from m_unconfirmedTransferDetailsContainer and put them in m_usedTransactionOutputIdsContainer
+    std::unordered_set<TransactionOutputId> usedTransactionOutputIdsContainer;
+
+    for (const auto& unconfirmedTransferDetails : m_unconfirmedTransferDetailsContainer) {
+      usedTransactionOutputIdsContainer.insert(unconfirmedTransferDetails.second.usedTransactionOutputIds.begin(), unconfirmedTransferDetails.second.usedTransactionOutputIds.end());
+    }
+
+    m_usedTransactionOutputIdsContainer = std::move(usedTransactionOutputIdsContainer);
+  }
+
+  return true;
+}
+
+void WalletUnconfirmedTransactions::updateTransactionId(const Crypto::Hash& transactionHash, size_t transactionIndex)
+{
+  auto it = m_unconfirmedTransferDetailsContainer.find(transactionHash);
+  if (it != m_unconfirmedTransferDetailsContainer.end())
+  {
     it->second.transactionIndex = transactionIndex;
   }
 }
 
-uint64_t WalletUnconfirmedTransactions::countUnconfirmedOutsAmount() const {
-  uint64_t amount = 0;
-
-  for (auto& utx: m_unconfirmedTxs)
-    amount+= utx.second.outsAmount;
-
-  return amount;
-}
-
-uint64_t WalletUnconfirmedTransactions::countUnconfirmedTransactionsAmount() const {
-  uint64_t amount = 0;
-
-  for (auto& utx: m_unconfirmedTxs)
-    amount+= utx.second.amount;
-
-  return amount;
-}
-
-bool WalletUnconfirmedTransactions::isUsed(const TransactionOutputInformation& out) const {
-  return m_usedOutputs.find(getOutputId(out)) != m_usedOutputs.end();
-}
-
-void WalletUnconfirmedTransactions::collectUsedOutputs() {
-  UsedOutputsContainer used;
-  for (const auto& kv : m_unconfirmedTxs) {
-    used.insert(kv.second.usedOutputs.begin(), kv.second.usedOutputs.end());
-  }
-  m_usedOutputs = std::move(used);
-}
-
-void WalletUnconfirmedTransactions::reset() {
-  m_unconfirmedTxs.clear();
-  m_usedOutputs.clear();
-}
-
-void WalletUnconfirmedTransactions::deleteUsedOutputs(const std::vector<TransactionOutputId>& usedOutputs) {
-  for (const auto& output: usedOutputs) {
-    m_usedOutputs.erase(output);
-  }
-}
-
-std::vector<size_t> WalletUnconfirmedTransactions::deleteOutdatedTransactions() {
+std::vector<size_t> WalletUnconfirmedTransactions::deleteOutdatedTransactions()
+{
   std::vector<size_t> deletedTransactions;
 
   uint64_t now = static_cast<uint64_t>(time(nullptr));
+
   assert(now >= m_uncofirmedTransactionsLiveTime);
 
-  for (auto it = m_unconfirmedTxs.begin(); it != m_unconfirmedTxs.end();) {
-    if (static_cast<uint64_t>(it->second.sentTime) <= now - m_uncofirmedTransactionsLiveTime) {
-      deleteUsedOutputs(it->second.usedOutputs);
-      deletedTransactions.push_back(it->second.transactionIndex);
-      it = m_unconfirmedTxs.erase(it);
-    } else {
-      ++it;
+  for (const auto& unconfirmedTransferDetails : m_unconfirmedTransferDetailsContainer)
+  {
+    if (static_cast<uint64_t>(unconfirmedTransferDetails.second.sentTime) <= now - m_uncofirmedTransactionsLiveTime)
+    {
+      for (const TransactionOutputId& usedTransactionOutputId : unconfirmedTransferDetails.second.usedTransactionOutputIds)
+      {
+        m_usedTransactionOutputIdsContainer.erase(usedTransactionOutputId);
+      }
+
+      deletedTransactions.push_back(unconfirmedTransferDetails.second.transactionIndex);
+
+      m_unconfirmedTransferDetailsContainer.erase(unconfirmedTransferDetails.first);
     }
   }
 
   return deletedTransactions;
+
 }
 
-} /* namespace CryptoNote */
+} // end namespace CryptoNote

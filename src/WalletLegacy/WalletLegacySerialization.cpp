@@ -15,7 +15,7 @@
 namespace CryptoNote {
 
 void serialize(UnconfirmedTransferDetails& utd, ISerializer& serializer) {
-  serializer(utd.tx, "transaction");
+  serializer(utd.transaction, "transaction");
   serializer(utd.amount, "amount");
   serializer(utd.outsAmount, "outs_amount");
   uint64_t time = static_cast<uint64_t>(utd.sentTime);
