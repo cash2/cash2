@@ -37,7 +37,7 @@ public:
     m_sem.notify();
   }
 
-  virtual void sendTransactionCompleted(TransactionId transactionId, std::error_code result) override {
+  virtual void sendTransactionCompleted(size_t transactionIndex, std::error_code result) override {
     std::cout << "Transaction sent, result = " << result << std::endl;
   }
 

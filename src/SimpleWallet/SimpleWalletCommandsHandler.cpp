@@ -559,9 +559,9 @@ bool SimpleWalletCommandsHandler::all_transactions(const std::vector<std::string
   bool validTransactionFound = false;
 
   size_t walletTransactionsCount = m_walletLegacyPtr->getTransactionCount();
-  for (TransactionId transactionNumber = 0; transactionNumber < walletTransactionsCount; ++transactionNumber) {
+  for (size_t transactionIndex = 0; transactionIndex < walletTransactionsCount; ++transactionIndex) {
     WalletLegacyTransaction transaction;
-    m_walletLegacyPtr->getTransaction(transactionNumber, transaction);
+    m_walletLegacyPtr->getTransaction(transactionIndex, transaction);
     if (transaction.state == WalletLegacyTransactionState::Active && transaction.blockIndex != WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT) {
 
       if (validTransactionFound == false) {
@@ -605,10 +605,10 @@ bool SimpleWalletCommandsHandler::exit(const std::vector<std::string> &args)
   return true;
 }
 
-void SimpleWalletCommandsHandler::externalTransactionCreated(TransactionId transactionId) // IWalletLegacyObserver
+void SimpleWalletCommandsHandler::externalTransactionCreated(size_t transactionIndex) // IWalletLegacyObserver
 {
   WalletLegacyTransaction walletLegacyTransaction;
-  m_walletLegacyPtr->getTransaction(transactionId, walletLegacyTransaction);
+  m_walletLegacyPtr->getTransaction(transactionIndex, walletLegacyTransaction);
   
   std::stringstream ss;
   if (walletLegacyTransaction.blockIndex == WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT) {
@@ -645,12 +645,12 @@ void SimpleWalletCommandsHandler::externalTransactionCreated(TransactionId trans
 
 uint64_t SimpleWalletCommandsHandler::getMinimalFee()
 {
-  if ((m_nodeRpcProxyPtr->getLastKnownBlockHeight() + 1) < CryptoNote::parameters::SOFT_FORK_HEIGHT_1)
+  if ((m_nodeRpcProxyPtr->getLastKnownBlockHeight() + 1) < parameters::SOFT_FORK_HEIGHT_1)
   {
-    return CryptoNote::parameters::MINIMUM_FEE_1;
+    return parameters::MINIMUM_FEE_1;
   }
   
-  return CryptoNote::parameters::MINIMUM_FEE_2;
+  return parameters::MINIMUM_FEE_2;
 }
 
 bool SimpleWalletCommandsHandler::height(const std::vector<std::string>& args)
@@ -678,9 +678,9 @@ bool SimpleWalletCommandsHandler::incoming_transactions(const std::vector<std::s
   bool incomingTransactionFound = false;
   size_t walletTransactionsCount = m_walletLegacyPtr->getTransactionCount();
 
-  for (TransactionId transactionNumber = 0; transactionNumber < walletTransactionsCount; ++transactionNumber) {
+  for (size_t transactionIndex = 0; transactionIndex < walletTransactionsCount; ++transactionIndex) {
     WalletLegacyTransaction transaction;
-    m_walletLegacyPtr->getTransaction(transactionNumber, transaction);
+    m_walletLegacyPtr->getTransaction(transactionIndex, transaction);
     if (transaction.totalAmount > 0)
     {
       if (incomingTransactionFound == false)
@@ -785,9 +785,9 @@ bool SimpleWalletCommandsHandler::outgoing_transactions(const std::vector<std::s
   bool outgoingTransactionFound = false;
   size_t walletTransactionsCount = m_walletLegacyPtr->getTransactionCount();
 
-  for (TransactionId transactionNumber = 0; transactionNumber < walletTransactionsCount; ++transactionNumber) {
+  for (size_t transactionIndex = 0; transactionIndex < walletTransactionsCount; ++transactionIndex) {
     WalletLegacyTransaction transaction;
-    m_walletLegacyPtr->getTransaction(transactionNumber, transaction);
+    m_walletLegacyPtr->getTransaction(transactionIndex, transaction);
     if (transaction.totalAmount < 0)
     {
       if (outgoingTransactionFound == false)
@@ -859,9 +859,9 @@ bool SimpleWalletCommandsHandler::payments(const std::vector<std::string> &args)
       ss << '\n';
 
       size_t walletTransactionsCount = m_walletLegacyPtr->getTransactionCount();
-      for (TransactionId transactionNumber = 0; transactionNumber < walletTransactionsCount; ++transactionNumber) {
+      for (size_t transactionIndex = 0; transactionIndex < walletTransactionsCount; ++transactionIndex) {
         WalletLegacyTransaction transaction;
-        m_walletLegacyPtr->getTransaction(transactionNumber, transaction);
+        m_walletLegacyPtr->getTransaction(transactionIndex, transaction);
         if (transaction.totalAmount > 0) // incoming transaction
         {
           std::vector<uint8_t> transactionExtra(transaction.extra.begin(), transaction.extra.end()); // converts string to vector of uint8_t
@@ -1295,14 +1295,14 @@ bool SimpleWalletCommandsHandler::send(const std::vector<std::string> &args)
     std::copy(transactionExtra.begin(), transactionExtra.end(), std::back_inserter(transactionExtraStr));
     uint64_t unlockTimestamp = 0;
 
-    TransactionId transactionNumber = m_walletLegacyPtr->sendTransaction(destinations, fee, transactionExtraStr, mixin, unlockTimestamp);
+    size_t transactionIndex = m_walletLegacyPtr->sendTransaction(destinations, fee, transactionExtraStr, mixin, unlockTimestamp);
 
-    if (transactionNumber == WALLET_LEGACY_INVALID_TRANSACTION_ID) {
+    if (transactionIndex == WALLET_LEGACY_INVALID_TRANSACTION_ID) {
       m_logger(Logging::ERROR, Logging::RED) << "Error : Error sending money";
       return true;
     }
 
-    std::error_code sendError = walletLegacySendErrorObserver.wait(transactionNumber);
+    std::error_code sendError = walletLegacySendErrorObserver.wait(transactionIndex);
     walletLegacySmartObserver.removeObserver();
 
     if (sendError) {
@@ -1311,7 +1311,7 @@ bool SimpleWalletCommandsHandler::send(const std::vector<std::string> &args)
     }
 
     WalletLegacyTransaction transaction;
-    m_walletLegacyPtr->getTransaction(transactionNumber, transaction);
+    m_walletLegacyPtr->getTransaction(transactionIndex, transaction);
     m_logger(Logging::INFO, Logging::MAGENTA) << "Money successfully sent, transaction " << Common::podToHex(transaction.hash) << std::endl;
 
     try {

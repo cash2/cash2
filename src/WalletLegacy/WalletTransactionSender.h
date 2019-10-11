@@ -26,7 +26,7 @@ public:
 
   void stop();
 
-  std::shared_ptr<WalletRequest> makeSendRequest(TransactionId& transactionId, std::deque<std::shared_ptr<WalletLegacyEvent>>& events,
+  std::shared_ptr<WalletRequest> makeSendRequest(size_t& transactionIndex, std::deque<std::shared_ptr<WalletLegacyEvent>>& events,
     const std::vector<WalletLegacyTransfer>& transfers, uint64_t fee, const std::string& extra = "", uint64_t mixIn = 0, uint64_t unlockTimestamp = 0);
 
 private:

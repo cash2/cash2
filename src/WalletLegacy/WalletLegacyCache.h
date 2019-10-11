@@ -19,13 +19,13 @@ class WalletLegacyCache
 {
 public:
   explicit WalletLegacyCache(uint64_t mempoolTxLiveTime = 60 * 60 * 24);
-  TransactionId addNewTransaction(uint64_t amount, uint64_t fee, const std::string& extra, const std::vector<WalletLegacyTransfer>& transfers, uint64_t unlockTime);
-  std::vector<TransactionId> deleteOutdatedTransactions();
-  bool deserialize(CryptoNote::ISerializer& deserializer);
-  TransactionId findTransactionByHash(const Crypto::Hash& hash);                                                              
-  TransactionId findTransactionByTransferId(TransferId transferId) const;
-  WalletLegacyTransaction& getTransaction(TransactionId transactionId);
-  bool getTransaction(TransactionId transactionId, WalletLegacyTransaction& transaction) const;
+  size_t addNewTransaction(uint64_t amount, uint64_t fee, const std::string& extra, const std::vector<WalletLegacyTransfer>& transfers, uint64_t unlockTime);
+  std::vector<size_t> deleteOutdatedTransactions();
+  bool deserialize(ISerializer& deserializer);
+  size_t findTransactionByHash(const Crypto::Hash& hash);                                                              
+  size_t findTransactionByTransferId(TransferId transferId) const;
+  WalletLegacyTransaction& getTransaction(size_t transactionIndex);
+  bool getTransaction(size_t transactionIndex, WalletLegacyTransaction& transaction) const;
   size_t getTransactionCount() const;
   WalletLegacyTransfer& getTransfer(TransferId transferId);
   bool getTransfer(TransferId transferId, WalletLegacyTransfer& transfer) const;
@@ -34,11 +34,11 @@ public:
   std::shared_ptr<WalletLegacyEvent> onTransactionDeleted(const Crypto::Hash& transactionHash);
   std::shared_ptr<WalletLegacyEvent> onTransactionUpdated(const TransactionInformation& txInfo, int64_t txBalance);
   void reset();
-  bool serialize(CryptoNote::ISerializer& serializer);
+  bool serialize(ISerializer& serializer);
   uint64_t unconfirmedTransactionsAmount() const;
   uint64_t unconfrimedOutsAmount() const;
-  void updateTransaction(TransactionId transactionId, const CryptoNote::Transaction& tx, uint64_t amount, const std::list<TransactionOutputInformation>& usedOutputs, const Crypto::SecretKey& tx_key);
-  void updateTransactionSendingState(TransactionId transactionId, std::error_code ec);
+  void updateTransaction(size_t transactionIndex, const Transaction& tx, uint64_t amount, const std::list<TransactionOutputInformation>& usedOutputs, const Crypto::SecretKey& tx_key);
+  void updateTransactionSendingState(size_t transactionIndex, std::error_code ec);
     
 private:
   void getValidTransactionsAndTransfers(std::vector<WalletLegacyTransaction>& transactions, std::vector<WalletLegacyTransfer>& transfers);

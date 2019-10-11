@@ -99,7 +99,7 @@ public:
     return true;
   }
 
-  virtual void sendTransactionCompleted(CryptoNote::TransactionId transactionId, std::error_code result) override {
+  virtual void sendTransactionCompleted(size_t transactionIndex, std::error_code result) override {
     sendResult = result;
     sent.notify();
   }
@@ -341,11 +341,11 @@ struct CompletionWalletObserver : public IWalletLegacyObserver {
 struct WaitForExternalTransactionObserver : public CryptoNote::IWalletLegacyObserver {
 public:
   WaitForExternalTransactionObserver() {}
-  std::promise<CryptoNote::TransactionId> promise;
+  std::promise<size_t> promise;
 
-  virtual void externalTransactionCreated(CryptoNote::TransactionId transactionId) override {
+  virtual void externalTransactionCreated(size_t transactionIndex) override {
     decltype(promise) detachedPromise = std::move(promise);
-    detachedPromise.set_value(transactionId);
+    detachedPromise.set_value(transactionIndex);
   }
 
 };

@@ -44,7 +44,7 @@ private:
   bool balance(const std::vector<std::string> &args = std::vector<std::string>());
   virtual void connectionStatusUpdated(bool connected) override; // INodeRpcProxyObserver
   bool exit(const std::vector<std::string> &args);
-  virtual void externalTransactionCreated(TransactionId transactionId) override; // IWalletLegacyObserver
+  virtual void externalTransactionCreated(size_t transactionIndex) override; // IWalletLegacyObserver
   uint64_t getMinimalFee();
   bool height(const std::vector<std::string> &args);
   bool help(const std::vector<std::string> &args = std::vector<std::string>());

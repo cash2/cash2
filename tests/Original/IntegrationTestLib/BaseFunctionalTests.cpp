@@ -287,9 +287,9 @@ namespace {
     CryptoNote::IWalletLegacy& m_wallet;
   public:
     WaitForCoinBaseObserver(Semaphore& gotReward, CryptoNote::IWalletLegacy& wallet) : m_gotReward(gotReward), m_wallet(wallet) { }
-    virtual void externalTransactionCreated(CryptoNote::TransactionId transactionId) override {
+    virtual void externalTransactionCreated(size_t transactionIndex) override {
       CryptoNote::WalletLegacyTransaction trInfo;
-      m_wallet.getTransaction(transactionId, trInfo);
+      m_wallet.getTransaction(transactionIndex, trInfo);
       if (trInfo.isCoinbase) m_gotReward.notify();
     }
   };

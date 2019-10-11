@@ -19,7 +19,7 @@ TestWalletLegacy::TestWalletLegacy(System::Dispatcher& dispatcher, const Currenc
     m_someTransactionUpdated(dispatcher),
     m_currency(currency),
     m_node(node),
-    m_wallet(new CryptoNote::WalletLegacy(currency, node)),
+    m_wallet(new WalletLegacy(currency, node)),
     m_currentHeight(0) {
   m_wallet->addObserver(this);
 }
@@ -32,7 +32,7 @@ TestWalletLegacy::~TestWalletLegacy() {
 }
 
 std::error_code TestWalletLegacy::init() {
-  CryptoNote::AccountBase walletAccount;
+  AccountBase walletAccount;
   walletAccount.generate();
 
   m_wallet->initWithKeys(walletAccount.getAccountKeys(), TEST_PASSWORD);
@@ -45,22 +45,22 @@ namespace {
     System::Dispatcher& m_dispatcher;
     System::Event m_event;
     bool m_waiting = false;
-    TransactionId m_expectedTxId;
+    size_t m_expectedTransactionIndex;
     std::error_code m_result;
 
     TransactionSendingWaiter(System::Dispatcher& dispatcher) : m_dispatcher(dispatcher), m_event(dispatcher) {
     }
 
-    void wait(TransactionId expectedTxId) {
+    void wait(size_t expectedTransactionIndex) {
       m_waiting = true;
-      m_expectedTxId = expectedTxId;
+      m_expectedTransactionIndex = expectedTransactionIndex;
       m_event.wait();
       m_waiting = false;
     }
 
-    virtual void sendTransactionCompleted(TransactionId transactionId, std::error_code result) override {
-      m_dispatcher.remoteSpawn([this, transactionId, result]() {
-        if (m_waiting &&  m_expectedTxId == transactionId) {
+    virtual void sendTransactionCompleted(size_t transactionIndex, std::error_code result) override {
+      m_dispatcher.remoteSpawn([this, transactionIndex, result]() {
+        if (m_waiting &&  m_expectedTransactionIndex == transactionIndex) {
           m_result = result;
           m_event.set();
         }

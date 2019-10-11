@@ -39,13 +39,13 @@ namespace CryptoNote {
 struct UnconfirmedTransferDetails {
 
   UnconfirmedTransferDetails() :
-    amount(0), sentTime(0), transactionId(WALLET_LEGACY_INVALID_TRANSACTION_ID) {}
+    amount(0), sentTime(0), transactionIndex(WALLET_LEGACY_INVALID_TRANSACTION_ID) {}
 
-  CryptoNote::Transaction tx;
+  Transaction tx;
   uint64_t amount;
   uint64_t outsAmount;
   time_t sentTime;
-  TransactionId transactionId;
+  size_t transactionIndex;
   std::vector<TransactionOutputId> usedOutputs;
   Crypto::SecretKey secretKey;                            
 };
@@ -56,20 +56,20 @@ public:
 
   explicit WalletUnconfirmedTransactions(uint64_t uncofirmedTransactionsLiveTime);
 
-  bool serialize(CryptoNote::ISerializer& s);
+  bool serialize(ISerializer& s);
 
-  bool findTransactionId(const Crypto::Hash& hash, TransactionId& id);
+  bool findTransactionId(const Crypto::Hash& hash, size_t& transactionIndex);
   void erase(const Crypto::Hash& hash);
-  void add(const CryptoNote::Transaction& tx, TransactionId transactionId, 
+  void add(const Transaction& tx, size_t transactionIndex, 
     uint64_t amount, const std::list<TransactionOutputInformation>& usedOutputs, const Crypto::SecretKey& tx_key);
-  void updateTransactionId(const Crypto::Hash& hash, TransactionId id);
+  void updateTransactionId(const Crypto::Hash& hash, size_t transactionIndex);
 
   uint64_t countUnconfirmedOutsAmount() const;
   uint64_t countUnconfirmedTransactionsAmount() const;
   bool isUsed(const TransactionOutputInformation& out) const;
   void reset();
 
-  std::vector<TransactionId> deleteOutdatedTransactions();
+  std::vector<size_t> deleteOutdatedTransactions();
 
 private:
 

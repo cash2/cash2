@@ -163,13 +163,13 @@ public:
   class WaitForSendCompletedObserver : public CryptoNote::IWalletLegacyObserver {
     Tests::Common::Semaphore& m_Sent;
     std::error_code& m_error;
-    CryptoNote::TransactionId& m_transactionId;
+    size_t& m_transactionIndex;
 
   public:
-    WaitForSendCompletedObserver(Tests::Common::Semaphore& Sent, CryptoNote::TransactionId& transactionId, std::error_code& error) : m_Sent(Sent), m_transactionId(transactionId), m_error(error) { }
-    virtual void sendTransactionCompleted(CryptoNote::TransactionId transactionId, std::error_code result) override {
+    WaitForSendCompletedObserver(Tests::Common::Semaphore& Sent, size_t& transactionIndex, std::error_code& error) : m_Sent(Sent), m_transactionIndex(transactionIndex), m_error(error) { }
+    virtual void sendTransactionCompleted(size_t transactionIndex, std::error_code result) override {
       m_error = result;
-      m_transactionId = transactionId;
+      m_transactionIndex = transactionIndex;
       m_Sent.notify();
     }
   };
@@ -177,10 +177,10 @@ public:
   class WaitForExternalTransactionObserver : public CryptoNote::IWalletLegacyObserver {
   public:
     WaitForExternalTransactionObserver() { }
-    std::promise<CryptoNote::TransactionId> promise;
+    std::promise<size_t> promise;
 
-    virtual void externalTransactionCreated(CryptoNote::TransactionId transactionId) override {
-      promise.set_value(transactionId);
+    virtual void externalTransactionCreated(size_t transactionIndex) override {
+      promise.set_value(transactionIndex);
     }
 
   };
@@ -191,13 +191,13 @@ public:
     WaitForTransactionUpdated() {}
     std::promise<void> promise;
 
-    virtual void transactionUpdated(CryptoNote::TransactionId transactionId) override {
-      if (expectindTxId == transactionId) {
+    virtual void transactionUpdated(size_t transactionIndex) override {
+      if (expectindTransactionIndex == transactionIndex) {
         promise.set_value();
       }
     }
 
-    CryptoNote::TransactionId expectindTxId;
+    size_t expectindTransactionIndex;
   };
 
 
@@ -251,7 +251,7 @@ public:
     CryptoNote::WalletLegacyTransfer tr;
     tr.address = wallet2->getAddress();
     tr.amount = wallet1ActualBeforeTransaction / 2;
-    TransactionId sendTransaction;
+    size_t sendTransaction;
     std::error_code result;
     Semaphore moneySent;
     WaitForSendCompletedObserver sco1(moneySent, sendTransaction, result);    
@@ -577,12 +577,12 @@ public:
 
     wallet1->sendTransaction(tr, FEE);
 
-    auto txId = future.get();
+    auto transactionIndex = future.get();
     w2GotPending.wait();
 
     wallet2->removeObserver(&poolTxWaiter);
     CryptoNote::WalletLegacyTransaction txInfo;
-    wallet2->getTransaction(txId, txInfo);
+    wallet2->getTransaction(transactionIndex, txInfo);
 
     auto wallet2PendingAfterTransaction = wallet2->pendingBalance();
     auto wallet1PendingAfterTransaction = wallet1->pendingBalance();
@@ -602,7 +602,7 @@ public:
     LOG_DEBUG("Wallet2 actual:  " + m_currency.formatAmount(wallet2->actualBalance()));
 
     WaitForTransactionUpdated trasactionConfirmationObserver;
-    trasactionConfirmationObserver.expectindTxId = txId;
+    trasactionConfirmationObserver.expectindTransactionIndex = transactionIndex;
 
     wallet2->addObserver(&trasactionConfirmationObserver);
     auto txUpdated = trasactionConfirmationObserver.promise.get_future();
@@ -610,7 +610,7 @@ public:
     CHECK_AND_ASSERT_MES(mineBlock(), false, "mineBlock() failed");
     CHECK_AND_ASSERT_MES(mineBlock(), false, "mineBlock() failed");
     txUpdated.get();
-    wallet2->getTransaction(txId, txInfo);
+    wallet2->getTransaction(transactionIndex, txInfo);
     wallet2->removeObserver(&trasactionConfirmationObserver);
 
     CHECK_AND_ASSERT_MES(txInfo.blockIndex <= inprocNode->getLastLocalBlockHeight(), false, "STEP 6 ASSERTION FAILED tx height confirmation failed");
@@ -725,12 +725,12 @@ public:
 
     wallet1->sendTransaction(tr, FEE);
 
-    auto txId = future.get();
+    auto transactionIndex = future.get();
     w2GotPending.wait();
 
     wallet2->removeObserver(&poolTxWaiter);
     CryptoNote::WalletLegacyTransaction txInfo;
-    wallet2->getTransaction(txId, txInfo);
+    wallet2->getTransaction(transactionIndex, txInfo);
 
     auto wallet2PendingAfterTransaction = wallet2->pendingBalance();
     auto wallet1PendingAfterTransaction = wallet1->pendingBalance();
@@ -754,13 +754,13 @@ public:
     
 
     WaitForTransactionUpdated trasactionDeletionObserver;
-    trasactionDeletionObserver.expectindTxId = txId;
+    trasactionDeletionObserver.expectindTransactionIndex = transactionIndex;
 
     wallet2->addObserver(&trasactionDeletionObserver);
     auto txUpdated = trasactionDeletionObserver.promise.get_future();
 
     txUpdated.get();
-    wallet2->getTransaction(txId, txInfo);
+    wallet2->getTransaction(transactionIndex, txInfo);
     wallet2->removeObserver(&trasactionDeletionObserver);
 
    

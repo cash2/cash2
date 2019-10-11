@@ -17,7 +17,6 @@
 
 namespace CryptoNote {
 
-typedef size_t TransactionId;
 typedef size_t TransferId;
 
 struct WalletLegacyTransfer {
@@ -25,7 +24,7 @@ struct WalletLegacyTransfer {
   int64_t amount;
 };
 
-const TransactionId WALLET_LEGACY_INVALID_TRANSACTION_ID    = std::numeric_limits<TransactionId>::max();
+const size_t WALLET_LEGACY_INVALID_TRANSACTION_ID    = std::numeric_limits<size_t>::max();
 const TransferId WALLET_LEGACY_INVALID_TRANSFER_ID          = std::numeric_limits<TransferId>::max();
 const uint32_t WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT = std::numeric_limits<uint32_t>::max();
 
@@ -46,7 +45,7 @@ struct WalletLegacyTransaction {
   uint64_t         sentTime;
   uint64_t         unlockTime;
   Crypto::Hash     hash;
-  boost::optional<Crypto::SecretKey> secretKey = CryptoNote::NULL_SECRET_KEY;                                                                           
+  boost::optional<Crypto::SecretKey> secretKey = NULL_SECRET_KEY;                                                                           
   bool             isCoinbase;
   uint32_t         blockIndex; // I think this should be renamed to blockIndex
   uint64_t         timestamp;
@@ -64,9 +63,9 @@ public:
   virtual void synchronizationCompleted(std::error_code result) {}
   virtual void actualBalanceUpdated(uint64_t actualBalance) {}
   virtual void pendingBalanceUpdated(uint64_t pendingBalance) {}
-  virtual void externalTransactionCreated(TransactionId transactionId) {}
-  virtual void sendTransactionCompleted(TransactionId transactionId, std::error_code result) {}
-  virtual void transactionUpdated(TransactionId transactionId) {}
+  virtual void externalTransactionCreated(size_t transactionIndex) {}
+  virtual void sendTransactionCompleted(size_t transactionIndex, std::error_code result) {}
+  virtual void transactionUpdated(size_t transactionIndex) {}
 };
 
 class IWalletLegacy {
@@ -93,14 +92,14 @@ public:
   virtual size_t getTransactionCount() = 0;
   virtual size_t getTransferCount() = 0;
 
-  virtual TransactionId findTransactionByTransferId(TransferId transferId) = 0;
+  virtual size_t findTransactionByTransferId(TransferId transferId) = 0;
   
-  virtual bool getTransaction(TransactionId transactionId, WalletLegacyTransaction& transaction) = 0;
+  virtual bool getTransaction(size_t transactionIndex, WalletLegacyTransaction& transaction) = 0;
   virtual bool getTransfer(TransferId transferId, WalletLegacyTransfer& transfer) = 0;
   virtual Crypto::SecretKey getTxKey(const Crypto::Hash& txid) = 0;                                                                                                              
 
-  virtual TransactionId sendTransaction(const WalletLegacyTransfer& transfer, uint64_t fee, const std::string& extra = "", uint64_t mixIn = 0, uint64_t unlockTimestamp = 0) = 0;
-  virtual TransactionId sendTransaction(const std::vector<WalletLegacyTransfer>& transfers, uint64_t fee, const std::string& extra = "", uint64_t mixIn = 0, uint64_t unlockTimestamp = 0) = 0;
+  virtual size_t sendTransaction(const WalletLegacyTransfer& transfer, uint64_t fee, const std::string& extra = "", uint64_t mixIn = 0, uint64_t unlockTimestamp = 0) = 0;
+  virtual size_t sendTransaction(const std::vector<WalletLegacyTransfer>& transfers, uint64_t fee, const std::string& extra = "", uint64_t mixIn = 0, uint64_t unlockTimestamp = 0) = 0;
   virtual std::error_code cancelTransaction(size_t transferId) = 0;
 
   virtual void getAccountKeys(AccountKeys& keys) = 0;

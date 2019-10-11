@@ -16,45 +16,45 @@ namespace CryptoNote {
 
 namespace WalletHelper {
 
-class WalletLegacyInitErrorObserver : public CryptoNote::IWalletLegacyObserver {
+class WalletLegacyInitErrorObserver : public IWalletLegacyObserver {
 public:
   std::promise<std::error_code> initErrorPromise;
   virtual void initCompleted(std::error_code errorCode) override { initErrorPromise.set_value(errorCode); }
 };
 
-class WalletLegacySaveErrorObserver : public CryptoNote::IWalletLegacyObserver {
+class WalletLegacySaveErrorObserver : public IWalletLegacyObserver {
 public:
   std::promise<std::error_code> saveErrorPromise;
   virtual void saveCompleted(std::error_code result) override { saveErrorPromise.set_value(result); }
 };
 
-class WalletLegacySendErrorObserver : public CryptoNote::IWalletLegacyObserver {
+class WalletLegacySendErrorObserver : public IWalletLegacyObserver {
 public:
-  virtual void sendTransactionCompleted(CryptoNote::TransactionId transactionId, std::error_code result) override;
-  std::error_code wait(CryptoNote::TransactionId transactionId);
+  virtual void sendTransactionCompleted(size_t transactionIndex, std::error_code result) override;
+  std::error_code wait(size_t transactionIndex);
 
 private:
   std::mutex m_mutex;
   std::condition_variable m_condition;
-  std::map<CryptoNote::TransactionId, std::error_code> m_finishedTransactions;
+  std::map<size_t, std::error_code> m_finishedTransactions;
   std::error_code m_result;
 };
 
 class WalletLegacySmartObserver {
 public:
-  WalletLegacySmartObserver(CryptoNote::IWalletLegacy& walletLegacy, CryptoNote::IWalletLegacyObserver& observer);
+  WalletLegacySmartObserver(IWalletLegacy& walletLegacy, IWalletLegacyObserver& observer);
   ~WalletLegacySmartObserver();
 
   void removeObserver();
 
 private:
-  CryptoNote::IWalletLegacy& m_walletLegacy;
-  CryptoNote::IWalletLegacyObserver& m_observer;
+  IWalletLegacy& m_walletLegacy;
+  IWalletLegacyObserver& m_observer;
   bool m_removed;
 };
 
 void prepareFileNames(const std::string& filePath, std::string& walletFile);
-void saveWallet(CryptoNote::IWalletLegacy& walletLegacy, const std::string& walletFilename);
+void saveWallet(IWalletLegacy& walletLegacy, const std::string& walletFilename);
 
 } // end namespace WalletHelper
 

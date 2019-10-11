@@ -32,13 +32,13 @@ bool WalletUnconfirmedTransactions::serialize(ISerializer& s) {
   return true;
 }
 
-bool WalletUnconfirmedTransactions::findTransactionId(const Hash& hash, TransactionId& id) {
+bool WalletUnconfirmedTransactions::findTransactionId(const Hash& hash, size_t& transactionIndex) {
   auto it = m_unconfirmedTxs.find(hash);
   if (it == m_unconfirmedTxs.end()) {
     return false;
   }
 
-  id = it->second.transactionId;
+  transactionIndex = it->second.transactionIndex;
   return true;
 }
 
@@ -52,7 +52,7 @@ void WalletUnconfirmedTransactions::erase(const Hash& hash) {
   m_unconfirmedTxs.erase(it);
 }
 
-void WalletUnconfirmedTransactions::add(const Transaction& tx, TransactionId transactionId, 
+void WalletUnconfirmedTransactions::add(const Transaction& tx, size_t transactionIndex, 
   uint64_t amount, const std::list<TransactionOutputInformation>& usedOutputs, const Crypto::SecretKey& tx_key) {
 
   UnconfirmedTransferDetails& utd = m_unconfirmedTxs[getObjectHash(tx)];
@@ -60,7 +60,7 @@ void WalletUnconfirmedTransactions::add(const Transaction& tx, TransactionId tra
   utd.amount = amount;
   utd.sentTime = time(nullptr);
   utd.tx = tx;
-  utd.transactionId = transactionId;
+  utd.transactionIndex = transactionIndex;
   utd.secretKey = tx_key;                       
 
   uint64_t outsAmount = 0;
@@ -76,10 +76,10 @@ void WalletUnconfirmedTransactions::add(const Transaction& tx, TransactionId tra
   utd.outsAmount = outsAmount;
 }
 
-void WalletUnconfirmedTransactions::updateTransactionId(const Hash& hash, TransactionId id) {
+void WalletUnconfirmedTransactions::updateTransactionId(const Hash& hash, size_t transactionIndex) {
   auto it = m_unconfirmedTxs.find(hash);
   if (it != m_unconfirmedTxs.end()) {
-    it->second.transactionId = id;
+    it->second.transactionIndex = transactionIndex;
   }
 }
 
@@ -124,8 +124,8 @@ void WalletUnconfirmedTransactions::deleteUsedOutputs(const std::vector<Transact
   }
 }
 
-std::vector<TransactionId> WalletUnconfirmedTransactions::deleteOutdatedTransactions() {
-  std::vector<TransactionId> deletedTransactions;
+std::vector<size_t> WalletUnconfirmedTransactions::deleteOutdatedTransactions() {
+  std::vector<size_t> deletedTransactions;
 
   uint64_t now = static_cast<uint64_t>(time(nullptr));
   assert(now >= m_uncofirmedTransactionsLiveTime);
@@ -133,7 +133,7 @@ std::vector<TransactionId> WalletUnconfirmedTransactions::deleteOutdatedTransact
   for (auto it = m_unconfirmedTxs.begin(); it != m_unconfirmedTxs.end();) {
     if (static_cast<uint64_t>(it->second.sentTime) <= now - m_uncofirmedTransactionsLiveTime) {
       deleteUsedOutputs(it->second.usedOutputs);
-      deletedTransactions.push_back(it->second.transactionId);
+      deletedTransactions.push_back(it->second.transactionIndex);
       it = m_unconfirmedTxs.erase(it);
     } else {
       ++it;

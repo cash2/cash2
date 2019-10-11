@@ -11,17 +11,17 @@
 
 namespace CryptoNote {
 
-void WalletHelper::WalletLegacySendErrorObserver::sendTransactionCompleted(CryptoNote::TransactionId transactionId, std::error_code result) {
+void WalletHelper::WalletLegacySendErrorObserver::sendTransactionCompleted(size_t transactionIndex, std::error_code result) {
   std::lock_guard<std::mutex> lock(m_mutex);
-  m_finishedTransactions[transactionId] = result;
+  m_finishedTransactions[transactionIndex] = result;
   m_condition.notify_one();
 }
 
-std::error_code WalletHelper::WalletLegacySendErrorObserver::wait(CryptoNote::TransactionId transactionId) {
+std::error_code WalletHelper::WalletLegacySendErrorObserver::wait(size_t transactionIndex) {
   std::unique_lock<std::mutex> lock(m_mutex);
 
-  m_condition.wait(lock, [this, &transactionId] {
-    auto it = m_finishedTransactions.find(transactionId);
+  m_condition.wait(lock, [this, &transactionIndex] {
+    auto it = m_finishedTransactions.find(transactionIndex);
     if (it == m_finishedTransactions.end()) {
       return false;
     }
@@ -33,7 +33,7 @@ std::error_code WalletHelper::WalletLegacySendErrorObserver::wait(CryptoNote::Tr
   return m_result;
 }
 
-WalletHelper::WalletLegacySmartObserver::WalletLegacySmartObserver(CryptoNote::IWalletLegacy& walletLegacy, CryptoNote::IWalletLegacyObserver& observer) :
+WalletHelper::WalletLegacySmartObserver::WalletLegacySmartObserver(IWalletLegacy& walletLegacy, IWalletLegacyObserver& observer) :
   m_walletLegacy(walletLegacy),
   m_observer(observer),
   m_removed(false) {
@@ -65,7 +65,7 @@ void WalletHelper::prepareFileNames(const std::string& filePath, std::string& wa
   }
 }
 
-void WalletHelper::saveWallet(CryptoNote::IWalletLegacy& walletLegacy, const std::string& walletFilename) {
+void WalletHelper::saveWallet(IWalletLegacy& walletLegacy, const std::string& walletFilename) {
 
   boost::filesystem::path tempWalletFile = boost::filesystem::unique_path(walletFilename + ".tmp.%%%%-%%%%");
 
@@ -96,7 +96,7 @@ void WalletHelper::saveWallet(CryptoNote::IWalletLegacy& walletLegacy, const std
     throw;
   }
 
-  CryptoNote::WalletHelper::WalletLegacySaveErrorObserver walletLegacySaveErrorObserver;
+  WalletHelper::WalletLegacySaveErrorObserver walletLegacySaveErrorObserver;
   std::future<std::error_code> saveWalletErrorFuture = walletLegacySaveErrorObserver.saveErrorPromise.get_future();
   WalletLegacySmartObserver walletLegacySmartObserver(walletLegacy, walletLegacySaveErrorObserver);
 

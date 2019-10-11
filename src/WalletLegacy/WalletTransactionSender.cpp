@@ -60,9 +60,9 @@ void constructTx(const AccountKeys keys, const std::vector<TransactionSourceEntr
   throwIf(txSize >= sizeLimit, error::TRANSACTION_SIZE_TOO_BIG);
 }
 
-std::shared_ptr<WalletLegacyEvent> makeCompleteEvent(WalletLegacyCache& transactionCache, size_t transactionId, std::error_code ec) {
-  transactionCache.updateTransactionSendingState(transactionId, ec);
-  return std::make_shared<WalletSendTransactionCompletedEvent>(transactionId, ec);
+std::shared_ptr<WalletLegacyEvent> makeCompleteEvent(WalletLegacyCache& transactionCache, size_t transactionIndex, std::error_code ec) {
+  transactionCache.updateTransactionSendingState(transactionIndex, ec);
+  return std::make_shared<WalletSendTransactionCompletedEvent>(transactionIndex, ec);
 }
 
 } //namespace
@@ -94,7 +94,7 @@ void WalletTransactionSender::validateTransfersAddresses(const std::vector<Walle
   }
 }
 
-std::shared_ptr<WalletRequest> WalletTransactionSender::makeSendRequest(TransactionId& transactionId, std::deque<std::shared_ptr<WalletLegacyEvent>>& events,
+std::shared_ptr<WalletRequest> WalletTransactionSender::makeSendRequest(size_t& transactionIndex, std::deque<std::shared_ptr<WalletLegacyEvent>>& events,
     const std::vector<WalletLegacyTransfer>& transfers, uint64_t fee, const std::string& extra, uint64_t mixIn, uint64_t unlockTimestamp) {
 
   using namespace CryptoNote;
@@ -108,8 +108,8 @@ std::shared_ptr<WalletRequest> WalletTransactionSender::makeSendRequest(Transact
   context->foundMoney = selectTransfersToSend(neededMoney, 0 == mixIn, context->dustPolicy.dustThreshold, context->selectedTransfers);
   throwIf(context->foundMoney < neededMoney, error::WRONG_AMOUNT);
 
-  transactionId = m_walletLegacyCache.addNewTransaction(neededMoney, fee, extra, transfers, unlockTimestamp);
-  context->transactionId = transactionId;
+  transactionIndex = m_walletLegacyCache.addNewTransaction(neededMoney, fee, extra, transfers, unlockTimestamp);
+  context->transactionIndex = transactionIndex;
   context->mixIn = mixIn;
 
   if(context->mixIn) {
@@ -140,7 +140,7 @@ void WalletTransactionSender::sendTransactionRandomOutsByAmount(std::shared_ptr<
   }
 
   if (ec) {
-    events.push_back(makeCompleteEvent(m_walletLegacyCache, context->transactionId, ec));
+    events.push_back(makeCompleteEvent(m_walletLegacyCache, context->transactionIndex, ec));
     return;
   }
 
@@ -148,7 +148,7 @@ void WalletTransactionSender::sendTransactionRandomOutsByAmount(std::shared_ptr<
     [&] (CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount& out) {return out.outs.size() < context->mixIn;});
 
   if (scanty_it != context->outs.end()) {
-    events.push_back(makeCompleteEvent(m_walletLegacyCache, context->transactionId, make_error_code(error::MIXIN_COUNT_TOO_BIG)));
+    events.push_back(makeCompleteEvent(m_walletLegacyCache, context->transactionIndex, make_error_code(error::MIXIN_COUNT_TOO_BIG)));
     return;
   }
 
@@ -159,13 +159,13 @@ void WalletTransactionSender::sendTransactionRandomOutsByAmount(std::shared_ptr<
 
 std::shared_ptr<WalletRequest> WalletTransactionSender::doSendTransaction(std::shared_ptr<SendTransactionContext> context, std::deque<std::shared_ptr<WalletLegacyEvent>>& events) {
   if (m_isStoping) {
-    events.push_back(makeCompleteEvent(m_walletLegacyCache, context->transactionId, make_error_code(error::TX_CANCELLED)));
+    events.push_back(makeCompleteEvent(m_walletLegacyCache, context->transactionIndex, make_error_code(error::TX_CANCELLED)));
     return std::shared_ptr<WalletRequest>();
   }
 
   try
   {
-    WalletLegacyTransaction& transaction = m_walletLegacyCache.getTransaction(context->transactionId);
+    WalletLegacyTransaction& transaction = m_walletLegacyCache.getTransaction(context->transactionIndex);
 
     std::vector<TransactionSourceEntry> sources;
     prepareInputs(context->selectedTransfers, context->outs, sources, context->mixIn);
@@ -183,7 +183,7 @@ std::shared_ptr<WalletRequest> WalletTransactionSender::doSendTransaction(std::s
 
     getObjectHash(tx, transaction.hash);
 
-    m_walletLegacyCache.updateTransaction(context->transactionId, tx, totalAmount, context->selectedTransfers, context->tx_key);
+    m_walletLegacyCache.updateTransaction(context->transactionIndex, tx, totalAmount, context->selectedTransfers, context->tx_key);
 
     notifyBalanceChanged(events);
    
@@ -191,10 +191,10 @@ std::shared_ptr<WalletRequest> WalletTransactionSender::doSendTransaction(std::s
         std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
   }
   catch(std::system_error& ec) {
-    events.push_back(makeCompleteEvent(m_walletLegacyCache, context->transactionId, ec.code()));
+    events.push_back(makeCompleteEvent(m_walletLegacyCache, context->transactionIndex, ec.code()));
   }
   catch(std::exception&) {
-    events.push_back(makeCompleteEvent(m_walletLegacyCache, context->transactionId, make_error_code(error::INTERNAL_WALLET_ERROR)));
+    events.push_back(makeCompleteEvent(m_walletLegacyCache, context->transactionIndex, make_error_code(error::INTERNAL_WALLET_ERROR)));
   }
 
   return std::shared_ptr<WalletRequest>();
@@ -206,7 +206,7 @@ void WalletTransactionSender::relayTransactionCallback(std::shared_ptr<SendTrans
     return;
   }
 
-  events.push_back(makeCompleteEvent(m_walletLegacyCache, context->transactionId, ec));
+  events.push_back(makeCompleteEvent(m_walletLegacyCache, context->transactionIndex, ec));
 }
 
 
