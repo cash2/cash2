@@ -94,7 +94,7 @@ size_t WalletLegacyCache::findTransactionByTransferId(size_t transferIndex) cons
   {
     const WalletLegacyTransaction& transaction = m_walletLegacyTransactions[transactionIndex];
 
-    if (transaction.firstTransferIndex != WALLET_LEGACY_INVALID_TRANSFER_ID &&
+    if (transaction.firstTransferIndex != WALLET_LEGACY_INVALID_TRANSFER_INDEX &&
         transaction.transferCount != 0 &&
         transferIndex >= transaction.firstTransferIndex &&
         transferIndex < (transaction.firstTransferIndex + transaction.transferCount))
@@ -200,7 +200,7 @@ std::shared_ptr<WalletLegacyEvent> WalletLegacyCache::onTransactionUpdated(const
   if (transactionIndex == WALLET_LEGACY_INVALID_TRANSACTION_INDEX)
   {
     WalletLegacyTransaction transaction;
-    transaction.firstTransferIndex = WALLET_LEGACY_INVALID_TRANSFER_ID;
+    transaction.firstTransferIndex = WALLET_LEGACY_INVALID_TRANSFER_INDEX;
     transaction.transferCount = 0;
     transaction.totalAmount = balance;
     transaction.fee = isCoinbase ? 0 : txInfo.totalAmountIn - txInfo.totalAmountOut;
@@ -311,7 +311,7 @@ void WalletLegacyCache::getValidTransactionsAndTransfers(std::vector<WalletLegac
 
       WalletLegacyTransaction& transactionRef = transactions.back();
 
-      if (transactionRef.firstTransferIndex != WALLET_LEGACY_INVALID_TRANSFER_ID) {
+      if (transactionRef.firstTransferIndex != WALLET_LEGACY_INVALID_TRANSFER_INDEX) {
         std::vector<WalletLegacyTransfer>::const_iterator first = m_walletLegacyTransfers.begin() + transactionRef.firstTransferIndex;
         std::vector<WalletLegacyTransfer>::const_iterator last = first + transactionRef.transferCount;
 
@@ -324,7 +324,7 @@ void WalletLegacyCache::getValidTransactionsAndTransfers(std::vector<WalletLegac
     {
       const WalletLegacyTransaction& transaction = m_walletLegacyTransactions[transactionIndex];
 
-      if (transaction.firstTransferIndex != WALLET_LEGACY_INVALID_TRANSFER_ID)
+      if (transaction.firstTransferIndex != WALLET_LEGACY_INVALID_TRANSFER_INDEX)
       {
         offset += transaction.transferCount;
       }

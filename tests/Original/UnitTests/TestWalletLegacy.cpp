@@ -613,7 +613,7 @@ TEST_F(WalletLegacyApi, getTransactionSuccess) {
   ASSERT_EQ(alice->getTransactionCount(), 1);
   ASSERT_TRUE(alice->getTransaction(0, tx));
 
-  EXPECT_EQ(tx.firstTransferIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSFER_ID);
+  EXPECT_EQ(tx.firstTransferIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSFER_INDEX);
   EXPECT_EQ(tx.transferCount, 0);
   EXPECT_EQ(tx.totalAmount, TEST_BLOCK_REWARD);
   EXPECT_EQ(tx.fee, 0);

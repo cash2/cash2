@@ -926,7 +926,7 @@ void WalletSerializer::addWalletV1Details(const std::vector<WalletLegacyTransact
     WalletTransaction mtx = convert(tx);
     m_transactions.get<RandomAccessIndex>().push_back(std::move(mtx));
 
-    if (tx.firstTransferIndex != WALLET_LEGACY_INVALID_TRANSFER_ID && tx.transferCount != 0) {
+    if (tx.firstTransferIndex != WALLET_LEGACY_INVALID_TRANSFER_INDEX && tx.transferCount != 0) {
       size_t firstTr = tx.firstTransferIndex;
       size_t lastTr = firstTr + tx.transferCount;
 
