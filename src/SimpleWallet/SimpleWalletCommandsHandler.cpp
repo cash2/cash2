@@ -1297,7 +1297,7 @@ bool SimpleWalletCommandsHandler::send(const std::vector<std::string> &args)
 
     size_t transactionIndex = m_walletLegacyPtr->sendTransaction(destinations, fee, transactionExtraStr, mixin, unlockTimestamp);
 
-    if (transactionIndex == WALLET_LEGACY_INVALID_TRANSACTION_ID) {
+    if (transactionIndex == WALLET_LEGACY_INVALID_TRANSACTION_INDEX) {
       m_logger(Logging::ERROR, Logging::RED) << "Error : Error sending money";
       return true;
     }

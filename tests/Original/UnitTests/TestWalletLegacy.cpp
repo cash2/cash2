@@ -890,7 +890,7 @@ TEST_F(WalletLegacyApi, sendMoneyToMyself) {
   ASSERT_NO_FATAL_FAILURE(WaitWalletSync(aliceWalletObserver.get()));
 
   size_t transactionIndex = TransferMoney(*alice, *alice, 10000000, 100);
-  ASSERT_NE(transactionIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_ID);
+  ASSERT_NE(transactionIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_INDEX);
   ASSERT_NO_FATAL_FAILURE(WaitWalletSend(aliceWalletObserver.get()));
 
   generator.generateEmptyBlocks(10);
@@ -933,7 +933,7 @@ TEST_F(WalletLegacyApi, sendSeveralTransactions) {
     tr.amount = sendAmount;
 
     auto transactionIndex = alice->sendTransaction(tr, m_currency.minimumFee(), "", 1, 0);  
-    ASSERT_NE(transactionIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_ID);
+    ASSERT_NE(transactionIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_INDEX);
 
     std::error_code sendResult;
     ASSERT_NO_FATAL_FAILURE(WaitWalletSend(aliceWalletObserver.get(), sendResult));
@@ -1018,7 +1018,7 @@ TEST_F(WalletLegacyApi, checkPendingBalance) {
   tr.amount = sendAmount;
 
   auto transactionIndex = alice->sendTransaction(tr, fee, "", 1, 0);
-  ASSERT_NE(transactionIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_ID);
+  ASSERT_NE(transactionIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_INDEX);
 
   std::error_code sendResult;
   ASSERT_NO_FATAL_FAILURE(WaitWalletSend(aliceWalletObserver.get(), sendResult));
@@ -1063,7 +1063,7 @@ TEST_F(WalletLegacyApi, checkChange) {
   tr.amount = sendAmount;
 
   auto transactionIndex = alice->sendTransaction(tr, fee, "", 1, 0);
-  ASSERT_NE(transactionIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_ID);
+  ASSERT_NE(transactionIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_INDEX);
 
   std::error_code sendResult;
   ASSERT_NO_FATAL_FAILURE(WaitWalletSend(aliceWalletObserver.get(), sendResult));
@@ -1095,7 +1095,7 @@ TEST_F(WalletLegacyApi, checkBalanceAfterSend) {
   const uint64_t sendAmount = 100000;
   const uint64_t fee = 100;
   size_t transactionIndex = TransferMoney(*alice, *alice, sendAmount, fee);
-  ASSERT_NE(transactionIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_ID);
+  ASSERT_NE(transactionIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_INDEX);
   ASSERT_NO_FATAL_FAILURE(WaitWalletSend(aliceWalletObserver.get()));
 
   ASSERT_EQ(banknote, alice->actualBalance());
@@ -1126,7 +1126,7 @@ TEST_F(WalletLegacyApi, moneyInPoolDontAffectActualBalance) {
   const uint64_t fee = 100;
   aliceNode->setNextTransactionToPool();
   size_t transactionIndex = TransferMoney(*alice, *bob, sendAmount, fee);
-  ASSERT_NE(transactionIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_ID);
+  ASSERT_NE(transactionIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_INDEX);
   ASSERT_NO_FATAL_FAILURE(WaitWalletSend(aliceWalletObserver.get()));
   generator.generateEmptyBlocks(10);
 
@@ -1162,7 +1162,7 @@ TEST_F(WalletLegacyApi, balanceAfterTransactionsPlacedInBlockchain) {
   const uint64_t fee = 100;
   aliceNode->setNextTransactionToPool();
   size_t transactionIndex = TransferMoney(*alice, *bob, sendAmount, fee);
-  ASSERT_NE(transactionIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_ID);
+  ASSERT_NE(transactionIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_INDEX);
   ASSERT_NO_FATAL_FAILURE(WaitWalletSend(aliceWalletObserver.get()));
   generator.generateEmptyBlocks(10);
 
@@ -1199,7 +1199,7 @@ TEST_F(WalletLegacyApi, checkMyMoneyInTxPool) {
 
   aliceNode->setNextTransactionToPool();
   size_t transactionIndex = TransferMoney(*alice, *bob, sendAmount, fee);
-  ASSERT_NE(transactionIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_ID);
+  ASSERT_NE(transactionIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_INDEX);
   ASSERT_NO_FATAL_FAILURE(WaitWalletSend(aliceWalletObserver.get()));
 
   bobNode->updateObservers();
@@ -1250,7 +1250,7 @@ TEST_F(WalletLegacyApi, deleteTxFromPool) {
 
   aliceNode->setNextTransactionToPool();
   size_t transactionIndex = TransferMoney(*alice, *bob, sendAmount, fee);
-  ASSERT_NE(transactionIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_ID);
+  ASSERT_NE(transactionIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_INDEX);
   ASSERT_NO_FATAL_FAILURE(WaitWalletSend(aliceWalletObserver.get()));
   alice->shutdown();
 
@@ -1283,7 +1283,7 @@ TEST_F(WalletLegacyApi, sendAfterFailedTransaction) {
 
   EXPECT_THROW(alice->sendTransaction(tr, 1000, "", 2, 0), std::system_error);
   size_t transactionIndex = TransferMoney(*alice, *alice, 100000, 100);
-  ASSERT_NE(transactionIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_ID);
+  ASSERT_NE(transactionIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSACTION_INDEX);
   ASSERT_NO_FATAL_FAILURE(WaitWalletSend(aliceWalletObserver.get()));
   alice->shutdown();
 }

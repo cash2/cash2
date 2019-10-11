@@ -84,7 +84,7 @@ size_t WalletLegacyCache::findTransactionByHash(const Crypto::Hash& hash)
     }
   }
 
-  return WALLET_LEGACY_INVALID_TRANSACTION_ID;
+  return WALLET_LEGACY_INVALID_TRANSACTION_INDEX;
 }
 
 size_t WalletLegacyCache::findTransactionByTransferId(TransferId transferId) const
@@ -103,7 +103,7 @@ size_t WalletLegacyCache::findTransactionByTransferId(TransferId transferId) con
     }
   }
 
-  return WALLET_LEGACY_INVALID_TRANSACTION_ID;
+  return WALLET_LEGACY_INVALID_TRANSACTION_INDEX;
 }
 
 WalletLegacyTransaction& WalletLegacyCache::getTransaction(size_t transactionIndex) // function throws an exception if transactionIndex is outside bounds of vector
@@ -157,7 +157,7 @@ bool WalletLegacyCache::isUsed(const TransactionOutputInformation& out) const
 
 std::shared_ptr<WalletLegacyEvent> WalletLegacyCache::onTransactionDeleted(const Crypto::Hash& transactionHash)
 {
-  size_t transactionIndex = WALLET_LEGACY_INVALID_TRANSACTION_ID;
+  size_t transactionIndex = WALLET_LEGACY_INVALID_TRANSACTION_INDEX;
   if (m_unconfirmedTransactions.findTransactionId(transactionHash, transactionIndex)) {
     m_unconfirmedTransactions.erase(transactionHash);
     assert(false); // What does this line do? Does it just crash the SimpleWallet program?
@@ -166,7 +166,7 @@ std::shared_ptr<WalletLegacyEvent> WalletLegacyCache::onTransactionDeleted(const
   }
 
   std::shared_ptr<WalletLegacyEvent> event;
-  if (transactionIndex != WALLET_LEGACY_INVALID_TRANSACTION_ID) {
+  if (transactionIndex != WALLET_LEGACY_INVALID_TRANSACTION_INDEX) {
     WalletLegacyTransaction& transaction = getTransaction(transactionIndex);
     transaction.blockIndex = WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT;
     transaction.timestamp = 0;
@@ -184,7 +184,7 @@ std::shared_ptr<WalletLegacyEvent> WalletLegacyCache::onTransactionUpdated(const
 {
   std::shared_ptr<WalletLegacyEvent> event;
 
-  size_t transactionIndex = WALLET_LEGACY_INVALID_TRANSACTION_ID;
+  size_t transactionIndex = WALLET_LEGACY_INVALID_TRANSACTION_INDEX;
 
   if (m_unconfirmedTransactions.findTransactionId(txInfo.transactionHash, transactionIndex))
   {
@@ -197,7 +197,7 @@ std::shared_ptr<WalletLegacyEvent> WalletLegacyCache::onTransactionUpdated(const
 
   bool isCoinbase = txInfo.totalAmountIn == 0;
 
-  if (transactionIndex == WALLET_LEGACY_INVALID_TRANSACTION_ID)
+  if (transactionIndex == WALLET_LEGACY_INVALID_TRANSACTION_INDEX)
   {
     WalletLegacyTransaction transaction;
     transaction.firstTransferId = WALLET_LEGACY_INVALID_TRANSFER_ID;

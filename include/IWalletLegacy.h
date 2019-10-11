@@ -24,7 +24,7 @@ struct WalletLegacyTransfer {
   int64_t amount;
 };
 
-const size_t WALLET_LEGACY_INVALID_TRANSACTION_ID    = std::numeric_limits<size_t>::max();
+const size_t WALLET_LEGACY_INVALID_TRANSACTION_INDEX    = std::numeric_limits<size_t>::max();
 const TransferId WALLET_LEGACY_INVALID_TRANSFER_ID          = std::numeric_limits<TransferId>::max();
 const uint32_t WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT = std::numeric_limits<uint32_t>::max();
 
