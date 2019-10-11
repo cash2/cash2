@@ -17,15 +17,13 @@
 
 namespace CryptoNote {
 
-typedef size_t TransferId;
-
 struct WalletLegacyTransfer {
   std::string address;
   int64_t amount;
 };
 
 const size_t WALLET_LEGACY_INVALID_TRANSACTION_INDEX    = std::numeric_limits<size_t>::max();
-const TransferId WALLET_LEGACY_INVALID_TRANSFER_ID          = std::numeric_limits<TransferId>::max();
+const size_t WALLET_LEGACY_INVALID_TRANSFER_ID          = std::numeric_limits<size_t>::max();
 const uint32_t WALLET_LEGACY_UNCONFIRMED_TRANSACTION_HEIGHT = std::numeric_limits<uint32_t>::max();
 
 enum class WalletLegacyTransactionState : uint8_t {
@@ -38,7 +36,7 @@ enum class WalletLegacyTransactionState : uint8_t {
 };
 
 struct WalletLegacyTransaction {
-  TransferId       firstTransferId;
+  size_t       firstTransferIndex;
   size_t           transferCount;
   int64_t          totalAmount;
   uint64_t         fee;
@@ -92,10 +90,10 @@ public:
   virtual size_t getTransactionCount() = 0;
   virtual size_t getTransferCount() = 0;
 
-  virtual size_t findTransactionByTransferId(TransferId transferId) = 0;
+  virtual size_t findTransactionByTransferId(size_t transferIndex) = 0;
   
   virtual bool getTransaction(size_t transactionIndex, WalletLegacyTransaction& transaction) = 0;
-  virtual bool getTransfer(TransferId transferId, WalletLegacyTransfer& transfer) = 0;
+  virtual bool getTransfer(size_t transferIndex, WalletLegacyTransfer& transfer) = 0;
   virtual Crypto::SecretKey getTxKey(const Crypto::Hash& txid) = 0;                                                                                                              
 
   virtual size_t sendTransaction(const WalletLegacyTransfer& transfer, uint64_t fee, const std::string& extra = "", uint64_t mixIn = 0, uint64_t unlockTimestamp = 0) = 0;

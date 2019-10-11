@@ -31,9 +31,9 @@ void serialize(UnconfirmedTransferDetails& utd, ISerializer& serializer) {
 }
 
 void serialize(WalletLegacyTransaction& txi, ISerializer& serializer) {
-  uint64_t trId = static_cast<uint64_t>(txi.firstTransferId);
+  uint64_t trId = static_cast<uint64_t>(txi.firstTransferIndex);
   serializer(trId, "first_transfer_id");
-  txi.firstTransferId = static_cast<size_t>(trId);
+  txi.firstTransferIndex = static_cast<size_t>(trId);
 
   uint64_t trCount = static_cast<uint64_t>(txi.transferCount);
   serializer(trCount, "transfer_count");

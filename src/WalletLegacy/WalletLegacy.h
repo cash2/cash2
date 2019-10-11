@@ -38,12 +38,12 @@ public:
   virtual void addObserver(IWalletLegacyObserver* observer) override;
   virtual std::error_code cancelTransaction(size_t transactionIndex) override;
   virtual std::error_code changePassword(const std::string& oldPassword, const std::string& newPassword) override;
-  virtual size_t findTransactionByTransferId(TransferId transferId) override;
+  virtual size_t findTransactionByTransferId(size_t transferIndex) override;
   virtual void getAccountKeys(AccountKeys& keys) override;
   virtual std::string getAddress() override;
   virtual bool getTransaction(size_t transactionIndex, WalletLegacyTransaction& transaction) override;
   virtual size_t getTransactionCount() override;
-  virtual bool getTransfer(TransferId transferId, WalletLegacyTransfer& transfer) override;
+  virtual bool getTransfer(size_t transferIndex, WalletLegacyTransfer& transfer) override;
   virtual size_t getTransferCount() override;
   virtual Crypto::SecretKey getTxKey(const Crypto::Hash& txid) override;
   virtual void initAndGenerate(const std::string& password) override;

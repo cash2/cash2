@@ -141,11 +141,11 @@ std::error_code WalletLegacy::changePassword(const std::string& oldPassword, con
   return std::error_code();
 }
 
-size_t WalletLegacy::findTransactionByTransferId(TransferId transferId) {
+size_t WalletLegacy::findTransactionByTransferId(size_t transferIndex) {
   std::unique_lock<std::mutex> lock(m_cacheMutex);
   throwIfNotInitialised();
 
-  return m_walletLegacyCache.findTransactionByTransferId(transferId);
+  return m_walletLegacyCache.findTransactionByTransferId(transferIndex);
 }
 
 void WalletLegacy::getAccountKeys(AccountKeys& keys) {
@@ -177,11 +177,11 @@ size_t WalletLegacy::getTransactionCount() {
   return m_walletLegacyCache.getTransactionCount();
 }
 
-bool WalletLegacy::getTransfer(TransferId transferId, WalletLegacyTransfer& transfer) {
+bool WalletLegacy::getTransfer(size_t transferIndex, WalletLegacyTransfer& transfer) {
   std::unique_lock<std::mutex> lock(m_cacheMutex);
   throwIfNotInitialised();
 
-  return m_walletLegacyCache.getTransfer(transferId, transfer);
+  return m_walletLegacyCache.getTransfer(transferIndex, transfer);
 }
 
 size_t WalletLegacy::getTransferCount() {

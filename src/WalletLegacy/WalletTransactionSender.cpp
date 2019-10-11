@@ -176,7 +176,7 @@ std::shared_ptr<WalletRequest> WalletTransactionSender::doSendTransaction(std::s
     createChangeDestinations(m_keys.address, totalAmount, context->foundMoney, changeDts);
 
     std::vector<TransactionDestinationEntry> splittedDests;
-    splitDestinations(transaction.firstTransferId, transaction.transferCount, changeDts, context->dustPolicy, splittedDests);
+    splitDestinations(transaction.firstTransferIndex, transaction.transferCount, changeDts, context->dustPolicy, splittedDests);
 
     Transaction tx;
     constructTx(m_keys, sources, splittedDests, transaction.extra, transaction.unlockTime, m_upperTransactionSizeLimit, tx, context->tx_key);
@@ -210,11 +210,11 @@ void WalletTransactionSender::relayTransactionCallback(std::shared_ptr<SendTrans
 }
 
 
-void WalletTransactionSender::splitDestinations(TransferId firstTransferId, size_t transfersCount, const TransactionDestinationEntry& changeDts,
+void WalletTransactionSender::splitDestinations(size_t firstTransferIndex, size_t transfersCount, const TransactionDestinationEntry& changeDts,
   const TxDustPolicy& dustPolicy, std::vector<TransactionDestinationEntry>& splittedDests) {
   uint64_t dust = 0;
 
-  digitSplitStrategy(firstTransferId, transfersCount, changeDts, dustPolicy.dustThreshold, splittedDests, dust);
+  digitSplitStrategy(firstTransferIndex, transfersCount, changeDts, dustPolicy.dustThreshold, splittedDests, dust);
 
   throwIf(dustPolicy.dustThreshold < dust, error::INTERNAL_WALLET_ERROR);
   if (0 != dust && !dustPolicy.addToFee) {
@@ -223,13 +223,13 @@ void WalletTransactionSender::splitDestinations(TransferId firstTransferId, size
 }
 
 
-void WalletTransactionSender::digitSplitStrategy(TransferId firstTransferId, size_t transfersCount,
+void WalletTransactionSender::digitSplitStrategy(size_t firstTransferIndex, size_t transfersCount,
   const TransactionDestinationEntry& change_dst, uint64_t dust_threshold,
   std::vector<TransactionDestinationEntry>& splitted_dsts, uint64_t& dust) {
   splitted_dsts.clear();
   dust = 0;
 
-  for (TransferId idx = firstTransferId; idx < firstTransferId + transfersCount; ++idx) {
+  for (size_t idx = firstTransferIndex; idx < firstTransferIndex + transfersCount; ++idx) {
     WalletLegacyTransfer& de = m_walletLegacyCache.getTransfer(idx);
 
     AccountPublicAddress addr;

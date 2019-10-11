@@ -23,12 +23,12 @@ public:
   std::vector<size_t> deleteOutdatedTransactions();
   bool deserialize(ISerializer& deserializer);
   size_t findTransactionByHash(const Crypto::Hash& hash);                                                              
-  size_t findTransactionByTransferId(TransferId transferId) const;
+  size_t findTransactionByTransferId(size_t transferIndex) const;
   WalletLegacyTransaction& getTransaction(size_t transactionIndex);
   bool getTransaction(size_t transactionIndex, WalletLegacyTransaction& transaction) const;
   size_t getTransactionCount() const;
-  WalletLegacyTransfer& getTransfer(TransferId transferId);
-  bool getTransfer(TransferId transferId, WalletLegacyTransfer& transfer) const;
+  WalletLegacyTransfer& getTransfer(size_t transferIndex);
+  bool getTransfer(size_t transferIndex, WalletLegacyTransfer& transfer) const;
   size_t getTransferCount() const;
   bool isUsed(const TransactionOutputInformation& out) const;
   std::shared_ptr<WalletLegacyEvent> onTransactionDeleted(const Crypto::Hash& transactionHash);

@@ -30,7 +30,7 @@ size_t WalletLegacyCache::addNewTransaction(uint64_t amount, uint64_t fee, const
 
   WalletLegacyTransaction transaction;
 
-  transaction.firstTransferId =  m_walletLegacyTransfers.size() - transfers.size();
+  transaction.firstTransferIndex =  m_walletLegacyTransfers.size() - transfers.size();
   transaction.transferCount = transfers.size();
   transaction.totalAmount = -static_cast<int64_t>(amount);
   transaction.fee = fee;
@@ -87,17 +87,17 @@ size_t WalletLegacyCache::findTransactionByHash(const Crypto::Hash& hash)
   return WALLET_LEGACY_INVALID_TRANSACTION_INDEX;
 }
 
-size_t WalletLegacyCache::findTransactionByTransferId(TransferId transferId) const
+size_t WalletLegacyCache::findTransactionByTransferId(size_t transferIndex) const
 {
   size_t transactionIndex;
   for (transactionIndex = 0; transactionIndex < m_walletLegacyTransactions.size(); transactionIndex++)
   {
     const WalletLegacyTransaction& transaction = m_walletLegacyTransactions[transactionIndex];
 
-    if (transaction.firstTransferId != WALLET_LEGACY_INVALID_TRANSFER_ID &&
+    if (transaction.firstTransferIndex != WALLET_LEGACY_INVALID_TRANSFER_ID &&
         transaction.transferCount != 0 &&
-        transferId >= transaction.firstTransferId &&
-        transferId < (transaction.firstTransferId + transaction.transferCount))
+        transferIndex >= transaction.firstTransferIndex &&
+        transferIndex < (transaction.firstTransferIndex + transaction.transferCount))
     {
       return transactionIndex;
     }
@@ -128,19 +128,19 @@ size_t WalletLegacyCache::getTransactionCount() const
   return m_walletLegacyTransactions.size();
 }
 
-WalletLegacyTransfer& WalletLegacyCache::getTransfer(TransferId transferId) // function throws an exception if transferId is outside bounds of vector
+WalletLegacyTransfer& WalletLegacyCache::getTransfer(size_t transferIndex) // function throws an exception if transferIndex is outside bounds of vector
 {
-  return m_walletLegacyTransfers.at(transferId); // Returns a reference to the element at position n in the vector.
+  return m_walletLegacyTransfers.at(transferIndex); // Returns a reference to the element at position n in the vector.
 }
   
-bool WalletLegacyCache::getTransfer(TransferId transferId, WalletLegacyTransfer& transfer) const
+bool WalletLegacyCache::getTransfer(size_t transferIndex, WalletLegacyTransfer& transfer) const
 {
-  if (transferId >= m_walletLegacyTransfers.size())
+  if (transferIndex >= m_walletLegacyTransfers.size())
   {
     return false;
   }
 
-  transfer = m_walletLegacyTransfers[transferId];
+  transfer = m_walletLegacyTransfers[transferIndex];
 
   return true;
 }
@@ -200,7 +200,7 @@ std::shared_ptr<WalletLegacyEvent> WalletLegacyCache::onTransactionUpdated(const
   if (transactionIndex == WALLET_LEGACY_INVALID_TRANSACTION_INDEX)
   {
     WalletLegacyTransaction transaction;
-    transaction.firstTransferId = WALLET_LEGACY_INVALID_TRANSFER_ID;
+    transaction.firstTransferIndex = WALLET_LEGACY_INVALID_TRANSFER_ID;
     transaction.transferCount = 0;
     transaction.totalAmount = balance;
     transaction.fee = isCoinbase ? 0 : txInfo.totalAmountIn - txInfo.totalAmountOut;
@@ -311,11 +311,11 @@ void WalletLegacyCache::getValidTransactionsAndTransfers(std::vector<WalletLegac
 
       WalletLegacyTransaction& transactionRef = transactions.back();
 
-      if (transactionRef.firstTransferId != WALLET_LEGACY_INVALID_TRANSFER_ID) {
-        std::vector<WalletLegacyTransfer>::const_iterator first = m_walletLegacyTransfers.begin() + transactionRef.firstTransferId;
+      if (transactionRef.firstTransferIndex != WALLET_LEGACY_INVALID_TRANSFER_ID) {
+        std::vector<WalletLegacyTransfer>::const_iterator first = m_walletLegacyTransfers.begin() + transactionRef.firstTransferIndex;
         std::vector<WalletLegacyTransfer>::const_iterator last = first + transactionRef.transferCount;
 
-        transactionRef.firstTransferId -= offset;
+        transactionRef.firstTransferIndex -= offset;
 
         transfers.insert(transfers.end(), first, last);
       }
@@ -324,7 +324,7 @@ void WalletLegacyCache::getValidTransactionsAndTransfers(std::vector<WalletLegac
     {
       const WalletLegacyTransaction& transaction = m_walletLegacyTransactions[transactionIndex];
 
-      if (transaction.firstTransferId != WALLET_LEGACY_INVALID_TRANSFER_ID)
+      if (transaction.firstTransferIndex != WALLET_LEGACY_INVALID_TRANSFER_ID)
       {
         offset += transaction.transferCount;
       }

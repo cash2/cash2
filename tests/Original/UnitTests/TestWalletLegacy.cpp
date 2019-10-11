@@ -434,28 +434,28 @@ TEST_F(WalletLegacyApi, TransactionsAndTransfersAfterSend) {
   EXPECT_EQ(tx.totalAmount, -static_cast<int64_t>(amount1 + fee));
   EXPECT_EQ(tx.fee, fee);
   EXPECT_EQ(tx.isCoinbase, false);
-  EXPECT_EQ(tx.firstTransferId, 0);
+  EXPECT_EQ(tx.firstTransferIndex, 0);
   EXPECT_EQ(tx.transferCount, 1);
 
   ASSERT_TRUE(alice->getTransaction(2, tx));
   EXPECT_EQ(tx.totalAmount, -static_cast<int64_t>(amount2 + fee));
   EXPECT_EQ(tx.fee, fee);
   EXPECT_EQ(tx.isCoinbase, false);
-  EXPECT_EQ(tx.firstTransferId, 1);
+  EXPECT_EQ(tx.firstTransferIndex, 1);
   EXPECT_EQ(tx.transferCount, 1);
 
   ASSERT_TRUE(alice->getTransaction(3, tx));
   EXPECT_EQ(tx.totalAmount, -static_cast<int64_t>(amount3 + fee));
   EXPECT_EQ(tx.fee, fee);
   EXPECT_EQ(tx.isCoinbase, false);
-  EXPECT_EQ(tx.firstTransferId, 2);
+  EXPECT_EQ(tx.firstTransferIndex, 2);
   EXPECT_EQ(tx.transferCount, 1);
 
   ASSERT_TRUE(alice->getTransaction(4, tx));
   EXPECT_EQ(tx.totalAmount, -static_cast<int64_t>(amount4 + fee));
   EXPECT_EQ(tx.fee, fee);
   EXPECT_EQ(tx.isCoinbase, false);
-  EXPECT_EQ(tx.firstTransferId, 3);
+  EXPECT_EQ(tx.firstTransferIndex, 3);
   EXPECT_EQ(tx.transferCount, 1);
 
   //Now checking transfers
@@ -561,13 +561,13 @@ TEST_F(WalletLegacyApi, saveAndLoadCacheDetails) {
   ASSERT_TRUE(alice->getTransaction(1, tx));
   EXPECT_EQ(tx.totalAmount, -static_cast<int64_t>(amount1 + amount2 + fee));
   EXPECT_EQ(tx.fee, fee);
-  EXPECT_EQ(tx.firstTransferId, 0);
+  EXPECT_EQ(tx.firstTransferIndex, 0);
   EXPECT_EQ(tx.transferCount, 2);
 
   ASSERT_TRUE(alice->getTransaction(2, tx));
   EXPECT_EQ(tx.totalAmount, -static_cast<int64_t>(amount3 + fee));
   EXPECT_EQ(tx.fee, fee);
-  EXPECT_EQ(tx.firstTransferId, 2);
+  EXPECT_EQ(tx.firstTransferIndex, 2);
   EXPECT_EQ(tx.transferCount, 1);
 
   ASSERT_TRUE(alice->getTransfer(0, tr));
@@ -613,7 +613,7 @@ TEST_F(WalletLegacyApi, getTransactionSuccess) {
   ASSERT_EQ(alice->getTransactionCount(), 1);
   ASSERT_TRUE(alice->getTransaction(0, tx));
 
-  EXPECT_EQ(tx.firstTransferId, CryptoNote::WALLET_LEGACY_INVALID_TRANSFER_ID);
+  EXPECT_EQ(tx.firstTransferIndex, CryptoNote::WALLET_LEGACY_INVALID_TRANSFER_ID);
   EXPECT_EQ(tx.transferCount, 0);
   EXPECT_EQ(tx.totalAmount, TEST_BLOCK_REWARD);
   EXPECT_EQ(tx.fee, 0);
@@ -783,7 +783,7 @@ TEST_F(WalletLegacyApi, saveAndLoadErroneousTxsCacheDetails) {
   CryptoNote::WalletLegacyTransaction tx;
   ASSERT_TRUE(alice->getTransaction(1, tx));
   EXPECT_EQ(tx.totalAmount, -static_cast<int64_t>(amounts[3] + amounts[4] + fee));
-  EXPECT_EQ(tx.firstTransferId, 0);
+  EXPECT_EQ(tx.firstTransferIndex, 0);
   EXPECT_EQ(tx.transferCount, 2);
 
   CryptoNote::WalletLegacyTransfer tr;

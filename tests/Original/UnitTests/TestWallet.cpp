@@ -1058,8 +1058,8 @@ void WalletApi::testIWalletDataCompatibility(bool details, const std::string& ca
 
   for (const auto& tx: txs) {
     std::vector<WalletLegacyTransfer> txtrs;
-    if (tx.firstTransferId != WALLET_LEGACY_INVALID_TRANSFER_ID && tx.transferCount != 0) {
-      for (size_t i = tx.firstTransferId; i < (tx.firstTransferId  + tx.transferCount); ++i) {
+    if (tx.firstTransferIndex != WALLET_LEGACY_INVALID_TRANSFER_ID && tx.transferCount != 0) {
+      for (size_t i = tx.firstTransferIndex; i < (tx.firstTransferIndex  + tx.transferCount); ++i) {
         txtrs.push_back(trs[i]);
       }
     }
@@ -1101,9 +1101,9 @@ void WalletApi::testIWalletDataCompatibility(bool details, const std::string& ca
       size_t trsCount = wallet.getTransactionTransferCount(i);
       ASSERT_EQ(txs[i].transferCount, trsCount);
       for (size_t j = 0; j < trsCount; ++j) {
-        ASSERT_NE(WALLET_LEGACY_INVALID_TRANSFER_ID, txs[i].firstTransferId);
+        ASSERT_NE(WALLET_LEGACY_INVALID_TRANSFER_ID, txs[i].firstTransferIndex);
 
-        size_t index = txs[i].firstTransferId + j;
+        size_t index = txs[i].firstTransferIndex + j;
         EXPECT_EQ(trs[index].address, wallet.getTransactionTransfer(i, j).address);
         EXPECT_EQ(trs[index].amount, wallet.getTransactionTransfer(i, j).amount);
       }
@@ -1158,7 +1158,7 @@ TEST_F(WalletApi, IWalletDataCompatibilityDetails) {
   std::vector<WalletLegacyTransaction> txs;
 
   WalletLegacyTransaction tx1;
-  tx1.firstTransferId = 0;
+  tx1.firstTransferIndex = 0;
   tx1.transferCount = 2;
   tx1.unlockTime = 12;
   tx1.totalAmount = 1234567890;

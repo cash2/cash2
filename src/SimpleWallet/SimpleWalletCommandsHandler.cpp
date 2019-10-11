@@ -978,9 +978,9 @@ void SimpleWalletCommandsHandler::printOutgoingTransaction(const WalletLegacyTra
       "Block height : " << addCommasToBlockHeight(transaction.blockIndex + 1) << '\n';
 
     if (transaction.transferCount > 0) {
-      for (TransferId id = transaction.firstTransferId; id < transaction.firstTransferId + transaction.transferCount; ++id) {
+      for (size_t transferIndex = transaction.firstTransferIndex; transferIndex < transaction.firstTransferIndex + transaction.transferCount; ++transferIndex) {
         WalletLegacyTransfer tr;
-        m_walletLegacyPtr->getTransfer(id, tr);
+        m_walletLegacyPtr->getTransfer(transferIndex, tr);
 
         ss <<
         "Receiver's address : " << tr.address << '\n' <<
@@ -1043,9 +1043,9 @@ void SimpleWalletCommandsHandler::printTransaction(const WalletLegacyTransaction
       "Block height : " << addCommasToBlockHeight(transaction.blockIndex + 1) << '\n';
 
     if (transaction.transferCount > 0) {
-      for (TransferId id = transaction.firstTransferId; id < transaction.firstTransferId + transaction.transferCount; ++id) {
+      for (size_t transferIndex = transaction.firstTransferIndex; transferIndex < transaction.firstTransferIndex + transaction.transferCount; ++transferIndex) {
         WalletLegacyTransfer tr;
-        m_walletLegacyPtr->getTransfer(id, tr);
+        m_walletLegacyPtr->getTransfer(transferIndex, tr);
 
         ss <<
         "Receiver's address : " << tr.address << '\n' <<
