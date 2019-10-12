@@ -90,11 +90,11 @@ public:
   virtual size_t getTransactionCount() = 0;
   virtual size_t getTransferCount() = 0;
 
-  virtual size_t findTransactionByTransferId(size_t transferIndex) = 0;
+  virtual size_t getTransactionIndex(size_t transferIndex) = 0;
   
   virtual bool getTransaction(size_t transactionIndex, WalletLegacyTransaction& transaction) = 0;
   virtual bool getTransfer(size_t transferIndex, WalletLegacyTransfer& transfer) = 0;
-  virtual Crypto::SecretKey getTxKey(const Crypto::Hash& txid) = 0;                                                                                                              
+  virtual Crypto::SecretKey getTransactionPrivateKey(const Crypto::Hash& txid) = 0;                                                                                                              
 
   virtual size_t sendTransaction(const WalletLegacyTransfer& transfer, uint64_t fee, const std::string& extra = "", uint64_t mixIn = 0, uint64_t unlockTimestamp = 0) = 0;
   virtual size_t sendTransaction(const std::vector<WalletLegacyTransfer>& transfers, uint64_t fee, const std::string& extra = "", uint64_t mixIn = 0, uint64_t unlockTimestamp = 0) = 0;

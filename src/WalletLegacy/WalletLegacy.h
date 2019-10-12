@@ -38,14 +38,14 @@ public:
   virtual void addObserver(IWalletLegacyObserver* observer) override;
   virtual std::error_code cancelTransaction(size_t transactionIndex) override;
   virtual std::error_code changePassword(const std::string& oldPassword, const std::string& newPassword) override;
-  virtual size_t findTransactionByTransferId(size_t transferIndex) override;
   virtual void getAccountKeys(AccountKeys& keys) override;
   virtual std::string getAddress() override;
   virtual bool getTransaction(size_t transactionIndex, WalletLegacyTransaction& transaction) override;
   virtual size_t getTransactionCount() override;
+  virtual size_t getTransactionIndex(size_t transferIndex) override;
+  virtual Crypto::SecretKey getTransactionPrivateKey(const Crypto::Hash& txid) override;
   virtual bool getTransfer(size_t transferIndex, WalletLegacyTransfer& transfer) override;
   virtual size_t getTransferCount() override;
-  virtual Crypto::SecretKey getTxKey(const Crypto::Hash& txid) override;
   virtual void initAndGenerate(const std::string& password) override;
   virtual void initAndLoad(std::istream& inputStream, const std::string& password) override;
   virtual void initWithKeys(const AccountKeys& accountKeys, const std::string& password) override;
@@ -59,7 +59,7 @@ public:
 
 private:
   std::vector<size_t> deleteOutdatedUnconfirmedTransactions();
-  void doSave(std::ostream& destination, bool saveDetailed, bool saveCache);
+  void doSave(std::ostream& destination, bool saveDetailed, bool saveTransfersSynchronizerCache);
   void initSync();
   void load(std::istream& inputStream);
   void notifyClients(std::deque<std::shared_ptr<WalletLegacyEvent> >& events);
@@ -70,7 +70,6 @@ private:
   void synchronizationCallback(WalletRequest::Callback callback, std::error_code ec);
   virtual void synchronizationCompleted(std::error_code result) override; // IBlockchainSynchronizerObserver
   virtual void synchronizationProgressUpdated(uint32_t current, uint32_t total) override; // IBlockchainSynchronizerObserver
-  void throwIfNotInitialised();
   
   enum WalletState
   {
@@ -83,17 +82,17 @@ private:
   AccountBase m_account;
   WalletAsyncContextCounter m_walletAsyncContextCounter;
   BlockchainSynchronizer m_blockchainSynchronizer;
-  std::mutex m_cacheMutex;
   const Currency& m_currency;
   bool m_walletTransactionSenderIsStopping;
   std::atomic<uint64_t> m_lastNotifiedActualBalance;
   std::atomic<uint64_t> m_lastNotifiedPendingBalance;
+  std::mutex m_mutex;
   INode& m_node;
   Tools::ObserverManager<IWalletLegacyObserver> m_observerManager;
   std::string m_password;
   std::unique_ptr<WalletTransactionSender> m_walletTransactionSenderPtr;
   WalletState m_walletState;
-  ITransfersContainer* m_transfersContainer;
+  ITransfersContainer* m_transfersContainerPtr;
   TransfersSyncronizer m_transfersSynchronizer;
   WalletLegacyCache m_walletLegacyCache;
   

@@ -967,7 +967,7 @@ void SimpleWalletCommandsHandler::printOutgoingTransaction(const WalletLegacyTra
 
     // Sent money out of your wallet
 
-    Crypto::SecretKey transactionPrivateKey = m_walletLegacyPtr->getTxKey(transaction.hash);
+    Crypto::SecretKey transactionPrivateKey = m_walletLegacyPtr->getTransactionPrivateKey(transaction.hash);
 
     ss <<
       "Sent" << '\n' <<
@@ -1032,7 +1032,7 @@ void SimpleWalletCommandsHandler::printTransaction(const WalletLegacyTransaction
 
     // Sent money out of your wallet
 
-    Crypto::SecretKey transactionPrivateKey = m_walletLegacyPtr->getTxKey(transaction.hash);
+    Crypto::SecretKey transactionPrivateKey = m_walletLegacyPtr->getTransactionPrivateKey(transaction.hash);
 
     ss <<
       "Sent" << '\n' <<
@@ -1496,7 +1496,7 @@ bool SimpleWalletCommandsHandler::transaction_private_key(const std::vector<std:
 		return true;
 	}
 
-	Crypto::SecretKey transactionPrivateKey = m_walletLegacyPtr->getTxKey(transactionHash);
+	Crypto::SecretKey transactionPrivateKey = m_walletLegacyPtr->getTransactionPrivateKey(transactionHash);
 	if (transactionPrivateKey != NULL_SECRET_KEY) {
 		std::cout << "transaction private key : " << Common::podToHex(transactionPrivateKey) << std::endl;
 		return true;

@@ -74,38 +74,6 @@ bool WalletLegacyCache::deserialize(ISerializer& deserializer)
   return true;
 }
 
-size_t WalletLegacyCache::findTransactionByHash(const Crypto::Hash& hash)
-{
-  for (size_t transactionIndex = 0; transactionIndex < m_walletLegacyTransactions.size(); transactionIndex++)
-  {
-    if (m_walletLegacyTransactions[transactionIndex].hash == hash)
-    {
-      return transactionIndex;
-    }
-  }
-
-  return WALLET_LEGACY_INVALID_TRANSACTION_INDEX;
-}
-
-size_t WalletLegacyCache::findTransactionByTransferId(size_t transferIndex) const
-{
-  size_t transactionIndex;
-  for (transactionIndex = 0; transactionIndex < m_walletLegacyTransactions.size(); transactionIndex++)
-  {
-    const WalletLegacyTransaction& transaction = m_walletLegacyTransactions[transactionIndex];
-
-    if (transaction.firstTransferIndex != WALLET_LEGACY_INVALID_TRANSFER_INDEX &&
-        transaction.transferCount != 0 &&
-        transferIndex >= transaction.firstTransferIndex &&
-        transferIndex < (transaction.firstTransferIndex + transaction.transferCount))
-    {
-      return transactionIndex;
-    }
-  }
-
-  return WALLET_LEGACY_INVALID_TRANSACTION_INDEX;
-}
-
 WalletLegacyTransaction& WalletLegacyCache::getTransaction(size_t transactionIndex) // function throws an exception if transactionIndex is outside bounds of vector
 {
   return m_walletLegacyTransactions.at(transactionIndex); // Returns a reference to the element at position n in the vector.
@@ -126,6 +94,38 @@ bool WalletLegacyCache::getTransaction(size_t transactionIndex, WalletLegacyTran
 size_t WalletLegacyCache::getTransactionCount() const
 {
   return m_walletLegacyTransactions.size();
+}
+
+size_t WalletLegacyCache::getTransactionIndex(const Crypto::Hash& transactionHash)
+{
+  for (size_t transactionIndex = 0; transactionIndex < m_walletLegacyTransactions.size(); transactionIndex++)
+  {
+    if (m_walletLegacyTransactions[transactionIndex].hash == transactionHash)
+    {
+      return transactionIndex;
+    }
+  }
+
+  return WALLET_LEGACY_INVALID_TRANSACTION_INDEX;
+}
+
+size_t WalletLegacyCache::getTransactionIndex(size_t transferIndex) const
+{
+  size_t transactionIndex;
+  for (transactionIndex = 0; transactionIndex < m_walletLegacyTransactions.size(); transactionIndex++)
+  {
+    const WalletLegacyTransaction& transaction = m_walletLegacyTransactions[transactionIndex];
+
+    if (transaction.firstTransferIndex != WALLET_LEGACY_INVALID_TRANSFER_INDEX &&
+        transaction.transferCount != 0 &&
+        transferIndex >= transaction.firstTransferIndex &&
+        transferIndex < (transaction.firstTransferIndex + transaction.transferCount))
+    {
+      return transactionIndex;
+    }
+  }
+
+  return WALLET_LEGACY_INVALID_TRANSACTION_INDEX;
 }
 
 WalletLegacyTransfer& WalletLegacyCache::getTransfer(size_t transferIndex) // function throws an exception if transferIndex is outside bounds of vector
@@ -162,7 +162,7 @@ std::shared_ptr<WalletLegacyEvent> WalletLegacyCache::onTransactionDeleted(const
     m_unconfirmedTransactions.erase(transactionHash);
     assert(false); // What does this line do? Does it just crash the SimpleWallet program?
   } else {
-    transactionIndex = findTransactionByHash(transactionHash);
+    transactionIndex = getTransactionIndex(transactionHash);
   }
 
   std::shared_ptr<WalletLegacyEvent> event;
@@ -192,7 +192,7 @@ std::shared_ptr<WalletLegacyEvent> WalletLegacyCache::onTransactionUpdated(const
   }
   else
   {
-    transactionIndex = findTransactionByHash(txInfo.transactionHash);
+    transactionIndex = getTransactionIndex(txInfo.transactionHash);
   }
 
   bool isCoinbase = txInfo.totalAmountIn == 0;

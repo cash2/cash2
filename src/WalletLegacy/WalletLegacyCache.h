@@ -22,11 +22,11 @@ public:
   size_t addNewTransaction(uint64_t amount, uint64_t fee, const std::string& extra, const std::vector<WalletLegacyTransfer>& transfers, uint64_t unlockTime);
   std::vector<size_t> deleteOutdatedTransactions();
   bool deserialize(ISerializer& deserializer);
-  size_t findTransactionByHash(const Crypto::Hash& hash);                                                              
-  size_t findTransactionByTransferId(size_t transferIndex) const;
   WalletLegacyTransaction& getTransaction(size_t transactionIndex);
   bool getTransaction(size_t transactionIndex, WalletLegacyTransaction& transaction) const;
   size_t getTransactionCount() const;
+  size_t getTransactionIndex(const Crypto::Hash& transactionHash);                                                              
+  size_t getTransactionIndex(size_t transferIndex) const;
   WalletLegacyTransfer& getTransfer(size_t transferIndex);
   bool getTransfer(size_t transferIndex, WalletLegacyTransfer& transfer) const;
   size_t getTransferCount() const;

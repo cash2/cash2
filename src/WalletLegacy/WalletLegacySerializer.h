@@ -24,8 +24,8 @@ namespace CryptoNote {
 class WalletLegacySerializer {
 public:
   WalletLegacySerializer(CryptoNote::AccountBase& account, WalletLegacyCache& walletLegacyCache);
-  void deserialize(std::istream& inputStream, const std::string& password, std::string& cache);
-  void serialize(std::ostream& outputStream, const std::string& password, bool saveDetailed, const std::string& cache);
+  void deserialize(std::istream& inputStream, const std::string& password, std::string& transfersSynchronizerCache);
+  void serialize(std::ostream& outputStream, const std::string& password, bool saveDetailed, const std::string& transfersSynchronizerCache);
 
 private:
   void decrypt(const std::string& encryptedStr, std::string& decryptedStr, Crypto::chacha8_iv iv, const std::string& password);
@@ -33,8 +33,8 @@ private:
   void throwIfKeysMissmatch(const Crypto::SecretKey& privateKey, const Crypto::PublicKey& expectedPublicKey);
   bool verifyKeys(const Crypto::SecretKey& privateKey, const Crypto::PublicKey& expectedPublicKey);
 
-  CryptoNote::AccountBase& m_account;
-  WalletLegacyCache& m_walletLegacyCache;
+  CryptoNote::AccountBase& m_accountRef;
+  WalletLegacyCache& m_walletLegacyCacheRef;
   const uint32_t m_walletSerializationVersion;
 };
 

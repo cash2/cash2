@@ -27,13 +27,13 @@ uint32_t WALLET_LEGACY_SERIALIZATION_VERSION = 2;
 
 
 WalletLegacySerializer::WalletLegacySerializer(CryptoNote::AccountBase& account, WalletLegacyCache& walletLegacyCache) :
-  m_account(account),
-  m_walletLegacyCache(walletLegacyCache),
+  m_accountRef(account),
+  m_walletLegacyCacheRef(walletLegacyCache),
   m_walletSerializationVersion(2)
 {
 }
 
-void WalletLegacySerializer::deserialize(std::istream& inputStream, const std::string& password, std::string& cache) {
+void WalletLegacySerializer::deserialize(std::istream& inputStream, const std::string& password, std::string& transfersSynchronizerCache) {
   Common::StdInputStream encryptedInputStream(inputStream);
   CryptoNote::BinaryInputStreamSerializer encryptedDataDeserializer(encryptedInputStream);
 
@@ -81,15 +81,15 @@ void WalletLegacySerializer::deserialize(std::istream& inputStream, const std::s
   account.address.viewPublicKey = keys.viewPublicKey;
   account.viewSecretKey = keys.viewSecretKey;
 
-  m_account.setAccountKeys(account);
-  m_account.set_createtime(keys.creationTimestamp);
+  m_accountRef.setAccountKeys(account);
+  m_accountRef.set_createtime(keys.creationTimestamp);
 
-  throwIfKeysMissmatch(m_account.getAccountKeys().viewSecretKey, m_account.getAccountKeys().address.viewPublicKey);
+  throwIfKeysMissmatch(m_accountRef.getAccountKeys().viewSecretKey, m_accountRef.getAccountKeys().address.viewPublicKey);
 
-  if (m_account.getAccountKeys().spendSecretKey != NULL_SECRET_KEY) {
-    throwIfKeysMissmatch(m_account.getAccountKeys().spendSecretKey, m_account.getAccountKeys().address.spendPublicKey);
+  if (m_accountRef.getAccountKeys().spendSecretKey != NULL_SECRET_KEY) {
+    throwIfKeysMissmatch(m_accountRef.getAccountKeys().spendSecretKey, m_accountRef.getAccountKeys().address.spendPublicKey);
   } else {
-    if (!Crypto::check_key(m_account.getAccountKeys().address.spendPublicKey)) {
+    if (!Crypto::check_key(m_accountRef.getAccountKeys().address.spendPublicKey)) {
       throw std::system_error(make_error_code(CryptoNote::error::WRONG_PASSWORD));
     }
   }
@@ -99,15 +99,15 @@ void WalletLegacySerializer::deserialize(std::istream& inputStream, const std::s
   decryptedDataDeserializer(detailsSaved, "has_details");
 
   if (detailsSaved) {
-    // deserialize m_walletLegacyCache
-    decryptedDataDeserializer(m_walletLegacyCache, "details");
+    // deserialize m_walletLegacyCacheRef
+    decryptedDataDeserializer(m_walletLegacyCacheRef, "details");
   }
 
-  // deserialize cache
-  decryptedDataDeserializer.binary(cache, "cache");
+  // deserialize transfersSynchronizerCache
+  decryptedDataDeserializer.binary(transfersSynchronizerCache, "cache");
 }
 
-void WalletLegacySerializer::serialize(std::ostream& outputStream, const std::string& password, bool saveDetailed, const std::string& cache) {
+void WalletLegacySerializer::serialize(std::ostream& outputStream, const std::string& password, bool saveDetailed, const std::string& transfersSynchronizerCache) {
 
   CryptoNote::WALLET_LEGACY_SERIALIZATION_VERSION = m_walletSerializationVersion;                                            
 
@@ -116,8 +116,8 @@ void WalletLegacySerializer::serialize(std::ostream& outputStream, const std::st
   CryptoNote::BinaryOutputStreamSerializer decryptedDataSerializer(decryptedOutputStream);
 
   CryptoNote::KeysStorage keys;
-  CryptoNote::AccountKeys account = m_account.getAccountKeys();
-  keys.creationTimestamp = m_account.get_createtime();
+  CryptoNote::AccountKeys account = m_accountRef.getAccountKeys();
+  keys.creationTimestamp = m_accountRef.get_createtime();
   keys.spendPublicKey = account.address.spendPublicKey;
   keys.spendSecretKey = account.spendSecretKey;
   keys.viewPublicKey = account.address.viewPublicKey;
@@ -130,12 +130,12 @@ void WalletLegacySerializer::serialize(std::ostream& outputStream, const std::st
   decryptedDataSerializer(saveDetailed, "has_details");
 
   if (saveDetailed) {
-    // serialize m_walletLegacyCache
-    decryptedDataSerializer(m_walletLegacyCache, "details");
+    // serialize m_walletLegacyCacheRef
+    decryptedDataSerializer(m_walletLegacyCacheRef, "details");
   }
 
-  // serialize cache
-  decryptedDataSerializer.binary(const_cast<std::string&>(cache), "cache");
+  // serialize transfersSynchronizerCache
+  decryptedDataSerializer.binary(const_cast<std::string&>(transfersSynchronizerCache), "cache");
 
   std::string decryptedStr = decryptedStringStream.str();
 

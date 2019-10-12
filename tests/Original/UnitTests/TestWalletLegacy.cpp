@@ -476,10 +476,10 @@ TEST_F(WalletLegacyApi, TransactionsAndTransfersAfterSend) {
   EXPECT_EQ(tr.amount, amount4);
   EXPECT_EQ(tr.address, carol->getAddress());
 
-  EXPECT_EQ(alice->findTransactionByTransferId(0), 1);
-  EXPECT_EQ(alice->findTransactionByTransferId(1), 2);
-  EXPECT_EQ(alice->findTransactionByTransferId(2), 3);
-  EXPECT_EQ(alice->findTransactionByTransferId(3), 4);
+  EXPECT_EQ(alice->getTransactionIndex(0), 1);
+  EXPECT_EQ(alice->getTransactionIndex(1), 2);
+  EXPECT_EQ(alice->getTransactionIndex(2), 3);
+  EXPECT_EQ(alice->getTransactionIndex(3), 4);
 
   alice->shutdown();
 }
@@ -582,9 +582,9 @@ TEST_F(WalletLegacyApi, saveAndLoadCacheDetails) {
   EXPECT_EQ(tr.address, carol->getAddress());
   EXPECT_EQ(tr.amount, amount3);
 
-  EXPECT_EQ(alice->findTransactionByTransferId(0), 1);
-  EXPECT_EQ(alice->findTransactionByTransferId(1), 1);
-  EXPECT_EQ(alice->findTransactionByTransferId(2), 2);
+  EXPECT_EQ(alice->getTransactionIndex(0), 1);
+  EXPECT_EQ(alice->getTransactionIndex(1), 1);
+  EXPECT_EQ(alice->getTransactionIndex(2), 2);
 
   alice->shutdown();
   carol->shutdown();
@@ -645,7 +645,7 @@ TEST_F(WalletLegacyApi, useNotInitializedObject) {
   std::stringstream archive;
   EXPECT_THROW(alice->save(archive, true, true), std::system_error);
 
-  EXPECT_THROW(alice->findTransactionByTransferId(1), std::system_error);
+  EXPECT_THROW(alice->getTransactionIndex(1), std::system_error);
 
   CryptoNote::WalletLegacyTransaction tx;
   CryptoNote::WalletLegacyTransfer tr;
