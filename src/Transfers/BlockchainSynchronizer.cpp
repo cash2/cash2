@@ -177,7 +177,7 @@ void BlockchainSynchronizer::actualizeFutureState() {
     m_node.addObserver(this);
   }
 
-  if (m_futureState == State::stopped && m_currentState != State::stopped) { // stop(), immideately detach observer
+  if (m_currentState != State::stopped && m_futureState == State::stopped) { // stop(), immideately detach observer
     m_node.removeObserver(this);
   }
 

@@ -121,8 +121,7 @@ uint64_t WalletLegacy::actualBalance()
 
   assert(m_transfersContainerPtr);
 
-  return m_transfersContainerPtr->balance(ITransfersContainer::IncludeKeyUnlocked) -
-    m_walletLegacyCache.unconfrimedOutsAmount();
+  return m_transfersContainerPtr->balance(ITransfersContainer::IncludeKeyUnlocked) - m_walletLegacyCache.unconfrimedOutsAmount();
 }
 
 void WalletLegacy::addObserver(IWalletLegacyObserver* observer)
