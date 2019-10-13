@@ -8,55 +8,45 @@
 
 #include "CryptoNoteCore/Account.h"
 #include "CryptoNoteCore/Currency.h"
-
 #include "INode.h"
-#include "WalletLegacy/WalletSendTransactionContext.h"
-#include "WalletLegacy/WalletLegacyCache.h"
-#include "WalletLegacy/WalletUnconfirmedTransactions.h"
-#include "WalletLegacy/WalletRequest.h"
-
 #include "ITransfersContainer.h"
+#include "WalletLegacy/WalletLegacyCache.h"
+#include "WalletLegacy/WalletRequest.h"
+#include "WalletLegacy/WalletSendTransactionContext.h"
+#include "WalletLegacy/WalletUnconfirmedTransactions.h"
 
 namespace CryptoNote {
 
 class WalletTransactionSender
 {
-public:
-  WalletTransactionSender(const Currency& currency, WalletLegacyCache& walletLegacyCache, AccountKeys keys, ITransfersContainer& transfersContainer);
 
+public:
+
+  WalletTransactionSender(const Currency& currency, WalletLegacyCache& walletLegacyCache, AccountKeys keys, ITransfersContainer& transfersContainer);
+  std::shared_ptr<WalletRequest> makeSendRequest(size_t& transactionIndex, std::deque<std::shared_ptr<WalletLegacyEvent>>& events, const std::vector<WalletLegacyTransfer>& transfers, uint64_t fee, const std::string& extra = "", uint64_t mixIn = 0, uint64_t unlockTimestamp = 0);
   void stop();
 
-  std::shared_ptr<WalletRequest> makeSendRequest(size_t& transactionIndex, std::deque<std::shared_ptr<WalletLegacyEvent>>& events,
-    const std::vector<WalletLegacyTransfer>& transfers, uint64_t fee, const std::string& extra = "", uint64_t mixIn = 0, uint64_t unlockTimestamp = 0);
-
 private:
-  std::shared_ptr<WalletRequest> makeGetRandomOutsRequest(std::shared_ptr<SendTransactionContext> context);
-  std::shared_ptr<WalletRequest> doSendTransaction(std::shared_ptr<SendTransactionContext> context, std::deque<std::shared_ptr<WalletLegacyEvent>>& events);
-  void prepareInputs(const std::list<TransactionOutputInformation>& selectedTransfers, std::vector<CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& outs,
-      std::vector<TransactionSourceEntry>& sources, uint64_t mixIn);
-  void splitDestinations(size_t firstTransferIndex, size_t transfersCount, const TransactionDestinationEntry& changeDts,
-    const TxDustPolicy& dustPolicy, std::vector<TransactionDestinationEntry>& splittedDests);
-  void digitSplitStrategy(size_t firstTransferIndex, size_t transfersCount, const TransactionDestinationEntry& change_dst, uint64_t dust_threshold,
-    std::vector<TransactionDestinationEntry>& splitted_dsts, uint64_t& dust);
-  void sendTransactionRandomOutsByAmount(std::shared_ptr<SendTransactionContext> context, std::deque<std::shared_ptr<WalletLegacyEvent>>& events,
-      boost::optional<std::shared_ptr<WalletRequest> >& nextRequest, std::error_code ec);
-  bool mixinValid(std::shared_ptr<SendTransactionContext> context);
-  void relayTransactionCallback(std::shared_ptr<SendTransactionContext> context, std::deque<std::shared_ptr<WalletLegacyEvent>>& events,
-                                boost::optional<std::shared_ptr<WalletRequest> >& nextRequest, std::error_code ec);
-  void notifyBalanceChanged(std::deque<std::shared_ptr<WalletLegacyEvent>>& events);
 
+  std::shared_ptr<WalletRequest> doSendTransaction(std::shared_ptr<SendTransactionContext> context, std::deque<std::shared_ptr<WalletLegacyEvent>>& events);
+  std::shared_ptr<WalletRequest> makeGetRandomOutsRequest(std::shared_ptr<SendTransactionContext> context);
+  void digitSplitStrategy(size_t firstTransferIndex, size_t transfersCount, const TransactionDestinationEntry& change_dst, uint64_t dust_threshold, std::vector<TransactionDestinationEntry>& splitted_dsts, uint64_t& dust);
+  void notifyBalanceChanged(std::deque<std::shared_ptr<WalletLegacyEvent>>& events);
+  void prepareInputs(const std::list<TransactionOutputInformation>& selectedTransfers, std::vector<CORE_RPC_COMMAND_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount>& randomOutputs, std::vector<TransactionSourceEntry>& sources, uint64_t mixIn);
+  void relayTransactionCallback(std::shared_ptr<SendTransactionContext> context, std::deque<std::shared_ptr<WalletLegacyEvent>>& events, boost::optional<std::shared_ptr<WalletRequest> >& nextRequest, std::error_code ec);
+  uint64_t selectTransfersToSend(uint64_t neededMoney, bool addDust, uint64_t dust, std::list<TransactionOutputInformation>& selectedTransfers);
+  void sendTransactionRandomOutsByAmount(std::shared_ptr<SendTransactionContext> context, std::deque<std::shared_ptr<WalletLegacyEvent>>& events, boost::optional<std::shared_ptr<WalletRequest> >& nextRequest, std::error_code ec);
+  void splitDestinations(size_t firstTransferIndex, size_t transfersCount, const TransactionDestinationEntry& changeDts, const TxDustPolicy& dustPolicy, std::vector<TransactionDestinationEntry>& splittedDests);
   void validateTransfersAddresses(const std::vector<WalletLegacyTransfer>& transfers);
   bool validateDestinationAddress(const std::string& address);
-
-  uint64_t selectTransfersToSend(uint64_t neededMoney, bool addDust, uint64_t dust, std::list<TransactionOutputInformation>& selectedTransfers);
-
+  
   const Currency& m_currency;
-  AccountKeys m_keys;
-  WalletLegacyCache& m_walletLegacyCache;
-  uint64_t m_upperTransactionSizeLimit;
-
   bool m_isStoping;
-  ITransfersContainer& m_transferDetails;
+  AccountKeys m_keys;
+  ITransfersContainer& m_transfersContainer;
+  uint64_t m_upperTransactionSizeLimit;
+  WalletLegacyCache& m_walletLegacyCache;
+
 };
 
 } /* namespace CryptoNote */

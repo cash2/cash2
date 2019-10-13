@@ -419,7 +419,8 @@ size_t WalletLegacy::sendTransaction(const std::vector<WalletLegacyTransfer>& tr
   return transactionIndex;
 }
 
-void WalletLegacy::shutdown() {
+void WalletLegacy::shutdown()
+{
   {
     std::unique_lock<std::mutex> lock(m_mutex);
 
