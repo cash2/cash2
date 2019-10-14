@@ -6,24 +6,23 @@
 #pragma once
 
 #include <cstdint>
-#include <unordered_map>
 #include <mutex>
+#include <unordered_map>
 
-#include <boost/multi_index_container.hpp>
 #include <boost/multi_index/hashed_index.hpp>
-#include <boost/multi_index/member.hpp>
 #include <boost/multi_index/mem_fun.hpp>
+#include <boost/multi_index/member.hpp>
 #include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_index_container.hpp>
 
 #include "crypto/crypto.h"
 #include "CryptoNoteCore/CryptoNoteBasic.h"
 #include "CryptoNoteCore/CryptoNoteSerialization.h"
 #include "CryptoNoteCore/Currency.h"
-#include "Serialization/ISerializer.h"
-#include "Serialization/SerializationOverloads.h"
-
 #include "ITransaction.h"
 #include "ITransfersContainer.h"
+#include "Serialization/ISerializer.h"
+#include "Serialization/SerializationOverloads.h"
 
 namespace CryptoNote {
 
@@ -38,11 +37,9 @@ public:
 
   void assign(const Crypto::KeyImage* keyImage);
   void assign(uint64_t amount, uint32_t globalOutputIndex);
-
-  bool isValid() const;
-
-  bool operator==(const SpentOutputDescriptor& other) const;
   size_t hash() const;
+  bool isValid() const;
+  bool operator==(const SpentOutputDescriptor& other) const;
 
 private:
   TransactionTypes::OutputType m_type;
@@ -145,97 +142,115 @@ public:
 
   TransfersContainer(const CryptoNote::Currency& currency, size_t transactionSpendableAge);
 
-  bool addTransaction(const TransactionBlockInfo& block, const ITransactionReader& tx, const std::vector<TransactionOutputInformationIn>& transfers);
-  bool deleteUnconfirmedTransaction(const Crypto::Hash& transactionHash);
-  bool markTransactionConfirmed(const TransactionBlockInfo& block, const Crypto::Hash& transactionHash, const std::vector<uint32_t>& globalIndexes);
-
-  std::vector<Crypto::Hash> detach(uint32_t height);
+  bool addTransaction(const TransactionBlockInfo& block, const ITransactionReader& transactionReader, const std::vector<TransactionOutputInformationIn>& transfers);
   bool advanceHeight(uint32_t height);
-
-  // ITransfersContainer
-  virtual size_t transfersCount() const override;
-  virtual size_t transactionsCount() const override;
   virtual uint64_t balance(uint32_t flags) const override;
+  bool deleteUnconfirmedTransaction(const Crypto::Hash& transactionHash);
+  std::vector<Crypto::Hash> detach(uint32_t height);
   virtual void getOutputs(std::vector<TransactionOutputInformation>& transfers, uint32_t flags) const override;
-  virtual bool getTransactionInformation(const Crypto::Hash& transactionHash, TransactionInformation& info,
-    uint64_t* amountIn = nullptr, uint64_t* amountOut = nullptr) const override;
-  virtual std::vector<TransactionOutputInformation> getTransactionOutputs(const Crypto::Hash& transactionHash, uint32_t flags) const override;
-  //only type flags are feasible for this function
-  virtual std::vector<TransactionOutputInformation> getTransactionInputs(const Crypto::Hash& transactionHash, uint32_t flags) const override;
-  virtual void getUnconfirmedTransactions(std::vector<Crypto::Hash>& transactions) const override;
   virtual std::vector<TransactionSpentOutputInformation> getSpentOutputs() const override;
-
-  // IStreamSerializable
-  virtual void save(std::ostream& os) override;
+  virtual bool getTransactionInformation(const Crypto::Hash& transactionHash, TransactionInformation& info, uint64_t* amountIn = nullptr, uint64_t* amountOut = nullptr) const override;
+  virtual std::vector<TransactionOutputInformation> getTransactionInputs(const Crypto::Hash& transactionHash, uint32_t flags) const override; // only type flags are feasible for this function
+  virtual std::vector<TransactionOutputInformation> getTransactionOutputs(const Crypto::Hash& transactionHash, uint32_t flags) const override;
+  virtual void getUnconfirmedTransactions(std::vector<Crypto::Hash>& transactionHashes) const override;
   virtual void load(std::istream& in) override;
+  bool markTransactionConfirmed(const TransactionBlockInfo& block, const Crypto::Hash& transactionHash, const std::vector<uint32_t>& globalIndexes);
+  virtual void save(std::ostream& os) override;
+  virtual size_t transactionsCount() const override;
+  virtual size_t transfersCount() const override;
 
 private:
   struct ContainingTransactionIndex { };
   struct SpendingTransactionIndex { };
   struct SpentOutputDescriptorIndex { };
 
-  typedef boost::multi_index_container<
+  typedef
+  boost::multi_index_container
+  <
     TransactionInformation,
-    boost::multi_index::indexed_by<
-    boost::multi_index::hashed_unique<BOOST_MULTI_INDEX_MEMBER(TransactionInformation, Crypto::Hash, transactionHash)>,
-    boost::multi_index::ordered_non_unique < BOOST_MULTI_INDEX_MEMBER(TransactionInformation, uint32_t, blockHeight) >
+    boost::multi_index::indexed_by
+    <
+      boost::multi_index::hashed_unique<BOOST_MULTI_INDEX_MEMBER(TransactionInformation, Crypto::Hash, transactionHash)>,
+      boost::multi_index::ordered_non_unique < BOOST_MULTI_INDEX_MEMBER(TransactionInformation, uint32_t, blockHeight) >
     >
   > TransactionMultiIndex;
 
-  typedef boost::multi_index_container<
+  typedef
+  boost::multi_index_container
+  <
     TransactionOutputInformationEx,
-    boost::multi_index::indexed_by<
-      boost::multi_index::hashed_non_unique<
+    boost::multi_index::indexed_by
+    <
+      boost::multi_index::hashed_non_unique
+      <
         boost::multi_index::tag<SpentOutputDescriptorIndex>,
-        boost::multi_index::const_mem_fun<
+        boost::multi_index::const_mem_fun
+        <
           TransactionOutputInformationEx,
           SpentOutputDescriptor,
-          &TransactionOutputInformationEx::getSpentOutputDescriptor>,
+          &TransactionOutputInformationEx::getSpentOutputDescriptor
+        >,
         SpentOutputDescriptorHasher
       >,
-      boost::multi_index::hashed_non_unique<
+      boost::multi_index::hashed_non_unique
+      <
         boost::multi_index::tag<ContainingTransactionIndex>,
-        boost::multi_index::const_mem_fun<
+        boost::multi_index::const_mem_fun
+        <
           TransactionOutputInformationEx,
           const Crypto::Hash&,
-          &TransactionOutputInformationEx::getTransactionHash>
+          &TransactionOutputInformationEx::getTransactionHash
+        >
       >
     >
   > UnconfirmedTransfersMultiIndex;
 
-  typedef boost::multi_index_container<
+  typedef
+  boost::multi_index_container
+  <
     TransactionOutputInformationEx,
-    boost::multi_index::indexed_by<
-      boost::multi_index::hashed_non_unique<
+    boost::multi_index::indexed_by
+    <
+      boost::multi_index::hashed_non_unique
+      <
         boost::multi_index::tag<SpentOutputDescriptorIndex>,
-        boost::multi_index::const_mem_fun<
+        boost::multi_index::const_mem_fun
+        <
           TransactionOutputInformationEx,
           SpentOutputDescriptor,
-          &TransactionOutputInformationEx::getSpentOutputDescriptor>,
+          &TransactionOutputInformationEx::getSpentOutputDescriptor
+        >,
         SpentOutputDescriptorHasher
       >,
-      boost::multi_index::hashed_non_unique<
+      boost::multi_index::hashed_non_unique
+      <
         boost::multi_index::tag<ContainingTransactionIndex>,
-        boost::multi_index::const_mem_fun<
+        boost::multi_index::const_mem_fun
+        <
           TransactionOutputInformationEx,
           const Crypto::Hash&,
-          &TransactionOutputInformationEx::getTransactionHash>
+          &TransactionOutputInformationEx::getTransactionHash
+        >
       >
     >
   > AvailableTransfersMultiIndex;
 
-  typedef boost::multi_index_container<
+  typedef boost::multi_index_container
+  <
     SpentTransactionOutput,
-    boost::multi_index::indexed_by<
-      boost::multi_index::hashed_unique<
+    boost::multi_index::indexed_by
+    <
+      boost::multi_index::hashed_unique
+      <
         boost::multi_index::tag<SpentOutputDescriptorIndex>,
         boost::multi_index::const_mem_fun<
-    TransactionOutputInformationEx,
+          TransactionOutputInformationEx,
           SpentOutputDescriptor,
           &TransactionOutputInformationEx::getSpentOutputDescriptor>,
         SpentOutputDescriptorHasher
       >,
-      boost::multi_index::hashed_non_unique<
+      boost::multi_index::hashed_non_unique
+      <
         boost::multi_index::tag<ContainingTransactionIndex>,
         boost::multi_index::const_mem_fun<
           TransactionOutputInformationEx,
@@ -252,30 +267,25 @@ private:
     >
   > SpentTransfersMultiIndex;
 
-private:
-  void addTransaction(const TransactionBlockInfo& block, const ITransactionReader& tx);
-  bool addTransactionOutputs(const TransactionBlockInfo& block, const ITransactionReader& tx,
-                             const std::vector<TransactionOutputInformationIn>& transfers);
-  bool addTransactionInputs(const TransactionBlockInfo& block, const ITransactionReader& tx);
+  void addTransaction(const TransactionBlockInfo& block, const ITransactionReader& transactionReader);
+  bool addTransactionInputs(const TransactionBlockInfo& block, const ITransactionReader& transactionReader);
+  bool addTransactionOutputs(const TransactionBlockInfo& block, const ITransactionReader& transactionReader, const std::vector<TransactionOutputInformationIn>& transfers);
+  void copyToSpent(const TransactionBlockInfo& block, const ITransactionReader& transactionReader, size_t inputIndex, const TransactionOutputInformationEx& output);
   void deleteTransactionTransfers(const Crypto::Hash& transactionHash);
-  bool isSpendTimeUnlocked(uint64_t unlockTime) const;
   bool isIncluded(const TransactionOutputInformationEx& info, uint32_t flags) const;
   static bool isIncluded(TransactionTypes::OutputType type, uint32_t state, uint32_t flags);
+  bool isSpendTimeUnlocked(uint64_t unlockTime) const;
   void updateTransfersVisibility(const Crypto::KeyImage& keyImage);
 
-  void copyToSpent(const TransactionBlockInfo& block, const ITransactionReader& tx, size_t inputIndex, const TransactionOutputInformationEx& output);
-
-private:
-  TransactionMultiIndex m_transactions;
-  UnconfirmedTransfersMultiIndex m_unconfirmedTransfers;
   AvailableTransfersMultiIndex m_availableTransfers;
-  SpentTransfersMultiIndex m_spentTransfers;
-  //std::unordered_map<KeyImage, KeyOutputInfo, boost::hash<KeyImage>> m_keyImages;
-
-  uint32_t m_currentHeight; // current height is needed to check if a transfer is unlocked
-  size_t m_transactionSpendableAge;
   const CryptoNote::Currency& m_currency;
+  uint32_t m_currentHeight; // current height is needed to check if a transfer is unlocked
   mutable std::mutex m_mutex;
+  SpentTransfersMultiIndex m_spentTransfers;
+  TransactionMultiIndex m_transactions;
+  size_t m_transactionSpendableAge;
+  UnconfirmedTransfersMultiIndex m_unconfirmedTransfers;
+
 };
 
-}
+} // end namespace CryptoNote
