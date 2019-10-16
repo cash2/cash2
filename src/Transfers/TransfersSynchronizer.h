@@ -25,13 +25,13 @@ class TransfersSyncronizer : public ITransfersSynchronizer, public IBlockchainCo
 
 public:
 
-  TransfersSyncronizer(const Currency& currency, IBlockchainSynchronizer& sync, INode& node);
+  TransfersSyncronizer(const Currency& currency, IBlockchainSynchronizer& blockchainSynchronizer, INode& node);
   virtual ~TransfersSyncronizer();
   void addPublicKeysSeen(const AccountPublicAddress& account, const Crypto::Hash& transactionHash, const Crypto::PublicKey& outputKey); // This function is for fixing the burning bug
   virtual ITransfersSubscription& addSubscription(const AccountSubscription& subscription) override;
   virtual ITransfersSubscription* getSubscription(const AccountPublicAddress& account) override;
   virtual void getSubscriptions(std::vector<AccountPublicAddress>& subscriptions) override;
-  virtual std::vector<Crypto::Hash> getViewKeyKnownBlocks(const Crypto::PublicKey& publicViewKey) override;
+  virtual std::vector<Crypto::Hash> getViewKeyKnownBlocks(const Crypto::PublicKey& viewPublicKey) override;
   void initTransactionPool(const std::unordered_set<Crypto::Hash>& uncommitedTransactions);
   virtual void load(std::istream& inputStream) override;
   virtual bool removeSubscription(const AccountPublicAddress& account) override;
@@ -45,8 +45,7 @@ private:
   typedef std::unordered_map<Crypto::PublicKey, std::unique_ptr<SubscribersNotifier>> SubscribersMap;
   typedef std::unordered_map<Crypto::PublicKey, std::unique_ptr<TransfersConsumer>> ViewPublicKeyConsumersMap; // map { view public key -> consumer }
 
-  SubscribersMap::const_iterator findSubscriberForConsumer(IBlockchainConsumer* consumer) const;
-  bool findViewKeyForConsumer(IBlockchainConsumer* consumer, Crypto::PublicKey& viewPublicKey) const;
+  SubscribersMap::const_iterator findSubscriberForConsumer(IBlockchainConsumer* consumerPtr) const;
   virtual void onBlockchainDetach(IBlockchainConsumer* consumer, uint32_t blockIndex) override;
   virtual void onBlocksAdded(IBlockchainConsumer* consumer, const std::vector<Crypto::Hash>& blockHashes) override;
   virtual void onTransactionDeleteBegin(IBlockchainConsumer* consumer, Crypto::Hash transactionHash) override;

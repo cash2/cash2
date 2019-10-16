@@ -61,14 +61,14 @@ private:
   void updateSyncStart();
 
   const CryptoNote::Currency& m_currency;
-  INode& m_node;
   std::unordered_set<Crypto::Hash> m_mempoolTransactionHashes;
+  INode& m_node;
+  std::unordered_set<Crypto::PublicKey> m_publicKeysSeen;
   std::mutex m_seenMutex;
   std::unordered_set<Crypto::PublicKey> m_spendPublicKeys;
   std::unordered_map<Crypto::PublicKey, std::unique_ptr<TransfersSubscription>> m_spendPublicKeySubscriptions; // map { spend public key -> subscription }
   SynchronizationStart m_synchronizationStart;
   std::unordered_set<Crypto::Hash> m_transactionHashesSeen;
-  std::unordered_set<Crypto::PublicKey> m_publicKeysSeen;
   const Crypto::SecretKey m_viewPrivateKey;
   
 };

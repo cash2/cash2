@@ -48,16 +48,21 @@ TransfersSyncronizer::TransfersSyncronizer(const Currency& currency, IBlockchain
 TransfersSyncronizer::~TransfersSyncronizer()
 {
   m_blockchainSynchronizer.stop();
-  for (const auto& kv : m_viewPublicKeyConsumersMap) {
-    m_blockchainSynchronizer.removeConsumer(kv.second.get());
+
+  for (const auto& kv : m_viewPublicKeyConsumersMap)
+  {
+    const std::unique_ptr<TransfersConsumer>& transfersConsumerPtr = kv.second;
+    m_blockchainSynchronizer.removeConsumer(transfersConsumerPtr.get());
   }
 }
 
 void TransfersSyncronizer::addPublicKeysSeen(const AccountPublicAddress& account, const Crypto::Hash& transactionHash, const Crypto::PublicKey& outputKey) // This function is for fixing the burning bug
 {
   auto it = m_viewPublicKeyConsumersMap.find(account.viewPublicKey);
-  if (it != m_viewPublicKeyConsumersMap.end()) {
-     it->second->addPublicKeysSeen(transactionHash, outputKey);
+  if (it != m_viewPublicKeyConsumersMap.end())
+  {
+    const std::unique_ptr<TransfersConsumer>& transfersConsumerPtr = it->second;
+    transfersConsumerPtr->addPublicKeysSeen(transactionHash, outputKey);
   }
 }
 
@@ -89,9 +94,9 @@ void TransfersSyncronizer::getSubscriptions(std::vector<AccountPublicAddress>& s
   }
 }
 
-std::vector<Crypto::Hash> TransfersSyncronizer::getViewKeyKnownBlocks(const Crypto::PublicKey& publicViewKey)
+std::vector<Crypto::Hash> TransfersSyncronizer::getViewKeyKnownBlocks(const Crypto::PublicKey& viewPublicKey)
 {
-  auto it = m_viewPublicKeyConsumersMap.find(publicViewKey);
+  auto it = m_viewPublicKeyConsumersMap.find(viewPublicKey);
   if (it == m_viewPublicKeyConsumersMap.end()) {
     throw std::invalid_argument("Consumer not found");
   }
@@ -102,7 +107,8 @@ std::vector<Crypto::Hash> TransfersSyncronizer::getViewKeyKnownBlocks(const Cryp
 void TransfersSyncronizer::initTransactionPool(const std::unordered_set<Crypto::Hash>& uncommitedTransactions)
 {
   for (auto it = m_viewPublicKeyConsumersMap.begin(); it != m_viewPublicKeyConsumersMap.end(); ++it) {
-    it->second->initTransactionPool(uncommitedTransactions);
+    const std::unique_ptr<TransfersConsumer>& transfersConsumerPtr = it->second;
+    transfersConsumerPtr->initTransactionPool(uncommitedTransactions);
   }
 }
 
@@ -205,10 +211,10 @@ bool TransfersSyncronizer::removeSubscription(const AccountPublicAddress& accoun
     return false;
   }
 
-  TransfersConsumer* transfersConsumerPtr = it->second.get();
+  const std::unique_ptr<TransfersConsumer>& transfersConsumerPtr = it->second;
 
   if (transfersConsumerPtr->removeSubscription(account)) {
-    m_blockchainSynchronizer.removeConsumer(transfersConsumerPtr);
+    m_blockchainSynchronizer.removeConsumer(transfersConsumerPtr.get());
     m_viewPublicKeyConsumersMap.erase(it);
 
     m_subscribersMap.erase(account.viewPublicKey);
@@ -293,32 +299,22 @@ void TransfersSyncronizer::unsubscribeConsumerNotifications(const Crypto::Public
 // Private functions
 
 
-TransfersSyncronizer::SubscribersMap::const_iterator TransfersSyncronizer::findSubscriberForConsumer(IBlockchainConsumer* consumer) const
+TransfersSyncronizer::SubscribersMap::const_iterator TransfersSyncronizer::findSubscriberForConsumer(IBlockchainConsumer* consumerPtr) const
 {
-  Crypto::PublicKey viewPublicKey;
-  if (findViewKeyForConsumer(consumer, viewPublicKey)) {
-    auto it = m_subscribersMap.find(viewPublicKey);
-    if (it != m_subscribersMap.end()) {
-      return it;
+  for (const auto& kv : m_viewPublicKeyConsumersMap)
+  {
+    TransfersConsumer* transfersConsumerPtr = kv.second.get();
+    if (transfersConsumerPtr == consumerPtr)
+    {
+      Crypto::PublicKey viewPublicKey = kv.first;
+      auto it = m_subscribersMap.find(viewPublicKey);
+      if (it != m_subscribersMap.end()) {
+        return it;
+      }
     }
   }
 
   return m_subscribersMap.end();
-}
-
-bool TransfersSyncronizer::findViewKeyForConsumer(IBlockchainConsumer* consumer, Crypto::PublicKey& viewPublicKey) const
-{
-  //since we have only couple of consumers linear complexity is fine
-  auto it = std::find_if(m_viewPublicKeyConsumersMap.begin(), m_viewPublicKeyConsumersMap.end(), [consumer] (const ViewPublicKeyConsumersMap::value_type& subscription) {
-    return subscription.second.get() == consumer;
-  });
-
-  if (it == m_viewPublicKeyConsumersMap.end()) {
-    return false;
-  }
-
-  viewPublicKey = it->first;
-  return true;
 }
 
 void TransfersSyncronizer::onBlockchainDetach(IBlockchainConsumer* consumer, uint32_t blockIndex)
