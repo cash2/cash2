@@ -96,7 +96,7 @@ private:
   void workingProcedure();
 
   std::list<std::pair<const ITransactionReader*, std::promise<std::error_code>>> m_addTransactionTasks;
-  std::map<IBlockchainConsumer*, std::shared_ptr<SynchronizationState>> m_consumersMap;
+  std::map<IBlockchainConsumer*, std::shared_ptr<SynchronizationState>> m_consumerSynchronizationStateMap;
   mutable std::mutex m_consumersMutex;
   State m_currentState;
   State m_futureState;
@@ -106,7 +106,7 @@ private:
   INode& m_node;
   std::list<std::pair<const Crypto::Hash*, std::promise<void>>> m_removeTransactionTasks;
   mutable std::mutex m_stateMutex;
-  std::unique_ptr<std::thread> m_workingThread;
+  std::unique_ptr<std::thread> m_workingThreadPtr;
   
 };
 
