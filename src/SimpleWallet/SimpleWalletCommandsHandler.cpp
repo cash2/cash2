@@ -1553,14 +1553,14 @@ void SimpleWalletCommandsHandler::updateBlockchainHeight(uint64_t height, bool f
   std::chrono::time_point<std::chrono::system_clock> currentTime = std::chrono::system_clock::now();
 
   // update the stored blockchain height
-  if (currentTime - m_lastBlockchainHeightUpdateTime >= std::chrono::seconds(m_currency.difficultyTarget() / 2) || m_blockchainHeight <= height) {
+  if (currentTime - m_lastBlockchainHeightUpdateTime > std::chrono::seconds(m_currency.difficultyTarget() / 2) || m_blockchainHeight <= height) {
     m_blockchainHeight = m_nodeRpcProxyPtr->getLastLocalBlockHeight() + 1;
     m_lastBlockchainHeightUpdateTime = std::chrono::system_clock::now();
     m_blockchainHeight = std::max(m_blockchainHeight, height);
   }
 
   // print the blockchain height
-  if (currentTime - m_lastBlockchainHeightPrintTime >= std::chrono::milliseconds(1) || force) {
+  if (currentTime - m_lastBlockchainHeightPrintTime > std::chrono::milliseconds(1) || force) {
     Common::Console::setTextColor(Common::Console::Color::BrightCyan);
     std::cout << "Height " << addCommasToBlockHeight(height) << " of " << addCommasToBlockHeight(m_blockchainHeight) << '\r';
     Common::Console::setTextColor(Common::Console::Color::Default);
