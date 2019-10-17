@@ -9,6 +9,7 @@
 
 #include <string.h>
 
+#include "Logging/LoggerManager.h"
 #include "PaymentGateService.h"
 #include "version.h"
 
@@ -26,13 +27,13 @@
 
 #define SERVICE_NAME "Payment Gate"
 
-PaymentGateService* ppg;
+PaymentGateService* paymentGateServicePtr;
 
 #ifdef WIN32
+
 SERVICE_STATUS_HANDLE serviceStatusHandle;
 
-std::string GetLastErrorMessage(DWORD errorMessageID)
-{
+std::string GetLastErrorMessage(DWORD errorMessageID) {
   LPSTR messageBuffer = nullptr;
   size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
     NULL, errorMessageID, 0, (LPSTR)&messageBuffer, 0, NULL);
@@ -46,18 +47,18 @@ std::string GetLastErrorMessage(DWORD errorMessageID)
 
 void __stdcall serviceHandler(DWORD fdwControl) {
   if (fdwControl == SERVICE_CONTROL_STOP) {
-    Logging::LoggerRef log(ppg->getLogger(), "serviceHandler");
+    Logging::LoggerRef log(paymentGateServicePtr->getLogger(), "serviceHandler");
     log(Logging::INFO, Logging::BRIGHT_YELLOW) << "Stop signal caught";
 
     SERVICE_STATUS serviceStatus{ SERVICE_WIN32_OWN_PROCESS, SERVICE_STOP_PENDING, 0, NO_ERROR, 0, 0, 0 };
     SetServiceStatus(serviceStatusHandle, &serviceStatus);
 
-    ppg->stop();
+    paymentGateServicePtr->stop();
   }
 }
 
 void __stdcall serviceMain(DWORD dwArgc, char **lpszArgv) {
-  Logging::LoggerRef logRef(ppg->getLogger(), "WindowsService");
+  Logging::LoggerRef logRef(paymentGateServicePtr->getLogger(), "WindowsService");
 
   serviceStatusHandle = RegisterServiceCtrlHandler("PaymentGate", serviceHandler);
   if (serviceStatusHandle == NULL) {
@@ -78,7 +79,7 @@ void __stdcall serviceMain(DWORD dwArgc, char **lpszArgv) {
   }
 
   try {
-    ppg->run();
+    paymentGateServicePtr->run();
   } catch (std::exception& ex) {
     logRef(Logging::FATAL, Logging::BRIGHT_RED) << "Error occurred: " << ex.what();
   }
@@ -86,7 +87,9 @@ void __stdcall serviceMain(DWORD dwArgc, char **lpszArgv) {
   serviceStatus = { SERVICE_WIN32_OWN_PROCESS, SERVICE_STOPPED, 0, NO_ERROR, 0, 0, 0 };
   SetServiceStatus(serviceStatusHandle, &serviceStatus);
 }
+
 #else
+
 int daemonize() {
   pid_t pid;
   pid = fork();
@@ -116,6 +119,7 @@ int daemonize() {
 
   return 0;
 }
+
 #endif
 
 int runDaemon() {
@@ -126,7 +130,7 @@ int runDaemon() {
     { NULL, NULL }
   };
 
-  Logging::LoggerRef logRef(ppg->getLogger(), "RunService");
+  Logging::LoggerRef logRef(paymentGateServicePtr->getLogger(), "RunService");
 
   if (StartServiceCtrlDispatcher(serviceTable) != TRUE) {
     logRef(Logging::FATAL, Logging::BRIGHT_RED) << "Couldn't start service: " << GetLastErrorMessage(GetLastError());
@@ -147,7 +151,7 @@ int runDaemon() {
     return 1;
   }
 
-  ppg->run();
+  paymentGateServicePtr->run();
 
   return 0;
 
@@ -156,7 +160,7 @@ int runDaemon() {
 
 int registerService() {
 #ifdef WIN32
-  Logging::LoggerRef logRef(ppg->getLogger(), "ServiceRegistrator");
+  Logging::LoggerRef logRef(paymentGateServicePtr->getLogger(), "ServiceRegistrator");
 
   char pathBuff[MAX_PATH];
   std::string modulePath;
@@ -213,7 +217,7 @@ int registerService() {
 
 int unregisterService() {
 #ifdef WIN32
-  Logging::LoggerRef logRef(ppg->getLogger(), "ServiceDeregistrator");
+  Logging::LoggerRef logRef(paymentGateServicePtr->getLogger(), "ServiceDeregistrator");
 
   SC_HANDLE scManager = NULL;
   SC_HANDLE scService = NULL;
@@ -281,21 +285,25 @@ int unregisterService() {
 }
 
 int main(int argc, char** argv) {
-  PaymentGateService pg; 
-  ppg = &pg;
 
-  try {
-    if (!pg.init(argc, argv)) {
-      return 0; //help message requested or so
+  PaymentGateService paymentGateService; 
+  paymentGateServicePtr = &paymentGateService;
+
+  try
+  {
+
+    if (!paymentGateService.init(argc, argv)) {
+      return 0;
     }
 
-    Logging::LoggerRef(pg.getLogger(), "main")(Logging::INFO) << "PaymentService " << " v" << PROJECT_VERSION_LONG;
+    Logging::LoggerRef logger(paymentGateService.getLogger(), "main");
+    logger(Logging::INFO) << "PaymentService " << " v" << PROJECT_VERSION_LONG;
 
-    const auto& config = pg.getConfig();
+    const PaymentService::ConfigurationManager& config = paymentGateService.getConfig();
 
     if (config.gateConfiguration.generateNewContainer) {
       System::Dispatcher d;
-      generateNewWallet(pg.getCurrency(), pg.getWalletConfig(), pg.getLogger(), d);
+      generateNewWallet(paymentGateService.getCurrency(), paymentGateService.getWalletConfig(), paymentGateService.getLogger(), d);
       return 0;
     }
 
@@ -312,13 +320,17 @@ int main(int argc, char** argv) {
         throw std::runtime_error("Failed to start daemon");
       }
     } else {
-      pg.run();
+      paymentGateService.run();
     }
 
-  } catch (PaymentService::ConfigurationError& ex) {
+  }
+  catch (PaymentService::ConfigurationError& ex)
+  {
     std::cerr << "Configuration error: " << ex.what() << std::endl;
     return 1;
-  } catch (std::exception& ex) {
+  }
+  catch (std::exception& ex)
+  {
     std::cerr << "Fatal error: " << ex.what() << std::endl;
     return 1;
   }
