@@ -8,7 +8,6 @@
 #include "CryptoNoteCore/CoreConfig.h"
 #include "Logging/ILogger.h"
 #include "P2p/NodeServerConfig.h"
-#include "RpcNodeConfiguration.h"
 
 namespace PaymentService {
 
@@ -22,14 +21,15 @@ public:
   std::string containerFile;
   std::string containerPassword;
   CryptoNote::CoreConfig coreConfig;
+  std::string daemonHost;
   bool daemonize;
+  uint16_t daemonPort;
   bool generateNewContainer;
   size_t logLevel;
   std::string logFile;
   CryptoNote::NodeServerConfig nodeServerConfig;
   bool printAddresses;
   bool registerService;
-  RpcNodeConfiguration remoteNodeConfig;
   std::string rpcConfigurationPassword;
   std::string serverRoot;
   std::string spendPrivateKey;

@@ -18,7 +18,9 @@ namespace po = boost::program_options;
 ConfigurationManager::ConfigurationManager() {
   bindAddress = "";
   bindPort = 0;
+  daemonHost = "";
   daemonize = false;
+  daemonPort = 0;
   generateNewContainer = false;
   logFile = "payment_gate.log";
   logLevel = Logging::INFO;
@@ -39,7 +41,10 @@ bool ConfigurationManager::init(int argc, char** argv)
 
   // Remote Node Configuration Options
   po::options_description remoteNodeOptions("Remote Node Options");
-  RpcNodeConfiguration::initOptions(remoteNodeOptions);
+
+  remoteNodeOptions.add_options()
+    ("daemon-address", po::value<std::string>()->default_value("localhost"), "daemon address")
+    ("daemon-port", po::value<uint16_t>()->default_value(CryptoNote::RPC_DEFAULT_PORT), "daemon port");
 
   // Command Line Options
   po::options_description commandLineOptions("Walletd Configuration Options");
@@ -107,7 +112,8 @@ bool ConfigurationManager::init(int argc, char** argv)
   po::store(po::parse_command_line(argc, argv, allCommandLineOptions), commandLineInput);
   po::notify(commandLineInput);
 
-  if (commandLineInput.count("help")) {
+  if (commandLineInput.count("help"))
+  {
     std::cout << allCommandLineOptions << std::endl;
     return false;
   }
@@ -154,12 +160,23 @@ bool ConfigurationManager::init(int argc, char** argv)
       daemonize = true;
     }
 
+    if (configFileInput.count("daemon-address") != 0 && (!configFileInput["daemon-address"].defaulted() || daemonHost.empty()))
+    {
+      daemonHost = configFileInput["daemon-address"].as<std::string>();
+    }
+
+    if (configFileInput.count("daemon-port") != 0 && (!configFileInput["daemon-port"].defaulted() || daemonPort == 0))
+    {
+      daemonPort = configFileInput["daemon-port"].as<uint16_t>();
+    }
+
     if (configFileInput.count("generate-container") != 0)
     {
       generateNewContainer = true;
     }
 
-    if (configFileInput["local"].as<bool>()) {
+    if (configFileInput["local"].as<bool>())
+    {
       startInprocess = true;
     }
 
@@ -193,8 +210,10 @@ bool ConfigurationManager::init(int argc, char** argv)
       serverRoot = configFileInput["server-root"].as<std::string>();
     }
 
-    if (configFileInput.count("spend-private-key") != 0) {
-      if (!generateNewContainer) {
+    if (configFileInput.count("spend-private-key") != 0)
+    {
+      if (!generateNewContainer)
+      {
         throw std::runtime_error("generate-container parameter is required");
       }
 
@@ -211,8 +230,10 @@ bool ConfigurationManager::init(int argc, char** argv)
       unregisterService = true;
     }
 
-    if (configFileInput.count("view-private-key") != 0) {
-      if (!generateNewContainer) {
+    if (configFileInput.count("view-private-key") != 0)
+    {
+      if (!generateNewContainer)
+      {
         throw std::runtime_error("generate-container parameter is required");
       }
 
@@ -229,8 +250,10 @@ bool ConfigurationManager::init(int argc, char** argv)
       throw std::runtime_error("Must specify both spend private key and view private key to restore wallet");
     }
 
-    if (!registerService && !unregisterService) {
-      if (containerFile.empty() || containerPassword.empty()) {
+    if (!registerService && !unregisterService)
+    {
+      if (containerFile.empty() || containerPassword.empty())
+      {
         throw std::runtime_error("Both container-file and container-password parameters are required");
       }
     }
@@ -238,92 +261,122 @@ bool ConfigurationManager::init(int argc, char** argv)
     nodeServerConfig.init(configFileInput);
     nodeServerConfig.setTestnet(testnet);
     coreConfig.init(configFileInput);
-    remoteNodeConfig.init(configFileInput);
   }
 
   //command line options should override options from config file
 
-  if (commandLineInput.count("address") != 0) {
+  if (commandLineInput.count("address") != 0)
+  {
     printAddresses = true;
   }
 
-  if (commandLineInput.count("bind-address") != 0 && (!commandLineInput["bind-address"].defaulted() || bindAddress.empty())) {
+  if (commandLineInput.count("bind-address") != 0 && (!commandLineInput["bind-address"].defaulted() || bindAddress.empty()))
+  {
     bindAddress = commandLineInput["bind-address"].as<std::string>();
   }
 
-  if (commandLineInput.count("bind-port") != 0 && (!commandLineInput["bind-port"].defaulted() || bindPort == 0)) {
+  if (commandLineInput.count("bind-port") != 0 && (!commandLineInput["bind-port"].defaulted() || bindPort == 0))
+  {
     bindPort = commandLineInput["bind-port"].as<uint16_t>();
   }
 
-  if (commandLineInput.count("container-file") != 0) {
+  if (commandLineInput.count("container-file") != 0)
+  {
     containerFile = commandLineInput["container-file"].as<std::string>();
   }
 
-  if (commandLineInput.count("container-password") != 0) {
+  if (commandLineInput.count("container-password") != 0)
+  {
     containerPassword = commandLineInput["container-password"].as<std::string>();
   }
 
-  if (commandLineInput.count("daemon") != 0) {
+  if (commandLineInput.count("daemon") != 0)
+  {
     daemonize = true;
   }
 
-  if (commandLineInput.count("generate-container") != 0) {
+  if (commandLineInput.count("daemon-address") != 0 && (!commandLineInput["daemon-address"].defaulted() || daemonHost.empty()))
+  {
+    daemonHost = commandLineInput["daemon-address"].as<std::string>();
+  }
+
+  if (commandLineInput.count("daemon-port") != 0 && (!commandLineInput["daemon-port"].defaulted() || daemonPort == 0))
+  {
+    daemonPort = commandLineInput["daemon-port"].as<uint16_t>();
+  }
+
+  if (commandLineInput.count("generate-container") != 0)
+  {
     generateNewContainer = true;
   }
 
-  if (commandLineInput["local"].as<bool>()) {
+  if (commandLineInput["local"].as<bool>())
+  {
     startInprocess = true;
   }
 
-  if (commandLineInput.count("log-file") != 0) {
+  if (commandLineInput.count("log-file") != 0)
+  {
     logFile = commandLineInput["log-file"].as<std::string>();
   }
 
-  if (commandLineInput.count("log-level") != 0) {
+  if (commandLineInput.count("log-level") != 0)
+  {
     logLevel = commandLineInput["log-level"].as<size_t>();
-    if (logLevel > Logging::TRACE) {
+    if (logLevel > Logging::TRACE)
+    {
       std::string error = "log-level option must be in " + std::to_string(Logging::FATAL) +  ".." + std::to_string(Logging::TRACE) + " interval";
       throw std::runtime_error(error.c_str());
     }
   }
 
-  if (commandLineInput.count("register-service") != 0) {
+  if (commandLineInput.count("register-service") != 0)
+  {
     registerService = true;
   }
 
-  if (!(commandLineInput.count("rpc-password") == 0)) {
+  if (!(commandLineInput.count("rpc-password") == 0))
+  {
     rpcConfigurationPassword = commandLineInput["rpc-password"].as<std::string>();
   }
 
-  if (commandLineInput.count("server-root") != 0) {
+  if (commandLineInput.count("server-root") != 0)
+  {
     serverRoot = commandLineInput["server-root"].as<std::string>();
   }
 
-  if (commandLineInput.count("spend-private-key") != 0) {
-    if (!generateNewContainer) {
+  if (commandLineInput.count("spend-private-key") != 0)
+  {
+    if (!generateNewContainer)
+    {
       throw std::runtime_error("generate-container parameter is required");
     }
 
     spendPrivateKey = commandLineInput["spend-private-key"].as<std::string>();
   }
 
-  if (commandLineInput["testnet"].as<bool>()) {
+  if (commandLineInput["testnet"].as<bool>())
+  {
     testnet = true;
   }
 
-  if (commandLineInput.count("unregister-service") != 0) {
+  if (commandLineInput.count("unregister-service") != 0)
+  {
     unregisterService = true;
   }
 
-  if (commandLineInput.count("view-private-key") != 0) {
-    if (!generateNewContainer) {
+  if (commandLineInput.count("view-private-key") != 0)
+  {
+    if (!generateNewContainer)
+    {
       throw std::runtime_error("generate-container parameter is required");
     }
 
     viewPrivateKey = commandLineInput["view-private-key"].as<std::string>();
   }
 
-  if (registerService && unregisterService) {
+  if (registerService && unregisterService)
+  {
     throw std::runtime_error("It's impossible to use both \"register-service\" and \"unregister-service\" at the same time");
   }
 
@@ -332,8 +385,10 @@ bool ConfigurationManager::init(int argc, char** argv)
     throw std::runtime_error("Must specify both spend private key and view private key to restore wallet");
   }
 
-  if (!registerService && !unregisterService) {
-    if (containerFile.empty() || containerPassword.empty()) {
+  if (!registerService && !unregisterService)
+  {
+    if (containerFile.empty() || containerPassword.empty())
+    {
       throw std::runtime_error("Both container-file and container-password parameters are required");
     }
   }
@@ -341,7 +396,6 @@ bool ConfigurationManager::init(int argc, char** argv)
   nodeServerConfig.init(commandLineInput);
   nodeServerConfig.setTestnet(testnet);
   coreConfig.init(commandLineInput);
-  remoteNodeConfig.init(commandLineInput);
 
   return true;
 }
