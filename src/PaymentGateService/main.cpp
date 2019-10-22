@@ -299,7 +299,7 @@ int main(int argc, char** argv) {
     Logging::LoggerRef logger(paymentGateService.getLogger(), "main");
     logger(Logging::INFO) << "PaymentService " << " v" << PROJECT_VERSION_LONG;
 
-    const PaymentService::ConfigurationManager& config = paymentGateService.getConfig();
+    const PaymentService::WalletdConfigurationOptions& config = paymentGateService.getConfig();
 
     if (config.generateNewContainer) {
       System::Dispatcher d;

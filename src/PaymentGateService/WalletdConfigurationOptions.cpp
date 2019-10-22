@@ -8,14 +8,14 @@
 
 #include "Common/CommandLine.h"
 #include "Common/Util.h"
-#include "ConfigurationManager.h"
+#include "WalletdConfigurationOptions.h"
 #include "CryptoNoteConfig.h"
 
 namespace PaymentService {
 
 namespace po = boost::program_options;
 
-ConfigurationManager::ConfigurationManager() {
+WalletdConfigurationOptions::WalletdConfigurationOptions() {
   bindAddress = "";
   bindPort = 0;
   daemonHost = "";
@@ -32,7 +32,7 @@ ConfigurationManager::ConfigurationManager() {
   unregisterService = false;
 }
 
-bool ConfigurationManager::init(int argc, char** argv)
+bool WalletdConfigurationOptions::init(int argc, char** argv)
 {
   // Local Node Configuration Options
   po::options_description nodeServerOptions("Node Options");

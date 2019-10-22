@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "ConfigurationManager.h"
+#include "WalletdConfigurationOptions.h"
 #include "Logging/ConsoleLogger.h"
 #include "Logging/LoggerGroup.h"
 #include "Logging/StreamLogger.h"
@@ -21,7 +21,7 @@ public:
 
   bool init(int argc, char** argv);
 
-  const PaymentService::ConfigurationManager& getConfig() const { return config; }
+  const PaymentService::WalletdConfigurationOptions& getConfig() const { return config; }
   PaymentService::WalletConfiguration getWalletConfig() const;
   const CryptoNote::Currency getCurrency();
 
@@ -39,7 +39,7 @@ private:
 
   System::Dispatcher* dispatcher;
   System::Event* stopEvent;
-  PaymentService::ConfigurationManager config;
+  PaymentService::WalletdConfigurationOptions config;
   PaymentService::WalletService* service;
   CryptoNote::CurrencyBuilder currencyBuilder;
   

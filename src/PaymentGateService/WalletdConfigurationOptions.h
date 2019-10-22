@@ -11,9 +11,9 @@
 
 namespace PaymentService {
 
-class ConfigurationManager {
+class WalletdConfigurationOptions {
 public:
-  ConfigurationManager();
+  WalletdConfigurationOptions();
   bool init(int argc, char** argv);
 
   std::string bindAddress;
