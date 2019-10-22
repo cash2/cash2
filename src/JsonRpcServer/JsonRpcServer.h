@@ -13,8 +13,6 @@
 #include "Logging/ILogger.h"
 #include "Logging/LoggerRef.h"
 #include "Rpc/HttpServer.h"
-#include "PaymentGateService/PaymentServiceConfiguration.h"
-
 
 namespace CryptoNote {
 class HttpResponse;

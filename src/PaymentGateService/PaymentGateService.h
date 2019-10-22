@@ -6,8 +6,6 @@
 #pragma once
 
 #include "ConfigurationManager.h"
-#include "PaymentServiceConfiguration.h"
-
 #include "Logging/ConsoleLogger.h"
 #include "Logging/LoggerGroup.h"
 #include "Logging/StreamLogger.h"

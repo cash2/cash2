@@ -301,21 +301,21 @@ int main(int argc, char** argv) {
 
     const PaymentService::ConfigurationManager& config = paymentGateService.getConfig();
 
-    if (config.gateConfiguration.generateNewContainer) {
+    if (config.generateNewContainer) {
       System::Dispatcher d;
       generateNewWallet(paymentGateService.getCurrency(), paymentGateService.getWalletConfig(), paymentGateService.getLogger(), d);
       return 0;
     }
 
-    if (config.gateConfiguration.registerService) {
+    if (config.registerService) {
       return registerService();
     }
 
-    if (config.gateConfiguration.unregisterService) {
+    if (config.unregisterService) {
       return unregisterService();
     }
 
-    if (config.gateConfiguration.daemonize) {
+    if (config.daemonize) {
       if (runDaemon() != 0) {
         throw std::runtime_error("Failed to start daemon");
       }
@@ -324,14 +324,9 @@ int main(int argc, char** argv) {
     }
 
   }
-  catch (PaymentService::ConfigurationError& ex)
-  {
-    std::cerr << "Configuration error: " << ex.what() << std::endl;
-    return 1;
-  }
   catch (std::exception& ex)
   {
-    std::cerr << "Fatal error: " << ex.what() << std::endl;
+    std::cerr << "Error: " << ex.what() << std::endl;
     return 1;
   }
 

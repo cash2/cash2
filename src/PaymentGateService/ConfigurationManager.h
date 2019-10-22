@@ -6,7 +6,7 @@
 #pragma once
 
 #include "CryptoNoteCore/CoreConfig.h"
-#include "PaymentServiceConfiguration.h"
+#include "Logging/ILogger.h"
 #include "P2p/NodeServerConfig.h"
 #include "RpcNodeConfiguration.h"
 
@@ -17,11 +17,26 @@ public:
   ConfigurationManager();
   bool init(int argc, char** argv);
 
-  bool startInprocess;
-  Configuration gateConfiguration;
-  CryptoNote::NodeServerConfig nodeServerConfig;
+  std::string bindAddress;
+  uint16_t bindPort;
+  std::string containerFile;
+  std::string containerPassword;
   CryptoNote::CoreConfig coreConfig;
+  bool daemonize;
+  bool generateNewContainer;
+  size_t logLevel;
+  std::string logFile;
+  CryptoNote::NodeServerConfig nodeServerConfig;
+  bool printAddresses;
+  bool registerService;
   RpcNodeConfiguration remoteNodeConfig;
+  std::string rpcConfigurationPassword;
+  std::string serverRoot;
+  std::string spendPrivateKey;
+  bool startInprocess;
+  bool testnet;
+  bool unregisterService;
+  std::string viewPrivateKey;
 };
 
-} //namespace PaymentService
+} // end namespace PaymentService

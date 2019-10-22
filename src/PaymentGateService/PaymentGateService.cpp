@@ -47,22 +47,22 @@ bool PaymentGateService::init(int argc, char** argv) {
     return false;
   }
 
-  logger.setMaxLevel(static_cast<Logging::Level>(config.gateConfiguration.logLevel));
+  logger.setMaxLevel(static_cast<Logging::Level>(config.logLevel));
   logger.addLogger(consoleLogger);
 
   Logging::LoggerRef log(logger, "main");
 
-  if (config.gateConfiguration.testnet) {
+  if (config.testnet) {
     log(Logging::INFO) << "Starting in testnet mode";
     currencyBuilder.testnet(true);
   }
 
-  if (!config.gateConfiguration.serverRoot.empty()) {
-    changeDirectory(config.gateConfiguration.serverRoot);
-    log(Logging::INFO) << "Current working directory now is " << config.gateConfiguration.serverRoot;
+  if (!config.serverRoot.empty()) {
+    changeDirectory(config.serverRoot);
+    log(Logging::INFO) << "Current working directory now is " << config.serverRoot;
   }
 
-  fileStream.open(config.gateConfiguration.logFile, std::ofstream::app);
+  fileStream.open(config.logFile, std::ofstream::app);
 
   if (!fileStream) {
     throw std::runtime_error("Couldn't open log file");
@@ -76,10 +76,10 @@ bool PaymentGateService::init(int argc, char** argv) {
 
 WalletConfiguration PaymentGateService::getWalletConfig() const {
   return WalletConfiguration{
-    config.gateConfiguration.containerFile,
-    config.gateConfiguration.containerPassword,
-    config.gateConfiguration.spendPrivateKey,
-    config.gateConfiguration.viewPrivateKey
+    config.containerFile,
+    config.containerPassword,
+    config.spendPrivateKey,
+    config.viewPrivateKey
   };
 }
 
@@ -208,10 +208,10 @@ void PaymentGateService::runRpcProxy(Logging::LoggerRef& log) {
 
 void PaymentGateService::runWalletService(const CryptoNote::Currency& currency, CryptoNote::INode& node) {
   PaymentService::WalletConfiguration walletConfiguration{
-    config.gateConfiguration.containerFile,
-    config.gateConfiguration.containerPassword,
-    config.gateConfiguration.spendPrivateKey,
-    config.gateConfiguration.viewPrivateKey
+    config.containerFile,
+    config.containerPassword,
+    config.spendPrivateKey,
+    config.viewPrivateKey
   };
 
   std::unique_ptr<CryptoNote::IWallet> wallet (WalletFactory::createWallet(currency, node, *dispatcher));
@@ -225,7 +225,7 @@ void PaymentGateService::runWalletService(const CryptoNote::Currency& currency, 
     return;
   }
 
-  if (config.gateConfiguration.printAddresses) {
+  if (config.printAddresses) {
     // print addresses and exit
     std::vector<std::string> addresses;
     service->getAddresses(addresses);
@@ -233,8 +233,8 @@ void PaymentGateService::runWalletService(const CryptoNote::Currency& currency, 
       std::cout << "Address: " << address << std::endl;
     }
   } else {
-    PaymentService::PaymentServiceJsonRpcServer rpcServer(*dispatcher, *stopEvent, *service, logger, config.gateConfiguration.rpcConfigurationPassword);
-    rpcServer.start(config.gateConfiguration.bindAddress, config.gateConfiguration.bindPort);
+    PaymentService::PaymentServiceJsonRpcServer rpcServer(*dispatcher, *stopEvent, *service, logger, config.rpcConfigurationPassword);
+    rpcServer.start(config.bindAddress, config.bindPort);
 
     try {
       service->saveWallet();
