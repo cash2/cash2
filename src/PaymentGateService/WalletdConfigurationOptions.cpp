@@ -19,7 +19,6 @@ WalletdConfigurationOptions::WalletdConfigurationOptions() {
   bindAddress = "";
   bindPort = 0;
   daemonHost = "";
-  daemonize = false;
   daemonPort = 0;
   generateNewContainer = false;
   logFile = "payment_gate.log";
@@ -53,22 +52,15 @@ bool WalletdConfigurationOptions::init(int argc, char** argv)
     ("config", po::value<std::string>(), "configuration file")
     ("container-file", po::value<std::string>(), "container file")
     ("container-password", po::value<std::string>(), "container password")
-    ("daemon", "run as daemon in Unix or as service in Windows")
     ("generate-container", "generate new container file with one wallet and exit")
     ("help", "produce this help message and exit")
     ("local", po::bool_switch(), "start with local node (remote is default)")
     ("log-file", po::value<std::string>(), "log file")
     ("log-level", po::value<size_t>(), "log level")
-    #ifdef _WIN32
-    ("register-service", "register service and exit (Windows only)")
-    #endif
     ("rpc-password", po::value<std::string>(), "Specify a password for access to the wallet RPC server.")
     ("server-root", po::value<std::string>(), "server root. The service will use it as working directory. Don't set it if don't want to change it")
     ("spend-private-key", po::value<std::string>(), "Specify the spend private key that you want your first wallet file to have")
     ("testnet", po::bool_switch(), "testnet mode")
-    #ifdef _WIN32
-    ("unregister-service", "unregister service and exit (Windows only)")
-    #endif
     ("view-private-key", po::value<std::string>(), "Specify the view private key that you want your wallet container");
 
   command_line::add_arg(commandLineOptions, command_line::arg_data_dir, Tools::getDefaultDataDirectory());
@@ -84,21 +76,14 @@ bool WalletdConfigurationOptions::init(int argc, char** argv)
     ("bind-port", po::value<uint16_t>()->default_value(CryptoNote::WALLETD_DEFAULT_PORT), "payment service bind port")
     ("container-file", po::value<std::string>(), "container file")
     ("container-password", po::value<std::string>(), "container password")
-    ("daemon", "run as daemon in Unix or as service in Windows")
     ("generate-container", "generate new container file with one wallet and exit")
     ("local", po::bool_switch(), "start with local node (remote is default)")
     ("log-file", po::value<std::string>(), "log file")
     ("log-level", po::value<size_t>(), "log level")
-    #ifdef _WIN32
-    ("register-service", "register service and exit (Windows only)")
-    #endif
     ("rpc-password", po::value<std::string>(), "Specify a password for access to the wallet RPC server.")
     ("server-root", po::value<std::string>(), "server root. The service will use it as working directory. Don't set it if don't want to change it")
     ("spend-private-key", po::value<std::string>(), "Specify the spend private key that you want your first wallet file to have")
     ("testnet", po::bool_switch(), "testnet mode")
-    #ifdef _WIN32
-    ("unregister-service", "unregister service and exit (Windows only)")
-    #endif
     ("view-private-key", po::value<std::string>(), "Specify the view private key that you want your wallet container");
 
   command_line::add_arg(configFileOptions, command_line::arg_data_dir, Tools::getDefaultDataDirectory());
@@ -151,11 +136,6 @@ bool WalletdConfigurationOptions::init(int argc, char** argv)
     if (configFileInput.count("container-password") != 0)
     {
       containerPassword = configFileInput["container-password"].as<std::string>();
-    }
-
-    if (configFileInput.count("daemon") != 0)
-    {
-      daemonize = true;
     }
 
     if (configFileInput.count("daemon-address") != 0 && (!configFileInput["daemon-address"].defaulted() || daemonHost.empty()))
@@ -268,11 +248,6 @@ bool WalletdConfigurationOptions::init(int argc, char** argv)
   if (commandLineInput.count("container-password") != 0)
   {
     containerPassword = commandLineInput["container-password"].as<std::string>();
-  }
-
-  if (commandLineInput.count("daemon") != 0)
-  {
-    daemonize = true;
   }
 
   if (commandLineInput.count("daemon-address") != 0 && (!commandLineInput["daemon-address"].defaulted() || daemonHost.empty()))

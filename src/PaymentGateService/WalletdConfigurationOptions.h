@@ -22,7 +22,6 @@ public:
   std::string containerPassword;
   CryptoNote::CoreConfig coreConfig;
   std::string daemonHost;
-  bool daemonize;
   uint16_t daemonPort;
   bool generateNewContainer;
   size_t logLevel;
