@@ -29,13 +29,11 @@ public:
   std::string logFile;
   CryptoNote::NodeServerConfig nodeServerConfig;
   bool printAddresses;
-  bool registerService;
   std::string rpcConfigurationPassword;
   std::string serverRoot;
   std::string spendPrivateKey;
   bool startInprocess;
   bool testnet;
-  bool unregisterService;
   std::string viewPrivateKey;
 };
 

@@ -25,11 +25,9 @@ WalletdConfigurationOptions::WalletdConfigurationOptions() {
   logFile = "payment_gate.log";
   logLevel = Logging::INFO;
   printAddresses = false;
-  registerService = false;
   rpcConfigurationPassword = "";
   startInprocess = false;
   testnet = false;
-  unregisterService = false;
 }
 
 bool WalletdConfigurationOptions::init(int argc, char** argv)
@@ -195,11 +193,6 @@ bool WalletdConfigurationOptions::init(int argc, char** argv)
       }
     }
 
-    if (configFileInput.count("register-service") != 0)
-    {
-      registerService = true;
-    }
-
     if (!(configFileInput.count("rpc-password") == 0))
     {
       rpcConfigurationPassword = configFileInput["rpc-password"].as<std::string>();
@@ -225,11 +218,6 @@ bool WalletdConfigurationOptions::init(int argc, char** argv)
       testnet = true;
     }
 
-    if (configFileInput.count("unregister-service") != 0)
-    {
-      unregisterService = true;
-    }
-
     if (configFileInput.count("view-private-key") != 0)
     {
       if (!generateNewContainer)
@@ -240,22 +228,14 @@ bool WalletdConfigurationOptions::init(int argc, char** argv)
       viewPrivateKey = configFileInput["view-private-key"].as<std::string>();
     }
 
-    if (registerService && unregisterService)
-    {
-      throw std::runtime_error("It's impossible to use both \"register-service\" and \"unregister-service\" at the same time");
-    }
-
     if((!spendPrivateKey.empty() && viewPrivateKey.empty()) || (spendPrivateKey.empty() && !viewPrivateKey.empty()))
     {
       throw std::runtime_error("Must specify both spend private key and view private key to restore wallet");
     }
 
-    if (!registerService && !unregisterService)
+    if (containerFile.empty() || containerPassword.empty())
     {
-      if (containerFile.empty() || containerPassword.empty())
-      {
-        throw std::runtime_error("Both container-file and container-password parameters are required");
-      }
+      throw std::runtime_error("Both container-file and container-password parameters are required");
     }
 
     nodeServerConfig.init(configFileInput);
@@ -330,11 +310,6 @@ bool WalletdConfigurationOptions::init(int argc, char** argv)
     }
   }
 
-  if (commandLineInput.count("register-service") != 0)
-  {
-    registerService = true;
-  }
-
   if (!(commandLineInput.count("rpc-password") == 0))
   {
     rpcConfigurationPassword = commandLineInput["rpc-password"].as<std::string>();
@@ -360,11 +335,6 @@ bool WalletdConfigurationOptions::init(int argc, char** argv)
     testnet = true;
   }
 
-  if (commandLineInput.count("unregister-service") != 0)
-  {
-    unregisterService = true;
-  }
-
   if (commandLineInput.count("view-private-key") != 0)
   {
     if (!generateNewContainer)
@@ -375,22 +345,14 @@ bool WalletdConfigurationOptions::init(int argc, char** argv)
     viewPrivateKey = commandLineInput["view-private-key"].as<std::string>();
   }
 
-  if (registerService && unregisterService)
-  {
-    throw std::runtime_error("It's impossible to use both \"register-service\" and \"unregister-service\" at the same time");
-  }
-
   if((!spendPrivateKey.empty() && viewPrivateKey.empty()) || (spendPrivateKey.empty() && !viewPrivateKey.empty()))
   {
     throw std::runtime_error("Must specify both spend private key and view private key to restore wallet");
   }
 
-  if (!registerService && !unregisterService)
+  if (containerFile.empty() || containerPassword.empty())
   {
-    if (containerFile.empty() || containerPassword.empty())
-    {
-      throw std::runtime_error("Both container-file and container-password parameters are required");
-    }
+    throw std::runtime_error("Both container-file and container-password parameters are required");
   }
 
   nodeServerConfig.init(commandLineInput);
