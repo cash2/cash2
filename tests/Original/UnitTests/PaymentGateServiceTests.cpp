@@ -10,8 +10,8 @@
 #include <Common/StringTools.h>
 #include <Logging/ConsoleLogger.h>
 
-#include "PaymentGate/WalletService.h"
-#include "PaymentGate/WalletFactory.h"
+#include "PaymentGateService/WalletService.h"
+#include "PaymentGateService/WalletFactory.h"
 
 // test helpers
 #include "INodeStubs.h"
@@ -20,10 +20,10 @@
 using namespace PaymentService;
 using namespace CryptoNote;
 
-class PaymentGateTest : public testing::Test {
+class PaymentGateServiceTest : public testing::Test {
 public:
 
-  PaymentGateTest() : 
+  PaymentGateServiceTest() : 
     currency(CryptoNote::CurrencyBuilder(logger).currency()), 
     generator(currency),
     nodeStub(generator) 
@@ -56,13 +56,13 @@ protected:
 };
 
 
-TEST_F(PaymentGateTest, createWallet) {
+TEST_F(PaymentGateServiceTest, createWallet) {
   auto cfg = createWalletConfiguration();
   generateWallet(cfg);
   auto service = createWalletService(cfg);
 }
 
-TEST_F(PaymentGateTest, addTransaction) {
+TEST_F(PaymentGateServiceTest, addTransaction) {
   auto cfg = createWalletConfiguration();
   generateWallet(cfg);
   auto service = createWalletService(cfg);
@@ -93,7 +93,7 @@ TEST_F(PaymentGateTest, addTransaction) {
 }
 
 /*
-TEST_F(PaymentGateTest, DISABLED_sendTransaction) {
+TEST_F(PaymentGateServiceTest, DISABLED_sendTransaction) {
 
   auto cfg = createWalletConfiguration();
   generateWallet(cfg);
