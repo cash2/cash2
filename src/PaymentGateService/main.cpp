@@ -22,8 +22,8 @@
 #include "P2p/NodeServer.h"
 #include "NodeFactory.h"
 #include "PaymentServiceJsonRpcServer.h"
-#include "WalletFactory.h"
 #include "WalletService.h"
+#include "Wallet/WalletGreen.h"
 #include "System/Context.h"
 #include "WalletdConfigurationOptions.h"
 #include "version.h"
@@ -51,7 +51,7 @@ void runWalletService(const CryptoNote::Currency& currency, CryptoNote::INode& n
     walletdConfigurationOptions.viewPrivateKey
   };
 
-  std::unique_ptr<CryptoNote::IWallet> walletPtr (PaymentService::WalletFactory::createWallet(currency, node, *dispatcherPtr));
+  std::unique_ptr<CryptoNote::IWallet> walletPtr (new CryptoNote::WalletGreen(*dispatcherPtr, currency, node));
   std::unique_ptr<PaymentService::WalletService> walletServicePtr(new PaymentService::WalletService(currency, *dispatcherPtr, node, *walletPtr, walletConfiguration, logger));
 
   try

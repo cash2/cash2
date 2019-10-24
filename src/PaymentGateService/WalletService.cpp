@@ -29,11 +29,11 @@
 #include <System/EventLock.h>
 
 #include "PaymentServiceJsonRpcMessages.h"
-#include "WalletFactory.h"
 #include "NodeFactory.h"
 
 #include "Wallet/WalletErrors.h"
 #include "Wallet/WalletUtils.h"
+#include "Wallet/WalletGreen.h"
 #include "WalletServiceErrorCategory.h"
 
 namespace PaymentService {
@@ -423,7 +423,7 @@ void generateNewWallet(const CryptoNote::Currency &currency, const WalletConfigu
     createWalletFile(walletFile, conf.walletFile);
 
     // create and initialize the wallet
-    CryptoNote::IWallet* wallet = WalletFactory::createWallet(currency, *nodeStub, dispatcher);
+    CryptoNote::IWallet* wallet = new CryptoNote::WalletGreen(dispatcher, currency, *nodeStub);
     std::unique_ptr<CryptoNote::IWallet> walletGuard(wallet);
     wallet->initializeWithViewKey(viewPrivateKey, conf.walletPassword);
     std::string address = wallet->createAddress(spendPrivateKey);
@@ -459,7 +459,7 @@ void generateNewWallet(const CryptoNote::Currency &currency, const WalletConfigu
     createWalletFile(walletFile, conf.walletFile);
 
     // create and initialize the wallet
-    CryptoNote::IWallet* wallet = WalletFactory::createWallet(currency, *nodeStub, dispatcher);
+    CryptoNote::IWallet* wallet = new CryptoNote::WalletGreen(dispatcher, currency, *nodeStub);
     std::unique_ptr<CryptoNote::IWallet> walletGuard(wallet);
     wallet->initialize(conf.walletPassword);
     std::string address = wallet->createAddress();
