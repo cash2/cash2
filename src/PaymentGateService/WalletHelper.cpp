@@ -27,7 +27,7 @@
 #include "Wallet/WalletGreen.h"
 #include "Wallet/WalletUtils.h"
 #include "WalletHelper.h"
-#include "WalletServiceErrorCategory.h"
+#include "WalletHelperErrorCategory.h"
 
 namespace PaymentService {
 
@@ -208,11 +208,11 @@ struct WalletHelper::TransactionsInBlockInfoFilter
     if (!paymentIdStr.empty()) {
 
       if (!checkPaymentId(paymentIdStr)) {
-        throw std::system_error(make_error_code(CryptoNote::error::WalletServiceErrorCode::WRONG_PAYMENT_ID_FORMAT));
+        throw std::system_error(make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_PAYMENT_ID_FORMAT));
       }
 
       if (!Common::podFromHex(paymentIdStr, paymentId)) {
-        throw std::system_error(make_error_code(CryptoNote::error::WalletServiceErrorCode::WRONG_PAYMENT_ID_FORMAT));
+        throw std::system_error(make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_PAYMENT_ID_FORMAT));
       }
 
       havePaymentId = true;
@@ -317,7 +317,7 @@ std::error_code WalletHelper::createAddress(const std::string& spendPrivateKeySt
     {
       m_logger(Logging::WARNING) << "Spend private key has wrong format : " << spendPrivateKeyStr;
 
-      return make_error_code(CryptoNote::error::WalletServiceErrorCode::WRONG_KEY_FORMAT);
+      return make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_KEY_FORMAT);
     }
 
     address = m_wallet.createAddress(spendPrivateKey);
@@ -404,7 +404,7 @@ std::error_code WalletHelper::createTrackingAddress(const std::string& spendPubl
     if (!Common::podFromHex(spendPublicKeyStr, spendPublicKey))
     {
       m_logger(Logging::WARNING) << "Spend public key has wrong format : " << spendPublicKeyStr;
-      return make_error_code(CryptoNote::error::WalletServiceErrorCode::WRONG_KEY_FORMAT);
+      return make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_KEY_FORMAT);
     }
 
     address = m_wallet.createAddress(spendPublicKey);
@@ -450,14 +450,14 @@ std::error_code WalletHelper::deleteDelayedTransaction(const std::string& transa
     Crypto::Hash transactionHashIgnore;
     if (!Common::podFromHex(transactionHashStr, transactionHashIgnore)) {
       m_logger(Logging::WARNING) << "Transaction hash string validation failed " << transactionHashStr;
-      throw std::system_error(make_error_code(CryptoNote::error::WalletServiceErrorCode::WRONG_HASH_FORMAT));
+      throw std::system_error(make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_HASH_FORMAT));
     }
 
     auto it = m_transactionHashStrIndexMap.find(transactionHashStr);
     
     if (it == m_transactionHashStrIndexMap.end())
     {
-      return make_error_code(CryptoNote::error::WalletServiceErrorCode::OBJECT_NOT_FOUND);
+      return make_error_code(CryptoNote::error::WalletHelperErrorCode::OBJECT_NOT_FOUND);
     }
 
     size_t transactionId = it->second;
@@ -920,14 +920,14 @@ std::error_code WalletHelper::replaceWithNewWallet(const std::string& viewPrivat
     if (!Common::podFromHex(viewPrivateKeyStr, viewPrivateKey))
     {
       m_logger(Logging::WARNING) << "View private key has invalid format " << viewPrivateKeyStr;
-      return make_error_code(CryptoNote::error::WalletServiceErrorCode::WRONG_KEY_FORMAT);
+      return make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_KEY_FORMAT);
     }
 
     Crypto::PublicKey viewPublicKeyIgnore;
     if (!Crypto::secret_key_to_public_key(viewPrivateKey, viewPublicKeyIgnore))
     {
       m_logger(Logging::WARNING) << "Cannot derive view public key, wrong view private key " << viewPrivateKeyStr;
-      return make_error_code(CryptoNote::error::WalletServiceErrorCode::WRONG_KEY_FORMAT);
+      return make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_KEY_FORMAT);
     }
 
     m_wallet.stop();
@@ -1013,7 +1013,7 @@ std::error_code WalletHelper::sendDelayedTransaction(const std::string& transact
     auto it = m_transactionHashStrIndexMap.find(transactionHashStr);
     if (it == m_transactionHashStrIndexMap.end())
     {
-      return make_error_code(CryptoNote::error::WalletServiceErrorCode::OBJECT_NOT_FOUND);
+      return make_error_code(CryptoNote::error::WalletHelperErrorCode::OBJECT_NOT_FOUND);
     }
 
     size_t transactionIndex = it->second;
@@ -1317,7 +1317,7 @@ std::vector<TransactionsInBlockRpcInfo> WalletHelper::getRpcTransactions(const C
 
   if (transactions.empty())
   {
-    throw std::system_error(make_error_code(CryptoNote::error::WalletServiceErrorCode::OBJECT_NOT_FOUND));
+    throw std::system_error(make_error_code(CryptoNote::error::WalletHelperErrorCode::OBJECT_NOT_FOUND));
   }
 
   std::vector<CryptoNote::TransactionsInBlockInfo> filteredTransactions = filterTransactions(transactions, filter);
@@ -1331,7 +1331,7 @@ std::vector<TransactionsInBlockRpcInfo> WalletHelper::getRpcTransactions(uint32_
 
   if (transactions.empty())
   {
-    throw std::system_error(make_error_code(CryptoNote::error::WalletServiceErrorCode::OBJECT_NOT_FOUND));
+    throw std::system_error(make_error_code(CryptoNote::error::WalletHelperErrorCode::OBJECT_NOT_FOUND));
   }
 
   std::vector<CryptoNote::TransactionsInBlockInfo> filteredTransactions = filterTransactions(transactions, filter);
@@ -1345,7 +1345,7 @@ std::vector<TransactionHashesInBlockRpcInfo> WalletHelper::getRpcTransactionHash
 
   if (transactions.empty())
   {
-    throw std::system_error(make_error_code(CryptoNote::error::WalletServiceErrorCode::OBJECT_NOT_FOUND));
+    throw std::system_error(make_error_code(CryptoNote::error::WalletHelperErrorCode::OBJECT_NOT_FOUND));
   }
 
   std::vector<CryptoNote::TransactionsInBlockInfo> filteredTransactions = filterTransactions(transactions, filter);
@@ -1359,7 +1359,7 @@ std::vector<TransactionHashesInBlockRpcInfo> WalletHelper::getRpcTransactionHash
 
   if (transactions.empty())
   {
-    throw std::system_error(make_error_code(CryptoNote::error::WalletServiceErrorCode::OBJECT_NOT_FOUND));
+    throw std::system_error(make_error_code(CryptoNote::error::WalletHelperErrorCode::OBJECT_NOT_FOUND));
   }
 
   std::vector<CryptoNote::TransactionsInBlockInfo> filteredTransactions = filterTransactions(transactions, filter);
@@ -1373,7 +1373,7 @@ Crypto::Hash WalletHelper::hashStringToHash(const std::string& hashString)
 
   if (!Common::podFromHex(hashString, hash)) {
     m_logger(Logging::WARNING) << "Can't parse hash string " << hashString;
-    throw std::system_error(make_error_code(CryptoNote::error::WalletServiceErrorCode::WRONG_HASH_FORMAT));
+    throw std::system_error(make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_HASH_FORMAT));
   }
 
   return hash;
@@ -1478,7 +1478,7 @@ void WalletHelper::validatePaymentId(const std::string& paymentId)
   if (!checkPaymentId(paymentId))
   {
     m_logger(Logging::WARNING) << "Can't validate payment id: " << paymentId;
-    throw std::system_error(make_error_code(CryptoNote::error::WalletServiceErrorCode::WRONG_PAYMENT_ID_FORMAT));
+    throw std::system_error(make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_PAYMENT_ID_FORMAT));
   }
 }
 

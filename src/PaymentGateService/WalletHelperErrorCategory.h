@@ -12,7 +12,7 @@ namespace CryptoNote {
 
 namespace error {
 
-enum class WalletServiceErrorCode
+enum class WalletHelperErrorCode
 {
   WRONG_KEY_FORMAT = 1,
   WRONG_PAYMENT_ID_FORMAT,
@@ -20,15 +20,15 @@ enum class WalletServiceErrorCode
   OBJECT_NOT_FOUND
 };
 
-class WalletServiceErrorCategory : public std::error_category {
+class WalletHelperErrorCategory : public std::error_category {
 
 public :
 
-  static WalletServiceErrorCategory INSTANCE;
+  static WalletHelperErrorCategory INSTANCE;
 
   virtual const char* name() const throw() override
   {
-    return "WalletServiceErrorCategory";
+    return "WalletHelperErrorCategory";
   }
 
   virtual std::error_condition default_error_condition(int ev) const throw() override
@@ -38,17 +38,17 @@ public :
 
   virtual std::string message(int ev) const override
   {
-    WalletServiceErrorCode code = static_cast<WalletServiceErrorCode>(ev);
+    WalletHelperErrorCode code = static_cast<WalletHelperErrorCode>(ev);
 
     switch (code)
     {
-      case WalletServiceErrorCode::WRONG_KEY_FORMAT:
+      case WalletHelperErrorCode::WRONG_KEY_FORMAT:
         return "Wrong key format";
-      case WalletServiceErrorCode::WRONG_PAYMENT_ID_FORMAT:
+      case WalletHelperErrorCode::WRONG_PAYMENT_ID_FORMAT:
         return "Wrong payment id format";
-      case WalletServiceErrorCode::WRONG_HASH_FORMAT:
+      case WalletHelperErrorCode::WRONG_HASH_FORMAT:
         return "Wrong block id format";
-      case WalletServiceErrorCode::OBJECT_NOT_FOUND:
+      case WalletHelperErrorCode::OBJECT_NOT_FOUND:
         return "Requested object not found";
       default:
         return "Unknown error";
@@ -57,7 +57,7 @@ public :
 
 private :
 
-  WalletServiceErrorCategory() {
+  WalletHelperErrorCategory() {
   }
 
 };
@@ -66,14 +66,14 @@ private :
 
 } // end namespace CryptoNote
 
-inline std::error_code make_error_code(CryptoNote::error::WalletServiceErrorCode e)
+inline std::error_code make_error_code(CryptoNote::error::WalletHelperErrorCode e)
 {
-  return std::error_code(static_cast<int>(e), CryptoNote::error::WalletServiceErrorCategory::INSTANCE);
+  return std::error_code(static_cast<int>(e), CryptoNote::error::WalletHelperErrorCategory::INSTANCE);
 }
 
 namespace std {
 
 template <>
-struct is_error_code_enum<CryptoNote::error::WalletServiceErrorCode>: public true_type {};
+struct is_error_code_enum<CryptoNote::error::WalletHelperErrorCode>: public true_type {};
 
 } // end namespace std

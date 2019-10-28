@@ -16,7 +16,7 @@
 #include "Logging/ConsoleLogger.h"
 #include <System/Event.h>
 #include "PaymentGateService/WalletHelper.h"
-#include "PaymentGateService/WalletServiceErrorCategory.h"
+#include "PaymentGateService/WalletHelperErrorCategory.h"
 #include "INodeStubs.h"
 #include "Wallet/WalletErrors.h"
 
@@ -194,7 +194,7 @@ TEST_F(WalletServiceTest_createAddress, invalidSecretKey) {
 
   std::string address;
   std::error_code ec = walletHelper->createAddress("wrong key", address);
-  ASSERT_EQ(make_error_code(CryptoNote::error::WalletServiceErrorCode::WRONG_KEY_FORMAT), ec);
+  ASSERT_EQ(make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_KEY_FORMAT), ec);
 }
 
 TEST_F(WalletServiceTest_createAddress, invalidPublicKey) {
@@ -202,7 +202,7 @@ TEST_F(WalletServiceTest_createAddress, invalidPublicKey) {
 
   std::string address;
   std::error_code ec = walletHelper->createTrackingAddress("wrong key", address);
-  ASSERT_EQ(make_error_code(CryptoNote::error::WalletServiceErrorCode::WRONG_KEY_FORMAT), ec);
+  ASSERT_EQ(make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_KEY_FORMAT), ec);
 }
 
 TEST_F(WalletServiceTest_createAddress, correctSecretKey) {
@@ -625,7 +625,7 @@ TEST_F(WalletServiceTest_getTransactions, invalidPaymentId) {
 
   std::vector<TransactionsInBlockRpcInfo> transactions;
   auto ec = walletHelper->getTransactions({}, 0, 1, "invalid payment id", transactions);
-  ASSERT_EQ(make_error_code(CryptoNote::error::WalletServiceErrorCode::WRONG_PAYMENT_ID_FORMAT), ec);
+  ASSERT_EQ(make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_PAYMENT_ID_FORMAT), ec);
 }
 
 TEST_F(WalletServiceTest_getTransactions, blockNotFound) {
@@ -634,7 +634,7 @@ TEST_F(WalletServiceTest_getTransactions, blockNotFound) {
   std::vector<TransactionsInBlockRpcInfo> transactions;
 
   auto ec = walletHelper->getTransactions({}, 0, 1, "", transactions);
-  ASSERT_EQ(make_error_code(CryptoNote::error::WalletServiceErrorCode::OBJECT_NOT_FOUND), ec);
+  ASSERT_EQ(make_error_code(CryptoNote::error::WalletHelperErrorCode::OBJECT_NOT_FOUND), ec);
 }
 
 class WalletServiceTest_getTransaction : public WalletServiceTest_getTransactions {
@@ -656,7 +656,7 @@ TEST_F(WalletServiceTest_getTransaction, wrongHash) {
 
   TransactionRpcInfo transaction;
   auto ec = walletHelper->getTransaction("wrong hash", transaction);
-  ASSERT_EQ(make_error_code(CryptoNote::error::WalletServiceErrorCode::WRONG_HASH_FORMAT), ec);
+  ASSERT_EQ(make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_HASH_FORMAT), ec);
 }
 
 TEST_F(WalletServiceTest_getTransaction, returnsCorrectFields) {
