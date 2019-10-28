@@ -8,57 +8,49 @@
 
 #include <system_error>
 
-#include <System/Dispatcher.h>
-#include <System/Event.h>
+#include "Common/JsonValue.h"
+#include "HTTP/HttpRequest.h"
+#include "HTTP/HttpResponse.h"
 #include "Logging/ILogger.h"
 #include "Logging/LoggerRef.h"
 #include "Rpc/HttpServer.h"
-
-namespace CryptoNote {
-class HttpResponse;
-class HttpRequest;
-}
-
-namespace Common {
-class JsonValue;
-}
-
-namespace System {
-class TcpConnection;
-}
+#include "System/Dispatcher.h"
+#include "System/Event.h"
+#include "System/TcpConnection.h"
 
 namespace CryptoNote {
 
 class JsonRpcServer : HttpServer {
-public:
-  JsonRpcServer(System::Dispatcher& sys, System::Event& stopEvent, Logging::ILogger& loggerGroup, std::string rpcPassword);
+
+public :
+
+  JsonRpcServer(System::Dispatcher& dispatcher, System::Event& m_stopEvent, Logging::ILogger& loggerGroup, std::string rpcPassword);
   JsonRpcServer(const JsonRpcServer&) = delete;
 
   void start(const std::string& bindAddress, uint16_t bindPort);
 
-protected:
-  static void makeErrorResponse(const std::error_code& ec, Common::JsonValue& resp);
-  static void makeMethodNotFoundResponse(Common::JsonValue& resp);
-  static void makeGenericErrorReponse(Common::JsonValue& resp, const char* what, int errorCode = -32001);
-  static void makeMissingRpcPasswordKeyResponse(Common::JsonValue& resp);
-  static void makeIncorrectRpcPasswordResponse(Common::JsonValue& resp);
-  static void makeInvalidRpcPasswordResponse(Common::JsonValue& resp);
-  static void fillJsonResponse(const Common::JsonValue& v, Common::JsonValue& resp);
-  static void prepareJsonResponse(const Common::JsonValue& req, Common::JsonValue& resp);
-  static void makeJsonParsingErrorResponse(Common::JsonValue& resp);
-  
-  std::string getRpcConfigurationPassword();
+protected :
 
-  virtual void processJsonRpcRequest(const Common::JsonValue& req, Common::JsonValue& resp) = 0;
-  
+  static void fillJsonResponse(const Common::JsonValue& val, Common::JsonValue& reponse);
+  std::string getRpcConfigurationPassword();
+  static void makeErrorResponse(const std::error_code& ec, Common::JsonValue& reponse);
+  static void makeGenericErrorReponse(Common::JsonValue& reponse, const char* what, int errorCode = -32001);
+  static void makeIncorrectRpcPasswordResponse(Common::JsonValue& reponse);
+  static void makeInvalidRpcPasswordResponse(Common::JsonValue& reponse);
+  static void makeJsonParsingErrorResponse(Common::JsonValue& reponse);
+  static void makeMethodNotFoundResponse(Common::JsonValue& reponse);
+  static void makeMissingRpcPasswordKeyResponse(Common::JsonValue& reponse);
+  static void prepareJsonResponse(const Common::JsonValue& request, Common::JsonValue& reponse);
+  virtual void processJsonRpcRequest(const Common::JsonValue& request, Common::JsonValue& reponse) = 0;
+
 private:
-  // HttpServer
+
   virtual void processRequest(const CryptoNote::HttpRequest& request, CryptoNote::HttpResponse& response) override;
 
-  System::Dispatcher& system;
-  System::Event& stopEvent;
-  Logging::LoggerRef logger;
+  System::Dispatcher& m_dispatcher;
+  Logging::LoggerRef m_logger;
+  System::Event& m_stopEvent;
   std::string m_rpcConfigurationPassword;
 };
 
-} //namespace CryptoNote
+} // end namespace CryptoNote
