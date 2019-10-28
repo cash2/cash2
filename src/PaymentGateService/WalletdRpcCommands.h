@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "WalletService.h"
+#include "WalletHelper.h"
 
 namespace PaymentService {
 
@@ -15,7 +15,7 @@ class WalletdRpcCommands {
 
 public :
 
-  WalletdRpcCommands(WalletService& walletService);
+  WalletdRpcCommands(WalletHelper& walletService);
 
   std::error_code createAddress(const WALLETD_RPC_COMMAND_CREATE_ADDRESS::Request& request, WALLETD_RPC_COMMAND_CREATE_ADDRESS::Response& response);
   std::error_code createDelayedTransaction(const WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION::Request& request, WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION::Response& response);
@@ -41,7 +41,7 @@ public :
 
 private :
 
-  WalletService& service;
+  WalletHelper& m_walletHelper;
 
 };
 

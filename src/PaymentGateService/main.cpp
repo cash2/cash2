@@ -22,7 +22,7 @@
 #include "P2p/NodeServer.h"
 #include "NodeFactory.h"
 #include "WalletdRpcServer.h"
-#include "WalletService.h"
+#include "WalletHelper.h"
 #include "Wallet/WalletGreen.h"
 #include "System/Context.h"
 #include "WalletdConfigurationOptions.h"
@@ -52,11 +52,11 @@ void runWalletService(const CryptoNote::Currency& currency, CryptoNote::INode& n
   };
 
   std::unique_ptr<CryptoNote::IWallet> walletPtr (new CryptoNote::WalletGreen(*dispatcherPtr, currency, node));
-  std::unique_ptr<PaymentService::WalletService> walletServicePtr(new PaymentService::WalletService(currency, *dispatcherPtr, node, *walletPtr, walletConfiguration, logger));
+  std::unique_ptr<PaymentService::WalletHelper> walletHelperPtr(new PaymentService::WalletHelper(currency, *dispatcherPtr, node, *walletPtr, walletConfiguration, logger));
 
   try
   {
-    walletServicePtr->init();
+    walletHelperPtr->init();
   }
   catch (std::exception& e)
   {
@@ -71,7 +71,7 @@ void runWalletService(const CryptoNote::Currency& currency, CryptoNote::INode& n
     // print addresses and exit
 
     std::vector<std::string> addresses;
-    walletServicePtr->getAddresses(addresses);
+    walletHelperPtr->getAddresses(addresses);
     for (const std::string& address: addresses)
     {
       std::cout << "Address: " << address << std::endl;
@@ -80,12 +80,12 @@ void runWalletService(const CryptoNote::Currency& currency, CryptoNote::INode& n
   }
   else
   {
-    PaymentService::WalletdRpcServer walletdRpcServer(*dispatcherPtr, *stopEventPtr, *walletServicePtr, logger, walletdConfigurationOptions.rpcConfigurationPassword);
+    PaymentService::WalletdRpcServer walletdRpcServer(*dispatcherPtr, *stopEventPtr, *walletHelperPtr, logger, walletdConfigurationOptions.rpcConfigurationPassword);
     walletdRpcServer.start(walletdConfigurationOptions.bindAddress, walletdConfigurationOptions.bindPort);
 
     try
     {
-      walletServicePtr->saveWallet();
+      walletHelperPtr->saveWallet();
     }
     catch (std::exception& e)
     {

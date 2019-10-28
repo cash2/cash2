@@ -10,7 +10,7 @@
 #include <Common/StringTools.h>
 #include <Logging/ConsoleLogger.h>
 
-#include "PaymentGateService/WalletService.h"
+#include "PaymentGateService/WalletHelper.h"
 #include "Wallet/WalletGreen.h"
 
 // test helpers
@@ -33,11 +33,11 @@ public:
     return WalletConfiguration{ walletFile, "pass" };
   }
 
-  std::unique_ptr<WalletService> createWalletService(const WalletConfiguration& cfg) {
+  std::unique_ptr<WalletHelper> createWalletHelper(const WalletConfiguration& cfg) {
     wallet.reset(new CryptoNote::WalletGreen(dispatcher, currency, nodeStub));
-    std::unique_ptr<WalletService> service(new WalletService(currency, dispatcher, nodeStub, *wallet, cfg, logger));
-    service->init();
-    return service;
+    std::unique_ptr<WalletHelper> walletHelper(new WalletHelper(currency, dispatcher, nodeStub, *wallet, cfg, logger));
+    walletHelper->init();
+    return walletHelper;
   }
 
   void generateWallet(const WalletConfiguration& conf) {
@@ -59,16 +59,16 @@ protected:
 TEST_F(PaymentGateServiceTest, createWallet) {
   auto cfg = createWalletConfiguration();
   generateWallet(cfg);
-  auto service = createWalletService(cfg);
+  auto walletHelper = createWalletHelper(cfg);
 }
 
 TEST_F(PaymentGateServiceTest, addTransaction) {
   auto cfg = createWalletConfiguration();
   generateWallet(cfg);
-  auto service = createWalletService(cfg);
+  auto walletHelper = createWalletHelper(cfg);
 
   std::string addressStr;
-  ASSERT_TRUE(!service->createAddress(addressStr));
+  ASSERT_TRUE(!walletHelper->createAddress(addressStr));
 
   AccountPublicAddress address;
   ASSERT_TRUE(currency.parseAccountAddressString(addressStr, address));
@@ -84,7 +84,7 @@ TEST_F(PaymentGateServiceTest, addTransaction) {
 
   uint64_t pending = 0, actual = 0;
 
-  service->getBalance(actual, pending);
+  walletHelper->getBalance(actual, pending);
 
   ASSERT_NE(0, pending);
   ASSERT_NE(0, actual);
@@ -97,10 +97,10 @@ TEST_F(PaymentGateServiceTest, DISABLED_sendTransaction) {
 
   auto cfg = createWalletConfiguration();
   generateWallet(cfg);
-  auto service = createWalletService(cfg);
+  auto walletHelper = createWalletHelper(cfg);
 
   std::string addressStr;
-  ASSERT_TRUE(!service->createAddress(addressStr));
+  ASSERT_TRUE(!walletHelper->createAddress(addressStr));
 
   AccountPublicAddress address;
   ASSERT_TRUE(currency.parseAccountAddressString(addressStr, address));
@@ -114,10 +114,10 @@ TEST_F(PaymentGateServiceTest, DISABLED_sendTransaction) {
 
   auto cfg2 = createWalletConfiguration("pgwallet2.bin");
   generateWallet(cfg2);
-  auto serviceRecv = createWalletService(cfg2);
+  auto walletHelperRecv = createWalletHelper(cfg2);
 
   std::string recvAddress;
-  serviceRecv->createAddress(recvAddress);
+  walletHelperRecv->createAddress(recvAddress);
 
   uint64_t TEST_AMOUNT = 0;
   currency.parseAmount("100000.0", TEST_AMOUNT);
@@ -138,7 +138,7 @@ TEST_F(PaymentGateServiceTest, DISABLED_sendTransaction) {
     req.unlockTime = 0;
     req.paymentId = paymentIdStr;
 
-    ASSERT_TRUE(!service->sendTransaction(req, res.transactionHash));
+    ASSERT_TRUE(!walletHelper->sendTransaction(req, res.transactionHash));
 
     txId = res.transactionId;
   }
@@ -152,19 +152,19 @@ TEST_F(PaymentGateServiceTest, DISABLED_sendTransaction) {
   TransactionRpcInfo txInfo;
   bool found = false;
 
-  ASSERT_TRUE(!service->getTransaction(txId, found, txInfo));
+  ASSERT_TRUE(!walletHelper->getTransaction(txId, found, txInfo));
   ASSERT_TRUE(found);
 
   uint64_t recvTxCount = 0;
-  ASSERT_TRUE(!serviceRecv->getTransactionsCount(recvTxCount));
+  ASSERT_TRUE(!walletHelperRecv->getTransactionsCount(recvTxCount));
   ASSERT_EQ(1, recvTxCount);
 
   uint64_t sendTxCount = 0;
-  ASSERT_TRUE(!service->getTransactionsCount(sendTxCount));
+  ASSERT_TRUE(!walletHelper->getTransactionsCount(sendTxCount));
   ASSERT_EQ(2, sendTxCount); // 1 from mining, 1 transfer
 
   TransactionRpcInfo recvTxInfo;
-  ASSERT_TRUE(!serviceRecv->getTransaction(0, found, recvTxInfo));
+  ASSERT_TRUE(!walletHelperRecv->getTransaction(0, found, recvTxInfo));
   ASSERT_TRUE(found);
 
   ASSERT_EQ(txInfo.hash, recvTxInfo.hash);
@@ -174,8 +174,8 @@ TEST_F(PaymentGateServiceTest, DISABLED_sendTransaction) {
 
   {
     // check payments
-    WalletService::IncomingPayments payments;
-    ASSERT_TRUE(!serviceRecv->getIncomingPayments({ paymentIdStr }, payments));
+    WalletHelper::IncomingPayments payments;
+    ASSERT_TRUE(!walletHelperRecv->getIncomingPayments({ paymentIdStr }, payments));
 
     ASSERT_EQ(1, payments.size());
 
@@ -190,19 +190,19 @@ TEST_F(PaymentGateServiceTest, DISABLED_sendTransaction) {
     ASSERT_EQ(txInfo.blockHeight, recvPayment[0].blockHeight);
   }
 
-  // reload services
+  // reload walletHelpers
 
-  service->saveWallet();
-  serviceRecv->saveWallet();
+  walletHelper->saveWallet();
+  walletHelperRecv->saveWallet();
 
-  service.reset();
-  serviceRecv.reset();
+  walletHelper.reset();
+  walletHelperRecv.reset();
 
-  service = createWalletService(cfg);
-  serviceRecv = createWalletService(cfg2);
+  walletHelper = createWalletHelper(cfg);
+  walletHelperRecv = createWalletHelper(cfg2);
 
   recvTxInfo = boost::value_initialized<TransactionRpcInfo>();
-  ASSERT_TRUE(!serviceRecv->getTransaction(0, found, recvTxInfo));
+  ASSERT_TRUE(!walletHelperRecv->getTransaction(0, found, recvTxInfo));
   ASSERT_TRUE(found);
 
   ASSERT_EQ(txInfo.hash, recvTxInfo.hash);
@@ -215,7 +215,7 @@ TEST_F(PaymentGateServiceTest, DISABLED_sendTransaction) {
 
   {
     std::string recvAddress;
-    service->createAddress(recvAddress);
+    walletHelper->createAddress(recvAddress);
 
     SendTransactionRequest req;
     SendTransactionResponse res;
@@ -226,7 +226,7 @@ TEST_F(PaymentGateServiceTest, DISABLED_sendTransaction) {
     req.unlockTime = 0;
     req.paymentId = paymentIdStr;
 
-    ASSERT_TRUE(!serviceRecv->sendTransaction(req, res));
+    ASSERT_TRUE(!walletHelperRecv->sendTransaction(req, res));
 
     txId = res.transactionId;
   }
@@ -236,12 +236,12 @@ TEST_F(PaymentGateServiceTest, DISABLED_sendTransaction) {
 
   System::Timer(dispatcher).sleep(std::chrono::seconds(5));
 
-  ASSERT_TRUE(!service->getTransactionsCount(recvTxCount));
+  ASSERT_TRUE(!walletHelper->getTransactionsCount(recvTxCount));
   ASSERT_EQ(3, recvTxCount);
 
   {
-    WalletService::IncomingPayments payments;
-    ASSERT_TRUE(!service->getIncomingPayments({ paymentIdStr }, payments));
+    WalletHelper::IncomingPayments payments;
+    ASSERT_TRUE(!walletHelper->getIncomingPayments({ paymentIdStr }, payments));
     ASSERT_EQ(1, payments.size());
     ASSERT_EQ(paymentIdStr, payments.begin()->first);
 

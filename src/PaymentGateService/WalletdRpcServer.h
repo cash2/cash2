@@ -26,7 +26,7 @@ class WalletdRpcServer : CryptoNote::HttpServer {
 
 public :
 
-  WalletdRpcServer(System::Dispatcher& dispatcher, System::Event& stopEvent, WalletService& service, Logging::ILogger& loggerGroup, std::string rpcConfigurationPassword);
+  WalletdRpcServer(System::Dispatcher& dispatcher, System::Event& stopEvent, WalletHelper& walletHelper, Logging::ILogger& loggerGroup, std::string rpcConfigurationPassword);
   WalletdRpcServer(const WalletdRpcServer&) = delete;
 
   void start(const std::string& bindAddress, uint16_t bindPort);

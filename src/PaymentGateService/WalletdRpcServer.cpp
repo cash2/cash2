@@ -40,13 +40,13 @@ namespace PaymentService {
 // Public functions
 
 
-WalletdRpcServer::WalletdRpcServer(System::Dispatcher& dispatcher, System::Event& stopEvent, WalletService& service, Logging::ILogger& loggerGroup, std::string rpcConfigurationPassword) :
+WalletdRpcServer::WalletdRpcServer(System::Dispatcher& dispatcher, System::Event& stopEvent, WalletHelper& walletHelper, Logging::ILogger& loggerGroup, std::string rpcConfigurationPassword) :
   HttpServer(dispatcher, loggerGroup), 
   m_dispatcher(dispatcher),
   m_logger(loggerGroup, "WalletdRpcServer"),
   m_stopEvent(stopEvent),
   m_rpcConfigurationPassword(rpcConfigurationPassword),
-  m_walletdRpcCommands(service) {
+  m_walletdRpcCommands(walletHelper) {
 }
 
 void WalletdRpcServer::start(const std::string& bindAddress, uint16_t bindPort)

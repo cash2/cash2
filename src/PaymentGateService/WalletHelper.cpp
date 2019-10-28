@@ -26,7 +26,7 @@
 #include "Wallet/WalletErrors.h"
 #include "Wallet/WalletGreen.h"
 #include "Wallet/WalletUtils.h"
-#include "WalletService.h"
+#include "WalletHelper.h"
 #include "WalletServiceErrorCategory.h"
 
 namespace PaymentService {
@@ -200,7 +200,7 @@ bool checkPaymentId(const std::string& paymentIdStr)
 
 }
 
-struct WalletService::TransactionsInBlockInfoFilter
+struct WalletHelper::TransactionsInBlockInfoFilter
 {
   TransactionsInBlockInfoFilter(const std::vector<std::string>& addressesVec, const std::string& paymentIdStr) {
     addresses.insert(addressesVec.begin(), addressesVec.end());
@@ -257,12 +257,12 @@ struct WalletService::TransactionsInBlockInfoFilter
 // Public functions
 
 
-WalletService::WalletService(const CryptoNote::Currency& currency, System::Dispatcher& dispatcher, CryptoNote::INode& node, CryptoNote::IWallet& wallet, const WalletConfiguration& config, Logging::ILogger& logger) :
+WalletHelper::WalletHelper(const CryptoNote::Currency& currency, System::Dispatcher& dispatcher, CryptoNote::INode& node, CryptoNote::IWallet& wallet, const WalletConfiguration& config, Logging::ILogger& logger) :
   m_dispatcher(dispatcher),
   m_config(config),
   m_currency(currency),
   m_initialized(false),
-  m_logger(logger, "WalletService"),
+  m_logger(logger, "WalletHelper"),
   m_node(node),
   m_readyEvent(m_dispatcher),
   m_refreshContext(m_dispatcher),
@@ -271,7 +271,7 @@ WalletService::WalletService(const CryptoNote::Currency& currency, System::Dispa
   m_readyEvent.set();
 }
 
-WalletService::~WalletService()
+WalletHelper::~WalletHelper()
 {
   if (m_initialized)
   {
@@ -281,7 +281,7 @@ WalletService::~WalletService()
   }
 }
 
-std::error_code WalletService::createAddress(std::string& address)
+std::error_code WalletHelper::createAddress(std::string& address)
 {
   try
   {
@@ -304,7 +304,7 @@ std::error_code WalletService::createAddress(std::string& address)
   return std::error_code();
 }
 
-std::error_code WalletService::createAddress(const std::string& spendPrivateKeyStr, std::string& address)
+std::error_code WalletHelper::createAddress(const std::string& spendPrivateKeyStr, std::string& address)
 {
   try
   {
@@ -336,7 +336,7 @@ std::error_code WalletService::createAddress(const std::string& spendPrivateKeyS
   return std::error_code();
 }
 
-std::error_code WalletService::createDelayedTransaction(const WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION::Request& request, std::string& transactionHash)
+std::error_code WalletHelper::createDelayedTransaction(const WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION::Request& request, std::string& transactionHash)
 {
   try
   {
@@ -392,7 +392,7 @@ std::error_code WalletService::createDelayedTransaction(const WALLETD_RPC_COMMAN
   return std::error_code();
 }
 
-std::error_code WalletService::createTrackingAddress(const std::string& spendPublicKeyStr, std::string& address)
+std::error_code WalletHelper::createTrackingAddress(const std::string& spendPublicKeyStr, std::string& address)
 {
   try
   {
@@ -420,7 +420,7 @@ std::error_code WalletService::createTrackingAddress(const std::string& spendPub
   return std::error_code();
 }
 
-std::error_code WalletService::deleteAddress(const std::string& address)
+std::error_code WalletHelper::deleteAddress(const std::string& address)
 {
   try
   {
@@ -440,7 +440,7 @@ std::error_code WalletService::deleteAddress(const std::string& address)
   return std::error_code();
 }
 
-std::error_code WalletService::deleteDelayedTransaction(const std::string& transactionHashStr)
+std::error_code WalletHelper::deleteDelayedTransaction(const std::string& transactionHashStr)
 {
   try
   {
@@ -480,7 +480,7 @@ std::error_code WalletService::deleteDelayedTransaction(const std::string& trans
   return std::error_code();
 }
 
-std::error_code WalletService::getAddresses(std::vector<std::string>& addresses)
+std::error_code WalletHelper::getAddresses(std::vector<std::string>& addresses)
 {
   try
   {
@@ -506,7 +506,7 @@ std::error_code WalletService::getAddresses(std::vector<std::string>& addresses)
   return std::error_code();
 }
 
-std::error_code WalletService::getAddressesCount(size_t& addressesCount)
+std::error_code WalletHelper::getAddressesCount(size_t& addressesCount)
 {
   try
   {
@@ -523,7 +523,7 @@ std::error_code WalletService::getAddressesCount(size_t& addressesCount)
   return std::error_code();
 }
 
-std::error_code WalletService::getBalance(const std::string& address, uint64_t& availableBalance, uint64_t& lockedBalance)
+std::error_code WalletHelper::getBalance(const std::string& address, uint64_t& availableBalance, uint64_t& lockedBalance)
 {
   try
   {
@@ -545,7 +545,7 @@ std::error_code WalletService::getBalance(const std::string& address, uint64_t& 
   return std::error_code();
 }
 
-std::error_code WalletService::getBalance(uint64_t& availableBalance, uint64_t& lockedBalance)
+std::error_code WalletHelper::getBalance(uint64_t& availableBalance, uint64_t& lockedBalance)
 {
   try
   {
@@ -567,7 +567,7 @@ std::error_code WalletService::getBalance(uint64_t& availableBalance, uint64_t& 
   return std::error_code();
 }
 
-std::error_code WalletService::getBlockHashes(uint32_t firstBlockIndex, uint32_t blockCount, std::vector<std::string>& blockHashStrings)
+std::error_code WalletHelper::getBlockHashes(uint32_t firstBlockIndex, uint32_t blockCount, std::vector<std::string>& blockHashStrings)
 {
   try
   {
@@ -590,7 +590,7 @@ std::error_code WalletService::getBlockHashes(uint32_t firstBlockIndex, uint32_t
   return std::error_code();
 }
 
-std::error_code WalletService::getDelayedTransactionHashes(std::vector<std::string>& transactionHashStrings)
+std::error_code WalletHelper::getDelayedTransactionHashes(std::vector<std::string>& transactionHashStrings)
 {
   try
   {
@@ -619,7 +619,7 @@ std::error_code WalletService::getDelayedTransactionHashes(std::vector<std::stri
   return std::error_code();
 }
 
-std::error_code WalletService::getSpendPrivateKey(const std::string& address, std::string& spendPrivateKeyStr)
+std::error_code WalletHelper::getSpendPrivateKey(const std::string& address, std::string& spendPrivateKeyStr)
 {
   try
   {
@@ -638,7 +638,7 @@ std::error_code WalletService::getSpendPrivateKey(const std::string& address, st
   return std::error_code();
 }
 
-std::error_code WalletService::getSpendPrivateKeys(std::vector<std::string>& spendPrivateKeyStrings)
+std::error_code WalletHelper::getSpendPrivateKeys(std::vector<std::string>& spendPrivateKeyStrings)
 {
   try
   {
@@ -662,7 +662,7 @@ std::error_code WalletService::getSpendPrivateKeys(std::vector<std::string>& spe
   return std::error_code();
 }
 
-std::error_code WalletService::getStatus(uint32_t& blockCount, uint32_t& knownBlockCount, std::string& lastBlockHash, uint32_t& peerCount, uint64_t& minimalFee)
+std::error_code WalletHelper::getStatus(uint32_t& blockCount, uint32_t& knownBlockCount, std::string& lastBlockHash, uint32_t& peerCount, uint64_t& minimalFee)
 {
   try
   {
@@ -690,7 +690,7 @@ std::error_code WalletService::getStatus(uint32_t& blockCount, uint32_t& knownBl
   return std::error_code();
 }
 
-std::error_code WalletService::getTransaction(const std::string& transactionHashStr, TransactionRpcInfo& transactionRpcInfo)
+std::error_code WalletHelper::getTransaction(const std::string& transactionHashStr, TransactionRpcInfo& transactionRpcInfo)
 {
   try
   {
@@ -722,7 +722,7 @@ std::error_code WalletService::getTransaction(const std::string& transactionHash
   return std::error_code();
 }
 
-std::error_code WalletService::getTransactionHashes(const std::vector<std::string>& addresses, const std::string& blockHashStr, uint32_t blockCount, const std::string& paymentId, std::vector<TransactionHashesInBlockRpcInfo>& transactionHashes)
+std::error_code WalletHelper::getTransactionHashes(const std::vector<std::string>& addresses, const std::string& blockHashStr, uint32_t blockCount, const std::string& paymentId, std::vector<TransactionHashesInBlockRpcInfo>& transactionHashes)
 {
   try
   {
@@ -754,7 +754,7 @@ std::error_code WalletService::getTransactionHashes(const std::vector<std::strin
   return std::error_code();
 }
 
-std::error_code WalletService::getTransactionHashes(const std::vector<std::string>& addresses, uint32_t firstBlockIndex, uint32_t blockCount, const std::string& paymentId, std::vector<TransactionHashesInBlockRpcInfo>& transactionHashes)
+std::error_code WalletHelper::getTransactionHashes(const std::vector<std::string>& addresses, uint32_t firstBlockIndex, uint32_t blockCount, const std::string& paymentId, std::vector<TransactionHashesInBlockRpcInfo>& transactionHashes)
 {
   try
   {
@@ -784,7 +784,7 @@ std::error_code WalletService::getTransactionHashes(const std::vector<std::strin
   return std::error_code();
 }
 
-std::error_code WalletService::getTransactions(const std::vector<std::string>& addresses, const std::string& blockHashString, uint32_t blockCount, const std::string& paymentId, std::vector<TransactionsInBlockRpcInfo>& transactions)
+std::error_code WalletHelper::getTransactions(const std::vector<std::string>& addresses, const std::string& blockHashString, uint32_t blockCount, const std::string& paymentId, std::vector<TransactionsInBlockRpcInfo>& transactions)
 {
   try
   {
@@ -817,7 +817,7 @@ std::error_code WalletService::getTransactions(const std::vector<std::string>& a
   return std::error_code();
 }
 
-std::error_code WalletService::getTransactions(const std::vector<std::string>& addresses, uint32_t firstBlockIndex, uint32_t blockCount, const std::string& paymentId, std::vector<TransactionsInBlockRpcInfo>& transactions)
+std::error_code WalletHelper::getTransactions(const std::vector<std::string>& addresses, uint32_t firstBlockIndex, uint32_t blockCount, const std::string& paymentId, std::vector<TransactionsInBlockRpcInfo>& transactions)
 {
   try
   {
@@ -848,7 +848,7 @@ std::error_code WalletService::getTransactions(const std::vector<std::string>& a
   return std::error_code();
 }
 
-std::error_code WalletService::getUnconfirmedTransactionHashes(const std::vector<std::string>& addresses, std::vector<std::string>& transactionHashes)
+std::error_code WalletHelper::getUnconfirmedTransactionHashes(const std::vector<std::string>& addresses, std::vector<std::string>& transactionHashes)
 {
   try
   {
@@ -882,7 +882,7 @@ std::error_code WalletService::getUnconfirmedTransactionHashes(const std::vector
   return std::error_code();
 }
 
-std::error_code WalletService::getViewPrivateKey(std::string& viewPrivateKey)
+std::error_code WalletHelper::getViewPrivateKey(std::string& viewPrivateKey)
 {
   try
   {
@@ -900,7 +900,7 @@ std::error_code WalletService::getViewPrivateKey(std::string& viewPrivateKey)
   return std::error_code();
 }
 
-void WalletService::init()
+void WalletHelper::init()
 {
   loadWallet();
   loadTransactionIdIndex();
@@ -910,7 +910,7 @@ void WalletService::init()
   m_initialized = true;
 }
 
-std::error_code WalletService::replaceWithNewWallet(const std::string& viewPrivateKeyStr)
+std::error_code WalletHelper::replaceWithNewWallet(const std::string& viewPrivateKeyStr)
 {
   try
   {
@@ -957,7 +957,7 @@ std::error_code WalletService::replaceWithNewWallet(const std::string& viewPriva
   return std::error_code();
 }
 
-std::error_code WalletService::resetWallet()
+std::error_code WalletHelper::resetWallet()
 {
   try
   {
@@ -996,13 +996,13 @@ std::error_code WalletService::resetWallet()
   return std::error_code();
 }
 
-void WalletService::saveWallet()
+void WalletHelper::saveWallet()
 {
   secureSaveWallet(m_wallet, m_config.walletFile, true, true);
   m_logger(Logging::INFO) << "Wallet is saved";
 }
 
-std::error_code WalletService::sendDelayedTransaction(const std::string& transactionHashStr)
+std::error_code WalletHelper::sendDelayedTransaction(const std::string& transactionHashStr)
 {
   try
   {
@@ -1036,7 +1036,7 @@ std::error_code WalletService::sendDelayedTransaction(const std::string& transac
   return std::error_code();
 }
 
-std::error_code WalletService::sendTransaction(const WALLETD_RPC_COMMAND_SEND_TRANSACTION::Request& request, std::string& transactionHash, std::string& transactionPrivateKeyStr)
+std::error_code WalletHelper::sendTransaction(const WALLETD_RPC_COMMAND_SEND_TRANSACTION::Request& request, std::string& transactionHash, std::string& transactionPrivateKeyStr)
 {
   try
   {
@@ -1095,7 +1095,7 @@ std::error_code WalletService::sendTransaction(const WALLETD_RPC_COMMAND_SEND_TR
   return std::error_code();
 }
 
-std::error_code WalletService::validateAddress(const std::string& address, bool& addressValid)
+std::error_code WalletHelper::validateAddress(const std::string& address, bool& addressValid)
 {
   try
   {
@@ -1129,7 +1129,7 @@ std::error_code WalletService::validateAddress(const std::string& address, bool&
 // Private functions
 
 
-void WalletService::addPaymentIdToExtra(const std::string& paymentId, std::string& extra)
+void WalletHelper::addPaymentIdToExtra(const std::string& paymentId, std::string& extra)
 {
   std::vector<uint8_t> extraVector;
   
@@ -1141,7 +1141,7 @@ void WalletService::addPaymentIdToExtra(const std::string& paymentId, std::strin
   std::copy(extraVector.begin(), extraVector.end(), std::back_inserter(extra));
 }
 
-std::vector<std::string> WalletService::collectDestinationAddresses(const std::vector<WalletRpcOrder>& orders)
+std::vector<std::string> WalletHelper::collectDestinationAddresses(const std::vector<WalletRpcOrder>& orders)
 {
   std::vector<std::string> addresses;
 
@@ -1155,7 +1155,7 @@ std::vector<std::string> WalletService::collectDestinationAddresses(const std::v
   return addresses;
 }
 
-std::vector<TransactionHashesInBlockRpcInfo> WalletService::convertTransactionsInBlockInfoToTransactionHashesInBlockRpcInfo(const std::vector<CryptoNote::TransactionsInBlockInfo>& blocks) const {
+std::vector<TransactionHashesInBlockRpcInfo> WalletHelper::convertTransactionsInBlockInfoToTransactionHashesInBlockRpcInfo(const std::vector<CryptoNote::TransactionsInBlockInfo>& blocks) const {
 
   std::vector<TransactionHashesInBlockRpcInfo> transactionHashes;
   transactionHashes.reserve(blocks.size());
@@ -1173,7 +1173,7 @@ std::vector<TransactionHashesInBlockRpcInfo> WalletService::convertTransactionsI
   return transactionHashes;
 }
 
-std::vector<TransactionsInBlockRpcInfo> WalletService::convertTransactionsInBlockInfoToTransactionsInBlockRpcInfo(const std::vector<CryptoNote::TransactionsInBlockInfo>& blocks) const {
+std::vector<TransactionsInBlockRpcInfo> WalletHelper::convertTransactionsInBlockInfoToTransactionsInBlockRpcInfo(const std::vector<CryptoNote::TransactionsInBlockInfo>& blocks) const {
 
   std::vector<TransactionsInBlockRpcInfo> rpcBlocks;
   rpcBlocks.reserve(blocks.size());
@@ -1192,7 +1192,7 @@ std::vector<TransactionsInBlockRpcInfo> WalletService::convertTransactionsInBloc
   return rpcBlocks;
 }
 
-TransactionRpcInfo WalletService::convertTransactionWithTransfersToTransactionRpcInfo(const CryptoNote::WalletTransactionWithTransfers& transactionWithTransfers) const
+TransactionRpcInfo WalletHelper::convertTransactionWithTransfersToTransactionRpcInfo(const CryptoNote::WalletTransactionWithTransfers& transactionWithTransfers) const
 {
 
   TransactionRpcInfo transactionRpcInfo;
@@ -1221,7 +1221,7 @@ TransactionRpcInfo WalletService::convertTransactionWithTransfersToTransactionRp
   return transactionRpcInfo;
 }
 
-std::vector<CryptoNote::WalletOrder> WalletService::convertWalletRpcOrdersToWalletOrders(const std::vector<WalletRpcOrder>& walletRpcOrders)
+std::vector<CryptoNote::WalletOrder> WalletHelper::convertWalletRpcOrdersToWalletOrders(const std::vector<WalletRpcOrder>& walletRpcOrders)
 {
   std::vector<CryptoNote::WalletOrder> result;
   result.reserve(walletRpcOrders.size());
@@ -1235,7 +1235,7 @@ std::vector<CryptoNote::WalletOrder> WalletService::convertWalletRpcOrdersToWall
   return result;
 }
 
-bool WalletService::createOutputBinaryFile(const std::string& filename, std::fstream& file)
+bool WalletHelper::createOutputBinaryFile(const std::string& filename, std::fstream& file)
 {
   file.open(filename.c_str(), std::fstream::in | std::fstream::out | std::ofstream::binary);
   if (file) {
@@ -1247,7 +1247,7 @@ bool WalletService::createOutputBinaryFile(const std::string& filename, std::fst
   return true;
 }
 
-std::string WalletService::createTemporaryFile(const std::string& path, std::fstream& tempFile)
+std::string WalletHelper::createTemporaryFile(const std::string& path, std::fstream& tempFile)
 {
   bool created = false;
   std::string temporaryName;
@@ -1269,7 +1269,7 @@ std::string WalletService::createTemporaryFile(const std::string& path, std::fst
   return temporaryName;
 }
 
-std::vector<CryptoNote::TransactionsInBlockInfo> WalletService::filterTransactions(const std::vector<CryptoNote::TransactionsInBlockInfo>& blocks, const TransactionsInBlockInfoFilter& filter) const
+std::vector<CryptoNote::TransactionsInBlockInfo> WalletHelper::filterTransactions(const std::vector<CryptoNote::TransactionsInBlockInfo>& blocks, const TransactionsInBlockInfoFilter& filter) const
 {
   std::vector<CryptoNote::TransactionsInBlockInfo> result;
 
@@ -1301,7 +1301,7 @@ std::vector<CryptoNote::TransactionsInBlockInfo> WalletService::filterTransactio
   return result;
 }
 
-std::string WalletService::getPaymentIdStringFromExtra(const std::string& binaryString) const {
+std::string WalletHelper::getPaymentIdStringFromExtra(const std::string& binaryString) const {
   Crypto::Hash paymentId;
 
   if (!CryptoNote::getPaymentIdFromTxExtra(Common::asBinaryArray(binaryString), paymentId)) {
@@ -1311,7 +1311,7 @@ std::string WalletService::getPaymentIdStringFromExtra(const std::string& binary
   return Common::podToHex(paymentId);
 }
 
-std::vector<TransactionsInBlockRpcInfo> WalletService::getRpcTransactions(const Crypto::Hash& blockHash, size_t blockCount, const TransactionsInBlockInfoFilter& filter) const
+std::vector<TransactionsInBlockRpcInfo> WalletHelper::getRpcTransactions(const Crypto::Hash& blockHash, size_t blockCount, const TransactionsInBlockInfoFilter& filter) const
 {
   std::vector<CryptoNote::TransactionsInBlockInfo> transactions = m_wallet.getTransactions(blockHash, blockCount);
 
@@ -1325,7 +1325,7 @@ std::vector<TransactionsInBlockRpcInfo> WalletService::getRpcTransactions(const 
   return convertTransactionsInBlockInfoToTransactionsInBlockRpcInfo(filteredTransactions);
 }
 
-std::vector<TransactionsInBlockRpcInfo> WalletService::getRpcTransactions(uint32_t firstBlockIndex, size_t blockCount, const TransactionsInBlockInfoFilter& filter) const
+std::vector<TransactionsInBlockRpcInfo> WalletHelper::getRpcTransactions(uint32_t firstBlockIndex, size_t blockCount, const TransactionsInBlockInfoFilter& filter) const
 {
   std::vector<CryptoNote::TransactionsInBlockInfo> transactions = m_wallet.getTransactions(firstBlockIndex, blockCount);
 
@@ -1339,7 +1339,7 @@ std::vector<TransactionsInBlockRpcInfo> WalletService::getRpcTransactions(uint32
   return convertTransactionsInBlockInfoToTransactionsInBlockRpcInfo(filteredTransactions);
 }
 
-std::vector<TransactionHashesInBlockRpcInfo> WalletService::getRpcTransactionHashes(const Crypto::Hash& blockHash, size_t blockCount, const TransactionsInBlockInfoFilter& filter) const
+std::vector<TransactionHashesInBlockRpcInfo> WalletHelper::getRpcTransactionHashes(const Crypto::Hash& blockHash, size_t blockCount, const TransactionsInBlockInfoFilter& filter) const
 {
   std::vector<CryptoNote::TransactionsInBlockInfo> transactions = m_wallet.getTransactions(blockHash, blockCount);
 
@@ -1353,7 +1353,7 @@ std::vector<TransactionHashesInBlockRpcInfo> WalletService::getRpcTransactionHas
   return convertTransactionsInBlockInfoToTransactionHashesInBlockRpcInfo(filteredTransactions);
 }
 
-std::vector<TransactionHashesInBlockRpcInfo> WalletService::getRpcTransactionHashes(uint32_t firstBlockIndex, size_t blockCount, const TransactionsInBlockInfoFilter& filter) const
+std::vector<TransactionHashesInBlockRpcInfo> WalletHelper::getRpcTransactionHashes(uint32_t firstBlockIndex, size_t blockCount, const TransactionsInBlockInfoFilter& filter) const
 {
   std::vector<CryptoNote::TransactionsInBlockInfo> transactions = m_wallet.getTransactions(firstBlockIndex, blockCount);
 
@@ -1367,7 +1367,7 @@ std::vector<TransactionHashesInBlockRpcInfo> WalletService::getRpcTransactionHas
   return convertTransactionsInBlockInfoToTransactionHashesInBlockRpcInfo(filteredTransactions);
 }
 
-Crypto::Hash WalletService::hashStringToHash(const std::string& hashString)
+Crypto::Hash WalletHelper::hashStringToHash(const std::string& hashString)
 {
   Crypto::Hash hash;
 
@@ -1379,7 +1379,7 @@ Crypto::Hash WalletService::hashStringToHash(const std::string& hashString)
   return hash;
 }
 
-void WalletService::loadWallet()
+void WalletHelper::loadWallet()
 {
   std::ifstream inputStream;
 
@@ -1397,7 +1397,7 @@ void WalletService::loadWallet()
   m_logger(Logging::INFO) << "Wallet loading is finished.";
 }
 
-void WalletService::loadTransactionIdIndex()
+void WalletHelper::loadTransactionIdIndex()
 {
   m_transactionHashStrIndexMap.clear();
 
@@ -1409,7 +1409,7 @@ void WalletService::loadTransactionIdIndex()
   }
 }
 
-void WalletService::refresh()
+void WalletHelper::refresh()
 {
   try
   {
@@ -1435,7 +1435,7 @@ void WalletService::refresh()
   }
 }
 
-void WalletService::secureSaveWallet(CryptoNote::IWallet& wallet, const std::string& path, bool saveDetailed, bool saveCache)
+void WalletHelper::secureSaveWallet(CryptoNote::IWallet& wallet, const std::string& path, bool saveDetailed, bool saveCache)
 {
   std::fstream tempFile;
   std::string tempFilePath = createTemporaryFile(path, tempFile);
@@ -1461,7 +1461,7 @@ void WalletService::secureSaveWallet(CryptoNote::IWallet& wallet, const std::str
   Tools::replace_file(tempFilePath, path);
 }
 
-void WalletService::validateAddresses(const std::vector<std::string>& addresses)
+void WalletHelper::validateAddresses(const std::vector<std::string>& addresses)
 {
   for (const std::string& address: addresses)
   {
@@ -1473,7 +1473,7 @@ void WalletService::validateAddresses(const std::vector<std::string>& addresses)
   }
 }
 
-void WalletService::validatePaymentId(const std::string& paymentId)
+void WalletHelper::validatePaymentId(const std::string& paymentId)
 {
   if (!checkPaymentId(paymentId))
   {
