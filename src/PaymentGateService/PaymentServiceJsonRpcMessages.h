@@ -453,7 +453,7 @@ struct WALLETD_RPC_COMMAND_GET_UNCONFIRMED_TRANSACTION_HASHES {
   };
 };
 
-struct WALLETD_RPC_COMMAND_GET_VIEW_KEY {
+struct WALLETD_RPC_COMMAND_GET_VIEW_PRIVATE_KEY {
   struct Request {
     void serialize(CryptoNote::ISerializer& serializer) {}
   };

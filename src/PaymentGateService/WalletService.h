@@ -59,7 +59,7 @@ public:
   std::error_code getTransactions(const std::vector<std::string>& addresses, const std::string& blockHash, uint32_t blockCount, const std::string& paymentId, std::vector<TransactionsInBlockRpcInfo>& transactionHashes);
   std::error_code getTransactions(const std::vector<std::string>& addresses, uint32_t firstBlockIndex, uint32_t blockCount, const std::string& paymentId, std::vector<TransactionsInBlockRpcInfo>& transactionHashes);
   std::error_code getUnconfirmedTransactionHashes(const std::vector<std::string>& addresses, std::vector<std::string>& transactionHashes);
-  std::error_code getViewKey(std::string& viewPrivateKey);
+  std::error_code getViewPrivateKey(std::string& viewPrivateKey);
   void init();
   std::error_code replaceWithNewWallet(const std::string& viewPrivateKeyStr);
   std::error_code resetWallet();

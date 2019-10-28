@@ -101,8 +101,8 @@ std::error_code WalletdRpcCommands::sendDelayedTransaction(const WALLETD_RPC_COM
   return service.sendDelayedTransaction(request.transaction_hash);
 }
 
-std::error_code WalletdRpcCommands::getViewKey(const WALLETD_RPC_COMMAND_GET_VIEW_KEY::Request& request, WALLETD_RPC_COMMAND_GET_VIEW_KEY::Response& response) {
-  return service.getViewKey(response.view_private_key);
+std::error_code WalletdRpcCommands::getViewPrivateKey(const WALLETD_RPC_COMMAND_GET_VIEW_PRIVATE_KEY::Request& request, WALLETD_RPC_COMMAND_GET_VIEW_PRIVATE_KEY::Response& response) {
+  return service.getViewPrivateKey(response.view_private_key);
 }
 
 std::error_code WalletdRpcCommands::getStatus(const WALLETD_RPC_COMMAND_GET_STATUS::Request& request, WALLETD_RPC_COMMAND_GET_STATUS::Response& response) {

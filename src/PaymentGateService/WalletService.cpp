@@ -882,7 +882,7 @@ std::error_code WalletService::getUnconfirmedTransactionHashes(const std::vector
   return std::error_code();
 }
 
-std::error_code WalletService::getViewKey(std::string& viewPrivateKey)
+std::error_code WalletService::getViewPrivateKey(std::string& viewPrivateKey)
 {
   try
   {

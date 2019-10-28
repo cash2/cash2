@@ -529,8 +529,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "get_view_private_key")
     {
-      WALLETD_RPC_COMMAND_GET_VIEW_KEY::Request getViewKeyRequest;
-      WALLETD_RPC_COMMAND_GET_VIEW_KEY::Response getViewKeyResponse;
+      WALLETD_RPC_COMMAND_GET_VIEW_PRIVATE_KEY::Request getViewKeyRequest;
+      WALLETD_RPC_COMMAND_GET_VIEW_PRIVATE_KEY::Response getViewKeyResponse;
 
       try
       {
@@ -543,7 +543,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.getViewKey(getViewKeyRequest, getViewKeyResponse);
+      std::error_code error = m_walletdRpcCommands.getViewPrivateKey(getViewKeyRequest, getViewKeyResponse);
       if (error)
       {
         makeErrorResponse(error, response);

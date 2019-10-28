@@ -396,7 +396,7 @@ TEST_F(WalletServiceTest_getViewKey, returnsCorrectValue) {
   auto service = createWalletService(wallet);
 
   std::string viewSecretKey;
-  ASSERT_FALSE(service->getViewKey(viewSecretKey));
+  ASSERT_FALSE(service->getViewPrivateKey(viewSecretKey));
   ASSERT_EQ(Common::podToHex(wallet.keyPair.secretKey), viewSecretKey);
 }
 
