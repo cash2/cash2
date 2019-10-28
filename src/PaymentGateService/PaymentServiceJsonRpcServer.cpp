@@ -111,7 +111,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleCreateAddress(createAddressRequest, createAddressResponse);
+      std::error_code error = m_walletdRpcCommands.createAddress(createAddressRequest, createAddressResponse);
       if (error)
       {
         makeErrorResponse(error, response);
@@ -138,7 +138,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleCreateDelayedTransaction(createDelayedTransactionRequest, createDelayedTransactionResponse);
+      std::error_code error = m_walletdRpcCommands.createDelayedTransaction(createDelayedTransactionRequest, createDelayedTransactionResponse);
       if (error)
       {
         makeErrorResponse(error, response);
@@ -165,7 +165,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleDeleteAddress(deleteAddressRequest, deleteAddressResponse);
+      std::error_code error = m_walletdRpcCommands.deleteAddress(deleteAddressRequest, deleteAddressResponse);
       if (error)
       {
         makeErrorResponse(error, response);
@@ -192,7 +192,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleDeleteDelayedTransaction(deleteDelayedTransactionRequest, deleteDelayedTransactionResponse);
+      std::error_code error = m_walletdRpcCommands.deleteDelayedTransaction(deleteDelayedTransactionRequest, deleteDelayedTransactionResponse);
       if (error)
       {
         makeErrorResponse(error, response);
@@ -219,7 +219,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleGetAddresses(getAddressesRequest, getAddressesResponse);
+      std::error_code error = m_walletdRpcCommands.getAddresses(getAddressesRequest, getAddressesResponse);
       if (error)
       {
         makeErrorResponse(error, response);
@@ -246,7 +246,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleGetAddressesCount(getAddressesCountRequest, getAddressesCountResponse);
+      std::error_code error = m_walletdRpcCommands.getAddressesCount(getAddressesCountRequest, getAddressesCountResponse);
       if (error)
       {
         makeErrorResponse(error, response);
@@ -273,7 +273,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleGetBalance(getBalanceRequest, getBalanceResponse);
+      std::error_code error = m_walletdRpcCommands.getBalance(getBalanceRequest, getBalanceResponse);
       if (error)
       {
         makeErrorResponse(error, response);
@@ -300,7 +300,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleGetBlockHashes(getBlockHashesRequest, getBlockHashesResponse);
+      std::error_code error = m_walletdRpcCommands.getBlockHashes(getBlockHashesRequest, getBlockHashesResponse);
       if (error)
       {
         makeErrorResponse(error, response);
@@ -327,7 +327,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleGetDelayedTransactionHashes(getDelayedTransactionHashesRequest, getDelayedTransactionHashesResponse);
+      std::error_code error = m_walletdRpcCommands.getDelayedTransactionHashes(getDelayedTransactionHashesRequest, getDelayedTransactionHashesResponse);
       if (error)
       {
         makeErrorResponse(error, response);
@@ -354,7 +354,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleGetSpendPrivateKey(getSpendPrivateKeyRequest, getSpendPrivateKeyResponse);
+      std::error_code error = m_walletdRpcCommands.getSpendPrivateKey(getSpendPrivateKeyRequest, getSpendPrivateKeyResponse);
       if (error)
       {
         makeErrorResponse(error, response);
@@ -381,7 +381,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleGetSpendPrivateKeys(getSpendPrivateKeysRequest, getSpendPrivateKeysResponse);
+      std::error_code error = m_walletdRpcCommands.getSpendPrivateKeys(getSpendPrivateKeysRequest, getSpendPrivateKeysResponse);
       if (error)
       {
         makeErrorResponse(error, response);
@@ -408,7 +408,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleGetStatus(getStatusRequest, getStatusResponse);
+      std::error_code error = m_walletdRpcCommands.getStatus(getStatusRequest, getStatusResponse);
       if (error)
       {
         makeErrorResponse(error, response);
@@ -435,7 +435,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleGetTransaction(getTransactionRequest, getTransactionResponse);
+      std::error_code error = m_walletdRpcCommands.getTransaction(getTransactionRequest, getTransactionResponse);
       if (error)
       {
         makeErrorResponse(error, response);
@@ -462,7 +462,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleGetTransactionHashes(getTransactionHashesRequest, getTransactionHashesResponse);
+      std::error_code error = m_walletdRpcCommands.getTransactionHashes(getTransactionHashesRequest, getTransactionHashesResponse);
       if (error)
       {
         makeErrorResponse(error, response);
@@ -489,7 +489,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleGetTransactions(getTransactionsRequest, getTransactionsResponse);
+      std::error_code error = m_walletdRpcCommands.getTransactions(getTransactionsRequest, getTransactionsResponse);
       if (error)
       {
         makeErrorResponse(error, response);
@@ -516,7 +516,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleGetUnconfirmedTransactionHashes(getUnconfirmedTransactionHashesRequest, getUnconfirmedTransactionHashesResponse);
+      std::error_code error = m_walletdRpcCommands.getUnconfirmedTransactionHashes(getUnconfirmedTransactionHashesRequest, getUnconfirmedTransactionHashesResponse);
       if (error)
       {
         makeErrorResponse(error, response);
@@ -543,7 +543,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleGetViewKey(getViewKeyRequest, getViewKeyResponse);
+      std::error_code error = m_walletdRpcCommands.getViewKey(getViewKeyRequest, getViewKeyResponse);
       if (error)
       {
         makeErrorResponse(error, response);
@@ -570,7 +570,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleReset(resetRequest, resetResponse);
+      std::error_code error = m_walletdRpcCommands.reset(resetRequest, resetResponse);
       if (error)
       {
         makeErrorResponse(error, response);
@@ -597,7 +597,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleSendDelayedTransaction(sendDelayedTransactionRequest, sendDelayedTransactionResponse);
+      std::error_code error = m_walletdRpcCommands.sendDelayedTransaction(sendDelayedTransactionRequest, sendDelayedTransactionResponse);
       if (error)
       {
         makeErrorResponse(error, response);
@@ -624,7 +624,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleSendTransaction(sendTransactionRequest, sendTransactionResponse);
+      std::error_code error = m_walletdRpcCommands.sendTransaction(sendTransactionRequest, sendTransactionResponse);
       if (error)
       {
         makeErrorResponse(error, response);
@@ -651,7 +651,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
         return;
       }
 
-      std::error_code error = m_walletdRpcCommands.handleValidateAddress(validateAddressRequest, validateAddressResponse);
+      std::error_code error = m_walletdRpcCommands.validateAddress(validateAddressRequest, validateAddressResponse);
       if (error)
       {
         makeErrorResponse(error, response);
