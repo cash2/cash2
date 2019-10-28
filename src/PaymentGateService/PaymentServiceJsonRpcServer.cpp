@@ -5,8 +5,6 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <functional>
-
 #include "PaymentServiceJsonRpcMessages.h"
 #include "PaymentServiceJsonRpcServer.h"
 #include "Serialization/JsonInputValueSerializer.h"
@@ -42,26 +40,41 @@ namespace PaymentService {
 // Public functions
 
 
-PaymentServiceJsonRpcServer::PaymentServiceJsonRpcServer(System::Dispatcher& sys, System::Event& stopEvent, WalletService& service, Logging::ILogger& loggerGroup, std::string rpcConfigurationPassword) :
-  JsonRpcServer(sys, stopEvent, loggerGroup, rpcConfigurationPassword),
-  m_walletdRpcCommands(service),
-  logger(loggerGroup, "WalletdRpcServer") {
+PaymentServiceJsonRpcServer::PaymentServiceJsonRpcServer(System::Dispatcher& dispatcher, System::Event& stopEvent, WalletService& service, Logging::ILogger& loggerGroup, std::string rpcConfigurationPassword) :
+  HttpServer(dispatcher, loggerGroup), 
+  m_dispatcher(dispatcher),
+  m_logger(loggerGroup, "WalletdRpcServer"),
+  m_stopEvent(stopEvent),
+  m_rpcConfigurationPassword(rpcConfigurationPassword),
+  m_walletdRpcCommands(service) {
+}
+
+void PaymentServiceJsonRpcServer::start(const std::string& bindAddress, uint16_t bindPort)
+{
+  HttpServer::start(bindAddress, bindPort);
+  m_stopEvent.wait();
+  HttpServer::stop();
 }
 
 
 // Private functions
 
 
+void PaymentServiceJsonRpcServer::fillJsonResponse(const Common::JsonValue& value, Common::JsonValue& response)
+{
+  response.insert("result", value);
+}
+
 bool PaymentServiceJsonRpcServer::getMethod(const Common::JsonValue& request, Common::JsonValue& response, std::string& method)
 {
   if (!request.contains("method")) {
-    logger(Logging::WARNING) << "Field \"method\" is not found in json request : " << request;
+    m_logger(Logging::WARNING) << "Field \"method\" is not found in json request : " << request;
     makeGenericErrorReponse(response, "Invalid Request", -3600);
     return false;
   }
 
   if (!request("method").isString()) {
-    logger(Logging::WARNING) << "Field \"method\" is not a string type: " << request;
+    m_logger(Logging::WARNING) << "Field \"method\" is not a string type: " << request;
     makeGenericErrorReponse(response, "Invalid Request", -3600);
     return false;
   }
@@ -71,10 +84,148 @@ bool PaymentServiceJsonRpcServer::getMethod(const Common::JsonValue& request, Co
   return true;
 }
 
-void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue& request, Common::JsonValue& response) {
+std::string PaymentServiceJsonRpcServer::getRpcConfigurationPassword()
+{
+  return m_rpcConfigurationPassword;
+}
+
+void PaymentServiceJsonRpcServer::makeErrorResponse(const std::error_code& ec, Common::JsonValue& response)
+{
+  Common::JsonValue error(Common::JsonValue::OBJECT);
+
+  Common::JsonValue code;
+  code = static_cast<int64_t>(-32000); //Application specific error code
+
+  Common::JsonValue message;
+  message = ec.message();
+
+  Common::JsonValue data(Common::JsonValue::OBJECT);
+  Common::JsonValue appCode;
+  appCode = static_cast<int64_t>(ec.value());
+  data.insert("application_code", appCode);
+
+  error.insert("code", code);
+  error.insert("message", message);
+  error.insert("data", data);
+
+  response.insert("error", error);
+}
+
+void PaymentServiceJsonRpcServer::makeGenericErrorReponse(Common::JsonValue& response, const char* what, int errorCode)
+{
+  Common::JsonValue error(Common::JsonValue::OBJECT);
+
+  Common::JsonValue code;
+  code = static_cast<int64_t>(errorCode);
+
+  std::string msg;
+  if (what) {
+    msg = what;
+  } else {
+    msg = "Unknown application error";
+  }
+
+  Common::JsonValue message;
+  message = msg;
+
+  error.insert("code", code);
+  error.insert("message", message);
+
+  response.insert("error", error);
+
+}
+
+void PaymentServiceJsonRpcServer::makeIncorrectRpcPasswordResponse(Common::JsonValue& response)
+{
+  Common::JsonValue error(Common::JsonValue::OBJECT);
+
+  Common::JsonValue code;
+  code = static_cast<int64_t>(-32604);
+
+  Common::JsonValue message;
+  message = "Incorrect RPC password";
+
+  error.insert("code", code);
+  error.insert("message", message);
+
+  response.insert("error", error);
+}
+
+void PaymentServiceJsonRpcServer::makeInvalidRpcPasswordResponse(Common::JsonValue& response)
+{
+  Common::JsonValue error(Common::JsonValue::OBJECT);
+
+  Common::JsonValue code;
+  code = static_cast<int64_t>(-32604);
+
+  Common::JsonValue message;
+  message = "Invalid RPC password";
+
+  error.insert("code", code);
+  error.insert("message", message);
+
+  response.insert("error", error);
+}
+
+void PaymentServiceJsonRpcServer::makeJsonParsingErrorResponse(Common::JsonValue& response)
+{
+  response = Common::JsonValue(Common::JsonValue::OBJECT);
+  response.insert("jsonrpc", "2.0");
+  response.insert("id", nullptr);
+
+  Common::JsonValue error(Common::JsonValue::OBJECT);
+  Common::JsonValue code;
+  code = static_cast<int64_t>(-32700); //ambigous declaration of JsonValue::operator= (between int and JsonValue)
+
+  Common::JsonValue message = "Parse error";
+
+  error.insert("code", code);
+  error.insert("message", message);
+
+  response.insert("error", error);
+}
+
+void PaymentServiceJsonRpcServer::makeMethodNotFoundResponse(Common::JsonValue& response)
+{
+  Common::JsonValue error(Common::JsonValue::OBJECT);
+
+  Common::JsonValue code;
+  code = static_cast<int64_t>(-32601); //ambigous declaration of JsonValue::operator= (between int and JsonValue)
+
+  Common::JsonValue message;
+  message = "Method not found";
+
+  error.insert("code", code);
+  error.insert("message", message);
+
+  response.insert("error", error);
+}
+
+void PaymentServiceJsonRpcServer::makeMissingRpcPasswordKeyResponse(Common::JsonValue& response)
+{
+  Common::JsonValue error(Common::JsonValue::OBJECT);
+
+  Common::JsonValue code;
+  code = static_cast<int64_t>(-32604);
+
+  Common::JsonValue message;
+  message = "Missing rpc_password key in JSON RPC request";
+
+  error.insert("code", code);
+  error.insert("message", message);
+
+  response.insert("error", error);
+}
+
+void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue& request, Common::JsonValue& response)
+{
   try
   {
-    prepareJsonResponse(request, response);
+    if (request.contains("id")) {
+      response.insert("id", request("id"));
+    }
+    
+    response.insert("jsonrpc", "2.0");
 
     if (!validateRpcPassword(request, response))
     {
@@ -664,18 +815,66 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else
     {
-      logger(Logging::WARNING) << "Requested method not found : " << method;
+      m_logger(Logging::WARNING) << "Requested method not found : " << method;
       makeMethodNotFoundResponse(response);
       return;
     }
 
-    logger(Logging::DEBUGGING) << method << " request came";
+    m_logger(Logging::DEBUGGING) << method << " request came";
 
   }
   catch (std::exception& e)
   {
-    logger(Logging::WARNING) << "Error occurred while processing JsonRpc request: " << e.what();
+    m_logger(Logging::WARNING) << "Error occurred while processing JsonRpc request: " << e.what();
     makeGenericErrorReponse(response, e.what());
+  }
+}
+
+void PaymentServiceJsonRpcServer::processRequest(const CryptoNote::HttpRequest& request, CryptoNote::HttpResponse& response)
+{
+  try
+  {
+    m_logger(Logging::TRACE) << "HTTP request came: \n" << request;
+
+    if (request.getUrl() == "/json_rpc")
+    {
+      std::istringstream jsonInputStream(request.getBody());
+      Common::JsonValue jsonRpcRequest;
+      Common::JsonValue jsonRpcResponse(Common::JsonValue::OBJECT);
+
+      try
+      {
+        jsonInputStream >> jsonRpcRequest;
+      }
+      catch (std::runtime_error&)
+      {
+        m_logger(Logging::DEBUGGING) << "Couldn't parse request: \"" << request.getBody() << "\"";
+        makeJsonParsingErrorResponse(jsonRpcResponse);
+        response.setStatus(CryptoNote::HttpResponse::STATUS_200);
+        response.setBody(jsonRpcResponse.toString());
+        return;
+      }
+
+      processJsonRpcRequest(jsonRpcRequest, jsonRpcResponse);
+
+      std::ostringstream jsonOutputStream;
+      jsonOutputStream << jsonRpcResponse;
+
+      response.setStatus(CryptoNote::HttpResponse::STATUS_200);
+      response.setBody(jsonOutputStream.str());
+
+    }
+    else
+    {
+      m_logger(Logging::WARNING) << "Requested url \"" << request.getUrl() << "\" is not found";
+      response.setStatus(CryptoNote::HttpResponse::STATUS_404);
+      return;
+    }
+  }
+  catch (std::exception& e)
+  {
+    m_logger(Logging::WARNING) << "Error while processing http request: " << e.what();
+    response.setStatus(CryptoNote::HttpResponse::STATUS_500);
   }
 }
 
@@ -693,13 +892,13 @@ bool PaymentServiceJsonRpcServer::validateRpcPassword(const Common::JsonValue& r
     }
     else if (!request.contains("rpc_password"))
     {
-      logger(Logging::WARNING) << "Missing rpc_password key in JSON RPC request";
+      m_logger(Logging::WARNING) << "Missing rpc_password key in JSON RPC request";
       makeMissingRpcPasswordKeyResponse(response);
       return false;
     }
     else
     {
-      logger(Logging::WARNING) << "RPC password is invalid";
+      m_logger(Logging::WARNING) << "RPC password is invalid";
       makeInvalidRpcPasswordResponse(response);
       return false;
     }
@@ -708,11 +907,11 @@ bool PaymentServiceJsonRpcServer::validateRpcPassword(const Common::JsonValue& r
     {
       if (rpcPassword == "")
       {
-        logger(Logging::WARNING) << "Your request does not include an RPC password";
+        m_logger(Logging::WARNING) << "Your request does not include an RPC password";
       }
       else
       {
-        logger(Logging::WARNING) << "Incorrect RPC password : " << rpcPassword;
+        m_logger(Logging::WARNING) << "Incorrect RPC password : " << rpcPassword;
       }
 
       makeIncorrectRpcPasswordResponse(response);

@@ -7,32 +7,51 @@
 
 #pragma once
 
+#include <system_error>
 #include <unordered_map>
 
 #include "Common/JsonValue.h"
-#include "JsonRpcServer/JsonRpcServer.h"
-#include "PaymentServiceJsonRpcMessages.h"
-#include "Serialization/JsonInputValueSerializer.h"
-#include "Serialization/JsonOutputStreamSerializer.h"
+#include "HTTP/HttpRequest.h"
+#include "HTTP/HttpResponse.h"
+#include "Logging/ILogger.h"
+#include "Rpc/HttpServer.h"
+#include "System/Dispatcher.h"
+#include "System/Event.h"
+#include "System/TcpConnection.h"
 #include "WalletdRpcCommands.h"
 
 namespace PaymentService {
 
-class PaymentServiceJsonRpcServer : public CryptoNote::JsonRpcServer {
+class PaymentServiceJsonRpcServer : CryptoNote::HttpServer {
 
 public :
 
-  PaymentServiceJsonRpcServer(System::Dispatcher& sys, System::Event& stopEvent, WalletService& service, Logging::ILogger& loggerGroup, std::string rpcConfigurationPassword);
+  PaymentServiceJsonRpcServer(System::Dispatcher& dispatcher, System::Event& stopEvent, WalletService& service, Logging::ILogger& loggerGroup, std::string rpcConfigurationPassword);
   PaymentServiceJsonRpcServer(const PaymentServiceJsonRpcServer&) = delete;
+
+  void start(const std::string& bindAddress, uint16_t bindPort);
 
 private :
 
+  static void fillJsonResponse(const Common::JsonValue& value, Common::JsonValue& response);
   bool getMethod(const Common::JsonValue& request, Common::JsonValue& response, std::string& method);
-  virtual void processJsonRpcRequest(const Common::JsonValue& request, Common::JsonValue& response) override;
+  std::string getRpcConfigurationPassword();
+  static void makeErrorResponse(const std::error_code& ec, Common::JsonValue& response);
+  static void makeGenericErrorReponse(Common::JsonValue& response, const char* what, int errorCode = -32001);
+  static void makeIncorrectRpcPasswordResponse(Common::JsonValue& response);
+  static void makeInvalidRpcPasswordResponse(Common::JsonValue& response);
+  static void makeJsonParsingErrorResponse(Common::JsonValue& response);
+  static void makeMethodNotFoundResponse(Common::JsonValue& response);
+  static void makeMissingRpcPasswordKeyResponse(Common::JsonValue& response);
+  void processJsonRpcRequest(const Common::JsonValue& request, Common::JsonValue& response);
+  virtual void processRequest(const CryptoNote::HttpRequest& request, CryptoNote::HttpResponse& response) override;
   bool validateRpcPassword(const Common::JsonValue& request, Common::JsonValue& response);
   
-  Logging::LoggerRef logger;
+  Logging::LoggerRef m_logger;
   WalletdRpcCommands m_walletdRpcCommands;
+  System::Dispatcher& m_dispatcher;
+  System::Event& m_stopEvent;
+  std::string m_rpcConfigurationPassword;
 
 };
 
