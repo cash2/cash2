@@ -336,7 +336,7 @@ std::error_code WalletService::createAddress(const std::string& spendPrivateKeyS
   return std::error_code();
 }
 
-std::error_code WalletService::createDelayedTransaction(const CreateDelayedTransaction::Request& request, std::string& transactionHash)
+std::error_code WalletService::createDelayedTransaction(const WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION::Request& request, std::string& transactionHash)
 {
   try
   {
@@ -967,7 +967,7 @@ std::error_code WalletService::resetWallet()
 
     if (!m_initialized)
     {
-      m_logger(Logging::WARNING) << "Reset impossible : Walletd is not initialized";
+      m_logger(Logging::WARNING) << "WALLETD_RPC_COMMAND_RESET impossible : Walletd is not initialized";
       return make_error_code(CryptoNote::error::NOT_INITIALIZED);
     }
 
@@ -1036,7 +1036,7 @@ std::error_code WalletService::sendDelayedTransaction(const std::string& transac
   return std::error_code();
 }
 
-std::error_code WalletService::sendTransaction(const SendTransaction::Request& request, std::string& transactionHash, std::string& transactionPrivateKeyStr)
+std::error_code WalletService::sendTransaction(const WALLETD_RPC_COMMAND_SEND_TRANSACTION::Request& request, std::string& transactionHash, std::string& transactionPrivateKeyStr)
 {
   try
   {

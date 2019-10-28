@@ -17,27 +17,27 @@ public :
 
   WalletdRpcCommands(WalletService& walletService);
 
-  std::error_code handleCreateAddress(const CreateAddress::Request& request, CreateAddress::Response& response);
-  std::error_code handleCreateDelayedTransaction(const CreateDelayedTransaction::Request& request, CreateDelayedTransaction::Response& response);
-  std::error_code handleDeleteAddress(const DeleteAddress::Request& request, DeleteAddress::Response& response);
-  std::error_code handleDeleteDelayedTransaction(const DeleteDelayedTransaction::Request& request, DeleteDelayedTransaction::Response& response);
-  std::error_code handleGetAddresses(const GetAddresses::Request& request, GetAddresses::Response& response);
-  std::error_code handleGetAddressesCount(const GetAddressesCount::Request& request, GetAddressesCount::Response& response);
-  std::error_code handleGetBalance(const GetBalance::Request& request, GetBalance::Response& response);
-  std::error_code handleGetBlockHashes(const GetBlockHashes::Request& request, GetBlockHashes::Response& response);
-  std::error_code handleGetDelayedTransactionHashes(const GetDelayedTransactionHashes::Request& request, GetDelayedTransactionHashes::Response& response);
-  std::error_code handleGetSpendPrivateKey(const GetSpendPrivateKey::Request& request, GetSpendPrivateKey::Response& response);
-  std::error_code handleGetSpendPrivateKeys(const GetSpendPrivateKeys::Request& request, GetSpendPrivateKeys::Response& response);
-  std::error_code handleGetStatus(const GetStatus::Request& request, GetStatus::Response& response);
-  std::error_code handleGetTransaction(const GetTransaction::Request& request, GetTransaction::Response& response);
-  std::error_code handleGetTransactionHashes(const GetTransactionHashes::Request& request, GetTransactionHashes::Response& response);
-  std::error_code handleGetTransactions(const GetTransactions::Request& request, GetTransactions::Response& response);
-  std::error_code handleGetUnconfirmedTransactionHashes(const GetUnconfirmedTransactionHashes::Request& request, GetUnconfirmedTransactionHashes::Response& response);
-  std::error_code handleGetViewKey(const GetViewKey::Request& request, GetViewKey::Response& response);
-  std::error_code handleReset(const Reset::Request& request, Reset::Response& response);
-  std::error_code handleSendDelayedTransaction(const SendDelayedTransaction::Request& request, SendDelayedTransaction::Response& response);
-  std::error_code handleSendTransaction(const SendTransaction::Request& request, SendTransaction::Response& response);
-  std::error_code handleValidateAddress(const ValidateAddress::Request& request, ValidateAddress::Response& response);
+  std::error_code handleCreateAddress(const WALLETD_RPC_COMMAND_CREATE_ADDRESS::Request& request, WALLETD_RPC_COMMAND_CREATE_ADDRESS::Response& response);
+  std::error_code handleCreateDelayedTransaction(const WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION::Request& request, WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION::Response& response);
+  std::error_code handleDeleteAddress(const WALLETD_RPC_COMMAND_DELETE_ADDRESS::Request& request, WALLETD_RPC_COMMAND_DELETE_ADDRESS::Response& response);
+  std::error_code handleDeleteDelayedTransaction(const WALLETD_RPC_COMMAND_DELETE_DELAYED_TRANSACTION::Request& request, WALLETD_RPC_COMMAND_DELETE_DELAYED_TRANSACTION::Response& response);
+  std::error_code handleGetAddresses(const WALLETD_RPC_COMMAND_GET_ADDRESSES::Request& request, WALLETD_RPC_COMMAND_GET_ADDRESSES::Response& response);
+  std::error_code handleGetAddressesCount(const WALLETD_RPC_COMMAND_GET_ADDRESSES_COUNT::Request& request, WALLETD_RPC_COMMAND_GET_ADDRESSES_COUNT::Response& response);
+  std::error_code handleGetBalance(const WALLETD_RPC_COMMAND_GET_BALANCE::Request& request, WALLETD_RPC_COMMAND_GET_BALANCE::Response& response);
+  std::error_code handleGetBlockHashes(const WALLETD_RPC_COMMAND_GET_BLOCK_HASHES::Request& request, WALLETD_RPC_COMMAND_GET_BLOCK_HASHES::Response& response);
+  std::error_code handleGetDelayedTransactionHashes(const WALLETD_RPC_COMMAND_GET_DELAYED_TRANSACTION_HASHES::Request& request, WALLETD_RPC_COMMAND_GET_DELAYED_TRANSACTION_HASHES::Response& response);
+  std::error_code handleGetSpendPrivateKey(const WALLETD_RPC_COMMAND_GET_SPEND_PRIVATE_KEY::Request& request, WALLETD_RPC_COMMAND_GET_SPEND_PRIVATE_KEY::Response& response);
+  std::error_code handleGetSpendPrivateKeys(const WALLETD_RPC_COMMAND_GET_SPEND_PRIVATE_KEYS::Request& request, WALLETD_RPC_COMMAND_GET_SPEND_PRIVATE_KEYS::Response& response);
+  std::error_code handleGetStatus(const WALLETD_RPC_COMMAND_GET_STATUS::Request& request, WALLETD_RPC_COMMAND_GET_STATUS::Response& response);
+  std::error_code handleGetTransaction(const WALLETD_RPC_COMMAND_GET_TRANSACTION::Request& request, WALLETD_RPC_COMMAND_GET_TRANSACTION::Response& response);
+  std::error_code handleGetTransactionHashes(const WALLETD_RPC_COMMAND_GET_TRANSACTION_HASHES::Request& request, WALLETD_RPC_COMMAND_GET_TRANSACTION_HASHES::Response& response);
+  std::error_code handleGetTransactions(const WALLETD_RPC_COMMAND_GET_TRANSACTIONS::Request& request, WALLETD_RPC_COMMAND_GET_TRANSACTIONS::Response& response);
+  std::error_code handleGetUnconfirmedTransactionHashes(const WALLETD_RPC_COMMAND_GET_UNCONFIRMED_TRANSACTION_HASHES::Request& request, WALLETD_RPC_COMMAND_GET_UNCONFIRMED_TRANSACTION_HASHES::Response& response);
+  std::error_code handleGetViewKey(const WALLETD_RPC_COMMAND_GET_VIEW_KEY::Request& request, WALLETD_RPC_COMMAND_GET_VIEW_KEY::Response& response);
+  std::error_code handleReset(const WALLETD_RPC_COMMAND_RESET::Request& request, WALLETD_RPC_COMMAND_RESET::Response& response);
+  std::error_code handleSendDelayedTransaction(const WALLETD_RPC_COMMAND_SEND_DELAYED_TRANSACTION::Request& request, WALLETD_RPC_COMMAND_SEND_DELAYED_TRANSACTION::Response& response);
+  std::error_code handleSendTransaction(const WALLETD_RPC_COMMAND_SEND_TRANSACTION::Request& request, WALLETD_RPC_COMMAND_SEND_TRANSACTION::Response& response);
+  std::error_code handleValidateAddress(const WALLETD_RPC_COMMAND_VALIDATE_ADDRESS::Request& request, WALLETD_RPC_COMMAND_VALIDATE_ADDRESS::Response& response);
 
 private :
 

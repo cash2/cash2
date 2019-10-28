@@ -723,7 +723,7 @@ TEST_F(WalletServiceTest_getTransaction, transactionNotFound) {
 class WalletServiceTest_sendTransaction : public WalletServiceTest_getTransactions {
   virtual void SetUp() override;
 protected:
-  SendTransaction::Request request;
+  WALLETD_RPC_COMMAND_SEND_TRANSACTION::Request request;
 };
 
 void WalletServiceTest_sendTransaction::SetUp() {
@@ -751,7 +751,7 @@ struct WalletTransferStub : public IWalletBaseStub {
   TransactionParameters params;
 };
 
-bool isEquivalent(const SendTransaction::Request& request, const TransactionParameters& params) {
+bool isEquivalent(const WALLETD_RPC_COMMAND_SEND_TRANSACTION::Request& request, const TransactionParameters& params) {
   std::string extra;
   if (!request.payment_id.empty()) {
     extra = "022100" + request.payment_id;
@@ -805,7 +805,7 @@ TEST_F(WalletServiceTest_sendTransaction, incorrectTransferAddress) {
 class WalletServiceTest_createDelayedTransaction : public WalletServiceTest_getTransactions {
   virtual void SetUp() override;
 protected:
-  CreateDelayedTransaction::Request request;
+  WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION::Request request;
 };
 
 void WalletServiceTest_createDelayedTransaction::SetUp() {
@@ -833,7 +833,7 @@ struct WalletMakeTransactionStub : public IWalletBaseStub {
   TransactionParameters params;
 };
 
-bool isEquivalent(const CreateDelayedTransaction::Request& request, const TransactionParameters& params) {
+bool isEquivalent(const WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION::Request& request, const TransactionParameters& params) {
   std::string extra;
   if (!request.payment_id.empty()) {
     extra = "022100" + request.payment_id;

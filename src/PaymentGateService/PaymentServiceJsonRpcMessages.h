@@ -23,7 +23,7 @@ public:
 };
 
 
-// RPC Data Types
+// Walletd RPC Data Types
 
 
 struct TransferRpcInfo {
@@ -101,10 +101,10 @@ struct WalletRpcOrder {
 };
 
 
-// RPC Commands
+// Walletd RPC Commands
 
 
-struct CreateAddress {
+struct WALLETD_RPC_COMMAND_CREATE_ADDRESS {
   struct Request {
     std::string spend_private_key;
     std::string spend_public_key;
@@ -128,7 +128,7 @@ struct CreateAddress {
   };
 };
 
-struct CreateDelayedTransaction {
+struct WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION {
   struct Request {
     std::vector<std::string> addresses;
     std::vector<WalletRpcOrder> transfers;
@@ -176,7 +176,7 @@ struct CreateDelayedTransaction {
   };
 };
 
-struct DeleteAddress {
+struct WALLETD_RPC_COMMAND_DELETE_ADDRESS {
   struct Request {
     std::string address;
 
@@ -192,7 +192,7 @@ struct DeleteAddress {
   };
 };
 
-struct DeleteDelayedTransaction {
+struct WALLETD_RPC_COMMAND_DELETE_DELAYED_TRANSACTION {
   struct Request {
     std::string transaction_hash;
 
@@ -208,7 +208,7 @@ struct DeleteDelayedTransaction {
   };
 };
 
-struct GetAddresses {
+struct WALLETD_RPC_COMMAND_GET_ADDRESSES {
   struct Request {
     void serialize(CryptoNote::ISerializer& serializer) {}
   };
@@ -222,7 +222,7 @@ struct GetAddresses {
   };
 };
 
-struct GetAddressesCount {
+struct WALLETD_RPC_COMMAND_GET_ADDRESSES_COUNT {
   struct Request {
     void serialize(CryptoNote::ISerializer& serializer) {}
   };
@@ -236,7 +236,7 @@ struct GetAddressesCount {
   };
 };
 
-struct GetBalance {
+struct WALLETD_RPC_COMMAND_GET_BALANCE {
   struct Request {
     std::string address;
 
@@ -256,7 +256,7 @@ struct GetBalance {
   };
 };
 
-struct GetBlockHashes {
+struct WALLETD_RPC_COMMAND_GET_BLOCK_HASHES {
   struct Request {
     uint32_t start_block_height;
     uint32_t number_of_blocks;
@@ -280,7 +280,7 @@ struct GetBlockHashes {
   };
 };
 
-struct GetDelayedTransactionHashes {
+struct WALLETD_RPC_COMMAND_GET_DELAYED_TRANSACTION_HASHES {
   struct Request {
     void serialize(CryptoNote::ISerializer& serializer) {}
   };
@@ -294,7 +294,7 @@ struct GetDelayedTransactionHashes {
   };
 };
 
-struct GetSpendPrivateKey {
+struct WALLETD_RPC_COMMAND_GET_SPEND_PRIVATE_KEY {
   struct Request {
     std::string address;
 
@@ -314,7 +314,7 @@ struct GetSpendPrivateKey {
   };
 };
 
-struct GetSpendPrivateKeys {
+struct WALLETD_RPC_COMMAND_GET_SPEND_PRIVATE_KEYS {
   struct Request {
     void serialize(CryptoNote::ISerializer& serializer) {}
   };
@@ -328,7 +328,7 @@ struct GetSpendPrivateKeys {
   };
 };
 
-struct GetStatus {
+struct WALLETD_RPC_COMMAND_GET_STATUS {
   struct Request {
     void serialize(CryptoNote::ISerializer& serializer) {}
   };
@@ -351,7 +351,7 @@ struct GetStatus {
   };
 };
 
-struct GetTransaction {
+struct WALLETD_RPC_COMMAND_GET_TRANSACTION {
   struct Request {
     std::string transaction_hash;
 
@@ -371,7 +371,7 @@ struct GetTransaction {
   };
 };
 
-struct GetTransactionHashes {
+struct WALLETD_RPC_COMMAND_GET_TRANSACTION_HASHES {
   struct Request {
     std::vector<std::string> addresses;
     std::string start_block_hash;
@@ -403,7 +403,7 @@ struct GetTransactionHashes {
   };
 };
 
-struct GetTransactions {
+struct WALLETD_RPC_COMMAND_GET_TRANSACTIONS {
   struct Request {
     std::vector<std::string> addresses;
     std::string start_block_hash;
@@ -435,7 +435,7 @@ struct GetTransactions {
   };
 };
 
-struct GetUnconfirmedTransactionHashes {
+struct WALLETD_RPC_COMMAND_GET_UNCONFIRMED_TRANSACTION_HASHES {
   struct Request {
     std::vector<std::string> addresses;
 
@@ -453,7 +453,7 @@ struct GetUnconfirmedTransactionHashes {
   };
 };
 
-struct GetViewKey {
+struct WALLETD_RPC_COMMAND_GET_VIEW_KEY {
   struct Request {
     void serialize(CryptoNote::ISerializer& serializer) {}
   };
@@ -467,7 +467,7 @@ struct GetViewKey {
   };
 };
 
-struct Reset {
+struct WALLETD_RPC_COMMAND_RESET {
   struct Request {
     std::string view_private_key;
 
@@ -481,7 +481,7 @@ struct Reset {
   };
 };
 
-struct SendDelayedTransaction {
+struct WALLETD_RPC_COMMAND_SEND_DELAYED_TRANSACTION {
   struct Request {
     std::string transaction_hash;
 
@@ -497,7 +497,7 @@ struct SendDelayedTransaction {
   };
 };
 
-struct SendTransaction {
+struct WALLETD_RPC_COMMAND_SEND_TRANSACTION {
   struct Request {
     std::vector<std::string> source_addresses;
     std::vector<WalletRpcOrder> transfers;
@@ -547,7 +547,7 @@ struct SendTransaction {
   };
 };
 
-struct ValidateAddress {
+struct WALLETD_RPC_COMMAND_VALIDATE_ADDRESS {
 	struct Request {
 		std::string address;
 

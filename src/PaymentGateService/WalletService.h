@@ -40,7 +40,7 @@ public:
   virtual ~WalletService();
   std::error_code createAddress(std::string& address);
   std::error_code createAddress(const std::string& spendPrivateKeyStr, std::string& address);
-  std::error_code createDelayedTransaction(const CreateDelayedTransaction::Request& request, std::string& transactionHash);
+  std::error_code createDelayedTransaction(const WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION::Request& request, std::string& transactionHash);
   std::error_code createTrackingAddress(const std::string& spendPublicKeyStr, std::string& address);
   std::error_code deleteAddress(const std::string& address);
   std::error_code deleteDelayedTransaction(const std::string& transactionHashStr);
@@ -65,7 +65,7 @@ public:
   std::error_code resetWallet();
   void saveWallet();
   std::error_code sendDelayedTransaction(const std::string& transactionHashStr);
-  std::error_code sendTransaction(const SendTransaction::Request& request, std::string& transactionHash, std::string& transactionPrivateKeyStr);
+  std::error_code sendTransaction(const WALLETD_RPC_COMMAND_SEND_TRANSACTION::Request& request, std::string& transactionHash, std::string& transactionPrivateKeyStr);
   std::error_code validateAddress(const std::string& address, bool& addressValid);
 
 private:

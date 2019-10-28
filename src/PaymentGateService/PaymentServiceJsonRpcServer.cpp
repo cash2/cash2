@@ -14,7 +14,7 @@
 
 namespace PaymentService {
 
-// Walletd RPC Methods
+// Walletd RPC Commands
 //
 // create_address
 // create_delayed_transaction
@@ -97,8 +97,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     
     if (method == "create_address")
     {
-      CreateAddress::Request createAddressRequest;
-      CreateAddress::Response createAddressResponse;
+      WALLETD_RPC_COMMAND_CREATE_ADDRESS::Request createAddressRequest;
+      WALLETD_RPC_COMMAND_CREATE_ADDRESS::Response createAddressResponse;
 
       try
       {
@@ -124,8 +124,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "create_delayed_transaction")
     {
-      CreateDelayedTransaction::Request createDelayedTransactionRequest;
-      CreateDelayedTransaction::Response createDelayedTransactionResponse;
+      WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION::Request createDelayedTransactionRequest;
+      WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION::Response createDelayedTransactionResponse;
 
       try
       {
@@ -151,8 +151,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "delete_address")
     {
-      DeleteAddress::Request deleteAddressRequest;
-      DeleteAddress::Response deleteAddressResponse;
+      WALLETD_RPC_COMMAND_DELETE_ADDRESS::Request deleteAddressRequest;
+      WALLETD_RPC_COMMAND_DELETE_ADDRESS::Response deleteAddressResponse;
 
       try
       {
@@ -178,8 +178,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "delete_delayed_transaction")
     {
-      DeleteDelayedTransaction::Request deleteDelayedTransactionRequest;
-      DeleteDelayedTransaction::Response deleteDelayedTransactionResponse;
+      WALLETD_RPC_COMMAND_DELETE_DELAYED_TRANSACTION::Request deleteDelayedTransactionRequest;
+      WALLETD_RPC_COMMAND_DELETE_DELAYED_TRANSACTION::Response deleteDelayedTransactionResponse;
 
       try
       {
@@ -205,8 +205,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "get_addresses")
     {
-      GetAddresses::Request getAddressesRequest;
-      GetAddresses::Response getAddressesResponse;
+      WALLETD_RPC_COMMAND_GET_ADDRESSES::Request getAddressesRequest;
+      WALLETD_RPC_COMMAND_GET_ADDRESSES::Response getAddressesResponse;
 
       try
       {
@@ -232,8 +232,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "get_addresses_count")
     {
-      GetAddressesCount::Request getAddressesCountRequest;
-      GetAddressesCount::Response getAddressesCountResponse;
+      WALLETD_RPC_COMMAND_GET_ADDRESSES_COUNT::Request getAddressesCountRequest;
+      WALLETD_RPC_COMMAND_GET_ADDRESSES_COUNT::Response getAddressesCountResponse;
 
       try
       {
@@ -259,8 +259,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "get_balance")
     {
-      GetBalance::Request getBalanceRequest;
-      GetBalance::Response getBalanceResponse;
+      WALLETD_RPC_COMMAND_GET_BALANCE::Request getBalanceRequest;
+      WALLETD_RPC_COMMAND_GET_BALANCE::Response getBalanceResponse;
 
       try
       {
@@ -286,8 +286,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "get_block_hashes")
     {
-      GetBlockHashes::Request getBlockHashesRequest;
-      GetBlockHashes::Response getBlockHashesResponse;
+      WALLETD_RPC_COMMAND_GET_BLOCK_HASHES::Request getBlockHashesRequest;
+      WALLETD_RPC_COMMAND_GET_BLOCK_HASHES::Response getBlockHashesResponse;
 
       try
       {
@@ -313,8 +313,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "get_delayed_transaction_hashes")
     {
-      GetDelayedTransactionHashes::Request getDelayedTransactionHashesRequest;
-      GetDelayedTransactionHashes::Response getDelayedTransactionHashesResponse;
+      WALLETD_RPC_COMMAND_GET_DELAYED_TRANSACTION_HASHES::Request getDelayedTransactionHashesRequest;
+      WALLETD_RPC_COMMAND_GET_DELAYED_TRANSACTION_HASHES::Response getDelayedTransactionHashesResponse;
 
       try
       {
@@ -340,8 +340,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "get_spend_private_key")
     {
-      GetSpendPrivateKey::Request getSpendPrivateKeyRequest;
-      GetSpendPrivateKey::Response getSpendPrivateKeyResponse;
+      WALLETD_RPC_COMMAND_GET_SPEND_PRIVATE_KEY::Request getSpendPrivateKeyRequest;
+      WALLETD_RPC_COMMAND_GET_SPEND_PRIVATE_KEY::Response getSpendPrivateKeyResponse;
 
       try
       {
@@ -367,8 +367,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "get_spend_private_keys")
     {
-      GetSpendPrivateKeys::Request getSpendPrivateKeysRequest;
-      GetSpendPrivateKeys::Response getSpendPrivateKeysResponse;
+      WALLETD_RPC_COMMAND_GET_SPEND_PRIVATE_KEYS::Request getSpendPrivateKeysRequest;
+      WALLETD_RPC_COMMAND_GET_SPEND_PRIVATE_KEYS::Response getSpendPrivateKeysResponse;
 
       try
       {
@@ -394,8 +394,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "get_status")
     {
-      GetStatus::Request getStatusRequest;
-      GetStatus::Response getStatusResponse;
+      WALLETD_RPC_COMMAND_GET_STATUS::Request getStatusRequest;
+      WALLETD_RPC_COMMAND_GET_STATUS::Response getStatusResponse;
 
       try
       {
@@ -421,8 +421,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "get_transaction")
     {
-      GetTransaction::Request getTransactionRequest;
-      GetTransaction::Response getTransactionResponse;
+      WALLETD_RPC_COMMAND_GET_TRANSACTION::Request getTransactionRequest;
+      WALLETD_RPC_COMMAND_GET_TRANSACTION::Response getTransactionResponse;
 
       try
       {
@@ -448,8 +448,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "get_transaction_hashes")
     {
-      GetTransactionHashes::Request getTransactionHashesRequest;
-      GetTransactionHashes::Response getTransactionHashesResponse;
+      WALLETD_RPC_COMMAND_GET_TRANSACTION_HASHES::Request getTransactionHashesRequest;
+      WALLETD_RPC_COMMAND_GET_TRANSACTION_HASHES::Response getTransactionHashesResponse;
 
       try
       {
@@ -475,8 +475,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "get_transactions")
     {
-      GetTransactions::Request getTransactionsRequest;
-      GetTransactions::Response getTransactionsResponse;
+      WALLETD_RPC_COMMAND_GET_TRANSACTIONS::Request getTransactionsRequest;
+      WALLETD_RPC_COMMAND_GET_TRANSACTIONS::Response getTransactionsResponse;
 
       try
       {
@@ -502,8 +502,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "get_unconfirmed_transaction_hashes")
     {
-      GetUnconfirmedTransactionHashes::Request getUnconfirmedTransactionHashesRequest;
-      GetUnconfirmedTransactionHashes::Response getUnconfirmedTransactionHashesResponse;
+      WALLETD_RPC_COMMAND_GET_UNCONFIRMED_TRANSACTION_HASHES::Request getUnconfirmedTransactionHashesRequest;
+      WALLETD_RPC_COMMAND_GET_UNCONFIRMED_TRANSACTION_HASHES::Response getUnconfirmedTransactionHashesResponse;
 
       try
       {
@@ -529,8 +529,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "get_view_private_key")
     {
-      GetViewKey::Request getViewKeyRequest;
-      GetViewKey::Response getViewKeyResponse;
+      WALLETD_RPC_COMMAND_GET_VIEW_KEY::Request getViewKeyRequest;
+      WALLETD_RPC_COMMAND_GET_VIEW_KEY::Response getViewKeyResponse;
 
       try
       {
@@ -556,8 +556,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "reset")
     {
-      Reset::Request resetRequest;
-      Reset::Response resetResponse;
+      WALLETD_RPC_COMMAND_RESET::Request resetRequest;
+      WALLETD_RPC_COMMAND_RESET::Response resetResponse;
 
       try
       {
@@ -583,8 +583,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "send_delayed_transaction")
     {
-      SendDelayedTransaction::Request sendDelayedTransactionRequest;
-      SendDelayedTransaction::Response sendDelayedTransactionResponse;
+      WALLETD_RPC_COMMAND_SEND_DELAYED_TRANSACTION::Request sendDelayedTransactionRequest;
+      WALLETD_RPC_COMMAND_SEND_DELAYED_TRANSACTION::Response sendDelayedTransactionResponse;
 
       try
       {
@@ -610,8 +610,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "send_transaction")
     {
-      SendTransaction::Request sendTransactionRequest;
-      SendTransaction::Response sendTransactionResponse;
+      WALLETD_RPC_COMMAND_SEND_TRANSACTION::Request sendTransactionRequest;
+      WALLETD_RPC_COMMAND_SEND_TRANSACTION::Response sendTransactionResponse;
 
       try
       {
@@ -637,8 +637,8 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
     }
     else if (method == "validate_address")
     {
-      ValidateAddress::Request validateAddressRequest;
-      ValidateAddress::Response validateAddressResponse;
+      WALLETD_RPC_COMMAND_VALIDATE_ADDRESS::Request validateAddressRequest;
+      WALLETD_RPC_COMMAND_VALIDATE_ADDRESS::Response validateAddressResponse;
 
       try
       {
