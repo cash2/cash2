@@ -6,7 +6,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "PaymentServiceJsonRpcMessages.h"
-#include "PaymentServiceJsonRpcServer.h"
+#include "WalletdRpcServer.h"
 #include "Serialization/JsonInputValueSerializer.h"
 #include "Serialization/JsonOutputStreamSerializer.h"
 
@@ -40,7 +40,7 @@ namespace PaymentService {
 // Public functions
 
 
-PaymentServiceJsonRpcServer::PaymentServiceJsonRpcServer(System::Dispatcher& dispatcher, System::Event& stopEvent, WalletService& service, Logging::ILogger& loggerGroup, std::string rpcConfigurationPassword) :
+WalletdRpcServer::WalletdRpcServer(System::Dispatcher& dispatcher, System::Event& stopEvent, WalletService& service, Logging::ILogger& loggerGroup, std::string rpcConfigurationPassword) :
   HttpServer(dispatcher, loggerGroup), 
   m_dispatcher(dispatcher),
   m_logger(loggerGroup, "WalletdRpcServer"),
@@ -49,7 +49,7 @@ PaymentServiceJsonRpcServer::PaymentServiceJsonRpcServer(System::Dispatcher& dis
   m_walletdRpcCommands(service) {
 }
 
-void PaymentServiceJsonRpcServer::start(const std::string& bindAddress, uint16_t bindPort)
+void WalletdRpcServer::start(const std::string& bindAddress, uint16_t bindPort)
 {
   HttpServer::start(bindAddress, bindPort);
   m_stopEvent.wait();
@@ -60,12 +60,12 @@ void PaymentServiceJsonRpcServer::start(const std::string& bindAddress, uint16_t
 // Private functions
 
 
-void PaymentServiceJsonRpcServer::fillJsonResponse(const Common::JsonValue& value, Common::JsonValue& response)
+void WalletdRpcServer::fillJsonResponse(const Common::JsonValue& value, Common::JsonValue& response)
 {
   response.insert("result", value);
 }
 
-bool PaymentServiceJsonRpcServer::getMethod(const Common::JsonValue& request, Common::JsonValue& response, std::string& method)
+bool WalletdRpcServer::getMethod(const Common::JsonValue& request, Common::JsonValue& response, std::string& method)
 {
   if (!request.contains("method")) {
     m_logger(Logging::WARNING) << "Field \"method\" is not found in json request : " << request;
@@ -84,12 +84,12 @@ bool PaymentServiceJsonRpcServer::getMethod(const Common::JsonValue& request, Co
   return true;
 }
 
-std::string PaymentServiceJsonRpcServer::getRpcConfigurationPassword()
+std::string WalletdRpcServer::getRpcConfigurationPassword()
 {
   return m_rpcConfigurationPassword;
 }
 
-void PaymentServiceJsonRpcServer::makeErrorResponse(const std::error_code& ec, Common::JsonValue& response)
+void WalletdRpcServer::makeErrorResponse(const std::error_code& ec, Common::JsonValue& response)
 {
   Common::JsonValue error(Common::JsonValue::OBJECT);
 
@@ -111,7 +111,7 @@ void PaymentServiceJsonRpcServer::makeErrorResponse(const std::error_code& ec, C
   response.insert("error", error);
 }
 
-void PaymentServiceJsonRpcServer::makeGenericErrorReponse(Common::JsonValue& response, const char* what, int errorCode)
+void WalletdRpcServer::makeGenericErrorReponse(Common::JsonValue& response, const char* what, int errorCode)
 {
   Common::JsonValue error(Common::JsonValue::OBJECT);
 
@@ -135,7 +135,7 @@ void PaymentServiceJsonRpcServer::makeGenericErrorReponse(Common::JsonValue& res
 
 }
 
-void PaymentServiceJsonRpcServer::makeIncorrectRpcPasswordResponse(Common::JsonValue& response)
+void WalletdRpcServer::makeIncorrectRpcPasswordResponse(Common::JsonValue& response)
 {
   Common::JsonValue error(Common::JsonValue::OBJECT);
 
@@ -151,7 +151,7 @@ void PaymentServiceJsonRpcServer::makeIncorrectRpcPasswordResponse(Common::JsonV
   response.insert("error", error);
 }
 
-void PaymentServiceJsonRpcServer::makeInvalidRpcPasswordResponse(Common::JsonValue& response)
+void WalletdRpcServer::makeInvalidRpcPasswordResponse(Common::JsonValue& response)
 {
   Common::JsonValue error(Common::JsonValue::OBJECT);
 
@@ -167,7 +167,7 @@ void PaymentServiceJsonRpcServer::makeInvalidRpcPasswordResponse(Common::JsonVal
   response.insert("error", error);
 }
 
-void PaymentServiceJsonRpcServer::makeJsonParsingErrorResponse(Common::JsonValue& response)
+void WalletdRpcServer::makeJsonParsingErrorResponse(Common::JsonValue& response)
 {
   response = Common::JsonValue(Common::JsonValue::OBJECT);
   response.insert("jsonrpc", "2.0");
@@ -185,7 +185,7 @@ void PaymentServiceJsonRpcServer::makeJsonParsingErrorResponse(Common::JsonValue
   response.insert("error", error);
 }
 
-void PaymentServiceJsonRpcServer::makeMethodNotFoundResponse(Common::JsonValue& response)
+void WalletdRpcServer::makeMethodNotFoundResponse(Common::JsonValue& response)
 {
   Common::JsonValue error(Common::JsonValue::OBJECT);
 
@@ -201,7 +201,7 @@ void PaymentServiceJsonRpcServer::makeMethodNotFoundResponse(Common::JsonValue& 
   response.insert("error", error);
 }
 
-void PaymentServiceJsonRpcServer::makeMissingRpcPasswordKeyResponse(Common::JsonValue& response)
+void WalletdRpcServer::makeMissingRpcPasswordKeyResponse(Common::JsonValue& response)
 {
   Common::JsonValue error(Common::JsonValue::OBJECT);
 
@@ -217,7 +217,7 @@ void PaymentServiceJsonRpcServer::makeMissingRpcPasswordKeyResponse(Common::Json
   response.insert("error", error);
 }
 
-void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue& request, Common::JsonValue& response)
+void WalletdRpcServer::processJsonRpcRequest(const Common::JsonValue& request, Common::JsonValue& response)
 {
   try
   {
@@ -830,7 +830,7 @@ void PaymentServiceJsonRpcServer::processJsonRpcRequest(const Common::JsonValue&
   }
 }
 
-void PaymentServiceJsonRpcServer::processRequest(const CryptoNote::HttpRequest& request, CryptoNote::HttpResponse& response)
+void WalletdRpcServer::processRequest(const CryptoNote::HttpRequest& request, CryptoNote::HttpResponse& response)
 {
   try
   {
@@ -878,7 +878,7 @@ void PaymentServiceJsonRpcServer::processRequest(const CryptoNote::HttpRequest& 
   }
 }
 
-bool PaymentServiceJsonRpcServer::validateRpcPassword(const Common::JsonValue& request, Common::JsonValue& response)
+bool WalletdRpcServer::validateRpcPassword(const Common::JsonValue& request, Common::JsonValue& response)
 {
   std::string rpcConfigurationPassword = getRpcConfigurationPassword();
 

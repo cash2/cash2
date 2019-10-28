@@ -21,7 +21,7 @@
 #include "Logging/StreamLogger.h"
 #include "P2p/NodeServer.h"
 #include "NodeFactory.h"
-#include "PaymentServiceJsonRpcServer.h"
+#include "WalletdRpcServer.h"
 #include "WalletService.h"
 #include "Wallet/WalletGreen.h"
 #include "System/Context.h"
@@ -80,7 +80,7 @@ void runWalletService(const CryptoNote::Currency& currency, CryptoNote::INode& n
   }
   else
   {
-    PaymentService::PaymentServiceJsonRpcServer walletdRpcServer(*dispatcherPtr, *stopEventPtr, *walletServicePtr, logger, walletdConfigurationOptions.rpcConfigurationPassword);
+    PaymentService::WalletdRpcServer walletdRpcServer(*dispatcherPtr, *stopEventPtr, *walletServicePtr, logger, walletdConfigurationOptions.rpcConfigurationPassword);
     walletdRpcServer.start(walletdConfigurationOptions.bindAddress, walletdConfigurationOptions.bindPort);
 
     try
