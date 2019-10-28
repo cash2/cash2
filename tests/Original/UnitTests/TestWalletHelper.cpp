@@ -120,9 +120,9 @@ protected:
   std::queue<WalletEvent> m_events;
 };
 
-class WalletServiceTest: public ::testing::Test {
+class WalletHelperTest: public ::testing::Test {
 public:
-  WalletServiceTest() :
+  WalletHelperTest() :
     currency(CryptoNote::CurrencyBuilder(logger).currency()),
     generator(currency),
     nodeStub(generator),
@@ -144,28 +144,28 @@ protected:
   Crypto::Hash generateRandomHash();
 };
 
-void WalletServiceTest::SetUp() {
+void WalletHelperTest::SetUp() {
   logger.setMaxLevel(Logging::DEBUGGING);
 
   walletConfig.walletFile = "test";
   walletConfig.walletPassword = "test";
 }
 
-std::unique_ptr<WalletHelper> WalletServiceTest::createWalletHelper(CryptoNote::IWallet& wallet) {
+std::unique_ptr<WalletHelper> WalletHelperTest::createWalletHelper(CryptoNote::IWallet& wallet) {
   return std::unique_ptr<WalletHelper> (new WalletHelper(currency, dispatcher, nodeStub, wallet, walletConfig, logger));
 }
 
-std::unique_ptr<WalletHelper> WalletServiceTest::createWalletHelper() {
+std::unique_ptr<WalletHelper> WalletHelperTest::createWalletHelper() {
   return createWalletHelper(walletBase);
 }
 
-Crypto::Hash WalletServiceTest::generateRandomHash() {
+Crypto::Hash WalletHelperTest::generateRandomHash() {
   Crypto::Hash hash;
   std::generate(std::begin(hash.data), std::end(hash.data), std::rand);
   return hash;
 }
 
-class WalletServiceTest_createAddress : public WalletServiceTest {
+class WalletHelperTest_createAddress : public WalletHelperTest {
 };
 
 struct WalletCreateAddressStub: public IWalletBaseStub {
@@ -178,7 +178,7 @@ struct WalletCreateAddressStub: public IWalletBaseStub {
   std::string address = "correctAddress";
 };
 
-TEST_F(WalletServiceTest_createAddress, returnsCorrectAddress) {
+TEST_F(WalletHelperTest_createAddress, returnsCorrectAddress) {
   WalletCreateAddressStub wallet(dispatcher);
 
   std::unique_ptr<WalletHelper> walletHelper = createWalletHelper(wallet);
@@ -189,7 +189,7 @@ TEST_F(WalletServiceTest_createAddress, returnsCorrectAddress) {
   ASSERT_EQ(wallet.address, address);
 }
 
-TEST_F(WalletServiceTest_createAddress, invalidSecretKey) {
+TEST_F(WalletHelperTest_createAddress, invalidSecretKey) {
   std::unique_ptr<WalletHelper> walletHelper = createWalletHelper();
 
   std::string address;
@@ -197,7 +197,7 @@ TEST_F(WalletServiceTest_createAddress, invalidSecretKey) {
   ASSERT_EQ(make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_KEY_FORMAT), ec);
 }
 
-TEST_F(WalletServiceTest_createAddress, invalidPublicKey) {
+TEST_F(WalletHelperTest_createAddress, invalidPublicKey) {
   std::unique_ptr<WalletHelper> walletHelper = createWalletHelper();
 
   std::string address;
@@ -205,7 +205,7 @@ TEST_F(WalletServiceTest_createAddress, invalidPublicKey) {
   ASSERT_EQ(make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_KEY_FORMAT), ec);
 }
 
-TEST_F(WalletServiceTest_createAddress, correctSecretKey) {
+TEST_F(WalletHelperTest_createAddress, correctSecretKey) {
   Crypto::PublicKey pub;
   Crypto::SecretKey sec;
   Crypto::generate_keys(pub, sec);
@@ -220,7 +220,7 @@ TEST_F(WalletServiceTest_createAddress, correctSecretKey) {
   ASSERT_EQ(wallet.address, address);
 }
 
-TEST_F(WalletServiceTest_createAddress, correctPublicKey) {
+TEST_F(WalletHelperTest_createAddress, correctPublicKey) {
   Crypto::PublicKey pub;
   Crypto::SecretKey sec;
   Crypto::generate_keys(pub, sec);
@@ -235,7 +235,7 @@ TEST_F(WalletServiceTest_createAddress, correctPublicKey) {
   ASSERT_EQ(wallet.address, address);
 }
 
-class WalletServiceTest_getSpendPrivateKey : public WalletServiceTest {
+class WalletHelperTest_getSpendPrivateKey : public WalletHelperTest {
 };
 
 struct WalletGetSpendPrivateKeyStub: public IWalletBaseStub {
@@ -250,7 +250,7 @@ struct WalletGetSpendPrivateKeyStub: public IWalletBaseStub {
   KeyPair keyPair;
 };
 
-TEST_F(WalletServiceTest_getSpendPrivateKey, returnsKeysCorrectly) {
+TEST_F(WalletHelperTest_getSpendPrivateKey, returnsKeysCorrectly) {
   WalletGetSpendPrivateKeyStub wallet(dispatcher);
   std::unique_ptr<WalletHelper> walletHelper = createWalletHelper(wallet);
 
@@ -260,7 +260,7 @@ TEST_F(WalletServiceTest_getSpendPrivateKey, returnsKeysCorrectly) {
   ASSERT_EQ(Common::podToHex(wallet.keyPair.secretKey), secretSpendKey);
 }
 
-class WalletServiceTest_getBalance : public WalletServiceTest {
+class WalletHelperTest_getBalance : public WalletHelperTest {
 };
 
 struct WalletGetBalanceStub: public IWalletBaseStub {
@@ -304,7 +304,7 @@ struct WalletGetBalanceStub: public IWalletBaseStub {
   uint64_t pendingBalance = 12121;
 };
 
-TEST_F(WalletServiceTest_getBalance, returnsCorrectBalance) {
+TEST_F(WalletHelperTest_getBalance, returnsCorrectBalance) {
   WalletGetBalanceStub wallet(dispatcher, false);
   std::unique_ptr<WalletHelper> walletHelper = createWalletHelper(wallet);
 
@@ -317,7 +317,7 @@ TEST_F(WalletServiceTest_getBalance, returnsCorrectBalance) {
   ASSERT_EQ(wallet.pendingBalance, pending);
 }
 
-TEST_F(WalletServiceTest_getBalance, returnsCorrectBalanceByAddress) {
+TEST_F(WalletHelperTest_getBalance, returnsCorrectBalanceByAddress) {
   WalletGetBalanceStub wallet(dispatcher, true);
   std::unique_ptr<WalletHelper> walletHelper = createWalletHelper(wallet);
 
@@ -330,7 +330,7 @@ TEST_F(WalletServiceTest_getBalance, returnsCorrectBalanceByAddress) {
   ASSERT_EQ(wallet.pendingBalance, pending);
 }
 
-class WalletServiceTest_getBlockHashes : public WalletServiceTest {
+class WalletHelperTest_getBlockHashes : public WalletHelperTest {
 protected:
   std::vector<Crypto::Hash> convertBlockHashes(const std::vector<std::string>& hashes) {
     std::vector<Crypto::Hash> result;
@@ -357,7 +357,7 @@ struct WalletGetBlockHashesStub: public IWalletBaseStub {
   std::vector<Crypto::Hash> blockHashes;
 };
 
-TEST_F(WalletServiceTest_getBlockHashes, returnsEmptyBlockHashes) {
+TEST_F(WalletHelperTest_getBlockHashes, returnsEmptyBlockHashes) {
   WalletGetBlockHashesStub wallet(dispatcher);
   auto walletHelper = createWalletHelper(wallet);
 
@@ -366,7 +366,7 @@ TEST_F(WalletServiceTest_getBlockHashes, returnsEmptyBlockHashes) {
   ASSERT_EQ(wallet.blockHashes, convertBlockHashes(blockHashes));
 }
 
-TEST_F(WalletServiceTest_getBlockHashes, returnsBlockHashes) {
+TEST_F(WalletHelperTest_getBlockHashes, returnsBlockHashes) {
   WalletGetBlockHashesStub wallet(dispatcher);
   std::generate_n(std::back_inserter(wallet.blockHashes), 10, [this] () { return generateRandomHash(); });
   auto walletHelper = createWalletHelper(wallet);
@@ -376,7 +376,7 @@ TEST_F(WalletServiceTest_getBlockHashes, returnsBlockHashes) {
   ASSERT_EQ(wallet.blockHashes, convertBlockHashes(blockHashes));
 }
 
-class WalletServiceTest_getViewKey : public WalletServiceTest {
+class WalletHelperTest_getViewKey : public WalletHelperTest {
 };
 
 struct WalletGetViewKeyStub: public IWalletBaseStub {
@@ -391,7 +391,7 @@ struct WalletGetViewKeyStub: public IWalletBaseStub {
   KeyPair keyPair;
 };
 
-TEST_F(WalletServiceTest_getViewKey, returnsCorrectValue) {
+TEST_F(WalletHelperTest_getViewKey, returnsCorrectValue) {
   WalletGetViewKeyStub wallet(dispatcher);
   auto walletHelper = createWalletHelper(wallet);
 
@@ -480,7 +480,7 @@ private:
   WalletTransactionWithTransfers tx;
 };
 
-class WalletServiceTest_getTransactions : public WalletServiceTest {
+class WalletHelperTest_getTransactions : public WalletHelperTest {
   virtual void SetUp() override;
 protected:
   std::vector<TransactionsInBlockInfo> testTransactions;
@@ -491,7 +491,7 @@ protected:
   const std::string PAYMENT_ID = "dededededededededededededededededededededededededededededededede";
 };
 
-void WalletServiceTest_getTransactions::SetUp() {
+void WalletHelperTest_getTransactions::SetUp() {
   TransactionsInBlockInfo block;
   block.blockHash = generateRandomHash();
   block.transactions.push_back(
@@ -517,7 +517,7 @@ public:
   std::vector<TransactionsInBlockInfo> transactions;
 };
 
-TEST_F(WalletServiceTest_getTransactions, addressesFilter_emptyReturnsTransaction) {
+TEST_F(WalletHelperTest_getTransactions, addressesFilter_emptyReturnsTransaction) {
   WalletGetTransactionsStub wallet(dispatcher);
   wallet.transactions = testTransactions;
 
@@ -532,7 +532,7 @@ TEST_F(WalletServiceTest_getTransactions, addressesFilter_emptyReturnsTransactio
   ASSERT_EQ(Common::podToHex(testTransactions[0].transactions[0].transaction.hash), transactions[0].transactions[0].transaction_hash);
 }
 
-TEST_F(WalletServiceTest_getTransactions, addressesFilter_existentReturnsTransaction) {
+TEST_F(WalletHelperTest_getTransactions, addressesFilter_existentReturnsTransaction) {
   WalletGetTransactionsStub wallet(dispatcher);
   wallet.transactions = testTransactions;
 
@@ -547,7 +547,7 @@ TEST_F(WalletServiceTest_getTransactions, addressesFilter_existentReturnsTransac
   ASSERT_EQ(Common::podToHex(testTransactions[0].transactions[0].transaction.hash), transactions[0].transactions[0].transaction_hash);
 }
 
-TEST_F(WalletServiceTest_getTransactions, addressesFilter_nonExistentReturnsNoTransactions) {
+TEST_F(WalletHelperTest_getTransactions, addressesFilter_nonExistentReturnsNoTransactions) {
   WalletGetTransactionsStub wallet(dispatcher);
   wallet.transactions = testTransactions;
 
@@ -561,7 +561,7 @@ TEST_F(WalletServiceTest_getTransactions, addressesFilter_nonExistentReturnsNoTr
   ASSERT_EQ(0, transactions.size());
 }
 
-TEST_F(WalletServiceTest_getTransactions, addressesFilter_existentAndNonExistentReturnsTransaction) {
+TEST_F(WalletHelperTest_getTransactions, addressesFilter_existentAndNonExistentReturnsTransaction) {
   WalletGetTransactionsStub wallet(dispatcher);
   wallet.transactions = testTransactions;
 
@@ -576,7 +576,7 @@ TEST_F(WalletServiceTest_getTransactions, addressesFilter_existentAndNonExistent
   ASSERT_EQ(Common::podToHex(testTransactions[0].transactions[0].transaction.hash), transactions[0].transactions[0].transaction_hash);
 }
 
-TEST_F(WalletServiceTest_getTransactions, paymentIdFilter_existentReturnsTransaction) {
+TEST_F(WalletHelperTest_getTransactions, paymentIdFilter_existentReturnsTransaction) {
   WalletGetTransactionsStub wallet(dispatcher);
   wallet.transactions = testTransactions;
 
@@ -592,7 +592,7 @@ TEST_F(WalletServiceTest_getTransactions, paymentIdFilter_existentReturnsTransac
   ASSERT_EQ(PAYMENT_ID, transactions[0].transactions[0].payment_id);
 }
 
-TEST_F(WalletServiceTest_getTransactions, paymentIdFilter_nonExistentReturnsNoTransaction) {
+TEST_F(WalletHelperTest_getTransactions, paymentIdFilter_nonExistentReturnsNoTransaction) {
   WalletGetTransactionsStub wallet(dispatcher);
   wallet.transactions = testTransactions;
 
@@ -606,7 +606,7 @@ TEST_F(WalletServiceTest_getTransactions, paymentIdFilter_nonExistentReturnsNoTr
   ASSERT_EQ(0, transactions.size());
 }
 
-TEST_F(WalletServiceTest_getTransactions, invalidAddress) {
+TEST_F(WalletHelperTest_getTransactions, invalidAddress) {
   WalletGetTransactionsStub wallet(dispatcher);
   wallet.transactions = testTransactions;
 
@@ -617,7 +617,7 @@ TEST_F(WalletServiceTest_getTransactions, invalidAddress) {
   ASSERT_EQ(make_error_code(CryptoNote::error::BAD_ADDRESS), ec);
 }
 
-TEST_F(WalletServiceTest_getTransactions, invalidPaymentId) {
+TEST_F(WalletHelperTest_getTransactions, invalidPaymentId) {
   WalletGetTransactionsStub wallet(dispatcher);
   wallet.transactions = testTransactions;
 
@@ -628,7 +628,7 @@ TEST_F(WalletServiceTest_getTransactions, invalidPaymentId) {
   ASSERT_EQ(make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_PAYMENT_ID_FORMAT), ec);
 }
 
-TEST_F(WalletServiceTest_getTransactions, blockNotFound) {
+TEST_F(WalletHelperTest_getTransactions, blockNotFound) {
   WalletGetTransactionsStub wallet(dispatcher);
   auto walletHelper = createWalletHelper(wallet);
   std::vector<TransactionsInBlockRpcInfo> transactions;
@@ -637,7 +637,7 @@ TEST_F(WalletServiceTest_getTransactions, blockNotFound) {
   ASSERT_EQ(make_error_code(CryptoNote::error::WalletHelperErrorCode::OBJECT_NOT_FOUND), ec);
 }
 
-class WalletServiceTest_getTransaction : public WalletServiceTest_getTransactions {
+class WalletHelperTest_getTransaction : public WalletHelperTest_getTransactions {
 };
 
 struct WalletGetTransactionStub : public IWalletBaseStub {
@@ -651,7 +651,7 @@ struct WalletGetTransactionStub : public IWalletBaseStub {
   WalletTransactionWithTransfers transaction;
 };
 
-TEST_F(WalletServiceTest_getTransaction, wrongHash) {
+TEST_F(WalletHelperTest_getTransaction, wrongHash) {
   auto walletHelper = createWalletHelper();
 
   TransactionRpcInfo transaction;
@@ -659,7 +659,7 @@ TEST_F(WalletServiceTest_getTransaction, wrongHash) {
   ASSERT_EQ(make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_HASH_FORMAT), ec);
 }
 
-TEST_F(WalletServiceTest_getTransaction, returnsCorrectFields) {
+TEST_F(WalletHelperTest_getTransaction, returnsCorrectFields) {
   WalletGetTransactionStub wallet(dispatcher);
   wallet.transaction = WalletTransactionWithTransfersBuilder().transaction(
         WalletTransactionBuilder()
@@ -710,7 +710,7 @@ struct WalletGetTransactionThrowStub : public IWalletBaseStub {
   }
 };
 
-TEST_F(WalletServiceTest_getTransaction, transactionNotFound) {
+TEST_F(WalletHelperTest_getTransaction, transactionNotFound) {
   WalletGetTransactionThrowStub wallet(dispatcher);
   auto walletHelper = createWalletHelper(wallet);
 
@@ -720,13 +720,13 @@ TEST_F(WalletServiceTest_getTransaction, transactionNotFound) {
   ASSERT_EQ(make_error_code(error::OBJECT_NOT_FOUND), ec);
 }
 
-class WalletServiceTest_sendTransaction : public WalletServiceTest_getTransactions {
+class WalletHelperTest_sendTransaction : public WalletHelperTest_getTransactions {
   virtual void SetUp() override;
 protected:
   WALLETD_RPC_COMMAND_SEND_TRANSACTION::Request request;
 };
 
-void WalletServiceTest_sendTransaction::SetUp() {
+void WalletHelperTest_sendTransaction::SetUp() {
   request.source_addresses.insert(request.source_addresses.end(), {RANDOM_ADDRESS1, RANDOM_ADDRESS2});
   request.transfers.push_back(WalletRpcOrder {RANDOM_ADDRESS3, 11111});
   request.fee = 2021;
@@ -769,7 +769,7 @@ bool isEquivalent(const WALLETD_RPC_COMMAND_SEND_TRANSACTION::Request& request, 
       std::make_tuple(params.sourceAddresses, params.destinations, params.fee, params.mixIn, Common::toHex(Common::asBinaryArray(params.extra)), params.unlockTimestamp);
 }
 
-TEST_F(WalletServiceTest_sendTransaction, passesCorrectParameters) {
+TEST_F(WalletHelperTest_sendTransaction, passesCorrectParameters) {
   WalletTransferStub wallet(dispatcher, generateRandomHash());
   auto walletHelper = createWalletHelper(wallet);
 
@@ -782,7 +782,7 @@ TEST_F(WalletServiceTest_sendTransaction, passesCorrectParameters) {
   ASSERT_TRUE(isEquivalent(request, wallet.params));
 }
 
-TEST_F(WalletServiceTest_sendTransaction, incorrectSourceAddress) {
+TEST_F(WalletHelperTest_sendTransaction, incorrectSourceAddress) {
   auto walletHelper = createWalletHelper();
   request.source_addresses.push_back("wrong address");
 
@@ -792,7 +792,7 @@ TEST_F(WalletServiceTest_sendTransaction, incorrectSourceAddress) {
   ASSERT_EQ(make_error_code(CryptoNote::error::BAD_ADDRESS), ec);
 }
 
-TEST_F(WalletServiceTest_sendTransaction, incorrectTransferAddress) {
+TEST_F(WalletHelperTest_sendTransaction, incorrectTransferAddress) {
   auto walletHelper = createWalletHelper();
   request.transfers.push_back(WalletRpcOrder{"wrong address", 12131});
 
@@ -802,13 +802,13 @@ TEST_F(WalletServiceTest_sendTransaction, incorrectTransferAddress) {
   ASSERT_EQ(make_error_code(CryptoNote::error::BAD_ADDRESS), ec);
 }
 
-class WalletServiceTest_createDelayedTransaction : public WalletServiceTest_getTransactions {
+class WalletHelperTest_createDelayedTransaction : public WalletHelperTest_getTransactions {
   virtual void SetUp() override;
 protected:
   WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION::Request request;
 };
 
-void WalletServiceTest_createDelayedTransaction::SetUp() {
+void WalletHelperTest_createDelayedTransaction::SetUp() {
   request.addresses.insert(request.addresses.end(), {RANDOM_ADDRESS1, RANDOM_ADDRESS2});
   request.transfers.push_back(WalletRpcOrder {RANDOM_ADDRESS3, 11111});
   request.fee = 2021;
@@ -851,7 +851,7 @@ bool isEquivalent(const WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION::Request&
       std::make_tuple(params.sourceAddresses, params.destinations, params.fee, params.mixIn, Common::toHex(Common::asBinaryArray(params.extra)), params.unlockTimestamp);
 }
 
-TEST_F(WalletServiceTest_createDelayedTransaction, passesCorrectParameters) {
+TEST_F(WalletHelperTest_createDelayedTransaction, passesCorrectParameters) {
   WalletMakeTransactionStub wallet(dispatcher, generateRandomHash());
   auto walletHelper = createWalletHelper(wallet);
 
@@ -863,7 +863,7 @@ TEST_F(WalletServiceTest_createDelayedTransaction, passesCorrectParameters) {
   ASSERT_TRUE(isEquivalent(request, wallet.params));
 }
 
-TEST_F(WalletServiceTest_createDelayedTransaction, incorrectSourceAddress) {
+TEST_F(WalletHelperTest_createDelayedTransaction, incorrectSourceAddress) {
   auto walletHelper = createWalletHelper();
   request.addresses.push_back("wrong address");
 
@@ -872,7 +872,7 @@ TEST_F(WalletServiceTest_createDelayedTransaction, incorrectSourceAddress) {
   ASSERT_EQ(make_error_code(CryptoNote::error::BAD_ADDRESS), ec);
 }
 
-TEST_F(WalletServiceTest_createDelayedTransaction, incorrectTransferAddress) {
+TEST_F(WalletHelperTest_createDelayedTransaction, incorrectTransferAddress) {
   auto walletHelper = createWalletHelper();
   request.transfers.push_back(WalletRpcOrder{"wrong address", 12131});
 
@@ -881,7 +881,7 @@ TEST_F(WalletServiceTest_createDelayedTransaction, incorrectTransferAddress) {
   ASSERT_EQ(make_error_code(CryptoNote::error::BAD_ADDRESS), ec);
 }
 
-class WalletServiceTest_getDelayedTransactionHashes: public WalletServiceTest {
+class WalletHelperTest_getDelayedTransactionHashes: public WalletHelperTest {
 };
 
 struct WalletGetDelayedTransactionIdsStub : public IWalletBaseStub {
@@ -899,7 +899,7 @@ struct WalletGetDelayedTransactionIdsStub : public IWalletBaseStub {
   const Crypto::Hash hash;
 };
 
-TEST_F(WalletServiceTest_getDelayedTransactionHashes, returnsCorrectResult) {
+TEST_F(WalletHelperTest_getDelayedTransactionHashes, returnsCorrectResult) {
   WalletGetDelayedTransactionIdsStub wallet(dispatcher, generateRandomHash());
   auto walletHelper = createWalletHelper(wallet);
 
@@ -911,14 +911,14 @@ TEST_F(WalletServiceTest_getDelayedTransactionHashes, returnsCorrectResult) {
   ASSERT_EQ(Common::podToHex(wallet.hash), hashes[0]);
 }
 
-class WalletServiceTest_getUnconfirmedTransactionHashes: public WalletServiceTest_getTransactions {
+class WalletHelperTest_getUnconfirmedTransactionHashes: public WalletHelperTest_getTransactions {
 public:
   virtual void SetUp() override;
 protected:
   std::vector<CryptoNote::WalletTransactionWithTransfers> transactions;
 };
 
-void WalletServiceTest_getUnconfirmedTransactionHashes::SetUp() {
+void WalletHelperTest_getUnconfirmedTransactionHashes::SetUp() {
   transactions = { WalletTransactionWithTransfersBuilder().transaction(
                     WalletTransactionBuilder().hash(generateRandomHash()).build()
                    ).addTransfer(RANDOM_ADDRESS1, 100).addTransfer(RANDOM_ADDRESS2, 333).build()
@@ -940,7 +940,7 @@ struct WalletGetUnconfirmedTransactionsStub : public IWalletBaseStub {
   std::vector<CryptoNote::WalletTransactionWithTransfers> transactions;
 };
 
-TEST_F(WalletServiceTest_getUnconfirmedTransactionHashes, returnsAllHashesWithoutAddresses) {
+TEST_F(WalletHelperTest_getUnconfirmedTransactionHashes, returnsAllHashesWithoutAddresses) {
   WalletGetUnconfirmedTransactionsStub wallet(dispatcher);
   wallet.transactions = transactions;
   auto walletHelper = createWalletHelper(wallet);
@@ -954,7 +954,7 @@ TEST_F(WalletServiceTest_getUnconfirmedTransactionHashes, returnsAllHashesWithou
   ASSERT_EQ(hashes[1], Common::podToHex(transactions[1].transaction.hash));
 }
 
-TEST_F(WalletServiceTest_getUnconfirmedTransactionHashes, returnsOneTransactionWithAddressFilter) {
+TEST_F(WalletHelperTest_getUnconfirmedTransactionHashes, returnsOneTransactionWithAddressFilter) {
   WalletGetUnconfirmedTransactionsStub wallet(dispatcher);
   wallet.transactions = transactions;
   auto walletHelper = createWalletHelper(wallet);
@@ -967,7 +967,7 @@ TEST_F(WalletServiceTest_getUnconfirmedTransactionHashes, returnsOneTransactionW
   ASSERT_EQ(hashes[0], Common::podToHex(transactions[0].transaction.hash));
 }
 
-TEST_F(WalletServiceTest_getUnconfirmedTransactionHashes, returnsTwoTransactionsWithAddressFilter) {
+TEST_F(WalletHelperTest_getUnconfirmedTransactionHashes, returnsTwoTransactionsWithAddressFilter) {
   WalletGetUnconfirmedTransactionsStub wallet(dispatcher);
   wallet.transactions = transactions;
   auto walletHelper = createWalletHelper(wallet);
@@ -981,7 +981,7 @@ TEST_F(WalletServiceTest_getUnconfirmedTransactionHashes, returnsTwoTransactions
   ASSERT_EQ(hashes[1], Common::podToHex(transactions[1].transaction.hash));
 }
 
-TEST_F(WalletServiceTest_getUnconfirmedTransactionHashes, wrongAddressFilter) {
+TEST_F(WalletHelperTest_getUnconfirmedTransactionHashes, wrongAddressFilter) {
   auto walletHelper = createWalletHelper();
 
   std::vector<std::string> hashes;
