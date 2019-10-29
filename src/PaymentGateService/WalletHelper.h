@@ -16,7 +16,7 @@
 #include "INode.h"
 #include "IWallet.h"
 #include "Logging/LoggerRef.h"
-#include "PaymentServiceJsonRpcMessages.h"
+#include "WalletdRpcRequestResponseObjects.h"
 #include "System/ContextGroup.h"
 #include "System/Dispatcher.h"
 #include "System/Event.h"

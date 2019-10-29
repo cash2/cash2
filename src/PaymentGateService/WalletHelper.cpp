@@ -19,7 +19,7 @@
 #include "CryptoNoteCore/CryptoNoteFormatUtils.h"
 #include "CryptoNoteCore/TransactionExtra.h"
 #include "NodeFactory.h"
-#include "PaymentServiceJsonRpcMessages.h"
+#include "WalletdRpcRequestResponseObjects.h"
 #include "System/EventLock.h"
 #include "System/InterruptedException.h"
 #include "System/Timer.h"
