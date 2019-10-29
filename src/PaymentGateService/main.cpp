@@ -20,7 +20,7 @@
 #include "Logging/LoggerRef.h"
 #include "Logging/StreamLogger.h"
 #include "P2p/NodeServer.h"
-#include "NodeFactory.h"
+#include "WalletdRpcNodeFactory.h"
 #include "WalletdRpcServer.h"
 #include "WalletHelper.h"
 #include "Wallet/WalletGreen.h"
@@ -276,7 +276,7 @@ int main(int argc, char** argv) {
 
       loggerRun(Logging::INFO) << "Starting Walletd with a remote node";
 
-      std::unique_ptr<CryptoNote::INode> nodePtr(Walletd::NodeFactory::createNode(walletdConfigurationOptions.daemonHost, walletdConfigurationOptions.daemonPort));
+      std::unique_ptr<CryptoNote::INode> nodePtr(Walletd::WalletdRpcNodeFactory::createNode(walletdConfigurationOptions.daemonHost, walletdConfigurationOptions.daemonPort));
       
       runWalletService(currency, *nodePtr, walletdConfigurationOptions, dispatcherPtr, logger, stopEventPtr);
     }

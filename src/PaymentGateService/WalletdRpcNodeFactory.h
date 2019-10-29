@@ -11,17 +11,17 @@
 
 namespace Walletd {
 
-class NodeFactory {
+class WalletdRpcNodeFactory {
 public:
   static CryptoNote::INode* createNode(const std::string& daemonAddress, uint16_t daemonPort);
   static CryptoNote::INode* createNodeStub();
 private:
-  NodeFactory();
-  ~NodeFactory();
+  WalletdRpcNodeFactory();
+  ~WalletdRpcNodeFactory();
 
   CryptoNote::INode* getNode(const std::string& daemonAddress, uint16_t daemonPort);
 
-  static NodeFactory factory;
+  static WalletdRpcNodeFactory factory;
 };
 
 } //namespace Walletd

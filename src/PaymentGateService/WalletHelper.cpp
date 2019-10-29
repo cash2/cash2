@@ -18,7 +18,7 @@
 #include "CryptoNoteCore/CryptoNoteBasicImpl.h"
 #include "CryptoNoteCore/CryptoNoteFormatUtils.h"
 #include "CryptoNoteCore/TransactionExtra.h"
-#include "NodeFactory.h"
+#include "WalletdRpcNodeFactory.h"
 #include "WalletdRpcRequestResponseObjects.h"
 #include "System/EventLock.h"
 #include "System/InterruptedException.h"
@@ -65,7 +65,7 @@ void generateNewWallet(const CryptoNote::Currency &currency, const WalletConfigu
 
     log(Logging::INFO) << "Creating a new wallet container ...";
 
-    CryptoNote::INode* nodeStub = NodeFactory::createNodeStub();
+    CryptoNote::INode* nodeStub = WalletdRpcNodeFactory::createNodeStub();
     std::unique_ptr<CryptoNote::INode> nodeGuard(nodeStub);
 
     CryptoNote::IWallet* walletPtr = new CryptoNote::WalletGreen(dispatcher, currency, *nodeStub);
@@ -132,7 +132,7 @@ void generateNewWallet(const CryptoNote::Currency &currency, const WalletConfigu
 
     log(Logging::INFO) << "Restoring wallet from the given spend private key and view private key ...";
 
-    CryptoNote::INode* nodeStub = NodeFactory::createNodeStub();
+    CryptoNote::INode* nodeStub = WalletdRpcNodeFactory::createNodeStub();
     std::unique_ptr<CryptoNote::INode> nodeGuard(nodeStub);
 
     CryptoNote::IWallet* walletPtr = new CryptoNote::WalletGreen(dispatcher, currency, *nodeStub);

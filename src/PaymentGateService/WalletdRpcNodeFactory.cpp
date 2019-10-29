@@ -4,7 +4,7 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "NodeFactory.h"
+#include "WalletdRpcNodeFactory.h"
 
 #include "NodeRpcProxy/NodeRpcProxy.h"
 #include <memory>
@@ -100,13 +100,13 @@ private:
   std::future<std::error_code> initFuture;
 };
 
-NodeFactory::NodeFactory() {
+WalletdRpcNodeFactory::WalletdRpcNodeFactory() {
 }
 
-NodeFactory::~NodeFactory() {
+WalletdRpcNodeFactory::~WalletdRpcNodeFactory() {
 }
 
-CryptoNote::INode* NodeFactory::createNode(const std::string& daemonAddress, uint16_t daemonPort) {
+CryptoNote::INode* WalletdRpcNodeFactory::createNode(const std::string& daemonAddress, uint16_t daemonPort) {
   std::unique_ptr<CryptoNote::INode> node(new CryptoNote::NodeRpcProxy(daemonAddress, daemonPort));
 
   NodeInitObserver initObserver;
@@ -116,7 +116,7 @@ CryptoNote::INode* NodeFactory::createNode(const std::string& daemonAddress, uin
   return node.release();
 }
 
-CryptoNote::INode* NodeFactory::createNodeStub() {
+CryptoNote::INode* WalletdRpcNodeFactory::createNodeStub() {
   return new NodeRpcStub();
 }
 
