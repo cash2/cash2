@@ -10,7 +10,7 @@
 #include <memory>
 #include <future>
 
-namespace PaymentService {
+namespace Walletd {
 
 class NodeRpcStub: public CryptoNote::INode {
 public:

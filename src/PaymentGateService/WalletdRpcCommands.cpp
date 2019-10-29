@@ -8,7 +8,7 @@
 #include "WalletdRpcCommands.h"
 #include "version.h"
 
-namespace PaymentService {
+namespace Walletd {
 
 WalletdRpcCommands::WalletdRpcCommands(WalletHelper& walletHelper) : m_walletHelper(walletHelper) {}
 
@@ -161,4 +161,4 @@ std::error_code WalletdRpcCommands::validateAddress(const WALLETD_RPC_COMMAND_VA
   return m_walletHelper.validateAddress(request.address, response.address_valid);
 }
 
-} // end namespace PaymentService
+} // end namespace Walletd

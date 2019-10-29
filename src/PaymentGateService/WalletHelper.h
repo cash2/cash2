@@ -21,7 +21,7 @@
 #include "System/Dispatcher.h"
 #include "System/Event.h"
 
-namespace PaymentService {
+namespace Walletd {
 
 struct WalletConfiguration {
   std::string walletFile;
@@ -109,4 +109,4 @@ private:
 
 };
 
-} // end namespace PaymentService
+} // end namespace Walletd

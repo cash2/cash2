@@ -41,10 +41,10 @@
 namespace {
 
 void runWalletService(const CryptoNote::Currency& currency, CryptoNote::INode& node,
-                      const PaymentService::WalletdConfigurationOptions& walletdConfigurationOptions, System::Dispatcher* dispatcherPtr,
+                      const Walletd::WalletdConfigurationOptions& walletdConfigurationOptions, System::Dispatcher* dispatcherPtr,
                       Logging::LoggerGroup& logger, System::Event* stopEventPtr) {
 
-  PaymentService::WalletConfiguration walletConfiguration{
+  Walletd::WalletConfiguration walletConfiguration{
     walletdConfigurationOptions.containerFile,
     walletdConfigurationOptions.containerPassword,
     walletdConfigurationOptions.spendPrivateKey,
@@ -52,7 +52,7 @@ void runWalletService(const CryptoNote::Currency& currency, CryptoNote::INode& n
   };
 
   std::unique_ptr<CryptoNote::IWallet> walletPtr (new CryptoNote::WalletGreen(*dispatcherPtr, currency, node));
-  std::unique_ptr<PaymentService::WalletHelper> walletHelperPtr(new PaymentService::WalletHelper(currency, *dispatcherPtr, node, *walletPtr, walletConfiguration, logger));
+  std::unique_ptr<Walletd::WalletHelper> walletHelperPtr(new Walletd::WalletHelper(currency, *dispatcherPtr, node, *walletPtr, walletConfiguration, logger));
 
   try
   {
@@ -80,7 +80,7 @@ void runWalletService(const CryptoNote::Currency& currency, CryptoNote::INode& n
   }
   else
   {
-    PaymentService::WalletdRpcServer walletdRpcServer(*dispatcherPtr, *stopEventPtr, *walletHelperPtr, logger, walletdConfigurationOptions.rpcConfigurationPassword);
+    Walletd::WalletdRpcServer walletdRpcServer(*dispatcherPtr, *stopEventPtr, *walletHelperPtr, logger, walletdConfigurationOptions.rpcConfigurationPassword);
     walletdRpcServer.start(walletdConfigurationOptions.bindAddress, walletdConfigurationOptions.bindPort);
 
     try
@@ -100,7 +100,7 @@ void runWalletService(const CryptoNote::Currency& currency, CryptoNote::INode& n
 int main(int argc, char** argv) {
 
   System::Dispatcher* dispatcherPtr = nullptr;
-  PaymentService::WalletdConfigurationOptions walletdConfigurationOptions;
+  Walletd::WalletdConfigurationOptions walletdConfigurationOptions;
   Logging::ConsoleLogger consoleLogger;
   Logging::LoggerGroup logger;
   CryptoNote::CurrencyBuilder currencyBuilder(logger);
@@ -154,7 +154,7 @@ int main(int argc, char** argv) {
     {
       System::Dispatcher dispatcher;
 
-      PaymentService::WalletConfiguration walletConfig {
+      Walletd::WalletConfiguration walletConfig {
         walletdConfigurationOptions.containerFile,
         walletdConfigurationOptions.containerPassword,
         walletdConfigurationOptions.spendPrivateKey,
@@ -276,7 +276,7 @@ int main(int argc, char** argv) {
 
       loggerRun(Logging::INFO) << "Starting Walletd with a remote node";
 
-      std::unique_ptr<CryptoNote::INode> nodePtr(PaymentService::NodeFactory::createNode(walletdConfigurationOptions.daemonHost, walletdConfigurationOptions.daemonPort));
+      std::unique_ptr<CryptoNote::INode> nodePtr(Walletd::NodeFactory::createNode(walletdConfigurationOptions.daemonHost, walletdConfigurationOptions.daemonPort));
       
       runWalletService(currency, *nodePtr, walletdConfigurationOptions, dispatcherPtr, logger, stopEventPtr);
     }

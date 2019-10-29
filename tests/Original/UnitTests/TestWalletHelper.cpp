@@ -21,7 +21,7 @@
 #include "Wallet/WalletErrors.h"
 
 using namespace CryptoNote;
-using namespace PaymentService;
+using namespace Walletd;
 
 namespace CryptoNote {
 

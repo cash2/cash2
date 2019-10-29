@@ -20,7 +20,7 @@
 #include "System/TcpConnection.h"
 #include "WalletdRpcCommands.h"
 
-namespace PaymentService {
+namespace Walletd {
 
 class WalletdRpcServer : CryptoNote::HttpServer {
 
@@ -55,4 +55,4 @@ private :
 
 };
 
-} // end namespace PaymentService
+} // end namespace Walletd

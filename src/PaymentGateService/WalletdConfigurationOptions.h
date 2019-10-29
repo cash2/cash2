@@ -9,7 +9,7 @@
 #include "Logging/ILogger.h"
 #include "P2p/NodeServerConfig.h"
 
-namespace PaymentService {
+namespace Walletd {
 
 class WalletdConfigurationOptions {
 public:
@@ -36,4 +36,4 @@ public:
   std::string viewPrivateKey;
 };
 
-} // end namespace PaymentService
+} // end namespace Walletd

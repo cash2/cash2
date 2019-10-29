@@ -11,7 +11,7 @@
 #include "WalletdConfigurationOptions.h"
 #include "CryptoNoteConfig.h"
 
-namespace PaymentService {
+namespace Walletd {
 
 namespace po = boost::program_options;
 
@@ -337,4 +337,4 @@ bool WalletdConfigurationOptions::init(int argc, char** argv)
   return true;
 }
 
-} // end namespace PaymentService
+} // end namespace Walletd

@@ -10,7 +10,7 @@
 #include "Serialization/JsonInputValueSerializer.h"
 #include "Serialization/JsonOutputStreamSerializer.h"
 
-namespace PaymentService {
+namespace Walletd {
 
 // Walletd RPC Commands
 //
@@ -922,4 +922,4 @@ bool WalletdRpcServer::validateRpcPassword(const Common::JsonValue& request, Com
   return true;
 }
 
-} // end namespace PaymentService
+} // end namespace Walletd

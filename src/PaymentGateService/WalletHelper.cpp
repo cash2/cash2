@@ -29,7 +29,7 @@
 #include "WalletHelper.h"
 #include "WalletHelperErrors.h"
 
-namespace PaymentService {
+namespace Walletd {
 
 void createWalletFile(std::fstream& walletFile, const std::string& filename)
 {
@@ -1482,4 +1482,4 @@ void WalletHelper::validatePaymentId(const std::string& paymentId)
   }
 }
 
-} // end namespace PaymentService
+} // end namespace Walletd

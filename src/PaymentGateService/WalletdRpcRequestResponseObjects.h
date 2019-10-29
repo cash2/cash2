@@ -13,7 +13,7 @@
 #include "CryptoNoteConfig.h"
 #include "Serialization/ISerializer.h"
 
-namespace PaymentService {
+namespace Walletd {
 
 const uint32_t DEFAULT_ANONYMITY_LEVEL = CryptoNote::parameters::MAX_MIXIN;
 
@@ -565,4 +565,4 @@ struct WALLETD_RPC_COMMAND_VALIDATE_ADDRESS {
 	};
 };
 
-} // end namespace PaymentService
+} // end namespace Walletd
