@@ -20,15 +20,15 @@ enum class WalletHelperErrorCode
   OBJECT_NOT_FOUND
 };
 
-class WalletHelperErrorCategory : public std::error_category {
+class WalletHelperErrors : public std::error_category {
 
 public :
 
-  static WalletHelperErrorCategory INSTANCE;
+  static WalletHelperErrors INSTANCE;
 
   virtual const char* name() const throw() override
   {
-    return "WalletHelperErrorCategory";
+    return "WalletHelperErrors";
   }
 
   virtual std::error_condition default_error_condition(int ev) const throw() override
@@ -57,7 +57,7 @@ public :
 
 private :
 
-  WalletHelperErrorCategory() {
+  WalletHelperErrors() {
   }
 
 };
@@ -68,7 +68,7 @@ private :
 
 inline std::error_code make_error_code(CryptoNote::error::WalletHelperErrorCode e)
 {
-  return std::error_code(static_cast<int>(e), CryptoNote::error::WalletHelperErrorCategory::INSTANCE);
+  return std::error_code(static_cast<int>(e), CryptoNote::error::WalletHelperErrors::INSTANCE);
 }
 
 namespace std {

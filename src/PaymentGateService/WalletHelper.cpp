@@ -27,7 +27,7 @@
 #include "Wallet/WalletGreen.h"
 #include "Wallet/WalletUtils.h"
 #include "WalletHelper.h"
-#include "WalletHelperErrorCategory.h"
+#include "WalletHelperErrors.h"
 
 namespace PaymentService {
 

@@ -16,7 +16,7 @@
 #include "Logging/ConsoleLogger.h"
 #include <System/Event.h>
 #include "PaymentGateService/WalletHelper.h"
-#include "PaymentGateService/WalletHelperErrorCategory.h"
+#include "PaymentGateService/WalletHelperErrors.h"
 #include "INodeStubs.h"
 #include "Wallet/WalletErrors.h"
 
