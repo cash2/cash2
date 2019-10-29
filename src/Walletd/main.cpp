@@ -40,7 +40,7 @@
 
 namespace {
 
-void runWalletService(const CryptoNote::Currency& currency, CryptoNote::INode& node,
+void runWalletHelper(const CryptoNote::Currency& currency, CryptoNote::INode& node,
                       const Walletd::WalletdConfigurationOptions& walletdConfigurationOptions, System::Dispatcher* dispatcherPtr,
                       Logging::LoggerGroup& logger, System::Event* stopEventPtr) {
 
@@ -260,7 +260,7 @@ int main(int argc, char** argv) {
 
       nodeServerStarted.wait();
 
-      runWalletService(currency, *nodePtr, walletdConfigurationOptions, dispatcherPtr, logger, stopEventPtr);
+      runWalletHelper(currency, *nodePtr, walletdConfigurationOptions, dispatcherPtr, logger, stopEventPtr);
 
       nodeServer.sendStopSignal();
       context.get();
@@ -278,7 +278,7 @@ int main(int argc, char** argv) {
 
       std::unique_ptr<CryptoNote::INode> nodePtr(Walletd::WalletdRpcNodeFactory::createNode(walletdConfigurationOptions.daemonHost, walletdConfigurationOptions.daemonPort));
       
-      runWalletService(currency, *nodePtr, walletdConfigurationOptions, dispatcherPtr, logger, stopEventPtr);
+      runWalletHelper(currency, *nodePtr, walletdConfigurationOptions, dispatcherPtr, logger, stopEventPtr);
     }
 
     dispatcherPtr = nullptr;
