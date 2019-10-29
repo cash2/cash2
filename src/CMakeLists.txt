@@ -27,7 +27,7 @@ file(GLOB_RECURSE Wallet Wallet/*)
 file(GLOB_RECURSE WalletLegacy WalletLegacy/*)
 
 file(GLOB_RECURSE PaymentGateService PaymentGateService/*)
-file(GLOB_RECURSE PaymentGateServiceTest PaymentGateService/NodeFactory.cpp PaymentGateService/PaymentServiceJsonRpcMessages.cpp PaymentGateService/PaymentServiceJsonRpcServer.cpp PaymentGateService/WalletdConfigurationOptions.cpp PaymentGateService/WalletFactory.cpp PaymentGateService/WalletHelper.cpp PaymentGateService/WalletHelperErrorCategory.cpp)
+file(GLOB_RECURSE PaymentGateServiceTest PaymentGateService/NodeFactory.cpp PaymentGateService/WalletdRpcServer.cpp PaymentGateService/WalletdConfigurationOptions.cpp PaymentGateService/WalletHelper.cpp PaymentGateService/WalletHelperErrorCategory.cpp)
 file(GLOB_RECURSE Miner Miner/*)
 
 source_group("" FILES $${Common} ${ConnectivityTool} ${Crypto} ${CryptoNoteCore} ${CryptoNoteProtocol} ${Daemon} ${Http} ${Logging} ${NodeRpcProxy} ${P2p} ${Rpc} ${Serialization} ${SimpleWallet} ${System} ${Transfers} ${Wallet} ${WalletLegacy})
