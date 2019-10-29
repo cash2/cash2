@@ -10,7 +10,7 @@
 #include <Common/StringTools.h>
 #include <Logging/ConsoleLogger.h>
 
-#include "PaymentGateService/WalletHelper.h"
+#include "Walletd/WalletHelper.h"
 #include "Wallet/WalletGreen.h"
 
 // test helpers
@@ -20,10 +20,10 @@
 using namespace Walletd;
 using namespace CryptoNote;
 
-class PaymentGateServiceTest : public testing::Test {
+class WalletdTest : public testing::Test {
 public:
 
-  PaymentGateServiceTest() : 
+  WalletdTest() : 
     currency(CryptoNote::CurrencyBuilder(logger).currency()), 
     generator(currency),
     nodeStub(generator) 
@@ -56,13 +56,13 @@ protected:
 };
 
 
-TEST_F(PaymentGateServiceTest, createWallet) {
+TEST_F(WalletdTest, createWallet) {
   auto cfg = createWalletConfiguration();
   generateWallet(cfg);
   auto walletHelper = createWalletHelper(cfg);
 }
 
-TEST_F(PaymentGateServiceTest, addTransaction) {
+TEST_F(WalletdTest, addTransaction) {
   auto cfg = createWalletConfiguration();
   generateWallet(cfg);
   auto walletHelper = createWalletHelper(cfg);
@@ -93,7 +93,7 @@ TEST_F(PaymentGateServiceTest, addTransaction) {
 }
 
 /*
-TEST_F(PaymentGateServiceTest, DISABLED_sendTransaction) {
+TEST_F(WalletdTest, DISABLED_sendTransaction) {
 
   auto cfg = createWalletConfiguration();
   generateWallet(cfg);
