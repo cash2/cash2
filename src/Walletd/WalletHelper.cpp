@@ -1497,8 +1497,6 @@ void WalletHelper::secureSaveWallet(const std::string& path, bool saveDetailed, 
 
   try
   {
-    System::EventLock lk(m_readyEvent);
-
     if (!m_initialized) {
       m_logger(Logging::WARNING, Logging::BRIGHT_YELLOW) << "Wallet is not initialized";
       throw make_error_code(CryptoNote::error::NOT_INITIALIZED);
