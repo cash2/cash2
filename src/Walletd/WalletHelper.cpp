@@ -998,14 +998,13 @@ std::error_code WalletHelper::resetWallet()
 
 void WalletHelper::saveWallet()
 {
+  System::EventLock lock(m_readyEvent);
+
   secureSaveWallet(m_config.walletFile, true, true);
-  m_logger(Logging::INFO) << "Wallet is saved";
 }
 
 std::error_code WalletHelper::secureSaveWalletNoThrow()
 {
-  m_logger(Logging::INFO) << "Wallet is saving ...";
-
   std::fstream tempFile;
   std::string tempFilePath = createTemporaryFile(m_config.walletFile, tempFile);
 
@@ -1017,6 +1016,8 @@ std::error_code WalletHelper::secureSaveWalletNoThrow()
       m_logger(Logging::WARNING, Logging::BRIGHT_YELLOW) << "Wallet is not initialized";
       return make_error_code(CryptoNote::error::NOT_INITIALIZED);
     }
+
+    m_logger(Logging::INFO) << "Saving wallet ...";
 
     bool saveDetailed = true;
     bool saveCache = true;
@@ -1052,7 +1053,7 @@ std::error_code WalletHelper::secureSaveWalletNoThrow()
 
   Tools::replace_file(tempFilePath, m_config.walletFile);
 
-  m_logger(Logging::INFO) << "Wallet saved";
+  m_logger(Logging::INFO) << "Wallet is saved";
 
   return std::error_code();
 }
@@ -1502,6 +1503,8 @@ void WalletHelper::secureSaveWallet(const std::string& path, bool saveDetailed, 
       throw make_error_code(CryptoNote::error::NOT_INITIALIZED);
     }
 
+    m_logger(Logging::INFO) << "Saving wallet ...";
+
     m_wallet.save(tempFile, saveDetailed, saveCache);
     tempFile.flush();
   }
@@ -1519,6 +1522,8 @@ void WalletHelper::secureSaveWallet(const std::string& path, bool saveDetailed, 
 
   // replace wallet files
   Tools::replace_file(tempFilePath, path);
+
+  m_logger(Logging::INFO) << "Wallet is saved";
 }
 
 void WalletHelper::validateAddresses(const std::vector<std::string>& addresses)
