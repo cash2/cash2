@@ -971,7 +971,7 @@ std::error_code WalletHelper::resetWallet()
       return make_error_code(CryptoNote::error::NOT_INITIALIZED);
     }
 
-    secureSaveWallet(m_wallet, m_config.walletFile, false, false);
+    secureSaveWallet(m_config.walletFile, false, false);
     m_wallet.stop();
     m_wallet.shutdown();
     m_initialized = false;
@@ -998,8 +998,63 @@ std::error_code WalletHelper::resetWallet()
 
 void WalletHelper::saveWallet()
 {
-  secureSaveWallet(m_wallet, m_config.walletFile, true, true);
+  secureSaveWallet(m_config.walletFile, true, true);
   m_logger(Logging::INFO) << "Wallet is saved";
+}
+
+std::error_code WalletHelper::secureSaveWalletNoThrow()
+{
+  m_logger(Logging::INFO) << "Wallet is saving ...";
+
+  std::fstream tempFile;
+  std::string tempFilePath = createTemporaryFile(m_config.walletFile, tempFile);
+
+  try
+  {
+    System::EventLock lk(m_readyEvent);
+
+    if (!m_initialized) {
+      m_logger(Logging::WARNING, Logging::BRIGHT_YELLOW) << "Wallet is not initialized";
+      return make_error_code(CryptoNote::error::NOT_INITIALIZED);
+    }
+
+    bool saveDetailed = true;
+    bool saveCache = true;
+    m_wallet.save(tempFile, saveDetailed, saveCache);
+    tempFile.flush();
+  }
+  catch (std::system_error& error)
+  {
+    m_logger(Logging::WARNING) << "Error while  saving wallet : " << error.what();
+
+    // delete temporary wallet file
+    boost::system::error_code deleteErrorIgnore;
+    boost::filesystem::remove(tempFilePath, deleteErrorIgnore);
+
+    tempFile.close();
+    
+    return error.code();
+  }
+  catch (std::exception& e)
+  {
+    m_logger(Logging::WARNING) << "Error while  saving wallet : " << e.what();
+
+    // delete temporary wallet file
+    boost::system::error_code deleteErrorIgnore;
+    boost::filesystem::remove(tempFilePath, deleteErrorIgnore);
+
+    tempFile.close();
+    
+    return make_error_code(CryptoNote::error::INTERNAL_WALLET_ERROR);
+  }
+
+  tempFile.close();
+
+  Tools::replace_file(tempFilePath, m_config.walletFile);
+
+  m_logger(Logging::INFO) << "Wallet saved";
+
+  return std::error_code();
 }
 
 std::error_code WalletHelper::sendDelayedTransaction(const std::string& transactionHashStr)
@@ -1435,17 +1490,24 @@ void WalletHelper::refresh()
   }
 }
 
-void WalletHelper::secureSaveWallet(CryptoNote::IWallet& wallet, const std::string& path, bool saveDetailed, bool saveCache)
+void WalletHelper::secureSaveWallet(const std::string& path, bool saveDetailed, bool saveCache)
 {
   std::fstream tempFile;
   std::string tempFilePath = createTemporaryFile(path, tempFile);
 
   try
   {
-    wallet.save(tempFile, saveDetailed, saveCache);
+    System::EventLock lk(m_readyEvent);
+
+    if (!m_initialized) {
+      m_logger(Logging::WARNING, Logging::BRIGHT_YELLOW) << "Wallet is not initialized";
+      throw make_error_code(CryptoNote::error::NOT_INITIALIZED);
+    }
+
+    m_wallet.save(tempFile, saveDetailed, saveCache);
     tempFile.flush();
   }
-  catch (std::exception& )
+  catch (std::exception&)
   {
     // delete temporary wallet file
     boost::system::error_code deleteErrorIgnore;

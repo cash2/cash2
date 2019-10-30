@@ -146,6 +146,11 @@ std::error_code WalletdRpcCommands::reset(const WALLETD_RPC_COMMAND_RESET::Reque
   }
 }
 
+std::error_code WalletdRpcCommands::save(const WALLETD_RPC_COMMAND_SAVE::Request& request, WALLETD_RPC_COMMAND_SAVE::Response& response)
+{
+  return m_walletHelper.secureSaveWalletNoThrow();
+}
+
 std::error_code WalletdRpcCommands::sendDelayedTransaction(const WALLETD_RPC_COMMAND_SEND_DELAYED_TRANSACTION::Request& request, WALLETD_RPC_COMMAND_SEND_DELAYED_TRANSACTION::Response& response)
 {
   return m_walletHelper.sendDelayedTransaction(request.transaction_hash);

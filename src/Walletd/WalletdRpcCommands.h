@@ -35,6 +35,7 @@ public :
   std::error_code getUnconfirmedTransactionHashes(const WALLETD_RPC_COMMAND_GET_UNCONFIRMED_TRANSACTION_HASHES::Request& request, WALLETD_RPC_COMMAND_GET_UNCONFIRMED_TRANSACTION_HASHES::Response& response);
   std::error_code getViewPrivateKey(const WALLETD_RPC_COMMAND_GET_VIEW_PRIVATE_KEY::Request& request, WALLETD_RPC_COMMAND_GET_VIEW_PRIVATE_KEY::Response& response);
   std::error_code reset(const WALLETD_RPC_COMMAND_RESET::Request& request, WALLETD_RPC_COMMAND_RESET::Response& response);
+  std::error_code save(const WALLETD_RPC_COMMAND_SAVE::Request& request, WALLETD_RPC_COMMAND_SAVE::Response& response);
   std::error_code sendDelayedTransaction(const WALLETD_RPC_COMMAND_SEND_DELAYED_TRANSACTION::Request& request, WALLETD_RPC_COMMAND_SEND_DELAYED_TRANSACTION::Response& response);
   std::error_code sendTransaction(const WALLETD_RPC_COMMAND_SEND_TRANSACTION::Request& request, WALLETD_RPC_COMMAND_SEND_TRANSACTION::Response& response);
   std::error_code validateAddress(const WALLETD_RPC_COMMAND_VALIDATE_ADDRESS::Request& request, WALLETD_RPC_COMMAND_VALIDATE_ADDRESS::Response& response);

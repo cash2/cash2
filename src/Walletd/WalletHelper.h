@@ -64,6 +64,7 @@ public:
   std::error_code replaceWithNewWallet(const std::string& viewPrivateKeyStr);
   std::error_code resetWallet();
   void saveWallet();
+  std::error_code secureSaveWalletNoThrow();
   std::error_code sendDelayedTransaction(const std::string& transactionHashStr);
   std::error_code sendTransaction(const WALLETD_RPC_COMMAND_SEND_TRANSACTION::Request& request, std::string& transactionHash, std::string& transactionPrivateKeyStr);
   std::error_code validateAddress(const std::string& address, bool& addressValid);
@@ -92,7 +93,7 @@ private:
   void refresh();
   void replaceWithNewWallet(const Crypto::SecretKey& viewSecretKey);
   void reset();
-  void secureSaveWallet(CryptoNote::IWallet& wallet, const std::string& path, bool saveDetailed = true, bool saveCache = true);
+  void secureSaveWallet(const std::string& path, bool saveDetailed = true, bool saveCache = true);
   void validateAddresses(const std::vector<std::string>& addresses);
   void validatePaymentId(const std::string& paymentId);
 

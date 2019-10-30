@@ -32,6 +32,7 @@ namespace Walletd {
 // get_unconfirmed_transaction_hashes
 // get_view_private_key
 // reset
+// save
 // send_delayed_transaction
 // send_transaction
 // validate_address
@@ -730,6 +731,33 @@ void WalletdRpcServer::processJsonRpcRequest(const Common::JsonValue& request, C
 
       CryptoNote::JsonOutputStreamSerializer outputSerializer;
       serialize(resetResponse, outputSerializer);
+      fillJsonResponse(outputSerializer.getValue(), response);
+    }
+    else if (method =="save")
+    {
+      WALLETD_RPC_COMMAND_SAVE::Request saveRequest;
+      WALLETD_RPC_COMMAND_SAVE::Response saveResponse;
+
+      try
+      {
+        CryptoNote::JsonInputValueSerializer inputSerializer(const_cast<Common::JsonValue&>(params));
+        serialize(saveRequest, inputSerializer);
+      }
+      catch (std::exception&)
+      {
+        makeGenericErrorReponse(response, "Invalid Request", -32600);
+        return;
+      }
+
+      std::error_code error = m_walletdRpcCommands.save(saveRequest, saveResponse);
+      if (error)
+      {
+        makeErrorResponse(error, response);
+        return;
+      }
+
+      CryptoNote::JsonOutputStreamSerializer outputSerializer;
+      serialize(saveResponse, outputSerializer);
       fillJsonResponse(outputSerializer.getValue(), response);
     }
     else if (method == "send_delayed_transaction")
