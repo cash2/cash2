@@ -183,7 +183,8 @@ TEST_F(WalletHelperTest_createAddress, returnsCorrectAddress) {
 
   std::unique_ptr<WalletHelper> walletHelper = createWalletHelper(wallet);
   std::string address;
-  std::error_code ec = walletHelper->createAddress(address);
+  std::string spendPrivateKeyIgnore;
+  std::error_code ec = walletHelper->createAddress(address, spendPrivateKeyIgnore);
 
   ASSERT_FALSE(ec);
   ASSERT_EQ(wallet.address, address);
@@ -193,7 +194,8 @@ TEST_F(WalletHelperTest_createAddress, invalidSecretKey) {
   std::unique_ptr<WalletHelper> walletHelper = createWalletHelper();
 
   std::string address;
-  std::error_code ec = walletHelper->createAddress("wrong key", address);
+  std::string spendPrivateKeyReturnIgnore;
+  std::error_code ec = walletHelper->createAddress("wrong key", address, spendPrivateKeyReturnIgnore);
   ASSERT_EQ(make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_KEY_FORMAT), ec);
 }
 

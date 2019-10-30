@@ -38,8 +38,8 @@ public:
 
   WalletHelper(const CryptoNote::Currency& currency, System::Dispatcher& dispatcher, CryptoNote::INode& node, CryptoNote::IWallet& wallet, const WalletConfiguration& config, Logging::ILogger& logger);
   virtual ~WalletHelper();
-  std::error_code createAddress(std::string& address);
-  std::error_code createAddress(const std::string& spendPrivateKeyStr, std::string& address);
+  std::error_code createAddress(std::string& address, std::string& spendPrivateKeyStr);
+  std::error_code createAddress(const std::string& spendPrivateKeyStr, std::string& address, std::string& spendPrivateKeyReturnStr);
   std::error_code createDelayedTransaction(const WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION::Request& request, std::string& transactionHash);
   std::error_code createTrackingAddress(const std::string& spendPublicKeyStr, std::string& address);
   std::error_code deleteAddress(const std::string& address);

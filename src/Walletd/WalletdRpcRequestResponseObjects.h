@@ -121,9 +121,11 @@ struct WALLETD_RPC_COMMAND_CREATE_ADDRESS {
 
   struct Response {
     std::string address;
+    std::string spend_private_key;
 
     void serialize(CryptoNote::ISerializer& serializer) {
       serializer(address, "address");
+      serializer(spend_private_key, "spend_private_key");
     }
   };
 };

@@ -281,7 +281,7 @@ WalletHelper::~WalletHelper()
   }
 }
 
-std::error_code WalletHelper::createAddress(std::string& address)
+std::error_code WalletHelper::createAddress(std::string& address, std::string& spendPrivateKeyStr)
 {
   try
   {
@@ -289,9 +289,15 @@ std::error_code WalletHelper::createAddress(std::string& address)
 
     m_logger(Logging::DEBUGGING) << "Creating a new address ...";
 
-    address = m_wallet.createAddress();
+    std::string& tempAddress = m_wallet.createAddress();
 
-    // call saveWallet() here
+    secureSaveWallet(m_config.walletFile, true, true);
+
+    CryptoNote::KeyPair spendKeyPair = m_wallet.getAddressSpendKey(tempAddress);
+
+    spendPrivateKeyStr = Common::podToHex(spendKeyPair.secretKey);
+
+    address = tempAddress;
   }
   catch (std::system_error& error)
   {
@@ -304,7 +310,7 @@ std::error_code WalletHelper::createAddress(std::string& address)
   return std::error_code();
 }
 
-std::error_code WalletHelper::createAddress(const std::string& spendPrivateKeyStr, std::string& address)
+std::error_code WalletHelper::createAddress(const std::string& spendPrivateKeyStr, std::string& address, std::string& spendPrivateKeyReturnStr)
 {
   try
   {
@@ -320,9 +326,15 @@ std::error_code WalletHelper::createAddress(const std::string& spendPrivateKeySt
       return make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_KEY_FORMAT);
     }
 
-    address = m_wallet.createAddress(spendPrivateKey);
+    std::string& tempAddress = m_wallet.createAddress(spendPrivateKey);
 
-    // call saveWallet() here
+    secureSaveWallet(m_config.walletFile, true, true);
+
+    CryptoNote::KeyPair spendKeyPair = m_wallet.getAddressSpendKey(tempAddress);
+
+    spendPrivateKeyReturnStr = Common::podToHex(spendKeyPair.secretKey);
+
+    address = tempAddress;
   }
   catch (std::system_error& error)
   {
