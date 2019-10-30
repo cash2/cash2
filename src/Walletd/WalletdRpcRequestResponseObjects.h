@@ -481,6 +481,16 @@ struct WALLETD_RPC_COMMAND_RESET {
   };
 };
 
+struct WALLETD_RPC_COMMAND_SAVE {
+  struct Request {
+    void serialize(CryptoNote::ISerializer& serializer) {}
+  };
+
+  struct Response {
+    void serialize(CryptoNote::ISerializer& serializer) {}
+  };
+};
+
 struct WALLETD_RPC_COMMAND_SEND_DELAYED_TRANSACTION {
   struct Request {
     std::string transaction_hash;
