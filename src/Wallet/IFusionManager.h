@@ -8,11 +8,15 @@
 #include <cstdint>
 #include <utility>
 
-namespace CryptoNote {
+namespace CryptoNote
+{
 
 class IFusionManager {
+
 public:
-  struct EstimateResult {
+
+  struct EstimateResult
+  {
     size_t fusionReadyCount;
     size_t totalOutputCount;
   };
@@ -20,8 +24,8 @@ public:
   virtual ~IFusionManager() {}
 
   virtual size_t createFusionTransaction(uint64_t threshold, uint64_t mixin) = 0;
-  virtual bool isFusionTransaction(size_t transactionId) const = 0;
   virtual EstimateResult estimate(uint64_t threshold) const = 0;
+  virtual bool isFusionTransaction(size_t transactionId) const = 0;
 };
 
 }
