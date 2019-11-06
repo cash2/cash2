@@ -5,15 +5,13 @@
 
 #include "WalletAsyncContextCounter.h"
 
-namespace CryptoNote {
+namespace CryptoNote
+{
 
-void WalletAsyncContextCounter::incrementAsyncContextCounter() {
+void WalletAsyncContextCounter::decrementAsyncContextCounter()
+{
   std::unique_lock<std::mutex> lock(m_mutex);
-  m_asyncContextCounter++;
-}
 
-void WalletAsyncContextCounter::decrementAsyncContextCounter() {
-  std::unique_lock<std::mutex> lock(m_mutex);
   m_asyncContextCounter--;
 
   if (m_asyncContextCounter == 0)
@@ -22,8 +20,17 @@ void WalletAsyncContextCounter::decrementAsyncContextCounter() {
   }
 }
 
-void WalletAsyncContextCounter::waitAsyncContextsFinish() {
+void WalletAsyncContextCounter::incrementAsyncContextCounter()
+{
   std::unique_lock<std::mutex> lock(m_mutex);
+
+  m_asyncContextCounter++;
+}
+
+void WalletAsyncContextCounter::waitAsyncContextsFinish()
+{
+  std::unique_lock<std::mutex> lock(m_mutex);
+
   while (m_asyncContextCounter > 0)
   {
     m_cv.wait(lock);
