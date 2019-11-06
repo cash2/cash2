@@ -72,8 +72,8 @@ void generateNewWallet(const CryptoNote::Currency &currency, const WalletConfigu
     std::unique_ptr<CryptoNote::IWallet> walletGuard(walletPtr);
     walletPtr->initialize(config.walletPassword);
     std::string address = walletPtr->createAddress();
-    CryptoNote::KeyPair spendKeyPair = walletPtr->getAddressSpendKey(address);
-    CryptoNote::KeyPair viewKeyPair = walletPtr->getViewKey();
+    CryptoNote::KeyPair spendKeyPair = walletPtr->getAddressSpendKeyPair(address);
+    CryptoNote::KeyPair viewKeyPair = walletPtr->getViewKeyPair();
 
     log(Logging::INFO) << "A new wallet was successfully created :";
 
@@ -289,11 +289,11 @@ std::error_code WalletHelper::createAddress(std::string& address, std::string& s
 
     m_logger(Logging::DEBUGGING) << "Creating a new address ...";
 
-    std::string& tempAddress = m_wallet.createAddress();
+    std::string tempAddress = m_wallet.createAddress();
 
     secureSaveWallet(m_config.walletFile, true, true);
 
-    CryptoNote::KeyPair spendKeyPair = m_wallet.getAddressSpendKey(tempAddress);
+    CryptoNote::KeyPair spendKeyPair = m_wallet.getAddressSpendKeyPair(tempAddress);
 
     spendPrivateKeyStr = Common::podToHex(spendKeyPair.secretKey);
 
@@ -326,11 +326,11 @@ std::error_code WalletHelper::createAddress(const std::string& spendPrivateKeySt
       return make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_KEY_FORMAT);
     }
 
-    std::string& tempAddress = m_wallet.createAddress(spendPrivateKey);
+    std::string tempAddress = m_wallet.createAddress(spendPrivateKey);
 
     secureSaveWallet(m_config.walletFile, true, true);
 
-    CryptoNote::KeyPair spendKeyPair = m_wallet.getAddressSpendKey(tempAddress);
+    CryptoNote::KeyPair spendKeyPair = m_wallet.getAddressSpendKeyPair(tempAddress);
 
     spendPrivateKeyReturnStr = Common::podToHex(spendKeyPair.secretKey);
 
@@ -608,7 +608,7 @@ std::error_code WalletHelper::getDelayedTransactionHashes(std::vector<std::strin
   {
     System::EventLock lock(m_readyEvent);
 
-    std::vector<size_t> transactionIndexes = m_wallet.getDelayedTransactionIds();
+    std::vector<size_t> transactionIndexes = m_wallet.getDelayedTransactionIndexes();
     transactionHashStrings.reserve(transactionIndexes.size());
 
     for (size_t transactionIndex : transactionIndexes)
@@ -637,7 +637,7 @@ std::error_code WalletHelper::getSpendPrivateKey(const std::string& address, std
   {
     System::EventLock lock(m_readyEvent);
 
-    CryptoNote::KeyPair spendKeyPair = m_wallet.getAddressSpendKey(address);
+    CryptoNote::KeyPair spendKeyPair = m_wallet.getAddressSpendKeyPair(address);
 
     spendPrivateKeyStr = Common::podToHex(spendKeyPair.secretKey);
   }
@@ -660,7 +660,7 @@ std::error_code WalletHelper::getSpendPrivateKeys(std::vector<std::string>& spen
 
     for (size_t i = 0; i < walletAddressCount; ++i)
     {
-      CryptoNote::KeyPair spendKeyPair = m_wallet.getAddressSpendKey(i);
+      CryptoNote::KeyPair spendKeyPair = m_wallet.getAddressSpendKeyPair(i);
       spendPrivateKeyStrings.emplace_back(Common::podToHex(spendKeyPair.secretKey));
     }
 
@@ -900,7 +900,7 @@ std::error_code WalletHelper::getViewPrivateKey(std::string& viewPrivateKey)
   {
     System::EventLock lock(m_readyEvent);
 
-    CryptoNote::KeyPair viewKeyPair = m_wallet.getViewKey();
+    CryptoNote::KeyPair viewKeyPair = m_wallet.getViewKeyPair();
     viewPrivateKey = Common::podToHex(viewKeyPair.secretKey);
   }
   catch (std::system_error& error)

@@ -127,9 +127,9 @@ public:
 
   virtual size_t getAddressCount() const = 0;
   virtual std::string getAddress(size_t index) const = 0;
-  virtual KeyPair getAddressSpendKey(size_t index) const = 0;
-  virtual KeyPair getAddressSpendKey(const std::string& address) const = 0;
-  virtual KeyPair getViewKey() const = 0;
+  virtual KeyPair getAddressSpendKeyPair(size_t index) const = 0;
+  virtual KeyPair getAddressSpendKeyPair(const std::string& address) const = 0;
+  virtual KeyPair getViewKeyPair() const = 0;
   virtual std::string createAddress() = 0;
   virtual std::string createAddress(const Crypto::SecretKey& spendSecretKey) = 0;
   virtual std::string createAddress(const Crypto::PublicKey& spendPublicKey) = 0;
@@ -152,7 +152,7 @@ public:
   virtual std::vector<Crypto::Hash> getBlockHashes(uint32_t blockIndex, size_t count) const = 0;
   virtual uint32_t getBlockCount() const  = 0;
   virtual std::vector<WalletTransactionWithTransfers> getUnconfirmedTransactions() const = 0;
-  virtual std::vector<size_t> getDelayedTransactionIds() const = 0;                                                                                                         
+  virtual std::vector<size_t> getDelayedTransactionIndexes() const = 0;                                                                                                         
   virtual size_t transfer(const TransactionParameters& sendingTransaction, Crypto::SecretKey &txSecretKey) = 0;
 
   virtual size_t makeTransaction(const TransactionParameters& sendingTransaction) = 0;

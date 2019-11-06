@@ -49,9 +49,9 @@ struct IWalletBaseStub : public CryptoNote::IWallet {
 
   virtual size_t getAddressCount() const override { return 0; }
   virtual std::string getAddress(size_t index) const override { return ""; }
-  virtual KeyPair getAddressSpendKey(size_t index) const override { return KeyPair(); }
-  virtual KeyPair getAddressSpendKey(const std::string& address) const override { return KeyPair(); }
-  virtual KeyPair getViewKey() const override { return KeyPair(); }
+  virtual KeyPair getAddressSpendKeyPair(size_t index) const override { return KeyPair(); }
+  virtual KeyPair getAddressSpendKeyPair(const std::string& address) const override { return KeyPair(); }
+  virtual KeyPair getViewKeyPair() const override { return KeyPair(); }
   virtual std::string createAddress() override { return ""; }
   virtual std::string createAddress(const Crypto::SecretKey& spendSecretKey) override { return ""; }
   virtual std::string createAddress(const Crypto::PublicKey& spendPublicKey) override { return ""; }
@@ -76,7 +76,7 @@ struct IWalletBaseStub : public CryptoNote::IWallet {
   virtual std::vector<Crypto::Hash> getBlockHashes(uint32_t blockIndex, size_t count) const override { return {}; }
   virtual uint32_t getBlockCount() const override { return 0; }
   virtual std::vector<WalletTransactionWithTransfers> getUnconfirmedTransactions() const override { return {}; }
-  virtual std::vector<size_t> getDelayedTransactionIds() const override { return {}; }
+  virtual std::vector<size_t> getDelayedTransactionIndexes() const override { return {}; }
 
   virtual size_t transfer(const TransactionParameters& sendingTransaction, Crypto::SecretKey& txSecretKey) override { return 0; }
 
@@ -216,7 +216,8 @@ TEST_F(WalletHelperTest_createAddress, correctSecretKey) {
   std::unique_ptr<WalletHelper> walletHelper = createWalletHelper(wallet);
 
   std::string address;
-  std::error_code ec = walletHelper->createAddress(Common::podToHex(sec), address);
+  std::string spendPrivateKeyStringReturnedIgnored;
+  std::error_code ec = walletHelper->createAddress(Common::podToHex(sec), address, spendPrivateKeyStringReturnedIgnored);
 
   ASSERT_FALSE(ec);
   ASSERT_EQ(wallet.address, address);
@@ -245,7 +246,7 @@ struct WalletGetSpendPrivateKeyStub: public IWalletBaseStub {
     Crypto::generate_keys(keyPair.publicKey, keyPair.secretKey);
   }
 
-  virtual KeyPair getAddressSpendKey(const std::string& address) const override {
+  virtual KeyPair getAddressSpendKeyPair(const std::string& address) const override {
     return keyPair;
   }
 
@@ -386,7 +387,7 @@ struct WalletGetViewKeyStub: public IWalletBaseStub {
     Crypto::generate_keys(keyPair.publicKey, keyPair.secretKey);
   }
 
-  virtual KeyPair getViewKey() const override {
+  virtual KeyPair getViewKeyPair() const override {
     return keyPair;
   }
 
@@ -890,7 +891,7 @@ struct WalletGetDelayedTransactionIdsStub : public IWalletBaseStub {
   WalletGetDelayedTransactionIdsStub(System::Dispatcher& dispatcher, const Crypto::Hash& hash) : IWalletBaseStub(dispatcher), hash(hash) {
   }
 
-  virtual std::vector<size_t> getDelayedTransactionIds() const override {
+  virtual std::vector<size_t> getDelayedTransactionIndexes() const override {
     return {0};
   }
 

@@ -44,14 +44,22 @@ struct TransactionHashIndex {};
 struct TransactionIndex {};
 struct BlockHashIndex {};
 
-typedef boost::multi_index_container <
+typedef boost::multi_index_container
+<
   WalletRecord,
-  boost::multi_index::indexed_by <
+  boost::multi_index::indexed_by
+  <
     boost::multi_index::random_access < boost::multi_index::tag <RandomAccessIndex> >,
-    boost::multi_index::hashed_unique < boost::multi_index::tag <KeysIndex>,
-    BOOST_MULTI_INDEX_MEMBER(WalletRecord, Crypto::PublicKey, spendPublicKey)>,
-    boost::multi_index::hashed_unique < boost::multi_index::tag <TransfersContainerIndex>,
-      BOOST_MULTI_INDEX_MEMBER(WalletRecord, CryptoNote::ITransfersContainer*, container) >
+    boost::multi_index::hashed_unique
+    <
+      boost::multi_index::tag <KeysIndex>,
+      BOOST_MULTI_INDEX_MEMBER(WalletRecord, Crypto::PublicKey, spendPublicKey)
+    >,
+    boost::multi_index::hashed_unique
+    <
+      boost::multi_index::tag <TransfersContainerIndex>,
+      BOOST_MULTI_INDEX_MEMBER(WalletRecord, CryptoNote::ITransfersContainer*, container)
+    >
   >
 > WalletsContainer;
 
@@ -73,15 +81,21 @@ typedef boost::multi_index_container <
   >
 > UnlockTransactionJobs;
 
-typedef boost::multi_index_container <
+typedef boost::multi_index_container
+<
   CryptoNote::WalletTransaction,
-  boost::multi_index::indexed_by <
+  boost::multi_index::indexed_by
+  <
     boost::multi_index::random_access < boost::multi_index::tag <RandomAccessIndex> >,
-    boost::multi_index::hashed_unique < boost::multi_index::tag <TransactionIndex>,
-      boost::multi_index::member<CryptoNote::WalletTransaction, Crypto::Hash, &CryptoNote::WalletTransaction::hash >
+    boost::multi_index::hashed_unique
+    <
+      boost::multi_index::tag <TransactionIndex>,
+      boost::multi_index::member<CryptoNote::WalletTransaction, Crypto::Hash, &CryptoNote::WalletTransaction::hash>
     >,
-    boost::multi_index::ordered_non_unique < boost::multi_index::tag <BlockHeightIndex>,
-      boost::multi_index::member<CryptoNote::WalletTransaction, uint32_t, &CryptoNote::WalletTransaction::blockHeight >
+    boost::multi_index::ordered_non_unique
+    <
+      boost::multi_index::tag <BlockHeightIndex>,
+      boost::multi_index::member<CryptoNote::WalletTransaction, uint32_t, &CryptoNote::WalletTransaction::blockHeight>
     >
   >
 > WalletTransactions;

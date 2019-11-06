@@ -230,8 +230,8 @@ void WalletApi::SetUp() {
 void WalletApi::setMinerTo(CryptoNote::WalletGreen& wallet) {
   AccountBase base;
   AccountKeys keys;
-  auto viewKey = wallet.getViewKey();
-  auto spendKey = wallet.getAddressSpendKey(0);
+  auto viewKey = wallet.getViewKeyPair();
+  auto spendKey = wallet.getAddressSpendKeyPair(0);
   keys.address.spendPublicKey = spendKey.publicKey;
   keys.address.viewPublicKey = viewKey.publicKey;
   keys.viewSecretKey = viewKey.secretKey;
@@ -1706,7 +1706,7 @@ public:
   // Crypto::generate_keys(viewKeys.publicKey, viewKeys.secretKey);
   // wallet.initializeWithViewKey(viewKeys.secretKey, "pass");
 
-  // CryptoNote::KeyPair retrievedKeys = wallet.getViewKey();
+  // CryptoNote::KeyPair retrievedKeys = wallet.getViewKeyPair();
   // ASSERT_EQ(viewKeys.publicKey, retrievedKeys.publicKey);
   // ASSERT_EQ(viewKeys.secretKey, retrievedKeys.secretKey);
 
@@ -1715,13 +1715,13 @@ public:
 
 // TEST_F(WalletApi, getViewKeyThrowsIfNotInitialized) {
   // CryptoNote::WalletGreen wallet(dispatcher, currency, node);
-  // ASSERT_ANY_THROW(wallet.getViewKey());
+  // ASSERT_ANY_THROW(wallet.getViewKeyPair());
 // }
 
 // TEST_F(WalletApi, getViewKeyThrowsIfStopped) {
   // alice.stop();
 
-  // ASSERT_ANY_THROW(alice.getViewKey());
+  // ASSERT_ANY_THROW(alice.getViewKeyPair());
 // }
 
 // TEST_F(WalletApi, getAddressSpendKeyReturnsProperKey) {
@@ -1730,23 +1730,23 @@ public:
 
   // alice.createAddress(spendKeys.secretKey);
 
-  // CryptoNote::KeyPair retrievedKeys = alice.getAddressSpendKey(1);
+  // CryptoNote::KeyPair retrievedKeys = alice.getAddressSpendKeyPair(1);
   // ASSERT_EQ(spendKeys.publicKey, retrievedKeys.publicKey);
   // ASSERT_EQ(spendKeys.secretKey, retrievedKeys.secretKey);
 // }
 
 // TEST_F(WalletApi, getAddressSpendKeyThrowsForWrongAddressIndex) {
-  // ASSERT_ANY_THROW(alice.getAddressSpendKey(1));
+  // ASSERT_ANY_THROW(alice.getAddressSpendKeyPair(1));
 // }
 
 // TEST_F(WalletApi, getAddressSpendKeyThrowsIfNotInitialized) {
   // CryptoNote::WalletGreen wallet(dispatcher, currency, node);
-  // ASSERT_ANY_THROW(wallet.getAddressSpendKey(0));
+  // ASSERT_ANY_THROW(wallet.getAddressSpendKeyPair(0));
 // }
 
 // TEST_F(WalletApi, getAddressSpendKeyThrowsIfStopped) {
   // alice.stop();
-  // ASSERT_ANY_THROW(alice.getAddressSpendKey(0));
+  // ASSERT_ANY_THROW(alice.getAddressSpendKeyPair(0));
 // }
 
 Crypto::PublicKey generatePublicKey() {
@@ -1806,7 +1806,7 @@ Crypto::PublicKey generatePublicKey() {
   // Crypto::PublicKey publicKey = generatePublicKey();
   // wallet.createAddress(publicKey);
 
-  // KeyPair spendKeys = wallet.getAddressSpendKey(0);
+  // KeyPair spendKeys = wallet.getAddressSpendKeyPair(0);
   // ASSERT_EQ(NULL_SECRET_KEY, spendKeys.secretKey);
 
   // wallet.shutdown();
@@ -3380,12 +3380,12 @@ size_t getTransactionsCount(const std::vector<TransactionsInBlockInfo>& transact
 
 // TEST_F(WalletApi, getDelayedTransactionIdsThrowsIfNotInitialized) {
   // CryptoNote::WalletGreen bob(dispatcher, currency, node, TRANSACTION_SOFTLOCK_TIME);
-  // ASSERT_ANY_THROW(bob.getDelayedTransactionIds());
+  // ASSERT_ANY_THROW(bob.getDelayedTransactionIndexes());
 // }
 
 // TEST_F(WalletApi, getDelayedTransactionIdsThrowsIfStopped) {
   // alice.stop();
-  // ASSERT_ANY_THROW(alice.getDelayedTransactionIds());
+  // ASSERT_ANY_THROW(alice.getDelayedTransactionIndexes());
   // alice.start();
 // }
 
@@ -3398,7 +3398,7 @@ size_t getTransactionsCount(const std::vector<TransactionsInBlockInfo>& transact
   // Crypto::generate_keys(pub, sec);
 
   // bob.createAddress(pub);
-  // ASSERT_ANY_THROW(bob.getDelayedTransactionIds());
+  // ASSERT_ANY_THROW(bob.getDelayedTransactionIndexes());
 // }
 
 // TEST_F(WalletApi, getDelayedTransactionIdsReturnsDelayedTransaction) {
@@ -3408,7 +3408,7 @@ size_t getTransactionsCount(const std::vector<TransactionsInBlockInfo>& transact
 
   // auto id = makeTransaction({}, RANDOM_ADDRESS, SENT, FEE);
 
-  // auto delayed = alice.getDelayedTransactionIds();
+  // auto delayed = alice.getDelayedTransactionIndexes();
 
   // ASSERT_EQ(1, delayed.size());
   // ASSERT_EQ(id, delayed[0]);
@@ -3422,7 +3422,7 @@ size_t getTransactionsCount(const std::vector<TransactionsInBlockInfo>& transact
   // auto id = makeTransaction({}, RANDOM_ADDRESS, SENT, FEE);
   // alice.commitTransaction(id);
 
-  // auto delayed = alice.getDelayedTransactionIds();
+  // auto delayed = alice.getDelayedTransactionIndexes();
   // ASSERT_TRUE(delayed.empty());
 // }
 
@@ -3437,7 +3437,7 @@ size_t getTransactionsCount(const std::vector<TransactionsInBlockInfo>& transact
   // } catch (std::exception&){
   // }
 
-  // auto delayed = alice.getDelayedTransactionIds();
+  // auto delayed = alice.getDelayedTransactionIndexes();
   // ASSERT_TRUE(delayed.empty());
 // }
 
@@ -3537,7 +3537,7 @@ size_t getTransactionsCount(const std::vector<TransactionsInBlockInfo>& transact
 // }
 
 // TEST_F(WalletApi, checkBaseTransaction) {
-  // CryptoNote::AccountKeys keys{ parseAddress(alice.getAddress(0)), alice.getAddressSpendKey(0).secretKey, alice.getViewKey().secretKey };
+  // CryptoNote::AccountKeys keys{ parseAddress(alice.getAddress(0)), alice.getAddressSpendKeyPair(0).secretKey, alice.getViewKeyPair().secretKey };
   // CryptoNote::AccountBase acc;
   // acc.setAccountKeys(keys);
   // acc.set_createtime(0);
