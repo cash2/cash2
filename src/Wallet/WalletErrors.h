@@ -58,32 +58,32 @@ public:
 
   virtual std::string message(int ev) const override {
     switch (ev) {
-    case NOT_INITIALIZED:          return "Object was not initialized";
-    case WRONG_PASSWORD:           return "The wallet container password is incorrect";
-    case ALREADY_INITIALIZED:      return "The object is already initialized";
-    case INTERNAL_WALLET_ERROR:    return "Internal error occurred";
-    case MIXIN_COUNT_TOO_BIG:      return "MixIn count is too big";
-    case BAD_ADDRESS:              return "Bad address";
-    case TRANSACTION_SIZE_TOO_BIG: return "Transaction size is too big";
-    case WRONG_AMOUNT:             return "Wrong amount";
-    case SUM_OVERFLOW:             return "Sum overflow";
-    case ZERO_DESTINATION:         return "The destination is empty";
-    case TX_CANCEL_IMPOSSIBLE:     return "Impossible to cancel transaction";
-    case WRONG_STATE:              return "The wallet is in wrong state (maybe loading or saving), try again later";
-    case OPERATION_CANCELLED:      return "The operation you've requested has been cancelled";
-    case TX_TRANSFER_IMPOSSIBLE:   return "Transaction transfer impossible";
-    case WRONG_VERSION:            return "Wrong version";
-    case FEE_TOO_SMALL:            return "Transaction fee is too small";
-    case KEY_GENERATION_ERROR:     return "Cannot generate new key";
-    case INDEX_OUT_OF_RANGE:       return "Index is out of range";
     case ADDRESS_ALREADY_EXISTS:   return "Address already exists";
-    case TRACKING_MODE:            return "The wallet is in tracking mode";
-    case WRONG_PARAMETERS:         return "Wrong parameters passed";
-    case OBJECT_NOT_FOUND:         return "Object not found";
-    case WALLET_NOT_FOUND:         return "Requested wallet not found";
-    case CHANGE_ADDRESS_REQUIRED:  return "Change address required";
+    case ALREADY_INITIALIZED:      return "The object is already initialized";
+    case BAD_ADDRESS:              return "Bad address";
     case CHANGE_ADDRESS_NOT_FOUND: return "Change address not found";
+    case CHANGE_ADDRESS_REQUIRED:  return "Change address required";
     case EXTRA_TOO_LARGE:          return "Transaction extra too large";
+    case FEE_TOO_SMALL:            return "Transaction fee is too small";
+    case INDEX_OUT_OF_RANGE:       return "Index is out of range";
+    case INTERNAL_WALLET_ERROR:    return "Internal error occurred";
+    case KEY_GENERATION_ERROR:     return "Cannot generate new key";
+    case MIXIN_COUNT_TOO_BIG:      return "MixIn count is too big";
+    case NOT_INITIALIZED:          return "Object was not initialized";
+    case OBJECT_NOT_FOUND:         return "Object not found";
+    case OPERATION_CANCELLED:      return "The operation you've requested has been cancelled";
+    case SUM_OVERFLOW:             return "Sum overflow";
+    case TRACKING_MODE:            return "The wallet is in tracking mode";
+    case TRANSACTION_SIZE_TOO_BIG: return "Transaction size is too big";
+    case TX_CANCEL_IMPOSSIBLE:     return "Impossible to cancel transaction";
+    case TX_TRANSFER_IMPOSSIBLE:   return "Transaction transfer impossible";
+    case WALLET_NOT_FOUND:         return "Requested wallet not found";
+    case WRONG_AMOUNT:             return "Wrong amount";
+    case WRONG_PARAMETERS:         return "Wrong parameters passed";
+    case WRONG_PASSWORD:           return "The wallet container password is incorrect";
+    case WRONG_STATE:              return "The wallet is in wrong state (maybe loading or saving), try again later";
+    case WRONG_VERSION:            return "Wrong version";
+    case ZERO_DESTINATION:         return "The destination is empty";
     default:                       return "Unknown error";
     }
   }
