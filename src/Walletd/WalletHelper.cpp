@@ -326,15 +326,11 @@ std::error_code WalletHelper::createAddress(const std::string& spendPrivateKeySt
       return make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_KEY_FORMAT);
     }
 
-    std::string tempAddress = m_wallet.createAddress(spendPrivateKey);
+    address = m_wallet.createAddress(spendPrivateKey);
 
-    secureSaveWallet(m_config.walletFile, true, true);
-
-    CryptoNote::KeyPair spendKeyPair = m_wallet.getAddressSpendKeyPair(tempAddress);
+    CryptoNote::KeyPair spendKeyPair = m_wallet.getAddressSpendKeyPair(address);
 
     spendPrivateKeyReturnStr = Common::podToHex(spendKeyPair.secretKey);
-
-    address = tempAddress;
   }
   catch (std::system_error& error)
   {
@@ -348,7 +344,8 @@ std::error_code WalletHelper::createAddress(const std::string& spendPrivateKeySt
   return std::error_code();
 }
 
-std::error_code WalletHelper::createAddresses(const std::vector<std::string>& spendPrivateKeyStrs, std::vector<std::string>& addresses) {
+std::error_code WalletHelper::createAddresses(const std::vector<std::string>& spendPrivateKeyStrs, std::vector<std::string>& addresses)
+{
   try
   {
     System::EventLock lock(m_readyEvent);
