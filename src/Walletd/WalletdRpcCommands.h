@@ -18,6 +18,7 @@ public :
   WalletdRpcCommands(WalletHelper& walletService);
 
   std::error_code createAddress(const WALLETD_RPC_COMMAND_CREATE_ADDRESS::Request& request, WALLETD_RPC_COMMAND_CREATE_ADDRESS::Response& response);
+  std::error_code createAddresses(const WALLETD_RPC_COMMAND_CREATE_ADDRESSES::Request& request, WALLETD_RPC_COMMAND_CREATE_ADDRESSES::Response& response);
   std::error_code createDelayedTransaction(const WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION::Request& request, WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION::Response& response);
   std::error_code deleteAddress(const WALLETD_RPC_COMMAND_DELETE_ADDRESS::Request& request, WALLETD_RPC_COMMAND_DELETE_ADDRESS::Response& response);
   std::error_code deleteDelayedTransaction(const WALLETD_RPC_COMMAND_DELETE_DELAYED_TRANSACTION::Request& request, WALLETD_RPC_COMMAND_DELETE_DELAYED_TRANSACTION::Response& response);

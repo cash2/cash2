@@ -32,6 +32,7 @@ public:
   virtual std::string createAddress() override;
   virtual std::string createAddress(const Crypto::PublicKey& spendPublicKey) override;
   virtual std::string createAddress(const Crypto::SecretKey& spendPrivateKey) override;
+  virtual std::vector<std::string> createAddresses(const std::vector<Crypto::SecretKey>& spendPrivateKeys) override;
   virtual size_t createFusionTransaction(uint64_t threshold, uint64_t mixin) override; // Plan to remove
   virtual void deleteAddress(const std::string& address) override;
   virtual IFusionManager::EstimateResult estimate(uint64_t threshold) const override; // Plan to remove

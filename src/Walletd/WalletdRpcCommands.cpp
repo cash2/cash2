@@ -28,6 +28,11 @@ std::error_code WalletdRpcCommands::createAddress(const WALLETD_RPC_COMMAND_CREA
   }
 }
 
+std::error_code WalletdRpcCommands::createAddresses(const WALLETD_RPC_COMMAND_CREATE_ADDRESSES::Request& request, WALLETD_RPC_COMMAND_CREATE_ADDRESSES::Response& response)
+{
+  return m_walletHelper.createAddresses(request.spend_private_keys, response.addresses);
+}
+
 std::error_code WalletdRpcCommands::createDelayedTransaction(const WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION::Request& request, WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION::Response& response)
 {
   return m_walletHelper.createDelayedTransaction(request, response.transaction_hash);

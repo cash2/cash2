@@ -130,6 +130,26 @@ struct WALLETD_RPC_COMMAND_CREATE_ADDRESS {
   };
 };
 
+struct WALLETD_RPC_COMMAND_CREATE_ADDRESSES {
+  struct Request {
+    std::vector<std::string> spend_private_keys;
+
+    void serialize(CryptoNote::ISerializer& serializer) {
+      if (!serializer(spend_private_keys, "spend_private_keys")) {
+        throw RequestSerializationError();
+      }
+    }
+  };
+
+  struct Response {
+    std::vector<std::string> addresses;
+
+    void serialize(CryptoNote::ISerializer& serializer) {
+      serializer(addresses, "addresses");
+    }
+  };
+};
+
 struct WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION {
   struct Request {
     std::vector<std::string> addresses;

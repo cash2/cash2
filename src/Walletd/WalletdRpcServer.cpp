@@ -15,6 +15,7 @@ namespace Walletd {
 // Walletd RPC Commands
 //
 // create_address
+// create_addresses
 // create_delayed_transaction
 // delete_address
 // delete_delayed_transaction
@@ -272,6 +273,33 @@ void WalletdRpcServer::processJsonRpcRequest(const Common::JsonValue& request, C
 
       CryptoNote::JsonOutputStreamSerializer outputSerializer;
       serialize(createAddressResponse, outputSerializer);
+      fillJsonResponse(outputSerializer.getValue(), response);
+    }
+    else if (method == "create_addresses")
+    {
+      WALLETD_RPC_COMMAND_CREATE_ADDRESSES::Request createAddressesRequest;
+      WALLETD_RPC_COMMAND_CREATE_ADDRESSES::Response createAddressesResponse;
+
+      try
+      {
+        CryptoNote::JsonInputValueSerializer inputSerializer(const_cast<Common::JsonValue&>(params));
+        serialize(createAddressesRequest, inputSerializer);
+      }
+      catch (std::exception&)
+      {
+        makeGenericErrorReponse(response, "Invalid Request", -32600);
+        return;
+      }
+
+      std::error_code error = m_walletdRpcCommands.createAddresses(createAddressesRequest, createAddressesResponse);
+      if (error)
+      {
+        makeErrorResponse(error, response);
+        return;
+      }
+
+      CryptoNote::JsonOutputStreamSerializer outputSerializer;
+      serialize(createAddressesResponse, outputSerializer);
       fillJsonResponse(outputSerializer.getValue(), response);
     }
     else if (method == "create_delayed_transaction")

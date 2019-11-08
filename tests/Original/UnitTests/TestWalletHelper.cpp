@@ -55,6 +55,7 @@ struct IWalletBaseStub : public CryptoNote::IWallet {
   virtual std::string createAddress() override { return ""; }
   virtual std::string createAddress(const Crypto::SecretKey& spendSecretKey) override { return ""; }
   virtual std::string createAddress(const Crypto::PublicKey& spendPublicKey) override { return ""; }
+  virtual std::vector<std::string> createAddresses(const std::vector<Crypto::SecretKey>& spendPrivateKeys) override { return {}; }
   virtual void deleteAddress(const std::string& address) override { }
 
   virtual uint64_t getActualBalance() const override { return 0; }

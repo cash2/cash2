@@ -348,6 +348,42 @@ std::error_code WalletHelper::createAddress(const std::string& spendPrivateKeySt
   return std::error_code();
 }
 
+std::error_code WalletHelper::createAddresses(const std::vector<std::string>& spendPrivateKeyStrs, std::vector<std::string>& addresses) {
+  try
+  {
+    System::EventLock lock(m_readyEvent);
+
+    m_logger(Logging::DEBUGGING) << "Creating addresses ...";
+
+    const std::unordered_set<std::string> uniqueSpendPrivateKeyStrs(spendPrivateKeyStrs.begin(), spendPrivateKeyStrs.end());
+
+    std::vector<Crypto::SecretKey> spendPrivateKeys;
+    spendPrivateKeys.reserve(uniqueSpendPrivateKeyStrs.size());
+    
+    for (const std::string& spendPrivateKeyStr : uniqueSpendPrivateKeyStrs)
+    {
+      Crypto::SecretKey spendPrivateKey;
+      if (!Common::podFromHex(spendPrivateKeyStr, spendPrivateKey)) {
+        m_logger(Logging::WARNING, Logging::BRIGHT_YELLOW) << "Wrong key format: " << spendPrivateKeyStr;
+        return make_error_code(CryptoNote::error::WalletHelperErrorCode::WRONG_KEY_FORMAT);
+      }
+
+      spendPrivateKeys.emplace_back(spendPrivateKey);
+    }
+
+    addresses = m_wallet.createAddresses(spendPrivateKeys);
+  }
+  catch (std::system_error& error)
+  {
+    m_logger(Logging::WARNING, Logging::BRIGHT_YELLOW) << "Error while creating addresses: " << error.what();
+    return error.code();
+  }
+
+  m_logger(Logging::DEBUGGING) << "Created " << addresses.size() << " addresses";
+
+  return std::error_code();
+}
+
 std::error_code WalletHelper::createDelayedTransaction(const WALLETD_RPC_COMMAND_CREATE_DELAYED_TRANSACTION::Request& request, std::string& transactionHash)
 {
   try
