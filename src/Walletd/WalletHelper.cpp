@@ -13,13 +13,10 @@
 #include "Common/ConsoleTools.h"
 #include "Common/StringTools.h"
 #include "Common/Util.h"
-#include "crypto/crypto.h"
 #include "CryptoNote.h"
 #include "CryptoNoteCore/CryptoNoteBasicImpl.h"
 #include "CryptoNoteCore/CryptoNoteFormatUtils.h"
 #include "CryptoNoteCore/TransactionExtra.h"
-#include "WalletdRpcNodeFactory.h"
-#include "WalletdRpcRequestResponseObjects.h"
 #include "System/EventLock.h"
 #include "System/InterruptedException.h"
 #include "System/Timer.h"
@@ -28,6 +25,8 @@
 #include "Wallet/WalletUtils.h"
 #include "WalletHelper.h"
 #include "WalletHelperErrors.h"
+#include "WalletdRpcNodeFactory.h"
+#include "crypto/crypto.h"
 
 namespace Walletd {
 

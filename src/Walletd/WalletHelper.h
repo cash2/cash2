@@ -16,10 +16,10 @@
 #include "INode.h"
 #include "IWallet.h"
 #include "Logging/LoggerRef.h"
-#include "WalletdRpcRequestResponseObjects.h"
 #include "System/ContextGroup.h"
 #include "System/Dispatcher.h"
 #include "System/Event.h"
+#include "WalletdRpcCommandObjects.h"
 
 namespace Walletd {
 
