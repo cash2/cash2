@@ -288,15 +288,13 @@ std::error_code WalletHelper::createAddress(std::string& address, std::string& s
 
     m_logger(Logging::DEBUGGING) << "Creating a new address ...";
 
-    std::string tempAddress = m_wallet.createAddress();
+    address = m_wallet.createAddress();
 
     secureSaveWallet(m_config.walletFile, true, true);
 
-    CryptoNote::KeyPair spendKeyPair = m_wallet.getAddressSpendKeyPair(tempAddress);
+    CryptoNote::KeyPair spendKeyPair = m_wallet.getAddressSpendKeyPair(address);
 
     spendPrivateKeyStr = Common::podToHex(spendKeyPair.secretKey);
-
-    address = tempAddress;
   }
   catch (std::system_error& error)
   {
