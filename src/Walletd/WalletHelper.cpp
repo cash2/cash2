@@ -290,7 +290,9 @@ std::error_code WalletHelper::createAddress(std::string& address, std::string& s
 
     address = m_wallet.createAddress();
 
-    secureSaveWallet(m_config.walletFile, true, true);
+    bool saveDetailed = true;
+    bool saveCache = true;
+    secureSaveWallet(m_config.walletFile, saveDetailed, saveCache);
 
     CryptoNote::KeyPair spendKeyPair = m_wallet.getAddressSpendKeyPair(address);
 
@@ -324,6 +326,10 @@ std::error_code WalletHelper::createAddress(const std::string& spendPrivateKeySt
     }
 
     address = m_wallet.createAddress(spendPrivateKey);
+
+    bool saveDetailed = false;
+    bool saveCache = false;
+    secureSaveWallet(m_config.walletFile, saveDetailed, saveCache);
 
     CryptoNote::KeyPair spendKeyPair = m_wallet.getAddressSpendKeyPair(address);
 
@@ -366,6 +372,10 @@ std::error_code WalletHelper::createAddresses(const std::vector<std::string>& sp
     }
 
     addresses = m_wallet.createAddresses(spendPrivateKeys);
+
+    bool saveDetailed = false;
+    bool saveCache = false;
+    secureSaveWallet(m_config.walletFile, saveDetailed, saveCache);
   }
   catch (std::system_error& error)
   {
