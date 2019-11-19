@@ -16,11 +16,11 @@ std::error_code WalletdRpcCommands::createAddress(const WALLETD_RPC_COMMAND_CREA
 {
   if (request.spend_private_key.empty() && request.spend_public_key.empty())
   {
-    return m_walletHelper.createAddress(response.address, response.spend_private_key);
+    return m_walletHelper.createAddress(response.address);
   }
   else if (!request.spend_private_key.empty())
   {
-    return m_walletHelper.createAddress(request.spend_private_key, response.address, response.spend_private_key);
+    return m_walletHelper.createAddress(request.spend_private_key, response.address);
   }
   else
   {

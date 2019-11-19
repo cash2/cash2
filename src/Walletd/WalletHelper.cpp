@@ -280,7 +280,7 @@ WalletHelper::~WalletHelper()
   }
 }
 
-std::error_code WalletHelper::createAddress(std::string& address, std::string& spendPrivateKeyStr)
+std::error_code WalletHelper::createAddress(std::string& address)
 {
   try
   {
@@ -294,9 +294,6 @@ std::error_code WalletHelper::createAddress(std::string& address, std::string& s
     bool saveCache = true;
     secureSaveWallet(m_config.walletFile, saveDetailed, saveCache);
 
-    CryptoNote::KeyPair spendKeyPair = m_wallet.getAddressSpendKeyPair(address);
-
-    spendPrivateKeyStr = Common::podToHex(spendKeyPair.secretKey);
   }
   catch (std::system_error& error)
   {
@@ -309,7 +306,7 @@ std::error_code WalletHelper::createAddress(std::string& address, std::string& s
   return std::error_code();
 }
 
-std::error_code WalletHelper::createAddress(const std::string& spendPrivateKeyStr, std::string& address, std::string& spendPrivateKeyReturnStr)
+std::error_code WalletHelper::createAddress(const std::string& spendPrivateKeyStr, std::string& address)
 {
   try
   {
@@ -331,9 +328,6 @@ std::error_code WalletHelper::createAddress(const std::string& spendPrivateKeySt
     bool saveCache = false;
     secureSaveWallet(m_config.walletFile, saveDetailed, saveCache);
 
-    CryptoNote::KeyPair spendKeyPair = m_wallet.getAddressSpendKeyPair(address);
-
-    spendPrivateKeyReturnStr = Common::podToHex(spendKeyPair.secretKey);
   }
   catch (std::system_error& error)
   {

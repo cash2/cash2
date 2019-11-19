@@ -68,8 +68,7 @@ TEST_F(WalletdTest, addTransaction) {
   auto walletHelper = createWalletHelper(cfg);
 
   std::string addressStr;
-  std::string spendPrivateKeyStrIgnore;
-  ASSERT_TRUE(!walletHelper->createAddress(addressStr, spendPrivateKeyStrIgnore));
+  ASSERT_TRUE(!walletHelper->createAddress(addressStr));
 
   AccountPublicAddress address;
   ASSERT_TRUE(currency.parseAccountAddressString(addressStr, address));
