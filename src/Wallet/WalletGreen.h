@@ -259,9 +259,16 @@ protected :
         m_blockchain_height = (std::max)(m_blockchain_height, height);
       }
 
+      uint64_t printWidth = 9;
+
       if (std::chrono::milliseconds(1) < current_time - m_print_time || force) {
         Common::Console::setTextColor(Common::Console::Color::BrightCyan);
         std::cout << "Height " << height << " of " << m_blockchain_height << '\r';
+        std::cout << "Height " <<
+          std::setw(printWidth) << centerAlignHeight(printWidth, height) <<
+          " of " <<
+          std::setw(printWidth) << centerAlignHeight(printWidth, m_blockchain_height) <<
+          '\r' << std::flush;
         Common::Console::setTextColor(Common::Console::Color::Default);
         m_print_time = current_time;
       }
@@ -273,6 +280,24 @@ protected :
       uint64_t blockchain_height = m_wallet_green.node().getLastLocalBlockHeight() + 1;
       m_blockchain_height = blockchain_height;
       m_blockchain_height_update_time = std::chrono::system_clock::now();
+    }
+
+    std::string centerAlignHeight(uint64_t printWidth, uint64_t blockHeight)
+    {
+
+      std::string blockHeightStr = std::to_string(blockHeight);
+
+      uint64_t blockHeightStrLength = blockHeightStr.length();
+
+      if (printWidth < blockHeightStrLength)
+      {
+        return blockHeightStr;
+      }
+
+      uint64_t leftPadding = (printWidth - blockHeightStrLength) / 2;
+      uint64_t rightPadding = printWidth - blockHeightStrLength - leftPadding;
+
+      return std::string(leftPadding, ' ') + blockHeightStr + std::string(rightPadding, ' ');
     }
 
     uint64_t m_blockchain_height;
