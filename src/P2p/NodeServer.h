@@ -43,7 +43,6 @@ public:
   CryptoNote::CryptoNoteProtocolHandler& get_payload_object();
   uint32_t get_this_peer_port(){return m_listeningPort;}
   bool init(const NodeServerConfig& config);
-  static void init_options(boost::program_options::options_description& desc);
   void log_connections();
   void log_grey_peerlist();
   void log_incoming_connections();
@@ -73,7 +72,6 @@ private:
   int handleCommand(const LevinProtocol::Command& cmd, BinaryArray& buff_out, P2pConnectionContext& context, bool& handled);
   bool handleConfig(const NodeServerConfig& config);
   bool handleTimedSyncResponse(const BinaryArray& buffer, P2pConnectionContext& context);
-  bool handle_command_line(const boost::program_options::variables_map& vm);
 #ifdef ALLOW_DEBUG_COMMANDS
   int handle_get_network_state(int command, const COMMAND_REQUEST_NETWORK_STATE::request& request, COMMAND_REQUEST_NETWORK_STATE::response& response, P2pConnectionContext& context);
   int handle_get_peer_id(int command, const COMMAND_REQUEST_PEER_ID::request& request, COMMAND_REQUEST_PEER_ID::response& response, P2pConnectionContext& context);
