@@ -376,7 +376,7 @@ std::error_code TransfersConsumer::createTransfers(const AccountKeys& account, c
       KeyPair in_ephemeral;
       generate_key_image_helper(account, transactionPublicKey, i, in_ephemeral, info.keyImage);
 
-      assert(out.key == reinterpret_cast<const PublicKey&>(in_ephemeral.publicKey));
+      assert(out.key == reinterpret_cast<const Crypto::PublicKey&>(in_ephemeral.publicKey));
 
       std::unordered_set<Crypto::Hash>::iterator it = m_transactionHashesSeen.find(transactionHash);
 
