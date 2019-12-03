@@ -5,16 +5,13 @@
 
 #include "BlockValidation.h"
 #include "TestGenerator.h"
+#include "../TestGenerator/TestGenerator.h"
 #include "CryptoNoteCore/CryptoNoteTools.h"
 #include "Common/StringTools.h"
 
 using namespace Common;
 using namespace Crypto;
 using namespace CryptoNote;
-
-#define BLOCK_VALIDATION_INIT_GENERATE()                        \
-  GENERATE_ACCOUNT(miner_account);                              \
-  MAKE_GENESIS_BLOCK(events, blk_0, miner_account, 1338224400);
 
 namespace {
   bool lift_up_difficulty(const CryptoNote::Currency& currency, std::vector<test_event_entry>& events,
@@ -61,7 +58,16 @@ namespace {
 
 bool gen_block_ts_not_checked::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   REWIND_BLOCKS_N(events, blk_0r, blk_0, miner_account, m_currency.timestampCheckWindow() - 2);
 
@@ -77,7 +83,16 @@ bool gen_block_ts_not_checked::generate(std::vector<test_event_entry>& events) c
 
 bool gen_block_ts_in_past::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   REWIND_BLOCKS_N(events, blk_0r, blk_0, miner_account, m_currency.timestampCheckWindow() - 1);
 
@@ -94,7 +109,16 @@ bool gen_block_ts_in_past::generate(std::vector<test_event_entry>& events) const
 
 bool gen_block_ts_in_future_rejected::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   Block blk_1;
   generator.constructBlockManually(blk_1, blk_0, miner_account, test_generator::bf_timestamp,
@@ -108,7 +132,16 @@ bool gen_block_ts_in_future_rejected::generate(std::vector<test_event_entry>& ev
 
 bool gen_block_ts_in_future_accepted::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   Block blk_1;
   generator.constructBlockManually(blk_1, blk_0, miner_account, test_generator::bf_timestamp,
@@ -123,7 +156,16 @@ bool gen_block_ts_in_future_accepted::generate(std::vector<test_event_entry>& ev
 
 bool gen_block_invalid_prev_id::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   Block blk_1;
   Crypto::Hash prev_id = get_block_hash(blk_0);
@@ -147,7 +189,16 @@ bool gen_block_invalid_prev_id::check_block_verification_context(const CryptoNot
 
 bool gen_block_invalid_nonce::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp1 = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp1);
+  events.push_back(blk_0);
 
   std::vector<uint64_t> timestamps;
   std::vector<difficulty_type> commulative_difficulties;
@@ -159,14 +210,14 @@ bool gen_block_invalid_nonce::generate(std::vector<test_event_entry>& events) co
   difficulty_type diffic = m_currency.nextDifficulty1(timestamps, commulative_difficulties);
   assert(1 < diffic);
   const Block& blk_last = boost::get<Block>(events.back());
-  uint64_t timestamp = blk_last.timestamp;
+  uint64_t timestamp2 = blk_last.timestamp;
   Block blk_3;
   do
   {
-    ++timestamp;
+    ++timestamp2;
     clearTransaction(blk_3.baseTransaction);
     if (!generator.constructBlockManually(blk_3, blk_last, miner_account,
-      test_generator::bf_diffic | test_generator::bf_timestamp, timestamp, Crypto::Hash(), diffic))
+      test_generator::bf_diffic | test_generator::bf_timestamp, timestamp2, Crypto::Hash(), diffic))
       return false;
   }
   while (0 == blk_3.nonce);
@@ -178,7 +229,16 @@ bool gen_block_invalid_nonce::generate(std::vector<test_event_entry>& events) co
 
 bool gen_block_no_miner_tx::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   Transaction miner_tx;
   clearTransaction(miner_tx);
@@ -195,7 +255,16 @@ bool gen_block_no_miner_tx::generate(std::vector<test_event_entry>& events) cons
 
 bool gen_block_unlock_time_is_low::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   MAKE_MINER_TX_MANUALLY(miner_tx, blk_0);
   --miner_tx.unlockTime;
@@ -212,7 +281,16 @@ bool gen_block_unlock_time_is_low::generate(std::vector<test_event_entry>& event
 
 bool gen_block_unlock_time_is_high::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   MAKE_MINER_TX_MANUALLY(miner_tx, blk_0);
   ++miner_tx.unlockTime;
@@ -229,7 +307,16 @@ bool gen_block_unlock_time_is_high::generate(std::vector<test_event_entry>& even
 
 bool gen_block_unlock_time_is_timestamp_in_past::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   MAKE_MINER_TX_MANUALLY(miner_tx, blk_0);
   miner_tx.unlockTime = blk_0.timestamp - 10 * 60;
@@ -246,7 +333,16 @@ bool gen_block_unlock_time_is_timestamp_in_past::generate(std::vector<test_event
 
 bool gen_block_unlock_time_is_timestamp_in_future::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   MAKE_MINER_TX_MANUALLY(miner_tx, blk_0);
   miner_tx.unlockTime = blk_0.timestamp + 3 * m_currency.minedMoneyUnlockWindow() * m_currency.difficultyTarget();
@@ -263,7 +359,16 @@ bool gen_block_unlock_time_is_timestamp_in_future::generate(std::vector<test_eve
 
 bool gen_block_height_is_low::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   MAKE_MINER_TX_MANUALLY(miner_tx, blk_0);
   boost::get<BaseInput>(miner_tx.inputs[0]).blockIndex--;
@@ -280,7 +385,16 @@ bool gen_block_height_is_low::generate(std::vector<test_event_entry>& events) co
 
 bool gen_block_height_is_high::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   MAKE_MINER_TX_MANUALLY(miner_tx, blk_0);
   boost::get<BaseInput>(miner_tx.inputs[0]).blockIndex++;
@@ -297,7 +411,16 @@ bool gen_block_height_is_high::generate(std::vector<test_event_entry>& events) c
 
 bool gen_block_miner_tx_has_2_tx_gen_in::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   MAKE_MINER_TX_MANUALLY(miner_tx, blk_0);
 
@@ -317,7 +440,16 @@ bool gen_block_miner_tx_has_2_tx_gen_in::generate(std::vector<test_event_entry>&
 
 bool gen_block_miner_tx_has_2_in::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   REWIND_BLOCKS(events, blk_0r, blk_0, miner_account);
 
@@ -358,7 +490,16 @@ bool gen_block_miner_tx_has_2_in::generate(std::vector<test_event_entry>& events
 
 bool gen_block_miner_tx_with_txin_to_key::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   // This block has only one output
   Block blk_1;
@@ -402,7 +543,16 @@ bool gen_block_miner_tx_with_txin_to_key::generate(std::vector<test_event_entry>
 
 bool gen_block_miner_tx_out_is_small::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   MAKE_MINER_TX_MANUALLY(miner_tx, blk_0);
   miner_tx.outputs[0].amount /= 2;
@@ -419,7 +569,16 @@ bool gen_block_miner_tx_out_is_small::generate(std::vector<test_event_entry>& ev
 
 bool gen_block_miner_tx_out_is_big::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   MAKE_MINER_TX_MANUALLY(miner_tx, blk_0);
   miner_tx.outputs[0].amount *= 2;
@@ -436,7 +595,16 @@ bool gen_block_miner_tx_out_is_big::generate(std::vector<test_event_entry>& even
 
 bool gen_block_miner_tx_has_no_out::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   MAKE_MINER_TX_MANUALLY(miner_tx, blk_0);
   miner_tx.outputs.clear();
@@ -453,7 +621,16 @@ bool gen_block_miner_tx_has_no_out::generate(std::vector<test_event_entry>& even
 
 bool gen_block_miner_tx_has_out_to_alice::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   GENERATE_ACCOUNT(alice);
 
@@ -483,7 +660,16 @@ bool gen_block_miner_tx_has_out_to_alice::generate(std::vector<test_event_entry>
 
 bool gen_block_has_invalid_tx::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   std::vector<Crypto::Hash> tx_hashes;
   tx_hashes.push_back(Crypto::Hash());
@@ -499,7 +685,16 @@ bool gen_block_has_invalid_tx::generate(std::vector<test_event_entry>& events) c
 
 bool gen_block_is_too_big::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   Block blk_1;
   if (!generator.constructMaxSizeBlock(blk_1, blk_0, miner_account)) {
@@ -515,7 +710,16 @@ bool gen_block_is_too_big::generate(std::vector<test_event_entry>& events) const
 }
 
 bool TestBlockCumulativeSizeExceedsLimit::generate(std::vector<test_event_entry>& events) const {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   Block prevBlock = blk_0;
   for (size_t height = 1; height < 1000; ++height) {
@@ -549,7 +753,16 @@ gen_block_invalid_binary_format::gen_block_invalid_binary_format() :
 
 bool gen_block_invalid_binary_format::generate(std::vector<test_event_entry>& events) const
 {
-  BLOCK_VALIDATION_INIT_GENERATE();
+  Logging::ConsoleLogger m_logger;
+  CryptoNote::Currency m_currency(CryptoNote::CurrencyBuilder(m_logger).currency());
+  Block blk_0;
+  CryptoNote::AccountBase miner_account;
+  test_generator generator(m_currency);
+
+  miner_account.generate();
+  uint64_t timestamp = 1338224400;
+  generator.constructBlock(blk_0, miner_account, timestamp);
+  events.push_back(blk_0);
 
   std::vector<uint64_t> timestamps;
   std::vector<difficulty_type> cummulative_difficulties;
@@ -560,10 +773,11 @@ bool gen_block_invalid_binary_format::generate(std::vector<test_event_entry>& ev
   assert(m_currency.minedMoneyUnlockWindow() < m_currency.difficultyWindow());
   for (size_t i = 0; i < m_currency.minedMoneyUnlockWindow(); ++i)
   {
-    MAKE_NEXT_BLOCK(events, blk_curr, blk_last, miner_account);
-    timestamps.push_back(blk_curr.timestamp);
-    cummulative_difficulties.push_back(++cummulative_diff);
-    blk_last = blk_curr;
+    // Block blk_curr;
+    // MAKE_NEXT_BLOCK(events, blk_curr, blk_last, miner_account);
+    // timestamps.push_back(blk_curr.timestamp);
+    // cummulative_difficulties.push_back(++cummulative_diff);
+    // blk_last = blk_curr;
   }
 
   // Lifting up takes a while
