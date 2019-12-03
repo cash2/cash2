@@ -34,10 +34,6 @@
 #include "Serialization/BinaryOutputStreamSerializer.h"
 #include "Serialization/SerializationOverloads.h"
 
-using namespace Common;
-using namespace Logging;
-using namespace CryptoNote;
-
 namespace CryptoNote
 {
 
@@ -98,7 +94,7 @@ bool NodeServer::init(const NodeServerConfig& config)
   }
 
   if (!handleConfig(config)) { 
-    logger(ERROR, BRIGHT_RED) << "Failed to handle command line"; 
+    logger(Logging::ERROR, Logging::BRIGHT_RED) << "Failed to handle command line"; 
     return false; 
   }
 
@@ -106,12 +102,12 @@ bool NodeServer::init(const NodeServerConfig& config)
   m_p2p_state_filename = config.getP2pStateFilename();
 
   if (!init_config()) {
-    logger(ERROR, BRIGHT_RED) << "Failed to init config."; 
+    logger(Logging::ERROR, Logging::BRIGHT_RED) << "Failed to init config."; 
     return false; 
   }
 
   if (!m_peerlist_manager.init(m_allow_local_ip)) { 
-    logger(ERROR, BRIGHT_RED) << "Failed to init peerlist."; 
+    logger(Logging::ERROR, Logging::BRIGHT_RED) << "Failed to init peerlist."; 
     return false; 
   }
 
@@ -126,16 +122,16 @@ bool NodeServer::init(const NodeServerConfig& config)
   m_last_stat_request_time = 0;
 
   //try to bind
-  logger(INFO) << "Binding on " << m_bind_ip << ":" << m_port;
+  logger(Logging::INFO) << "Binding on " << m_bind_ip << ":" << m_port;
   m_listeningPort = Common::fromString<uint16_t>(m_port);
 
   m_listener = System::TcpListener(m_dispatcher, System::Ipv4Address(m_bind_ip), static_cast<uint16_t>(m_listeningPort));
 
-  logger(INFO, BRIGHT_GREEN) << "Net service bound to " << m_bind_ip << ":" << m_listeningPort;
+  logger(Logging::INFO, Logging::BRIGHT_GREEN) << "Net service bound to " << m_bind_ip << ":" << m_listeningPort;
 
   if(m_external_port)
   {
-    logger(INFO) << "External port defined as " << m_external_port;
+    logger(Logging::INFO) << "External port defined as " << m_external_port;
   }
 
   addPortMapping(logger, m_listeningPort);
@@ -167,7 +163,7 @@ void NodeServer::log_connections()
       std::endl;
   };
 
-  logger(INFO, BRIGHT_CYAN) << ss.str();
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << ss.str();
 }
 
 void NodeServer::log_grey_peerlist()
@@ -185,7 +181,7 @@ void NodeServer::log_grey_peerlist()
     std::setw(20) << std::left << "Last Seen" << '\n' <<
     print_peerlist_to_string(greyPeerlist) ;
 
-  logger(INFO, BRIGHT_CYAN) << ss.str();
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << ss.str();
 }
 
 void NodeServer::log_incoming_connections()
@@ -222,11 +218,11 @@ void NodeServer::log_incoming_connections()
 
   if (incomingConnectionFound == true)
   {
-    logger(INFO, BRIGHT_CYAN) << ss.str();
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << ss.str();
   }
   else
   {
-    logger(INFO, BRIGHT_CYAN) << "\n\nIncoming connections : None";
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "\n\nIncoming connections : None";
   }
 }
 
@@ -264,11 +260,11 @@ void NodeServer::log_outgoing_connections()
 
   if (outgoingConnectionFound == true)
   {
-    logger(INFO, BRIGHT_CYAN) << ss.str();
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << ss.str();
   }
   else
   {
-    logger(INFO, BRIGHT_CYAN) << "\n\nOutgoing connections : None";
+    logger(Logging::INFO, Logging::BRIGHT_CYAN) << "\n\nOutgoing connections : None";
   }
 }
 
@@ -293,7 +289,7 @@ void NodeServer::log_peerlist()
     std::setw(20) << std::left << "Peer ID" <<
     std::setw(20) << std::left << "Last Seen" << '\n' <<
     print_peerlist_to_string(greyPeerlist) ;
-  logger(INFO, BRIGHT_CYAN) << ss.str();
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << ss.str();
 }
 
 void NodeServer::log_white_peerlist()
@@ -311,12 +307,12 @@ void NodeServer::log_white_peerlist()
     std::setw(20) << std::left << "Last Seen" << '\n' <<
     print_peerlist_to_string(whitePeerlist) ;
 
-  logger(INFO, BRIGHT_CYAN) << ss.str();
+  logger(Logging::INFO, Logging::BRIGHT_CYAN) << ss.str();
 }
 
 bool NodeServer::run()
 {
-  logger(INFO) << "Starting NodeServer";
+  logger(Logging::INFO) << "Starting NodeServer";
 
   m_workingContextGroup.spawn(std::bind(&NodeServer::acceptLoop, this));
   m_workingContextGroup.spawn(std::bind(&NodeServer::onIdle, this));
@@ -325,11 +321,11 @@ bool NodeServer::run()
 
   m_stopEvent.wait();
 
-  logger(INFO) << "Stopping NodeServer and its " << m_connections.size() << " connections ...";
+  logger(Logging::INFO) << "Stopping NodeServer and its " << m_connections.size() << " connections ...";
   m_workingContextGroup.interrupt();
   m_workingContextGroup.wait();
 
-  logger(INFO) << "NodeServer loop stopped";
+  logger(Logging::INFO) << "NodeServer loop stopped";
   return true;
 }
 
@@ -342,7 +338,7 @@ bool NodeServer::sendStopSignal()
     m_payload_handler.stop();
   });
 
-  logger(INFO, BRIGHT_YELLOW) << "Stop signal sent";
+  logger(Logging::INFO, Logging::BRIGHT_YELLOW) << "Stop signal sent";
   return true;
 }
 
@@ -382,20 +378,20 @@ void NodeServer::acceptLoop()
 
       m_workingContextGroup.spawn(std::bind(&NodeServer::connectionHandler, this, std::cref(connectionId), std::ref(contextRef)));
     } catch (System::InterruptedException&) {
-      logger(DEBUGGING) << "acceptLoop() is interrupted";
+      logger(Logging::DEBUGGING) << "acceptLoop() is interrupted";
       break;
     } catch (const std::exception& e) {
-      logger(WARNING) << "Exception in acceptLoop: " << e.what();
+      logger(Logging::WARNING) << "Exception in acceptLoop: " << e.what();
     }
   }
 
-  logger(DEBUGGING) << "acceptLoop finished";
+  logger(Logging::DEBUGGING) << "acceptLoop finished";
 }
 
 void NodeServer::addPortMapping(Logging::LoggerRef& logger, uint32_t port)
 {
   // Add UPnP port mapping
-  logger(INFO) << "Attempting to add IGD port mapping.";
+  logger(Logging::INFO) << "Attempting to add IGD port mapping.";
   int result;
   UPNPDev* deviceList = upnpDiscover(1000, NULL, NULL, 0, 0, &result);
   UPNPUrls urls;
@@ -409,21 +405,21 @@ void NodeServer::addPortMapping(Logging::LoggerRef& logger, uint32_t port)
       portString << port;
       if (UPNP_AddPortMapping(urls.controlURL, igdData.first.servicetype, portString.str().c_str(),
         portString.str().c_str(), lanAddress, CryptoNote::CRYPTONOTE_NAME, "TCP", 0, "0") != 0) {
-        logger(ERROR) << "UPNP_AddPortMapping failed.";
+        logger(Logging::ERROR) << "UPNP_AddPortMapping failed.";
       } else {
-        logger(INFO, BRIGHT_GREEN) << "Added IGD port mapping.";
+        logger(Logging::INFO, Logging::BRIGHT_GREEN) << "Added IGD port mapping.";
       }
     } else if (result == 2) {
-      logger(INFO) << "IGD was found but reported as not connected.";
+      logger(Logging::INFO) << "IGD was found but reported as not connected.";
     } else if (result == 3) {
-      logger(INFO) << "UPnP device was found but not recoginzed as IGD.";
+      logger(Logging::INFO) << "UPnP device was found but not recoginzed as IGD.";
     } else {
-      logger(ERROR) << "UPNP_GetValidIGD returned an unknown result code.";
+      logger(Logging::ERROR) << "UPNP_GetValidIGD returned an unknown result code.";
     }
 
     FreeUPNPUrls(&urls);
   } else {
-    logger(INFO) << "No IGD was found.";
+    logger(Logging::INFO) << "No IGD was found.";
   }
 }
 
@@ -432,7 +428,7 @@ bool NodeServer::append_net_address(std::vector<NetworkAddress>& nodes, const st
   size_t pos = address.find_last_of(':');
 
   if (!(std::string::npos != pos && address.length() - 1 != pos && 0 != pos)) {
-    logger(ERROR, BRIGHT_RED) << "Failed to parse seed address from string: '" << address << '\'';
+    logger(Logging::ERROR, Logging::BRIGHT_RED) << "Failed to parse seed address from string: '" << address << '\'';
     return false;
   }
   
@@ -445,10 +441,10 @@ bool NodeServer::append_net_address(std::vector<NetworkAddress>& nodes, const st
     System::Ipv4Address address = resolver.resolve(host);
     nodes.push_back(NetworkAddress{hostToNetwork(address.getValue()), port});
 
-    logger(TRACE) << "Added seed node: " << nodes.back() << " (" << host << ")";
+    logger(Logging::TRACE) << "Added seed node: " << nodes.back() << " (" << host << ")";
 
   } catch (const std::exception& e) {
-    logger(ERROR, BRIGHT_YELLOW) << "Failed to resolve host name '" << host << "': " << e.what();
+    logger(Logging::ERROR, Logging::BRIGHT_YELLOW) << "Failed to resolve host name '" << host << "': " << e.what();
     return false;
   }
 
@@ -463,17 +459,17 @@ bool NodeServer::check_trust(const proof_of_trust &trust)
   uint64_t time_delata = local_time > trust.time ? local_time - trust.time : trust.time - local_time;
 
   if (time_delata > 24 * 60 * 60) {
-    logger(ERROR) << "check_trust failed to check time conditions, local_time=" << local_time << ", proof_time=" << trust.time;
+    logger(Logging::ERROR) << "check_trust failed to check time conditions, local_time=" << local_time << ", proof_time=" << trust.time;
     return false;
   }
 
   if (m_last_stat_request_time >= trust.time) {
-    logger(ERROR) << "check_trust failed to check time conditions, last_stat_request_time=" << m_last_stat_request_time << ", proof_time=" << trust.time;
+    logger(Logging::ERROR) << "check_trust failed to check time conditions, last_stat_request_time=" << m_last_stat_request_time << ", proof_time=" << trust.time;
     return false;
   }
 
   if (m_config.m_peer_id != trust.peer_id) {
-    logger(ERROR) << "check_trust failed: peer_id mismatch (passed " << trust.peer_id << ", expected " << m_config.m_peer_id << ")";
+    logger(Logging::ERROR) << "check_trust failed: peer_id mismatch (passed " << trust.peer_id << ", expected " << m_config.m_peer_id << ")";
     return false;
   }
 
@@ -481,7 +477,7 @@ bool NodeServer::check_trust(const proof_of_trust &trust)
   Common::podFromHex(CryptoNote::P2P_STAT_TRUSTED_PUB_KEY, pubicKey);
   Crypto::Hash trustHash = get_proof_of_trust_hash(trust);
   if (!Crypto::check_signature(trustHash, pubicKey, trust.sign)) {
-    logger(ERROR) << "check_trust failed: sign check failed";
+    logger(Logging::ERROR) << "check_trust failed: sign check failed";
     return false;
   }
 
@@ -547,9 +543,9 @@ void NodeServer::connectionHandler(const boost::uuids::uuid& connectionId, P2pCo
         }
       }
     } catch (System::InterruptedException&) {
-      logger(DEBUGGING) << ctx << "connectionHandler() inner context is interrupted";
+      logger(Logging::DEBUGGING) << ctx << "connectionHandler() inner context is interrupted";
     } catch (std::exception& e) {
-      logger(TRACE) << ctx << "Exception in connectionHandler: " << e.what();
+      logger(Logging::TRACE) << ctx << "Exception in connectionHandler: " << e.what();
     }
 
     ctx.interrupt();
@@ -565,7 +561,7 @@ void NodeServer::connectionHandler(const boost::uuids::uuid& connectionId, P2pCo
   try {
     context.get();
   } catch (System::InterruptedException&) {
-    logger(DEBUGGING) << "connectionHandler() is interrupted";
+    logger(Logging::DEBUGGING) << "connectionHandler() is interrupted";
   }
 }
 
@@ -591,7 +587,7 @@ bool NodeServer::connections_maker()
       }
 
       if (++try_count > m_seed_nodes.size()) {
-        logger(ERROR) << "Failed to connect to any of seed peers, continuing without seeds";
+        logger(Logging::ERROR) << "Failed to connect to any of seed peers, continuing without seeds";
         break;
       }
 
@@ -661,7 +657,7 @@ bool NodeServer::fix_time_delta(std::list<PeerlistEntry>& local_peerlist, time_t
   {
     if (peer.last_seen > uint64_t(local_time))
     {
-      logger(ERROR) << "FOUND FUTURE peerlist for entry " << peer.adr << " last_seen: " << peer.last_seen << ", local_time(on remote node):" << local_time;
+      logger(Logging::ERROR) << "FOUND FUTURE peerlist for entry " << peer.adr << " last_seen: " << peer.last_seen << ", local_time(on remote node):" << local_time;
       return false;
     }
 
@@ -1023,7 +1019,7 @@ bool NodeServer::idle_worker()
     m_connections_maker_interval.call(std::bind(&NodeServer::connections_maker, this));
     m_peerlist_store_interval.call(std::bind(&NodeServer::store_config, this));
   } catch (std::exception& e) {
-    logger(DEBUGGING) << "exception in idle_worker: " << e.what();
+    logger(Logging::DEBUGGING) << "exception in idle_worker: " << e.what();
   }
   return true;
 }
@@ -1039,7 +1035,7 @@ bool NodeServer::init_config()
       p2p_data.open(state_file_path, std::ios_base::binary | std::ios_base::in);
 
       if (!p2p_data.fail()) {
-        StdInputStream inputStream(p2p_data);
+        Common::StdInputStream inputStream(p2p_data);
         BinaryInputStreamSerializer a(inputStream);
         CryptoNote::serialize(*this, a);
         loaded = true;
@@ -1062,7 +1058,7 @@ bool NodeServer::init_config()
 
     m_first_connection_maker_call = true;
   } catch (const std::exception& e) {
-    logger(ERROR) << "init_config failed: " << e.what();
+    logger(Logging::ERROR) << "init_config failed: " << e.what();
     return false;
   }
   return true;
@@ -1163,7 +1159,7 @@ bool NodeServer::make_new_connection_from_peerlist(bool use_white_list)
     size_t random_index = get_random_index_with_fixed_probability(max_random_index);
 
     if (!(random_index < local_peers_count)) {
-      logger(ERROR, BRIGHT_RED) << "random_starter_index < peers_local.size() failed!!";
+      logger(Logging::ERROR, Logging::BRIGHT_RED) << "random_starter_index < peers_local.size() failed!!";
       return false;
     }
 
@@ -1178,7 +1174,7 @@ bool NodeServer::make_new_connection_from_peerlist(bool use_white_list)
     
     if (!(r))
     {
-      logger(ERROR, BRIGHT_RED) << "Failed to get random peer from peerlist(white:" << use_white_list << ")";
+      logger(Logging::ERROR, Logging::BRIGHT_RED) << "Failed to get random peer from peerlist(white:" << use_white_list << ")";
       return false;
     }
 
@@ -1189,7 +1185,7 @@ bool NodeServer::make_new_connection_from_peerlist(bool use_white_list)
       continue;
     }
 
-    logger(DEBUGGING) << "Selected peer: " << peer.id << " " << peer.adr << " [white=" << use_white_list
+    logger(Logging::DEBUGGING) << "Selected peer: " << peer.id << " " << peer.adr << " [white=" << use_white_list
                   << "] last_seen: " << (peer.last_seen ? Common::timeIntervalToString(time(NULL) - peer.last_seen) : "never");
     
     if (!try_to_connect_and_handshake_with_new_peer(peer.adr, false, peer.last_seen, use_white_list))
@@ -1205,7 +1201,7 @@ bool NodeServer::make_new_connection_from_peerlist(bool use_white_list)
 
 void NodeServer::onIdle()
 {
-  logger(DEBUGGING) << "onIdle started";
+  logger(Logging::DEBUGGING) << "onIdle started";
 
   try {
     while (!m_stop) {
@@ -1214,23 +1210,23 @@ void NodeServer::onIdle()
       m_idleTimer.sleep(std::chrono::seconds(1));
     }
   } catch (System::InterruptedException&) {
-    logger(DEBUGGING) << "onIdle() is interrupted";
+    logger(Logging::DEBUGGING) << "onIdle() is interrupted";
   } catch (std::exception& e) {
-    logger(WARNING) << "Exception in onIdle: " << e.what();
+    logger(Logging::WARNING) << "Exception in onIdle: " << e.what();
   }
 
-  logger(DEBUGGING) << "onIdle finished";
+  logger(Logging::DEBUGGING) << "onIdle finished";
 }
 
 void NodeServer::on_connection_close(P2pConnectionContext& context)
 {
-  logger(TRACE) << context << "CLOSE CONNECTION";
+  logger(Logging::TRACE) << context << "CLOSE CONNECTION";
   m_payload_handler.onConnectionClosed(context);
 }
 
 void NodeServer::on_connection_new(P2pConnectionContext& context)
 {
-  logger(TRACE) << context << "NEW CONNECTION";
+  logger(Logging::TRACE) << context << "NEW CONNECTION";
   m_payload_handler.onConnectionOpened(context);
 }
 
@@ -1246,7 +1242,7 @@ bool NodeServer::parse_peers_and_add_to_container(const boost::program_options::
   for(const std::string& peerString : peerStrings) {
     NetworkAddress peerAddress;
     if (!parse_peer_from_string(peerAddress, peerString)) { 
-      logger(ERROR, BRIGHT_RED) << "Failed to parse address from string: " << peerString; 
+      logger(Logging::ERROR, Logging::BRIGHT_RED) << "Failed to parse address from string: " << peerString; 
       return false; 
     }
     addresses.push_back(peerAddress);
@@ -1287,7 +1283,7 @@ bool NodeServer::store_config()
 {
   try {
     if (!Tools::create_directories_if_necessary(m_config_folder)) {
-      logger(INFO) << "Failed to create data directory: " << m_config_folder;
+      logger(Logging::INFO) << "Failed to create data directory: " << m_config_folder;
       return false;
     }
 
@@ -1295,16 +1291,16 @@ bool NodeServer::store_config()
     std::ofstream p2p_data;
     p2p_data.open(state_file_path, std::ios_base::binary | std::ios_base::out | std::ios::trunc);
     if (p2p_data.fail())  {
-      logger(INFO) << "Failed to save config to file " << state_file_path;
+      logger(Logging::INFO) << "Failed to save config to file " << state_file_path;
       return false;
     };
 
-    StdOutputStream stream(p2p_data);
+    Common::StdOutputStream stream(p2p_data);
     BinaryOutputStreamSerializer a(stream);
     CryptoNote::serialize(*this, a);
     return true;
   } catch (const std::exception& e) {
-    logger(WARNING) << "store_config failed: " << e.what();
+    logger(Logging::WARNING) << "store_config failed: " << e.what();
   }
 
   return false;
@@ -1335,12 +1331,12 @@ void NodeServer::timedSyncLoop()
       timedSync();
     }
   } catch (System::InterruptedException&) {
-    logger(DEBUGGING) << "timedSyncLoop() is interrupted";
+    logger(Logging::DEBUGGING) << "timedSyncLoop() is interrupted";
   } catch (std::exception& e) {
-    logger(WARNING) << "Exception in timedSyncLoop: " << e.what();
+    logger(Logging::WARNING) << "Exception in timedSyncLoop: " << e.what();
   }
 
-  logger(DEBUGGING) << "timedSyncLoop finished";
+  logger(Logging::DEBUGGING) << "timedSyncLoop finished";
 }
 
 void NodeServer::timeoutLoop()
@@ -1353,15 +1349,15 @@ void NodeServer::timeoutLoop()
       for (auto& connection : m_connections) {
         P2pConnectionContext& context = connection.second;
         if (context.writeDuration(now) > P2P_DEFAULT_INVOKE_TIMEOUT) {
-          logger(WARNING) << context << "write operation timed out, stopping connection";
+          logger(Logging::WARNING) << context << "write operation timed out, stopping connection";
           context.interrupt();
         }
       }
     }
   } catch (System::InterruptedException&) {
-    logger(DEBUGGING) << "timeoutLoop() is interrupted";
+    logger(Logging::DEBUGGING) << "timeoutLoop() is interrupted";
   } catch (std::exception& e) {
-    logger(WARNING) << "Exception in timeoutLoop: " << e.what();
+    logger(Logging::WARNING) << "Exception in timeoutLoop: " << e.what();
   }
 }
 
@@ -1391,19 +1387,19 @@ bool NodeServer::try_ping(const basic_node_data& node_data, const P2pConnectionC
 
     System::Context<> timeoutContext(m_dispatcher, [&] {
       System::Timer(m_dispatcher).sleep(std::chrono::milliseconds(m_config.m_net_config.connection_timeout * 2));
-      logger(DEBUGGING) << context << "Back ping timed out" << ip << ":" << port;
+      logger(Logging::DEBUGGING) << context << "Back ping timed out" << ip << ":" << port;
       pingContext.interrupt();
     });
 
     pingContext.get();
 
     if (response.status != PING_OK_RESPONSE_STATUS_TEXT || peerId != response.peer_id) {
-      logger(DEBUGGING) << context << "Back ping invoke wrong response \"" << response.status << "\" from" << ip
+      logger(Logging::DEBUGGING) << context << "Back ping invoke wrong response \"" << response.status << "\" from" << ip
                                  << ":" << port << ", hsh_peer_id=" << peerId << ", response.peer_id=" << response.peer_id;
       return false;
     }
   } catch (std::exception& e) {
-    logger(DEBUGGING) << context << "Back ping connection to " << ip << ":" << port << " failed: " << e.what();
+    logger(Logging::DEBUGGING) << context << "Back ping connection to " << ip << ":" << port << " failed: " << e.what();
     return false;
   }
 
@@ -1412,7 +1408,7 @@ bool NodeServer::try_ping(const basic_node_data& node_data, const P2pConnectionC
 
 bool NodeServer::try_to_connect_and_handshake_with_new_peer(const NetworkAddress& address, bool just_take_peerlist, uint64_t last_seen_timestamp, bool white)
 {
-  logger(DEBUGGING) << "Connecting to " << address << " (white=" << white << ", last_seen: "
+  logger(Logging::DEBUGGING) << "Connecting to " << address << " (white=" << white << ", last_seen: "
       << (last_seen_timestamp ? Common::timeIntervalToString(time(NULL) - last_seen_timestamp) : "never") << ")...";
 
   try {
@@ -1427,12 +1423,12 @@ bool NodeServer::try_to_connect_and_handshake_with_new_peer(const NetworkAddress
       System::Context<> timeoutContext(m_dispatcher, [&] {
         System::Timer(m_dispatcher).sleep(std::chrono::milliseconds(m_config.m_net_config.connection_timeout));
         connectionContext.interrupt();
-        logger(DEBUGGING) << "Connection to " << address <<" timed out, interrupt it";
+        logger(Logging::DEBUGGING) << "Connection to " << address <<" timed out, interrupt it";
       });
 
       connection = std::move(connectionContext.get());
     } catch (System::InterruptedException&) {
-      logger(DEBUGGING) << "Connection timed out";
+      logger(Logging::DEBUGGING) << "Connection timed out";
       return false;
     }
 
@@ -1454,15 +1450,15 @@ bool NodeServer::try_to_connect_and_handshake_with_new_peer(const NetworkAddress
         // Here we use connection_timeout * 3, one for this handshake, and two for back ping from peer.
         System::Timer(m_dispatcher).sleep(std::chrono::milliseconds(m_config.m_net_config.connection_timeout * 3));
         handshakeContext.interrupt();
-        logger(DEBUGGING) << "Handshake with " << address << " timed out, interrupt it";
+        logger(Logging::DEBUGGING) << "Handshake with " << address << " timed out, interrupt it";
       });
 
       if (!handshakeContext.get()) {
-        logger(WARNING) << "Failed to HANDSHAKE with peer " << address;
+        logger(Logging::WARNING) << "Failed to HANDSHAKE with peer " << address;
         return false;
       }
     } catch (System::InterruptedException&) {
-      logger(DEBUGGING) << "Handshake timed out";
+      logger(Logging::DEBUGGING) << "Handshake timed out";
       return false;
     }
 
@@ -1489,10 +1485,10 @@ bool NodeServer::try_to_connect_and_handshake_with_new_peer(const NetworkAddress
 
     return true;
   } catch (System::InterruptedException&) {
-    logger(DEBUGGING) << "Connection process interrupted";
+    logger(Logging::DEBUGGING) << "Connection process interrupted";
     throw;
   } catch (const std::exception& e) {
-    logger(DEBUGGING) << "Connection to " << address << " failed: " << e.what();
+    logger(Logging::DEBUGGING) << "Connection to " << address << " failed: " << e.what();
   }
 
   return false;
@@ -1500,7 +1496,7 @@ bool NodeServer::try_to_connect_and_handshake_with_new_peer(const NetworkAddress
 
 void NodeServer::writeHandler(P2pConnectionContext& context)
 {
-  logger(DEBUGGING) << context << "writeHandler started";
+  logger(Logging::DEBUGGING) << context << "writeHandler started";
 
   try {
     LevinProtocol protocol(context.connection);
@@ -1512,7 +1508,7 @@ void NodeServer::writeHandler(P2pConnectionContext& context)
       }
 
       for (const P2pMessage& message : messages) {
-        logger(DEBUGGING) << context << "message " << message.type << ':' << message.command;
+        logger(Logging::DEBUGGING) << context << "message " << message.type << ':' << message.command;
         switch (message.type) {
         case P2pMessage::COMMAND:
           protocol.sendMessage(message.command, message.buffer, true);
@@ -1530,13 +1526,13 @@ void NodeServer::writeHandler(P2pConnectionContext& context)
     }
   } catch (System::InterruptedException&) {
     // connection stopped
-    logger(DEBUGGING) << context << "writeHandler() is interrupted";
+    logger(Logging::DEBUGGING) << context << "writeHandler() is interrupted";
   } catch (std::exception& e) {
-    logger(WARNING) << context << "error during write: " << e.what();
+    logger(Logging::WARNING) << context << "error during write: " << e.what();
     context.interrupt(); // stop connection on write error
   }
 
-  logger(DEBUGGING) << context << "writeHandler finished";
+  logger(Logging::DEBUGGING) << context << "writeHandler finished";
 }
 
 } // end namespace CryptoNote
