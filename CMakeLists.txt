@@ -16,6 +16,31 @@ configure_file(${CMAKE_SOURCE_DIR}/CTestCustom.cmake ${CMAKE_BINARY_DIR})
 
 project(Cash2)
 
+# ARCH defines the target architecture, either by an explicit identifier or
+# one of the following two keywords. By default, ARCH a value of 'native':
+# target arch = host arch, binary is not portable. When ARCH is set to the
+# string 'default', no -march arg is passed, which creates a binary that is
+# portable across processors in the same family as host processor.  In cases
+# when ARCH is not set to an explicit identifier, cmake's builtin is used
+# to identify the target architecture, to direct logic in this cmake script.
+# Since ARCH is a cached variable, it will not be set on first cmake invocation.
+if (NOT ARCH OR ARCH STREQUAL "" OR ARCH STREQUAL "native" OR ARCH STREQUAL "default")
+  set(ARCH_ID "${CMAKE_SYSTEM_PROCESSOR}")
+else()
+  set(ARCH_ID "${ARCH}")
+endif()
+string(TOLOWER "${ARCH_ID}" ARM_ID)
+if (ARM_ID)
+  string(SUBSTRING "${ARM_ID}" 0 3 ARM_TEST)
+endif()
+if (ARM_TEST STREQUAL "arm")
+  set(ARM 1)
+endif()
+
+if (ARM_ID STREQUAL "aarch64" OR ARM_ID STREQUAL "arm64" OR ARM_ID STREQUAL "armv8-a")
+  set(ARM 1)
+endif()
+
 include_directories(include src external "${CMAKE_BINARY_DIR}/version")
 if(APPLE)
   include_directories(SYSTEM /usr/include/malloc)
@@ -77,11 +102,18 @@ else()
   endif()
   set(C_WARNINGS "-Waggregate-return -Wnested-externs -Wold-style-definition -Wstrict-prototypes")
   set(CXX_WARNINGS "-Wno-reorder -Wno-missing-field-initializers")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 ${MINGW_FLAG} ${WARNINGS} ${C_WARNINGS} ${ARCH_FLAG} -maes")
   if(NOT APPLE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
   endif()
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 ${MINGW_FLAG} ${WARNINGS} ${CXX_WARNINGS} ${ARCH_FLAG} -maes")
+
+  if(ARM)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 ${MINGW_FLAG} ${WARNINGS} ${C_WARNINGS} ${ARCH_FLAG}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 ${MINGW_FLAG} ${WARNINGS} ${CXX_WARNINGS} ${ARCH_FLAG}")
+  else()
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 ${MINGW_FLAG} ${WARNINGS} ${C_WARNINGS} ${ARCH_FLAG} -maes")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 ${MINGW_FLAG} ${WARNINGS} ${CXX_WARNINGS} ${ARCH_FLAG} -maes")
+  endif()
+
   if(APPLE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGTEST_HAS_TR1_TUPLE=0")
   endif()

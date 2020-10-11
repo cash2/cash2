@@ -74,7 +74,7 @@ public:
   static const int SIZEOF_PTHREAD_MUTEX_T = 32;
 # endif
 #else
-  static const int SIZEOF_PTHREAD_MUTEX_T = 24;
+  static const int SIZEOF_PTHREAD_MUTEX_T = sizeof(pthread_mutex_t);
 #endif
 
 private:
