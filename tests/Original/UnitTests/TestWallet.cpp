@@ -3605,9 +3605,3 @@ TEST_F(WalletApi, checkBaseTransaction) {
   EXPECT_LT(0, transfer.amount);
   EXPECT_EQ(tx.totalAmount, transfer.amount);
 }
-
-int main(int argc, char** argv)
-{
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
