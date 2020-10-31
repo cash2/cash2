@@ -3,8 +3,9 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <Common/ArrayRef.h>
 #include <gtest/gtest.h>
+
+#include "Common/ArrayRef.h"
 
 using namespace Common;
 
