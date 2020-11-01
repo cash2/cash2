@@ -4,12 +4,12 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <gtest/gtest.h>
-#include "Common/BlockingQueue.h"
-
 #include <future>
 #include <vector>
 #include <numeric>
 #include <memory>
+
+#include "Common/BlockingQueue.h"
 
 class ParallelProcessor {
 public:
