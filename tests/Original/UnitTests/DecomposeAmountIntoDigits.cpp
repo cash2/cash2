@@ -73,8 +73,7 @@ TEST_F(decompose_amount_into_digits_test, is_correct_1)
 
 TEST_F(decompose_amount_into_digits_test, is_correct_2)
 {
-  uint64_t expected_chunks_arr[] = {10};
-  VEC_FROM_ARR(expected_chunks);
+  std::vector<uint64_t> expected_chunks = {10};
   CryptoNote::decompose_amount_into_digits(10, 0, m_chunk_handler, m_dust_handler);
   ASSERT_EQ(m_chunk_handler.m_chunks, expected_chunks);
   ASSERT_EQ(m_dust_handler.m_has_dust, false);
@@ -100,8 +99,7 @@ TEST_F(decompose_amount_into_digits_test, is_correct_4)
 
 TEST_F(decompose_amount_into_digits_test, is_correct_5)
 {
-  uint64_t expected_chunks_arr[] = {100, 900000, 8000000};
-  VEC_FROM_ARR(expected_chunks);
+  std::vector<uint64_t> expected_chunks = {100, 900000, 8000000};
   CryptoNote::decompose_amount_into_digits(8900100, 10, m_chunk_handler, m_dust_handler);
   ASSERT_EQ(m_chunk_handler.m_chunks, expected_chunks);
   ASSERT_EQ(m_dust_handler.m_has_dust, false);
@@ -109,8 +107,7 @@ TEST_F(decompose_amount_into_digits_test, is_correct_5)
 
 TEST_F(decompose_amount_into_digits_test, is_correct_6)
 {
-  uint64_t expected_chunks_arr[] = {900000, 8000000};
-  VEC_FROM_ARR(expected_chunks);
+  std::vector<uint64_t> expected_chunks = {900000, 8000000};
   uint64_t expected_dust = 100;
   CryptoNote::decompose_amount_into_digits(8900100, 1000, m_chunk_handler, m_dust_handler);
   ASSERT_EQ(m_chunk_handler.m_chunks, expected_chunks);
